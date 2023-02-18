@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/java/com/github/danieldaeschle/ministrynotes/ui/home/ChartSection.kt" value="0.5" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/java/com/github/danieldaeschle/ministrynotes/ui/home/DetailsSection.kt" value="0.5" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/java/com/github/danieldaeschle/ministrynotes/ui/home/HistorySection.kt" value="0.5527777777777778" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/java/com/github/danieldaeschle/ministrynotes/ui/home/HomePage.kt" value="0.5" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/java/com/github/danieldaeschle/ministrynotes/ui/home/Toolbar.kt" value="0.5" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/res/drawable/ic_baseline_arrow_drop_down_24.xml" value="0.561025641025641" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/res/drawable/ic_diamond_stone_24.xml" value="0.32592592592592595" />
+        <entry key="..\:/Users/Daniel/Projects/MinistryNotes/app/src/main/res/font/jost.xml" value="0.4583333333333333" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
