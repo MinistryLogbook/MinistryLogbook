@@ -2,6 +2,7 @@ package com.github.danieldaeschle.ministrynotes.ui.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,17 +38,31 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 @Composable
-fun ToolbarActions(onOpenSettings: () -> Unit = {}) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        ToolbarAction(onClick = onOpenSettings) {
+fun ToolbarActions(homeViewModel: HomeViewModel = koinViewModel()) {
+    val navController = LocalAppNavController.current
+    val selectedMonth = homeViewModel.selectedMonth.collectAsState()
+
+    val handleOpenShare = {
+        navController.navigate(
+            HomeGraph.Share.createRoute(
+                selectedMonth.value.year, selectedMonth.value.monthNumber
+            )
+        )
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        ToolbarAction(onClick = handleOpenShare) {
             Icon(
-                painterResource(R.drawable.ic_settings),
-                contentDescription = "Settings",
+                painterResource(R.drawable.ic_share),
+                contentDescription = "Share",
             )
         }
+        ProfileButton()
     }
 }
-
 
 @Composable
 fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {

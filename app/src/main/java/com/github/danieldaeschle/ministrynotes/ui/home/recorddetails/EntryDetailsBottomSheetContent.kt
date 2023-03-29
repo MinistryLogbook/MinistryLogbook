@@ -1,15 +1,18 @@
 package com.github.danieldaeschle.ministrynotes.ui.home.recorddetails
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,14 +22,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.data.EntryKind
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
@@ -50,13 +53,15 @@ fun EntryDetailsBottomSheetContent(
     val currentRoute = backStackEntry.value?.destination?.route
     val entry = entryDetailsViewModel.entry.collectAsState()
     val isSavable = entry.value.let {
-        it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0 || it.videoShowings > 0 || it.creditHours > 0 || it.creditMinutes > 0
+        it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0 || it.videoShowings > 0
     }
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var isEntryKindDialogVisible by rememberSaveable { mutableStateOf(false) }
     val settingsDataStore = rememberSettingsDataStore()
     val role = settingsDataStore.role.collectAsState(Role.Publisher)
     val dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
+    val isCreditEnabled = role.value.canHaveCredit || entry.value.isCredit
 
     val handleClose: () -> Unit = {
         isDateDialogVisible = false
@@ -107,23 +112,8 @@ fun EntryDetailsBottomSheetContent(
     val handleChangeDate: (newValue: LocalDate) -> Unit = {
         entryDetailsViewModel.update(datetime = it)
     }
-    val handleChangeCreditHours: (newValue: Int) -> Unit = {
-        if (it in 0..99) {
-            entryDetailsViewModel.update(creditHours = it)
-        }
-    }
-    val handleChangeCreditMinutes: (newValue: Int) -> Unit = {
-        if (entry.value.hours > 0 && it < 0) {
-            entryDetailsViewModel.update(
-                creditHours = entry.value.hours - 1, creditMinutes = 60 + it
-            )
-        } else if (it > 59) {
-            entryDetailsViewModel.update(
-                creditHours = entry.value.hours + 1, creditMinutes = it - 60
-            )
-        } else if (it in 0..55) {
-            entryDetailsViewModel.update(creditMinutes = it)
-        }
+    val handleKindDate: (newValue: EntryKind) -> Unit = {
+        entryDetailsViewModel.update(kind = it)
     }
 
     LaunchedEffect(id, currentRoute) {
@@ -181,6 +171,34 @@ fun EntryDetailsBottomSheetContent(
         )
     }
 
+    com.github.danieldaeschle.ministrynotes.lib.AlertDialog(
+        isOpen = isEntryKindDialogVisible,
+        onClose = { isEntryKindDialogVisible = false },
+        paddingValues = PaddingValues(vertical = 8.dp),
+    ) {
+        Column {
+            EntryKind.values().forEach {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            handleKindDate(it)
+                            isEntryKindDialogVisible = false
+                        }
+                        .padding(vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    RadioButton(
+                        modifier = Modifier.padding(horizontal = 20.dp),
+                        selected = it == entry.value.kind,
+                        onClick = null,
+                    )
+                    Text(it.translate())
+                }
+            }
+        }
+    }
+
     Column(modifier = Modifier.navigationBarsPadding()) {
         DragLine()
         Toolbar(
@@ -192,17 +210,28 @@ fun EntryDetailsBottomSheetContent(
         )
         Divider()
         Box(Modifier.clickable { isDateDialogVisible = true }) {
-            Box(Modifier.padding(bottom = 16.dp, start = 20.dp, top = 16.dp, end = 20.dp)) {
+            Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
                 val dateStr = dateTimeFormatter.format(
                     entry.value.datetime.toJavaLocalDate()
                 )
                 UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
             }
         }
+        if (isCreditEnabled) {
+            Divider()
+            Box(Modifier.clickable { isEntryKindDialogVisible = true }) {
+                Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
+                    UnitRow(
+                        entry.value.kind.translate(),
+                        icon = entry.value.kind.icon(),
+                    )
+                }
+            }
+        }
         Divider()
         Column(
             Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
                 .fillMaxWidth()
         ) {
             UnitRow("Hours", icon = painterResource(R.drawable.ic_schedule)) {
@@ -216,53 +245,27 @@ fun EntryDetailsBottomSheetContent(
                     handleChangeMinutes(it)
                 }
             }
-            UnitRow(
-                "Placements",
-                description = "Printed and Electronic",
-                icon = painterResource(R.drawable.ic_article)
-            ) {
-                NumberPicker(entry.value.placements) {
-                    handleChangePlacements(it)
-                }
-            }
-            UnitRow("Videos", icon = painterResource(R.drawable.ic_play_circle)) {
-                NumberPicker(entry.value.videoShowings) {
-                    handleChangeVideos(it)
-                }
-            }
-            UnitRow("Return visits", icon = painterResource(R.drawable.ic_group)) {
-                NumberPicker(entry.value.returnVisits) {
-                    handleChangeReturnVisits(it)
-                }
-            }
-        }
 
-        if (role.value in arrayOf(
-                Role.RegularPioneer, Role.SpecialPioneer
-            ) || entry.value.creditHours > 0 || entry.value.creditMinutes > 0
-        ) {
-            Divider()
-
-            Column(
-                Modifier
-                    .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 16.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    "Credit".uppercase(),
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-                UnitRow("Hours", icon = painterResource(R.drawable.ic_volunteer_activism)) {
-                    NumberPicker(entry.value.creditHours) {
-                        handleChangeCreditHours(it)
+            AnimatedVisibility(visible = entry.value.kind == EntryKind.Ministry) {
+                Column {
+                    UnitRow(
+                        "Placements",
+                        description = "Printed and Electronic",
+                        icon = painterResource(R.drawable.ic_article)
+                    ) {
+                        NumberPicker(entry.value.placements) {
+                            handleChangePlacements(it)
+                        }
                     }
-                }
-                UnitRow("Minutes") {
-                    NumberPicker(entry.value.creditMinutes, step = 5) {
-                        handleChangeCreditMinutes(it)
+                    UnitRow("Videos", icon = painterResource(R.drawable.ic_play_circle)) {
+                        NumberPicker(entry.value.videoShowings) {
+                            handleChangeVideos(it)
+                        }
+                    }
+                    UnitRow("Return visits", icon = painterResource(R.drawable.ic_group)) {
+                        NumberPicker(entry.value.returnVisits) {
+                            handleChangeReturnVisits(it)
+                        }
                     }
                 }
             }

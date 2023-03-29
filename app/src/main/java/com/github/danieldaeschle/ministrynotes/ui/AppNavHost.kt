@@ -11,7 +11,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetLayout
+import com.github.danieldaeschle.ministrynotes.lib.PopupLayout
 import com.github.danieldaeschle.ministrynotes.lib.rememberBottomSheetNavigator
+import com.github.danieldaeschle.ministrynotes.lib.rememberPopupNavigator
 import com.github.danieldaeschle.ministrynotes.ui.home.homeGraph
 import com.github.danieldaeschle.ministrynotes.ui.settings.settingsGraph
 
@@ -28,7 +30,8 @@ fun AppNavHost(
     modifier: Modifier = Modifier, startDestination: String = AppGraph.Home.route
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
-    val navController = rememberNavController(bottomSheetNavigator)
+    val popupNavigator = rememberPopupNavigator()
+    val navController = rememberNavController(bottomSheetNavigator, popupNavigator)
 
     CompositionLocalProvider(LocalAppNavController provides navController) {
         ModalBottomSheetLayout(
@@ -40,13 +43,15 @@ fun AppNavHost(
             sheetElevation = 2.dp,
             scrimColor = MaterialTheme.colorScheme.surface.copy(0.5f),
         ) {
-            NavHost(
-                modifier = modifier,
-                navController = navController,
-                startDestination = startDestination
-            ) {
-                homeGraph(navController)
-                settingsGraph(navController)
+            PopupLayout(popupNavigator = popupNavigator) {
+                NavHost(
+                    modifier = modifier,
+                    navController = navController,
+                    startDestination = startDestination
+                ) {
+                    homeGraph(navController)
+                    settingsGraph(navController)
+                }
             }
         }
     }

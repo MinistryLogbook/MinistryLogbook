@@ -25,9 +25,11 @@ data class Entry(
     @ColumnInfo(name = "hours") val hours: Int = 0,
     @ColumnInfo(name = "minutes") val minutes: Int = 0,
     @ColumnInfo(name = "return_visits") val returnVisits: Int = 0,
-    @ColumnInfo(name = "credit_hours") val creditHours: Int = 0,
-    @ColumnInfo(name = "credit_minutes") val creditMinutes: Int = 0,
+    @ColumnInfo(name = "kind") val kind: EntryKind = EntryKind.Ministry
 ) : Parcelable {
+
+    val isCredit: Boolean
+        get() = kind == EntryKind.Ministry || kind == EntryKind.TheocraticAssignment
 
     private companion object : Parceler<Entry> {
         override fun create(parcel: Parcel) = Entry(
@@ -39,8 +41,7 @@ data class Entry(
             hours = parcel.readInt(),
             minutes = parcel.readInt(),
             returnVisits = parcel.readInt(),
-            creditHours = parcel.readInt(),
-            creditMinutes = parcel.readInt(),
+            kind = parcel.readString().let { EntryKind.valueOf(it!!) }
         )
 
         override fun Entry.write(parcel: Parcel, flags: Int) {
@@ -53,8 +54,7 @@ data class Entry(
             parcel.writeInt(hours)
             parcel.writeInt(minutes)
             parcel.writeInt(returnVisits)
-            parcel.writeInt(creditHours)
-            parcel.writeInt(creditMinutes)
+            parcel.writeString(kind.name)
         }
     }
 }

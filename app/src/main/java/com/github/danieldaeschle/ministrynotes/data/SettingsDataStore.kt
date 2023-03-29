@@ -18,6 +18,9 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("s
 enum class Role {
     Publisher, AuxiliaryPioneer, RegularPioneer, SpecialPioneer;
 
+    val canHaveCredit: Boolean
+        get() = this == RegularPioneer || this == SpecialPioneer
+
     @Composable
     fun translate(): String {
 //        val context = LocalContext.current

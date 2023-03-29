@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Entry
+import com.github.danieldaeschle.ministrynotes.data.EntryKind
 import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
 
 @Composable
@@ -27,8 +28,9 @@ fun Counter(modifier: Modifier = Modifier, entries: List<Entry>) {
     val onBackgroundColor80 = MaterialTheme.colorScheme.onBackground.copy(0.8f).toArgb()
     val onBackgroundColor60 = MaterialTheme.colorScheme.onBackground.copy(0.6f).toArgb()
     val jostTypeface = ResourcesCompat.getFont(context, R.font.jost_variable)
-    val accumulatedHours = entries.sumOf { it.hours }
-    val accumulatedMinutes = entries.sumOf { it.minutes }
+    val ministryEntries = entries.filter { it.kind == EntryKind.Ministry }
+    val accumulatedHours = ministryEntries.sumOf { it.hours }
+    val accumulatedMinutes = ministryEntries.sumOf { it.minutes }
     val accumulatedTime = accumulatedHours + accumulatedMinutes / 60f
     val hours = accumulatedTime.toInt()
     val hoursStr = hours.toString()

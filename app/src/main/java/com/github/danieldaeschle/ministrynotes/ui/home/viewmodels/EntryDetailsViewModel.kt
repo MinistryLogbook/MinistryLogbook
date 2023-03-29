@@ -3,6 +3,7 @@ package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.danieldaeschle.ministrynotes.data.Entry
+import com.github.danieldaeschle.ministrynotes.data.EntryKind
 import com.github.danieldaeschle.ministrynotes.data.EntryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,8 +28,7 @@ class EntryDetailsViewModel(private val _entryRepository: EntryRepository) : Vie
         hours: Int? = null,
         minutes: Int? = null,
         returnVisits: Int? = null,
-        creditHours: Int? = null,
-        creditMinutes: Int? = null,
+        kind: EntryKind? = null,
     ) {
         _entry.value = _entry.value.copy(
             datetime = datetime ?: _entry.value.datetime,
@@ -37,8 +37,7 @@ class EntryDetailsViewModel(private val _entryRepository: EntryRepository) : Vie
             hours = hours ?: _entry.value.hours,
             minutes = minutes ?: _entry.value.minutes,
             returnVisits = returnVisits ?: _entry.value.returnVisits,
-            creditHours = creditHours ?: _entry.value.creditHours,
-            creditMinutes = creditMinutes ?: _entry.value.creditMinutes,
+            kind = kind ?: _entry.value.kind,
         )
     }
 

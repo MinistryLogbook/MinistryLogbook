@@ -44,7 +44,7 @@ fun CircleProgress(
             val strokeWidthPx = strokeWidth.toPx()
             val radius = (size.width - strokeWidthPx) / 2
             drawCircle(
-                baseLineColor.copy(0.15f),
+                baseLineColor,
                 radius = radius,
                 center = Offset(radius + strokeWidthPx / 2, radius + strokeWidthPx / 2),
                 style = Stroke(width = strokeWidthPx),

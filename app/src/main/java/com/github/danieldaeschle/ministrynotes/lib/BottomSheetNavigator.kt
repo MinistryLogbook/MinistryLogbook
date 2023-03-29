@@ -1,11 +1,9 @@
 package com.github.danieldaeschle.ministrynotes.lib
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,32 +24,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.transform
 
 /**
- * The state of a [ModalBottomSheetLayout] that the [BottomSheetNavigator] drives
- *
- * @param sheetState The sheet state that is driven by the [BottomSheetNavigator]
- */
-@Stable
-class BottomSheetNavigatorSheetState(internal val sheetState: ModalBottomSheetState) {
-    /**
-     * @see ModalBottomSheetState.isVisible
-     */
-    val isVisible: Boolean
-        get() = sheetState.isVisible
-
-    /**
-     * @see ModalBottomSheetState.currentValue
-     */
-    val currentValue: ModalBottomSheetValue
-        get() = sheetState.currentValue
-
-    /**
-     * @see ModalBottomSheetState.targetValue
-     */
-    val targetValue: ModalBottomSheetValue
-        get() = sheetState.targetValue
-}
-
-/**
  * Create and remember a [BottomSheetNavigator]
  */
 @Composable
@@ -67,8 +39,7 @@ fun rememberBottomSheetNavigator(
 /**
  * Navigator that drives a [ModalBottomSheetState] for use of [ModalBottomSheetLayout]s
  * with the navigation library. Every destination using this Navigator must set a valid
- * [Composable] by setting it directly on an instantiated [Destination] or calling
- * [androidx.navigation.compose.material.bottomSheet].
+ * [Composable] by setting it directly on an instantiated [Destination] or calling [bottomSheet].
  *
  * <b>The [sheetContent] [Composable] will always host the latest entry of the back stack. When
  * navigating from a [BottomSheetNavigator.Destination] to another
@@ -107,17 +78,12 @@ class BottomSheetNavigator(
      * composed before the Navigator is attached, so we specifically return an empty flow if we
      * aren't attached yet.
      */
-    internal val transitionsInProgress: StateFlow<Set<NavBackStackEntry>>
+    private val transitionsInProgress: StateFlow<Set<NavBackStackEntry>>
         get() = if (attached) {
             state.transitionsInProgress
         } else {
             MutableStateFlow(emptySet())
         }
-
-    /**
-     * Access properties of the [ModalBottomSheetLayout]'s [ModalBottomSheetState]
-     */
-    val navigatorSheetState = BottomSheetNavigatorSheetState(sheetState)
 
     /**
      * A [Composable] function that hosts the current sheet content. This should be set as
@@ -180,7 +146,6 @@ class BottomSheetNavigator(
 
     override fun createDestination(): Destination = Destination(navigator = this, content = {})
 
-    @SuppressLint("NewApi") // b/187418647
     override fun navigate(
         entries: List<NavBackStackEntry>, navOptions: NavOptions?, navigatorExtras: Extras?
     ) {

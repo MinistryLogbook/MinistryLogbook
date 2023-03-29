@@ -45,13 +45,13 @@ import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
 import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
 import kotlinx.coroutines.launch
 
-sealed class SettingsScreen(val route: String) {
-    object Root : SettingsScreen("root")
+sealed class SettingsGraph(val route: String) {
+    object Root : SettingsGraph("root")
 }
 
 fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
-    navigation(route = AppGraph.Settings.route, startDestination = SettingsScreen.Root.route) {
-        composable(SettingsScreen.Root.route) {
+    navigation(route = AppGraph.Settings.route, startDestination = SettingsGraph.Root.route) {
+        composable(SettingsGraph.Root.route) {
             SettingsPage()
         }
     }

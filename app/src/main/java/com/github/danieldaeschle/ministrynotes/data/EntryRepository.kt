@@ -1,11 +1,8 @@
 package com.github.danieldaeschle.ministrynotes.data
 
 import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class EntryRepository(private val context: Context) {
 
@@ -20,7 +17,7 @@ class EntryRepository(private val context: Context) {
 
     suspend fun save(entry: Entry): Long {
         return withContext(Dispatchers.IO) {
-             context.db().entryDao().upsert(entry)
+            context.db().entryDao().upsert(entry)
         }.first()
     }
 

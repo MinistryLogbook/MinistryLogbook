@@ -1,11 +1,8 @@
 package com.github.danieldaeschle.ministrynotes.data
 
 import android.content.Context
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class StudyEntryRepository(private val context: Context) {
 

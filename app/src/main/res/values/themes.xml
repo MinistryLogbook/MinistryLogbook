@@ -11,9 +11,11 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+<!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
         <!-- Customize your theme here. -->
         <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/mn</item>
     </style>
 
     <style name="Theme.MinistryNotes.NoActionBar">

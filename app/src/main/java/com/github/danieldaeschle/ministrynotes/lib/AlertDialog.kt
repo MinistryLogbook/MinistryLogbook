@@ -3,6 +3,7 @@ package com.github.danieldaeschle.ministrynotes.lib
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,9 +22,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun AlertDialog(
     isOpen: Boolean = false,
-    title: @Composable () -> Unit = {},
-    negativeButton: @Composable () -> Unit = {},
+    title: (@Composable () -> Unit)? = null,
+    negativeButton: (@Composable () -> Unit)? = null,
     onClose: () -> Unit = {},
+    paddingValues: PaddingValues = PaddingValues(vertical = 24.dp),
     content: @Composable () -> Unit = {}
 ) {
     if (isOpen) {
@@ -35,28 +37,34 @@ fun AlertDialog(
                 shape = MaterialTheme.shapes.large,
                 tonalElevation = AlertDialogDefaults.TonalElevation,
             ) {
-                Column(Modifier.padding(vertical = 24.dp)) {
-                    ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
-                        Box(
-                            Modifier
-                                .padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
-                                .align(Alignment.Start)
-                        ) {
-                            title()
+                Column(Modifier.padding(paddingValues)) {
+                    title?.let {
+                        ProvideTextStyle(MaterialTheme.typography.headlineSmall) {
+                            Box(
+                                Modifier
+                                    .padding(bottom = 16.dp, start = 24.dp, end = 24.dp)
+                                    .align(Alignment.Start)
+                            ) {
+                                title()
+                            }
                         }
                     }
 
-                    Column(Modifier.padding(bottom = 16.dp)) {
+                    Column(Modifier.condition(negativeButton != null) {
+                        padding(bottom = 16.dp)
+                    }) {
                         content()
                     }
 
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp),
-                        horizontalArrangement = Arrangement.End
-                    ) {
-                        negativeButton()
+                    negativeButton?.let {
+                        Row(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(start = 24.dp, end = 24.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            negativeButton()
+                        }
                     }
                 }
             }

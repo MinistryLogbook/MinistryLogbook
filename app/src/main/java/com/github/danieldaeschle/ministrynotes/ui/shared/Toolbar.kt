@@ -76,7 +76,7 @@ fun ToolbarAction(
 ) {
     Column(
         modifier = Modifier
-            .size(36.dp)
+            .size(40.dp)
             .clip(CircleShape)
             .clickable(onClick = onClick)
             .then(modifier),

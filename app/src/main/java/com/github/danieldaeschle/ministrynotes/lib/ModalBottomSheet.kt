@@ -16,11 +16,7 @@
 package com.github.danieldaeschle.ministrynotes.lib
 
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -29,15 +25,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.widthIn
-import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetState.Companion.Saver
-import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetValue.Expanded
-import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetValue.HalfExpanded
-import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetValue.Hidden
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,22 +39,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.semantics.collapse
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.dismiss
 import androidx.compose.ui.semantics.expand
-import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetState.Companion.Saver
+import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetValue.Expanded
+import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetValue.HalfExpanded
+import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetValue.Hidden
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlin.math.max
@@ -132,9 +123,9 @@ fun ModalBottomSheetState(
  * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
  */
 class ModalBottomSheetState @Deprecated(
-    message = "This constructor is deprecated. confirmStateChange has been renamed to " + "confirmValueChange.",
+    message = "This constructor is deprecated. confirmStateChange has been renamed to confirmValueChange.",
     replaceWith = ReplaceWith(
-        "ModalBottomSheetState(" + "initialValue, animationSpec, confirmStateChange, isSkipHalfExpanded)"
+        "ModalBottomSheetState(initialValue, animationSpec, confirmStateChange, isSkipHalfExpanded)"
     )
 ) constructor(
     initialValue: ModalBottomSheetValue,
@@ -383,28 +374,39 @@ fun ModalBottomSheetLayout(
         Box(Modifier.fillMaxSize()) {
             content()
             Scrim(
-                color = scrimColor, onDismiss = {
+                color = scrimColor,
+                onDismiss = {
                     if (sheetState.swipeableState.confirmValueChange(Hidden)) {
                         scope.launch { sheetState.hide() }
                     }
-                }, visible = sheetState.swipeableState.targetValue != Hidden
+                },
+                visible = sheetState.swipeableState.targetValue != Hidden,
+                semanticsContentDescription = getString(Strings.CloseSheet)
             )
         }
-        Surface(Modifier.align(Alignment.TopCenter) // We offset from the top so we'll center from there
-            .widthIn(max = MaxModalBottomSheetWidth).fillMaxWidth()
+        Surface(Modifier
+            .align(Alignment.TopCenter) // We offset from the top so we'll center from there
+            .widthIn(max = MaxModalBottomSheetWidth)
+            .fillMaxWidth()
             .nestedScroll(remember(sheetState.swipeableState, orientation) {
                 ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
                     state = sheetState.swipeableState, orientation = orientation
                 )
-            }).offset {
+            })
+            .offset {
                 IntOffset(
-                    0, sheetState.swipeableState.requireOffset().roundToInt()
+                    0,
+                    sheetState.swipeableState
+                        .requireOffset()
+                        .roundToInt()
                 )
-            }.swipeableV2(
+            }
+            .swipeableV2(
                 state = sheetState.swipeableState,
                 orientation = orientation,
                 enabled = sheetState.swipeableState.currentValue != Hidden,
-            ).swipeAnchors(
+            )
+            .swipeAnchors(
                 state = sheetState.swipeableState,
                 possibleValues = setOf(Hidden, HalfExpanded, Expanded),
                 anchorChangeHandler = anchorChangeHandler
@@ -421,7 +423,8 @@ fun ModalBottomSheetLayout(
                         max(0f, fullHeight - sheetSize.height)
                     } else null
                 }
-            }.semantics {
+            }
+            .semantics {
                 if (sheetState.isVisible) {
                     dismiss {
                         if (sheetState.swipeableState.confirmValueChange(Hidden)) {
@@ -453,36 +456,6 @@ fun ModalBottomSheetLayout(
             contentColor = sheetContentColor
         ) {
             Column(content = sheetContent)
-        }
-    }
-}
-
-@Composable
-private fun Scrim(
-    color: Color, onDismiss: () -> Unit, visible: Boolean
-) {
-    if (color.isSpecified) {
-        val alpha by animateFloatAsState(
-            targetValue = if (visible) 1f else 0f, animationSpec = TweenSpec()
-        )
-        val closeSheet = getString(Strings.CloseSheet)
-        val dismissModifier = if (visible) {
-            Modifier
-                .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
-                .semantics(mergeDescendants = true) {
-                    contentDescription = closeSheet
-                    onClick { onDismiss(); true }
-                }
-        } else {
-            Modifier
-        }
-
-        Canvas(
-            Modifier
-                .fillMaxSize()
-                .then(dismissModifier)
-        ) {
-            drawRect(color = color, alpha = alpha)
         }
     }
 }

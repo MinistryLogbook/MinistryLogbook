@@ -6,7 +6,6 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.github.danieldaeschle.ministrynotes.ui.AppNavHost
 import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
-import dagger.hilt.android.AndroidEntryPoint
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
