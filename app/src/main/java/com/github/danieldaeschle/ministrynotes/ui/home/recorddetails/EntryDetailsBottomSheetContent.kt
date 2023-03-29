@@ -55,6 +55,7 @@ fun EntryDetailsBottomSheetContent(
     val isSavable = entry.value.let {
         it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0 || it.videoShowings > 0
     }
+    val hasLoaded = (id ?: 0) == entry.value.id
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isEntryKindDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -246,25 +247,27 @@ fun EntryDetailsBottomSheetContent(
                 }
             }
 
-            AnimatedVisibility(visible = entry.value.kind == EntryKind.Ministry) {
-                Column {
-                    UnitRow(
-                        "Placements",
-                        description = "Printed and Electronic",
-                        icon = painterResource(R.drawable.ic_article)
-                    ) {
-                        NumberPicker(entry.value.placements) {
-                            handleChangePlacements(it)
+            if (hasLoaded) {
+                AnimatedVisibility(visible = entry.value.kind == EntryKind.Ministry) {
+                    Column {
+                        UnitRow(
+                            "Placements",
+                            description = "Printed and Electronic",
+                            icon = painterResource(R.drawable.ic_article)
+                        ) {
+                            NumberPicker(entry.value.placements) {
+                                handleChangePlacements(it)
+                            }
                         }
-                    }
-                    UnitRow("Videos", icon = painterResource(R.drawable.ic_play_circle)) {
-                        NumberPicker(entry.value.videoShowings) {
-                            handleChangeVideos(it)
+                        UnitRow("Videos", icon = painterResource(R.drawable.ic_play_circle)) {
+                            NumberPicker(entry.value.videoShowings) {
+                                handleChangeVideos(it)
+                            }
                         }
-                    }
-                    UnitRow("Return visits", icon = painterResource(R.drawable.ic_group)) {
-                        NumberPicker(entry.value.returnVisits) {
-                            handleChangeReturnVisits(it)
+                        UnitRow("Return visits", icon = painterResource(R.drawable.ic_group)) {
+                            NumberPicker(entry.value.returnVisits) {
+                                handleChangeReturnVisits(it)
+                            }
                         }
                     }
                 }
