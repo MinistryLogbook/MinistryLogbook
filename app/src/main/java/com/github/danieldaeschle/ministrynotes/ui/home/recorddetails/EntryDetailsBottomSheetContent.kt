@@ -178,8 +178,14 @@ fun EntryDetailsBottomSheetContent(
         onClose = { isEntryKindDialogVisible = false },
         paddingValues = PaddingValues(vertical = 8.dp),
     ) {
+        val entryKinds =
+            if (role.value.canHaveCredit) EntryKind.values() else arrayOf(
+                EntryKind.Ministry,
+                entry.value.kind
+            )
+
         Column {
-            EntryKind.values().forEach {
+            entryKinds.forEach {
                 Row(
                     Modifier
                         .fillMaxWidth()
