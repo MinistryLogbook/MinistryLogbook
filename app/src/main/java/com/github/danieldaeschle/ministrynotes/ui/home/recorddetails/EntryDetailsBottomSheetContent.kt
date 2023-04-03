@@ -53,7 +53,8 @@ fun EntryDetailsBottomSheetContent(
     val currentRoute = backStackEntry.value?.destination?.route
     val entry = entryDetailsViewModel.entry.collectAsState()
     val isSavable = entry.value.let {
-        it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0 || it.videoShowings > 0
+        it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0
+                || it.videoShowings > 0
     }
     val hasLoaded = (id ?: 0) == entry.value.id
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }

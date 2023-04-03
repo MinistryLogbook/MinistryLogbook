@@ -36,8 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
-import com.github.danieldaeschle.ministrynotes.data.EntryKind
+import com.github.danieldaeschle.ministrynotes.data.Time
+import com.github.danieldaeschle.ministrynotes.data.ministryTimeSum
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
+import com.github.danieldaeschle.ministrynotes.data.theocraticAssignmentTimeSum
+import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.theme.ProgressPositive
 import org.koin.androidx.compose.koinViewModel
@@ -56,6 +59,8 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
     var isShareDialogOpen by remember { mutableStateOf(false) }
     val settingsDataStore = rememberSettingsDataStore()
     val goal = settingsDataStore.goal.collectAsState(50)
+    // credit will be added until 55 hours are reached
+    val maxHoursWithCredit = Time(55, 0)
 
     val handleShare = {
         isShareDialogOpen = false
@@ -101,32 +106,31 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                         .height(widthDp / 2)
                         .width(widthDp / 2)
                 ) {
-                    val accumulatedHours =
-                        entries.value.filter { it.kind == EntryKind.Ministry }.sumOf { it.hours }
-                    val accumulatedMinutes =
-                        entries.value.filter { it.kind == EntryKind.Ministry }
-                            .sumOf { it.minutes }
-                    val hoursWithMinutes = accumulatedHours + accumulatedMinutes / 60
-                    val accumulatedTheocraticAssignmentHours =
-                        entries.value.filter { it.kind == EntryKind.TheocraticAssignment }
-                            .sumOf { it.hours }
-                    val accumulatedTheocraticAssignmentMinutes =
-                        entries.value.filter { it.kind == EntryKind.TheocraticAssignment }
-                            .sumOf { it.minutes }
-                    val creditHoursWithMinutes =
-                        accumulatedTheocraticAssignmentHours + accumulatedTheocraticAssignmentMinutes / 60
-                    val hoursWithCredit = hoursWithMinutes + creditHoursWithMinutes
+                    val ministryTime = entries.value.ministryTimeSum()
+                    val theocraticAssignmentsTime = entries.value.theocraticAssignmentTimeSum()
+                    val theocraticSchoolTime = entries.value.theocraticSchoolTimeSum()
+                    val credit = minOf(
+                        maxHoursWithCredit - ministryTime,
+                        theocraticAssignmentsTime
+                    ) + theocraticSchoolTime
+                    val accumulatedTime = ministryTime.let {
+                        if (it.hours < maxHoursWithCredit.hours) {
+                            minOf(ministryTime + theocraticAssignmentsTime, maxHoursWithCredit)
+                        } else {
+                            it
+                        }
+                    } + theocraticSchoolTime
 
                     CircleProgress(
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
                         progresses = listOf(
                             Progress(
-                                percent = (100 / (goal.value ?: 50) * hoursWithCredit),
+                                percent = (100 / (goal.value ?: 50) * accumulatedTime.hours),
                                 color = ProgressPositive.copy(0.6f)
                             ),
                             Progress(
-                                percent = (100 / (goal.value ?: 50) * hoursWithMinutes),
+                                percent = (100 / (goal.value ?: 50) * ministryTime.hours),
                                 color = ProgressPositive
                             ),
                         ),
@@ -144,7 +148,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                             entries = entries.value
                         )
 
-                        if (accumulatedTheocraticAssignmentHours > 0 || accumulatedTheocraticAssignmentMinutes > 0) {
+                        if (credit > Time(0, 0)) {
                             Row(
                                 Modifier
                                     .clip(CircleShape)
@@ -154,10 +158,9 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                                 horizontalArrangement = Arrangement.End,
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                val restCreditMinutes = accumulatedTheocraticAssignmentMinutes % 60
                                 val creditMinutes =
-                                    if (restCreditMinutes > 0) ":${
-                                        restCreditMinutes.toString().padStart(2, '0')
+                                    if (credit.minutes > 0) ":${
+                                        credit.minutes.toString().padStart(2, '0')
                                     }" else ""
 
                                 Icon(
@@ -166,7 +169,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(Modifier.width(4.dp))
-                                val text = "${creditHoursWithMinutes}${creditMinutes} hrs"
+                                val text = "${credit.hours}${creditMinutes} hrs"
                                 Text(
                                     text,
                                     color = MaterialTheme.colorScheme.onSurface,

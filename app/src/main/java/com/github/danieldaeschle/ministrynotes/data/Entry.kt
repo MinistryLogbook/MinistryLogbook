@@ -29,7 +29,7 @@ data class Entry(
 ) : Parcelable {
 
     val isCredit: Boolean
-        get() = kind == EntryKind.Ministry || kind == EntryKind.TheocraticAssignment
+        get() = kind == EntryKind.TheocraticSchool || kind == EntryKind.TheocraticAssignment
 
     private companion object : Parceler<Entry> {
         override fun create(parcel: Parcel) = Entry(
@@ -58,3 +58,47 @@ data class Entry(
         }
     }
 }
+
+data class Time(val hours: Int, val minutes: Int) : Comparable<Time> {
+    operator fun plus(other: Time): Time {
+        var accumulatedHours = this.hours + other.hours
+        var accumulatedMinutes = this.minutes + other.minutes
+        accumulatedHours += accumulatedMinutes / 60
+        accumulatedMinutes %= 60
+        return Time(accumulatedHours, accumulatedMinutes)
+    }
+
+    operator fun minus(other: Time): Time {
+        var accumulatedHours = this.hours - other.hours
+        var accumulatedMinutes = this.minutes + other.minutes
+        if (accumulatedMinutes < 0) {
+            accumulatedHours -= 1
+            accumulatedMinutes += 60
+        }
+        return Time(accumulatedHours, accumulatedMinutes)
+    }
+
+    override fun compareTo(other: Time): Int {
+        val res = this.hours.compareTo(other.hours)
+        if (res == 0) {
+            return this.minutes.compareTo(other.minutes)
+        }
+        return res
+    }
+}
+
+fun List<Entry>.timeSum(): Time {
+    var hours = this.sumOf { it.hours }
+    var minutes = this.sumOf { it.minutes }
+    hours += minutes / 60
+    minutes %= 60
+    return Time(hours, minutes)
+}
+
+fun List<Entry>.ministryTimeSum() = this.filter { it.kind == EntryKind.Ministry }.timeSum()
+
+fun List<Entry>.theocraticAssignmentTimeSum() =
+    this.filter { it.kind == EntryKind.TheocraticAssignment }.timeSum()
+
+fun List<Entry>.theocraticSchoolTimeSum() =
+    this.filter { it.kind == EntryKind.TheocraticSchool }.timeSum()
