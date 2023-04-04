@@ -12,7 +12,6 @@ import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
 import com.github.danieldaeschle.ministrynotes.ui.home.share.FieldServiceReport
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -23,37 +22,30 @@ import java.time.format.TextStyle
 import java.util.Locale
 
 class HomeViewModel(
+    private val year: Int,
+    private val monthNumber: Int,
     private val _entryRepository: EntryRepository,
     private val _studyEntryRepository: StudyEntryRepository,
 ) : ViewModel() {
 
     private val _studyEntry = MutableStateFlow<StudyEntry?>(null)
     private val _entries = MutableStateFlow<List<Entry>>(listOf())
-    private val _currentDate by lazy {
-        val current = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        LocalDate(current.year, current.monthNumber, 1)
-    }
-    private val _selectedMonth = MutableStateFlow(_currentDate)
 
     val entries = _entries.asStateFlow()
-    val selectedMonth = _selectedMonth.asStateFlow()
+    val selectedMonth = LocalDate(year, monthNumber, 1)
     val studies = _studyEntry.asStateFlow().map { it?.count ?: 0 }
 
-    val monthTitle = selectedMonth.map {
+    val monthTitle: String = selectedMonth.run {
         // TODO: locale based on user settings
-        val monthName = it.month.getDisplayName(
-            TextStyle.FULL, Locale.ENGLISH,
-        )
+        val monthName = this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
         val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
-        if (it.year != currentYear) "$monthName $it.year" else monthName
+        if (this.year != currentYear) "$monthName $this.year" else monthName
     }
 
     val fieldServiceReport =
-        monthTitle.combine(_entries) { title, entries -> Pair(title, entries) }.map { combination ->
+        _entries.map { entries ->
             // TODO: get name from user
             val name = "Your Name"
-            val title = combination.first
-            val entries = combination.second
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
             val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
             val commentTheocraticAssignment =
@@ -67,7 +59,7 @@ class HomeViewModel(
 
             FieldServiceReport(
                 name = name,
-                month = title,
+                month = monthTitle,
                 placements = _entries.value.sumOf { it.placements },
                 hours = _entries.value.ministryTimeSum().hours,
                 returnVisits = _entries.value.sumOf { it.returnVisits },
@@ -77,9 +69,10 @@ class HomeViewModel(
             )
         }
 
-    fun load(year: Int, monthNumber: Int) = viewModelScope.launch {
-        _entries.value = _entryRepository.getAllOfMonth(year, monthNumber)
-        _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
-        _selectedMonth.value = LocalDate(year, monthNumber, 1)
+    init {
+        viewModelScope.launch {
+            _entries.value = _entryRepository.getAllOfMonth(year, monthNumber)
+            _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
+        }
     }
 }

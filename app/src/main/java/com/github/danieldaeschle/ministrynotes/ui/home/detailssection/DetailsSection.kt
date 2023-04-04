@@ -1,6 +1,5 @@
 package com.github.danieldaeschle.ministrynotes.ui.home.detailssection
 
-import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,15 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -44,8 +38,6 @@ import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.theme.ProgressPositive
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.TextStyle
-import java.util.Locale
 
 enum class ShareOption {
     Text, Image
@@ -53,44 +45,11 @@ enum class ShareOption {
 
 @Composable
 fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
-    val context = LocalContext.current
     val entries = homeViewModel.entries.collectAsState()
-    val studies = homeViewModel.studies.collectAsState(0)
-    var isShareDialogOpen by remember { mutableStateOf(false) }
     val settingsDataStore = rememberSettingsDataStore()
-    val goal = settingsDataStore.goal.collectAsState(50)
+    val goal = settingsDataStore.goal.collectAsState(1)
     // credit will be added until 55 hours are reached
     val maxHoursWithCredit = Time(55, 0)
-
-    val handleShare = {
-        isShareDialogOpen = false
-        val hours = entries.value.sumOf { it.hours }
-        val minutes = entries.value.sumOf { it.minutes }
-        val allHours = hours + minutes / 60
-        val placements = entries.value.sumOf { it.placements }
-        val videoShowings = entries.value.sumOf { it.videoShowings }
-        val returnVisits = entries.value.sumOf { it.returnVisits }
-        val monthName = homeViewModel.selectedMonth.value.month.getDisplayName(
-            TextStyle.FULL, Locale.ENGLISH
-        )
-        val text = """
-            My field service report for the month: $monthName
-            
-            Hours: $allHours
-            Placements: $placements
-            Video showings: $videoShowings
-            Return visits: $returnVisits
-            Studies: ${studies.value}
-        """.trimIndent()
-        val sendIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, text)
-            type = "text/plain"
-        }
-
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        context.startActivity(shareIntent)
-    }
 
     Column(modifier = Modifier.padding(16.dp)) {
         BoxWithConstraints {
@@ -124,14 +83,14 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                     CircleProgress(
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
-                        progresses = listOf(
+                        progresses = listOfNotNull(
                             Progress(
-                                percent = (100 / (goal.value ?: 50) * accumulatedTime.hours),
-                                color = ProgressPositive.copy(0.6f)
-                            ),
+                                percent = (100 / goal.value * accumulatedTime.hours),
+                                color = ProgressPositive.copy(0.6f),
+                            ).takeIf { credit > Time(0, 0) },
                             Progress(
-                                percent = (100 / (goal.value ?: 50) * ministryTime.hours),
-                                color = ProgressPositive
+                                percent = (100 / goal.value * ministryTime.hours),
+                                color = ProgressPositive,
                             ),
                         ),
                     )

@@ -12,7 +12,14 @@ import org.koin.dsl.module
 val appModule = module {
     single { EntryRepository(androidContext()) }
     single { StudyEntryRepository(androidContext()) }
-    viewModel { HomeViewModel(get(), get()) }
+    viewModel { parameters ->
+        HomeViewModel(
+            year = parameters[0],
+            monthNumber = parameters[1],
+            get(),
+            get()
+        )
+    }
     viewModel { StudiesDetailsViewModel(get()) }
     viewModel { EntryDetailsViewModel(get()) }
 }

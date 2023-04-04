@@ -1,5 +1,6 @@
 package com.github.danieldaeschle.ministrynotes.ui
 
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -8,14 +9,14 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
 import com.github.danieldaeschle.ministrynotes.lib.ModalBottomSheetLayout
 import com.github.danieldaeschle.ministrynotes.lib.PopupLayout
 import com.github.danieldaeschle.ministrynotes.lib.rememberBottomSheetNavigator
 import com.github.danieldaeschle.ministrynotes.lib.rememberPopupNavigator
 import com.github.danieldaeschle.ministrynotes.ui.home.homeGraph
 import com.github.danieldaeschle.ministrynotes.ui.settings.settingsGraph
+import com.google.accompanist.navigation.animation.AnimatedNavHost
+import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 sealed class AppGraph(val route: String) {
     object Home : AppGraph("home")
@@ -25,6 +26,7 @@ sealed class AppGraph(val route: String) {
 val LocalAppNavController =
     compositionLocalOf<NavHostController> { error("NavHostController error") }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
@@ -32,7 +34,7 @@ fun AppNavHost(
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val popupNavigator = rememberPopupNavigator()
-    val navController = rememberNavController(bottomSheetNavigator, popupNavigator)
+    val navController = rememberAnimatedNavController(bottomSheetNavigator, popupNavigator)
 
     CompositionLocalProvider(LocalAppNavController provides navController) {
         ModalBottomSheetLayout(
@@ -45,13 +47,13 @@ fun AppNavHost(
             scrimColor = MaterialTheme.colorScheme.surface.copy(0.5f),
         ) {
             PopupLayout(popupNavigator = popupNavigator) {
-                NavHost(
+                AnimatedNavHost(
                     modifier = modifier,
                     navController = navController,
                     startDestination = startDestination,
                 ) {
-                    homeGraph(navController)
-                    settingsGraph(navController)
+                    homeGraph()
+                    settingsGraph()
                 }
             }
         }

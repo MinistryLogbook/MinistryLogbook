@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,10 +59,8 @@ fun ToolbarActions() {
 
 @Composable
 fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
-    val expanded = remember { mutableStateOf(false) }
     val navController = LocalAppNavController.current
-    val selectedMonth by homeViewModel.selectedMonth.collectAsState()
-    val monthTitle by homeViewModel.monthTitle.collectAsState("")
+    var expanded by remember { mutableStateOf(false) }
 
     Box {
         Row(
@@ -71,11 +68,11 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
                 .height(32.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.tertiary.copy(0.15f))
-                .clickable { expanded.value = true }
+                .clickable { expanded = true }
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(monthTitle, color = MaterialTheme.colorScheme.secondary)
+            Text(homeViewModel.monthTitle, color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.width(6.dp))
             Icon(
                 Icons.Rounded.ArrowDropDown,
@@ -84,13 +81,13 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
             )
         }
         MonthPickerPopup(
-            expanded = expanded.value,
-            selectedMonth = selectedMonth,
+            expanded = expanded,
+            selectedMonth = homeViewModel.selectedMonth,
             onDismissRequest = {
-                expanded.value = !expanded.value
+                expanded = !expanded
             },
             onSelectMonth = { month ->
-                expanded.value = false
+                expanded = false
                 navController.navigate(HomeGraph.Root.createRoute(month.year, month.monthNumber))
             },
         )

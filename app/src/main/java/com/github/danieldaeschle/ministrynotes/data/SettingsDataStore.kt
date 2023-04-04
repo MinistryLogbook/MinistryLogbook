@@ -50,7 +50,7 @@ class SettingsDataStore(val context: Context) {
             return@combine g
         }
         return@combine when (r) {
-            Role.Publisher -> null
+            Role.Publisher -> PublisherGoal
             Role.AuxiliaryPioneer -> AuxiliaryPioneerGoal
             Role.RegularPioneer -> RegularPioneerGoal
             Role.SpecialPioneer -> SpecialPioneerGoal
@@ -79,6 +79,7 @@ fun rememberSettingsDataStore(): SettingsDataStore {
     return remember { SettingsDataStore(context) }
 }
 
+private const val PublisherGoal = 1
 private const val AuxiliaryPioneerGoal = 30
 private const val RegularPioneerGoal = 50
 private const val SpecialPioneerGoal = 100

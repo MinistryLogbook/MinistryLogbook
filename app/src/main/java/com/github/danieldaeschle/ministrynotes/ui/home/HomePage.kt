@@ -24,11 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.lib.ExtendableFloatingActionButton
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
@@ -41,22 +39,11 @@ import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(year: Int, monthNumber: Int, homeViewModel: HomeViewModel = koinViewModel()) {
-    var isShareDialogOpen by remember { mutableStateOf(false) }
-    val context = LocalContext.current
+fun HomePage(homeViewModel: HomeViewModel = koinViewModel()) {
     var fabExtended by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val navController = LocalAppNavController.current
     val entries = homeViewModel.entries.collectAsState()
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
-    val studies = homeViewModel.studies.collectAsState(0)
-
-    LaunchedEffect(year, monthNumber, currentRoute) {
-        if (currentRoute == HomeGraph.Root.route) {
-            homeViewModel.load(year, monthNumber)
-        }
-    }
 
     LaunchedEffect(scrollState) {
         var prev = 0

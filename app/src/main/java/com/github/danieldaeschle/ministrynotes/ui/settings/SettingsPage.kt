@@ -1,5 +1,11 @@
 package com.github.danieldaeschle.ministrynotes.ui.settings
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,9 +36,6 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
@@ -43,14 +46,32 @@ import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.shared.Toolbar
 import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
 import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
+import com.google.accompanist.navigation.animation.composable
+import com.google.accompanist.navigation.animation.navigation
 import kotlinx.coroutines.launch
 
 sealed class SettingsGraph(val route: String) {
     object Root : SettingsGraph("/")
 }
 
-fun NavGraphBuilder.settingsGraph(navController: NavHostController) {
-    navigation(route = AppGraph.Settings.route, startDestination = SettingsGraph.Root.route) {
+@OptIn(ExperimentalAnimationApi::class)
+fun NavGraphBuilder.settingsGraph() {
+    navigation(
+        route = AppGraph.Settings.route,
+        startDestination = SettingsGraph.Root.route,
+        enterTransition = {
+            slideInHorizontally(tween(200)) { it / 3 } + fadeIn(tween(100))
+        },
+        exitTransition = {
+            slideOutHorizontally(tween(200)) { it / 3 } + fadeOut(tween(100))
+        },
+        popEnterTransition = {
+            slideInHorizontally(tween(200)) { -it / 3 } + fadeIn(tween(100))
+        },
+        popExitTransition = {
+            slideOutHorizontally(tween(200)) { -it / 3 } + fadeOut(tween(100))
+        },
+    ) {
         composable(SettingsGraph.Root.route) {
             SettingsPage()
         }

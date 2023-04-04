@@ -37,7 +37,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entries = homeViewModel.entries.collectAsState()
     val studies = homeViewModel.studies.collectAsState(0)
-    val selectedMonth = homeViewModel.selectedMonth.collectAsState()
+    val selectedMonth = homeViewModel.selectedMonth
     val accumulatedPlacements = entries.value.sumOf { it.placements }
     val accumulatedReturnVisits = entries.value.sumOf { it.returnVisits }
     val accumulatedVideoShowings = entries.value.sumOf { it.videoShowings }
@@ -83,7 +83,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
             }, onClick = {
                 navController.navigate(
                     HomeGraph.Studies.createRoute(
-                        selectedMonth.value.year, selectedMonth.value.monthNumber
+                        selectedMonth.year, selectedMonth.monthNumber
                     )
                 )
             })
