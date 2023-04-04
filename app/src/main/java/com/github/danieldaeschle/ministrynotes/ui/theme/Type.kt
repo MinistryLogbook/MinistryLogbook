@@ -13,28 +13,10 @@ val Jost = FontFamily(
     Font(R.font.jost_variable, FontWeight.W400),
     Font(R.font.jost_italic_variable, FontWeight.W400, FontStyle.Italic)
 )
-//
-//// Set of Material typography styles to start with
-//val Typography = Typography(
-////    family = Jost,
-////    body = TextStyle(
-////        fontWeight = FontWeight.Normal,
-////        fontSize = 16.sp
-////    )
-//    /* Other default text styles to override
-//    button = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.W500,
-//        fontSize = 14.sp
-//    ),
-//    caption = TextStyle(
-//        fontFamily = FontFamily.Default,
-//        fontWeight = FontWeight.Normal,
-//        fontSize = 12.sp
-//    )
-//    */
-//)
-val Roboto = FontFamily.Default
+
+val Caveat = FontFamily(
+    Font(R.font.caveat_variable, FontWeight.W400),
+)
 
 val Typography = Typography(
     displayLarge = TextStyle(

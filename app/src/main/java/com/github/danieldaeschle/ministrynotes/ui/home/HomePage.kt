@@ -1,13 +1,11 @@
 package com.github.danieldaeschle.ministrynotes.ui.home
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -39,8 +37,6 @@ import com.github.danieldaeschle.ministrynotes.ui.home.historysection.HistorySec
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.shared.Toolbar
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.TextStyle
-import java.util.Locale
 
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -70,42 +66,10 @@ fun HomePage(year: Int, monthNumber: Int, homeViewModel: HomeViewModel = koinVie
         }
     }
 
-    val handleShare = {
-        isShareDialogOpen = false
-        val hours = entries.value.sumOf { it.hours }
-        val minutes = entries.value.sumOf { it.minutes }
-        val allHours = hours + minutes / 60
-        val placements = entries.value.sumOf { it.placements }
-        val videoShowings = entries.value.sumOf { it.videoShowings }
-        val returnVisits = entries.value.sumOf { it.returnVisits }
-        val monthName = homeViewModel.selectedMonth.value.month.getDisplayName(
-            TextStyle.FULL, Locale.ENGLISH
-        )
-        val text = """
-            My field service report for the month: $monthName
-            
-            Hours: $allHours
-            Placements: $placements
-            Video showings: $videoShowings
-            Return visits: $returnVisits
-            Studies: ${studies.value}
-        """.trimIndent()
-        val sendIntent = Intent().apply {
-            action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, text)
-            type = "text/plain"
-        }
-
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        context.startActivity(shareIntent)
-    }
-
-    val handleCreate = {
-        navController.navigate(HomeGraph.EntryDetails.createRoute())
-    }
-
     Scaffold(contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp), floatingActionButton = {
-        ExtendableFloatingActionButton(onClick = handleCreate, extended = fabExtended, icon = {
+        ExtendableFloatingActionButton(onClick = {
+            navController.navigate(HomeGraph.EntryDetails.createRoute())
+        }, extended = fabExtended, icon = {
             Icon(painterResource(R.drawable.ic_add), contentDescription = null)
         }, text = {
             Text("Add to report")

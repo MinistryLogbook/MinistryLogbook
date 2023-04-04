@@ -27,7 +27,8 @@ val LocalAppNavController =
 
 @Composable
 fun AppNavHost(
-    modifier: Modifier = Modifier, startDestination: String = AppGraph.Home.route
+    modifier: Modifier = Modifier,
+    startDestination: String = AppGraph.Home.route,
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val popupNavigator = rememberPopupNavigator()
@@ -47,7 +48,7 @@ fun AppNavHost(
                 NavHost(
                     modifier = modifier,
                     navController = navController,
-                    startDestination = startDestination
+                    startDestination = startDestination,
                 ) {
                     homeGraph(navController)
                     settingsGraph(navController)

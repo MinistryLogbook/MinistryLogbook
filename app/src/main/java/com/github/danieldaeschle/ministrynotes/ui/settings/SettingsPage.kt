@@ -46,7 +46,7 @@ import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
 import kotlinx.coroutines.launch
 
 sealed class SettingsGraph(val route: String) {
-    object Root : SettingsGraph("root")
+    object Root : SettingsGraph("/")
 }
 
 fun NavGraphBuilder.settingsGraph(navController: NavHostController) {

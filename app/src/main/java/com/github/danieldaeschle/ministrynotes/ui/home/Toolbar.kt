@@ -20,6 +20,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,34 +28,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
+import com.github.danieldaeschle.ministrynotes.ui.home.share.ShareDialog
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Composable
-fun ToolbarActions(homeViewModel: HomeViewModel = koinViewModel()) {
-    val navController = LocalAppNavController.current
-    val selectedMonth = homeViewModel.selectedMonth.collectAsState()
+fun ToolbarActions() {
+    var isShareDialogOpen by remember { mutableStateOf(false) }
 
-    val handleOpenShare = {
-        navController.navigate(
-            HomeGraph.Share.createRoute(
-                selectedMonth.value.year, selectedMonth.value.monthNumber
-            )
-        )
-    }
+    ShareDialog(
+        isOpen = isShareDialogOpen,
+        onClose = { isShareDialogOpen = false },
+    )
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ToolbarAction(onClick = handleOpenShare) {
+        ToolbarAction(onClick = {
+            isShareDialogOpen = true
+        }) {
             Icon(
                 painterResource(R.drawable.ic_share),
                 contentDescription = "Share",
@@ -69,6 +63,7 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
     val expanded = remember { mutableStateOf(false) }
     val navController = LocalAppNavController.current
     val selectedMonth by homeViewModel.selectedMonth.collectAsState()
+    val monthTitle by homeViewModel.monthTitle.collectAsState("")
 
     Box {
         Row(
@@ -80,13 +75,7 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val monthName = Month(selectedMonth.monthNumber).getDisplayName(
-                TextStyle.FULL, Locale.ENGLISH
-            )
-            val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
-            val year = selectedMonth.year
-            val selectedTitle = if (year != currentYear) "$monthName $year" else monthName
-            Text(selectedTitle, color = MaterialTheme.colorScheme.secondary)
+            Text(monthTitle, color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.width(6.dp))
             Icon(
                 Icons.Rounded.ArrowDropDown,
@@ -94,7 +83,8 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
                 tint = MaterialTheme.colorScheme.secondary,
             )
         }
-        MonthPickerPopup(expanded = expanded.value,
+        MonthPickerPopup(
+            expanded = expanded.value,
             selectedMonth = selectedMonth,
             onDismissRequest = {
                 expanded.value = !expanded.value
@@ -102,6 +92,7 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
             onSelectMonth = { month ->
                 expanded.value = false
                 navController.navigate(HomeGraph.Root.createRoute(month.year, month.monthNumber))
-            })
+            },
+        )
     }
 }
