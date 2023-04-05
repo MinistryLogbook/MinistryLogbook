@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.Time
 import com.github.danieldaeschle.ministrynotes.data.ministryTimeSum
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
@@ -46,15 +47,12 @@ import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.theme.ProgressPositive
 import org.koin.androidx.compose.koinViewModel
 
-enum class ShareOption {
-    Text, Image
-}
-
 @Composable
 fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
     val entries = homeViewModel.entries.collectAsState()
     val settingsDataStore = rememberSettingsDataStore()
-    val goal = settingsDataStore.goal.collectAsState(1)
+    val role by settingsDataStore.role.collectAsState(Role.Publisher)
+    val goal by settingsDataStore.goal.collectAsState(1)
     // credit will be added until 55 hours are reached
     val maxHoursWithCredit = Time(55, 0)
 
@@ -75,30 +73,47 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                     val ministryTime by remember {
                         derivedStateOf { entries.value.ministryTimeSum() }
                     }
-                    val theocraticAssignmentsTime = entries.value.theocraticAssignmentTimeSum()
-                    val theocraticSchoolTime = entries.value.theocraticSchoolTimeSum()
-                    val credit = minOf(
-                        maxHoursWithCredit - ministryTime,
-                        theocraticAssignmentsTime
-                    ) + theocraticSchoolTime
-                    val accumulatedTime = ministryTime.let {
-                        if (it.hours < maxHoursWithCredit.hours) {
-                            minOf(ministryTime + theocraticAssignmentsTime, maxHoursWithCredit)
-                        } else {
-                            it
+                    val theocraticAssignmentsTime by remember {
+                        derivedStateOf {
+                            entries.value.theocraticAssignmentTimeSum()
                         }
-                    } + theocraticSchoolTime
+                    }
+                    val theocraticSchoolTime by remember {
+                        derivedStateOf { entries.value.theocraticSchoolTimeSum() }
+                    }
+                    val credit by remember {
+                        derivedStateOf {
+                            minOf(
+                                maxHoursWithCredit - ministryTime,
+                                theocraticAssignmentsTime
+                            ) + theocraticSchoolTime
+                        }
+                    }
+                    val accumulatedTime by remember {
+                        derivedStateOf {
+                            ministryTime.let {
+                                if (it.hours < maxHoursWithCredit.hours) {
+                                    minOf(
+                                        ministryTime + theocraticAssignmentsTime,
+                                        maxHoursWithCredit
+                                    )
+                                } else {
+                                    it
+                                }
+                            } + theocraticSchoolTime
+                        }
+                    }
 
                     CircleProgress(
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
                         progresses = listOfNotNull(
                             Progress(
-                                percent = (100 / goal.value * accumulatedTime.hours),
+                                percent = (100 / goal * accumulatedTime.hours),
                                 color = ProgressPositive.copy(0.6f),
-                            ).takeIf { credit > Time(0, 0) },
+                            ).takeIf { role.canHaveCredit && credit > Time(0, 0) },
                             Progress(
-                                percent = (100 / goal.value * ministryTime.hours),
+                                percent = (100 / goal * ministryTime.hours),
                                 color = ProgressPositive,
                             ),
                         ),
@@ -117,7 +132,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                         )
 
                         AnimatedVisibility(
-                            visible = credit > Time(0, 0),
+                            visible = role.canHaveCredit && credit > Time(0, 0),
                             enter = fadeIn(
                                 animationSpec = tween(
                                     durationMillis = 200,

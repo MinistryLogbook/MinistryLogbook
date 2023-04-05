@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudiesDetailsViewModel(
+    private val year: Int,
+    private val monthNumber: Int,
     private val _studyEntryRepository: StudyEntryRepository
 ) : ViewModel() {
 
@@ -24,7 +26,9 @@ class StudiesDetailsViewModel(
         }
     }
 
-    fun load(year: Int, monthNumber: Int) = viewModelScope.launch {
-        _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
+    init {
+        viewModelScope.launch {
+            _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
+        }
     }
 }

@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.lib.ExtendableFloatingActionButton
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
@@ -44,6 +45,14 @@ fun HomePage(homeViewModel: HomeViewModel = koinViewModel()) {
     val scrollState = rememberScrollState()
     val navController = LocalAppNavController.current
     val entries = homeViewModel.entries.collectAsState()
+    val backStackEntry = navController.currentBackStackEntryAsState()
+    val currentRoute = backStackEntry.value?.destination?.route
+
+    LaunchedEffect(currentRoute) {
+        if (currentRoute == HomeGraph.Root.route) {
+            homeViewModel.load()
+        }
+    }
 
     LaunchedEffect(scrollState) {
         var prev = 0

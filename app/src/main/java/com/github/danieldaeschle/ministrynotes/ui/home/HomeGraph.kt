@@ -123,8 +123,13 @@ fun NavGraphBuilder.homeGraph() {
             val monthNumber =
                 it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
 
-            val studiesDetailsViewModel = getViewModel<StudiesDetailsViewModel>()
-            StudiesBottomSheetContent(year, monthNumber, studiesDetailsViewModel)
+            val studiesDetailsViewModel = getViewModel<StudiesDetailsViewModel>(parameters = {
+                parametersOf(
+                    year,
+                    monthNumber
+                )
+            })
+            StudiesBottomSheetContent(studiesDetailsViewModel)
         }
 
         popup(HomeGraph.ProfileMenu.route) {

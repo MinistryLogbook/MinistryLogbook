@@ -3,6 +3,7 @@ package com.github.danieldaeschle.ministrynotes.data
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
 
 class StudyEntryRepository(private val context: Context) {
 
@@ -12,7 +13,8 @@ class StudyEntryRepository(private val context: Context) {
             val lastYear = if (month <= 1) year - 1 else year
             val lastMonth = if (month <= 1) 12 else month - 1
             val lastMonthEntry = context.db().studyEntryDao().getOfMonth(lastYear, lastMonth)
-            save(StudyEntry(count = lastMonthEntry?.count ?: 0))
+            val localDate = LocalDate(year, month, 1)
+            save(StudyEntry(month = localDate, count = lastMonthEntry?.count ?: 0))
         }
         context.db().studyEntryDao().getOfMonth(year, month)
     }

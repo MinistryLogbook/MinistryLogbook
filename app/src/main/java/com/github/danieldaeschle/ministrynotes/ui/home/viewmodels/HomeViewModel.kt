@@ -69,10 +69,8 @@ class HomeViewModel(
             )
         }
 
-    init {
-        viewModelScope.launch {
-            _entries.value = _entryRepository.getAllOfMonth(year, monthNumber)
-            _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
-        }
+    fun load() = viewModelScope.launch {
+        _entries.value = _entryRepository.getAllOfMonth(year, monthNumber)
+        _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
     }
 }
