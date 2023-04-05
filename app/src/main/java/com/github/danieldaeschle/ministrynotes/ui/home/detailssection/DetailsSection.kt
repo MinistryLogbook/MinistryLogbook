@@ -1,5 +1,9 @@
 package com.github.danieldaeschle.ministrynotes.ui.home.detailssection
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,6 +24,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -65,7 +72,9 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                         .height(widthDp / 2)
                         .width(widthDp / 2)
                 ) {
-                    val ministryTime = entries.value.ministryTimeSum()
+                    val ministryTime by remember {
+                        derivedStateOf { entries.value.ministryTimeSum() }
+                    }
                     val theocraticAssignmentsTime = entries.value.theocraticAssignmentTimeSum()
                     val theocraticSchoolTime = entries.value.theocraticSchoolTimeSum()
                     val credit = minOf(
@@ -104,10 +113,23 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth(),
-                            entries = entries.value
+                            time = ministryTime,
                         )
 
-                        if (credit > Time(0, 0)) {
+                        AnimatedVisibility(
+                            visible = credit > Time(0, 0),
+                            enter = fadeIn(
+                                animationSpec = tween(
+                                    durationMillis = 200,
+                                    delayMillis = 600
+                                )
+                            ) + expandVertically(
+                                animationSpec = tween(
+                                    durationMillis = 200,
+                                    delayMillis = 600
+                                )
+                            )
+                        ) {
                             Row(
                                 Modifier
                                     .clip(CircleShape)

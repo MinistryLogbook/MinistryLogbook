@@ -17,6 +17,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,9 +41,15 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
     val entries = homeViewModel.entries.collectAsState()
     val studies = homeViewModel.studies.collectAsState(0)
     val selectedMonth = homeViewModel.selectedMonth
-    val accumulatedPlacements = entries.value.sumOf { it.placements }
-    val accumulatedReturnVisits = entries.value.sumOf { it.returnVisits }
-    val accumulatedVideoShowings = entries.value.sumOf { it.videoShowings }
+    val accumulatedPlacements by remember {
+        derivedStateOf { entries.value.sumOf { it.placements } }
+    }
+    val accumulatedReturnVisits by remember {
+        derivedStateOf { entries.value.sumOf { it.returnVisits } }
+    }
+    val accumulatedVideoShowings by remember {
+        derivedStateOf { entries.value.sumOf { it.videoShowings } }
+    }
 
     Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
         Column(modifier = Modifier.weight(1f)) {
@@ -100,14 +109,13 @@ fun OtherDetail(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(Modifier.padding(2.dp)) {
-            val modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clip(CircleShape)
-                    .condition(onClick != null) {
-                        clickable(onClick = onClick!!)
-                    }
-                    .padding(4.dp)
+            val modifier = Modifier
+                .fillMaxWidth()
+                .clip(CircleShape)
+                .condition(onClick != null) {
+                    clickable(onClick = onClick!!)
+                }
+                .padding(4.dp)
 
             Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
                 if (icon != null) {
@@ -124,9 +132,7 @@ fun OtherDetail(
 
                 Column {
                     Text(
-                        count.toString(),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
+                        count.toString(), fontSize = 20.sp, fontWeight = FontWeight.Bold
                     )
 
                     Text(
