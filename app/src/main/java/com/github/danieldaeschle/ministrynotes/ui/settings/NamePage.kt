@@ -46,6 +46,7 @@ fun NamePage() {
             TextField(
                 modifier = Modifier.fillMaxWidth(),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                singleLine = true,
                 label = {
                     Text("Set name")
                 },

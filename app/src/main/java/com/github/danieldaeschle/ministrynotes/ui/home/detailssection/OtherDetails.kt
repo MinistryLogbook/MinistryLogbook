@@ -25,35 +25,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.data.ministries
+import com.github.danieldaeschle.ministrynotes.data.placements
+import com.github.danieldaeschle.ministrynotes.data.returnVisits
+import com.github.danieldaeschle.ministrynotes.data.videoShowings
 import com.github.danieldaeschle.ministrynotes.lib.condition
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
+
 @Composable
 fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val entries = homeViewModel.entries.collectAsState()
-    val studies = homeViewModel.studies.collectAsState(0)
+    val entries by homeViewModel.entries.collectAsState()
+    val studies by homeViewModel.studies.collectAsState(0)
     val selectedMonth = homeViewModel.selectedMonth
-    val accumulatedPlacements by remember {
-        derivedStateOf { entries.value.sumOf { it.placements } }
-    }
-    val accumulatedReturnVisits by remember {
-        derivedStateOf { entries.value.sumOf { it.returnVisits } }
-    }
-    val accumulatedVideoShowings by remember {
-        derivedStateOf { entries.value.sumOf { it.videoShowings } }
-    }
+    val ministries by remember { derivedStateOf { entries.ministries() } }
+    val placements by remember { derivedStateOf { ministries.placements() } }
+    val returnVisits by remember { derivedStateOf { ministries.returnVisits() } }
+    val videoShowings by remember { derivedStateOf { ministries.videoShowings() } }
 
     Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
         Column(modifier = Modifier.weight(1f)) {
-            OtherDetail("Placements", accumulatedPlacements, icon = {
+            OtherDetail("Placements", placements, icon = {
                 Icon(
                     painterResource(R.drawable.ic_article),
                     contentDescription = null,
@@ -62,7 +63,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail("Video showings", accumulatedVideoShowings, icon = {
+            OtherDetail("Video showings", videoShowings, icon = {
                 Icon(
                     painterResource(R.drawable.ic_play_circle),
                     contentDescription = null,
@@ -73,7 +74,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            OtherDetail("Return visits", accumulatedReturnVisits, icon = {
+            OtherDetail("Return visits", returnVisits, icon = {
                 Icon(
                     painterResource(R.drawable.ic_group),
                     contentDescription = null,
@@ -82,7 +83,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail("Studies", studies.value, icon = {
+            OtherDetail("Studies", studies, icon = {
                 Icon(
                     painterResource(R.drawable.ic_local_library),
                     contentDescription = null,
@@ -138,7 +139,9 @@ fun OtherDetail(
                     Text(
                         name,
                         color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
             }

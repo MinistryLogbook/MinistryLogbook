@@ -58,7 +58,7 @@ fun NameSetting() {
     val settingsDataStore = rememberSettingsDataStore()
     val navController = LocalAppNavController.current
     val name by settingsDataStore.name.collectAsState("")
-    val nameOrDefault by remember { derivedStateOf { name.ifEmpty { "-" } } }
+    val nameOrDefault by remember { derivedStateOf { name.ifEmpty { "No Name set" } } }
 
     Setting(title = "Name", onClick = {
         navController.navigateToSettingsName()

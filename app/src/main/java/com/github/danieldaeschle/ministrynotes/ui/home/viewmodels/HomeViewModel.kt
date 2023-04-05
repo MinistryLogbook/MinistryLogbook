@@ -8,8 +8,11 @@ import com.github.danieldaeschle.ministrynotes.data.SettingsDataStore
 import com.github.danieldaeschle.ministrynotes.data.StudyEntry
 import com.github.danieldaeschle.ministrynotes.data.StudyEntryRepository
 import com.github.danieldaeschle.ministrynotes.data.ministryTimeSum
+import com.github.danieldaeschle.ministrynotes.data.placements
+import com.github.danieldaeschle.ministrynotes.data.returnVisits
 import com.github.danieldaeschle.ministrynotes.data.theocraticAssignmentTimeSum
 import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
+import com.github.danieldaeschle.ministrynotes.data.videoShowings
 import com.github.danieldaeschle.ministrynotes.ui.home.share.FieldServiceReport
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -28,7 +31,7 @@ class HomeViewModel(
     private val monthNumber: Int,
     private val _entryRepository: EntryRepository,
     private val _studyEntryRepository: StudyEntryRepository,
-    private val _settingsDataStore: SettingsDataStore,
+    settingsDataStore: SettingsDataStore,
 ) : ViewModel() {
 
     private val _studyEntry = MutableStateFlow<StudyEntry?>(null)
@@ -46,7 +49,7 @@ class HomeViewModel(
     }
 
     val fieldServiceReport =
-        _entries.combine(_settingsDataStore.name) { entries, name -> Pair(entries, name) }
+        _entries.combine(settingsDataStore.name) { entries, name -> Pair(entries, name) }
             .map { pair ->
                 val entries = pair.first
                 val name = pair.second
@@ -64,10 +67,10 @@ class HomeViewModel(
                 FieldServiceReport(
                     name = name,
                     month = monthTitle,
-                    placements = _entries.value.sumOf { it.placements },
+                    placements = _entries.value.placements(),
                     hours = _entries.value.ministryTimeSum().hours,
-                    returnVisits = _entries.value.sumOf { it.returnVisits },
-                    videoShowings = _entries.value.sumOf { it.videoShowings },
+                    returnVisits = _entries.value.returnVisits(),
+                    videoShowings = _entries.value.videoShowings(),
                     bibleStudies = _studyEntry.value?.count ?: 0,
                     comments = comments,
                 )

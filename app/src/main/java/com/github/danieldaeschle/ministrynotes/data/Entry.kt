@@ -95,10 +95,20 @@ fun List<Entry>.timeSum(): Time {
     return Time(hours, minutes)
 }
 
-fun List<Entry>.ministryTimeSum() = this.filter { it.kind == EntryKind.Ministry }.timeSum()
+fun List<Entry>.ministryTimeSum() = this.ministries().timeSum()
 
-fun List<Entry>.theocraticAssignmentTimeSum() =
-    this.filter { it.kind == EntryKind.TheocraticAssignment }.timeSum()
+fun List<Entry>.theocraticAssignments() = this.filter { it.kind == EntryKind.TheocraticAssignment }
 
-fun List<Entry>.theocraticSchoolTimeSum() =
-    this.filter { it.kind == EntryKind.TheocraticSchool }.timeSum()
+fun List<Entry>.theocraticAssignmentTimeSum() = this.theocraticAssignments().timeSum()
+
+fun List<Entry>.theocraticSchools() = this.filter { it.kind == EntryKind.TheocraticSchool }
+
+fun List<Entry>.theocraticSchoolTimeSum() = this.theocraticSchools().timeSum()
+
+fun List<Entry>.ministries() = this.filter { it.kind == EntryKind.TheocraticSchool }
+
+fun List<Entry>.placements() = this.ministries().sumOf { it.placements }
+
+fun List<Entry>.returnVisits() = this.ministries().sumOf { it.returnVisits }
+
+fun List<Entry>.videoShowings() = this.ministries().sumOf { it.videoShowings }
