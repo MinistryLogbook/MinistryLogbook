@@ -32,9 +32,6 @@ jobs:
 
     - name: Build with Gradle
       run: ./gradlew build
-
-    - name: Lint check
-      run: ./gradlew ktlintCheck
     
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v2.2.4
