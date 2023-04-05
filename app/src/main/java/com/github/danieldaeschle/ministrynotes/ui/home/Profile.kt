@@ -17,21 +17,24 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
-import com.github.danieldaeschle.ministrynotes.ui.settings.SettingsGraph
+import com.github.danieldaeschle.ministrynotes.ui.settings.navigateToSettings
 import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
-
 
 @Composable
 fun ProfileButton() {
     val navController = LocalAppNavController.current
+    val settingsDataStore = rememberSettingsDataStore()
+    val name by settingsDataStore.name.collectAsState("")
 
     Box(
         Modifier
@@ -49,7 +52,8 @@ fun ProfileButton() {
                 .background(MaterialTheme.colorScheme.onSurface.copy(0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            Text("D")
+            val char = if (name.isNotEmpty()) name.substring(0..0) else "?"
+            Text(char)
         }
     }
 }
@@ -77,7 +81,7 @@ fun ProfilePopup() {
         Modifier
             .fillMaxWidth()
             .clickable {
-                navController.navigate(SettingsGraph.Root.route)
+                navController.navigateToSettings()
             }
             .padding(horizontal = 16.dp, vertical = 12.dp)) {
         Icon(painterResource(R.drawable.ic_settings), contentDescription = null)

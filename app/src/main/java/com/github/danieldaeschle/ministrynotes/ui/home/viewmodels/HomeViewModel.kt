@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.danieldaeschle.ministrynotes.data.Entry
 import com.github.danieldaeschle.ministrynotes.data.EntryRepository
+import com.github.danieldaeschle.ministrynotes.data.SettingsDataStore
 import com.github.danieldaeschle.ministrynotes.data.StudyEntry
 import com.github.danieldaeschle.ministrynotes.data.StudyEntryRepository
 import com.github.danieldaeschle.ministrynotes.data.ministryTimeSum
@@ -12,6 +13,7 @@ import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
 import com.github.danieldaeschle.ministrynotes.ui.home.share.FieldServiceReport
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -26,6 +28,7 @@ class HomeViewModel(
     private val monthNumber: Int,
     private val _entryRepository: EntryRepository,
     private val _studyEntryRepository: StudyEntryRepository,
+    private val _settingsDataStore: SettingsDataStore,
 ) : ViewModel() {
 
     private val _studyEntry = MutableStateFlow<StudyEntry?>(null)
@@ -43,31 +46,32 @@ class HomeViewModel(
     }
 
     val fieldServiceReport =
-        _entries.map { entries ->
-            // TODO: get name from user
-            val name = "Your Name"
-            val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
-            val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
-            val commentTheocraticAssignment =
-                "${theocraticAssignmentTime.hours} hours spent on theocratic assignments."
-            val commentTheocraticSchool =
-                "${theocraticSchoolTime.hours} hours spent on theocratic schools."
-            val comments = listOfNotNull(
-                commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
-                commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },
-            ).joinToString("\n")
+        _entries.combine(_settingsDataStore.name) { entries, name -> Pair(entries, name) }
+            .map { pair ->
+                val entries = pair.first
+                val name = pair.second
+                val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
+                val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
+                val commentTheocraticAssignment =
+                    "${theocraticAssignmentTime.hours} hours spent on theocratic assignments."
+                val commentTheocraticSchool =
+                    "${theocraticSchoolTime.hours} hours spent on theocratic schools."
+                val comments = listOfNotNull(
+                    commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
+                    commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },
+                ).joinToString("\n")
 
-            FieldServiceReport(
-                name = name,
-                month = monthTitle,
-                placements = _entries.value.sumOf { it.placements },
-                hours = _entries.value.ministryTimeSum().hours,
-                returnVisits = _entries.value.sumOf { it.returnVisits },
-                videoShowings = _entries.value.sumOf { it.videoShowings },
-                bibleStudies = _studyEntry.value?.count ?: 0,
-                comments = comments,
-            )
-        }
+                FieldServiceReport(
+                    name = name,
+                    month = monthTitle,
+                    placements = _entries.value.sumOf { it.placements },
+                    hours = _entries.value.ministryTimeSum().hours,
+                    returnVisits = _entries.value.sumOf { it.returnVisits },
+                    videoShowings = _entries.value.sumOf { it.videoShowings },
+                    bibleStudies = _studyEntry.value?.count ?: 0,
+                    comments = comments,
+                )
+            }
 
     fun load() = viewModelScope.launch {
         _entries.value = _entryRepository.getAllOfMonth(year, monthNumber)

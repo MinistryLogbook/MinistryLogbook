@@ -1,11 +1,5 @@
 package com.github.danieldaeschle.ministrynotes.ui.settings
 
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -25,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,68 +30,44 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavGraphBuilder
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.lib.AlertDialog
 import com.github.danieldaeschle.ministrynotes.lib.condition
-import com.github.danieldaeschle.ministrynotes.ui.AppGraph
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.shared.Toolbar
 import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
 import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 import kotlinx.coroutines.launch
 
-sealed class SettingsGraph(val route: String) {
-    object Root : SettingsGraph("/")
-}
-
-@OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.settingsGraph() {
-    navigation(
-        route = AppGraph.Settings.route,
-        startDestination = SettingsGraph.Root.route,
-        enterTransition = {
-            slideInHorizontally(tween(200)) { it / 3 } + fadeIn(tween(100))
-        },
-        exitTransition = {
-            slideOutHorizontally(tween(200)) { it / 3 } + fadeOut(tween(100))
-        },
-        popEnterTransition = {
-            slideInHorizontally(tween(200)) { -it / 3 } + fadeIn(tween(100))
-        },
-        popExitTransition = {
-            slideOutHorizontally(tween(200)) { -it / 3 } + fadeOut(tween(100))
-        },
-    ) {
-        composable(SettingsGraph.Root.route) {
-            SettingsPage()
+@Composable
+fun SettingsPage() {
+    BaseSettingsPage("Settings") {
+        Section {
+            Title("Personal Information")
+            NameSetting()
+            RoleSetting()
+            GoalSetting()
         }
     }
 }
 
 @Composable
-fun SettingsPage() {
-    val coroutineScope = rememberCoroutineScope()
+fun NameSetting() {
     val settingsDataStore = rememberSettingsDataStore()
+    val navController = LocalAppNavController.current
+    val name by settingsDataStore.name.collectAsState("")
+    val nameOrDefault by remember { derivedStateOf { name.ifEmpty { "-" } } }
 
-    BaseSettingsPage {
-        Section {
-            Title("Personal Information")
-            Setting(title = "Name", onClick = {}) {
-                Text(
-                    "Your Name",
-                    fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
-                )
-            }
-
-            RoleSetting()
-            GoalSetting()
-        }
+    Setting(title = "Name", onClick = {
+        navController.navigateToSettingsName()
+    }) {
+        Text(
+            nameOrDefault,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+        )
     }
 }
 
@@ -105,7 +76,7 @@ fun RoleSetting() {
     var isRoleDialogOpen by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val settingsDataStore = rememberSettingsDataStore()
-    val role = settingsDataStore.role.collectAsState(Role.Publisher)
+    val role by settingsDataStore.role.collectAsState(Role.Publisher)
 
     val handleClose = {
         isRoleDialogOpen = false
@@ -139,7 +110,7 @@ fun RoleSetting() {
         onClick = { isRoleDialogOpen = true },
     ) {
         Text(
-            role.value.translate(),
+            role.translate(),
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
         )
@@ -151,16 +122,16 @@ fun GoalSetting() {
     var isGoalDialogOpen by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val settingsDataStore = rememberSettingsDataStore()
-    val goal = settingsDataStore.goal.collectAsState(null)
-    val manuallySetGoal = settingsDataStore.manuallySetGoal.collectAsState(null)
+    val goal by settingsDataStore.goal.collectAsState(null)
+    val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
 
-    val goalText = if (goal.value != null) {
-        val prefix = if (goal.value != manuallySetGoal.value && manuallySetGoal.value != null) {
+    val goalText = if (goal != null) {
+        val prefix = if (goal != manuallySetGoal && manuallySetGoal != null) {
             "Manually set: "
         } else {
             ""
         }
-        "${prefix}${goal.value} hours"
+        "${prefix}${goal} hours"
     } else {
         "No goal set"
     }
@@ -202,7 +173,11 @@ fun GoalSetting() {
 }
 
 @Composable
-fun BaseSettingsPage(content: @Composable () -> Unit = {}) {
+fun BaseSettingsPage(
+    title: String,
+    actions: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit = {}
+) {
     val navController = LocalAppNavController.current
 
     val handleBack: () -> Unit = {
@@ -217,7 +192,10 @@ fun BaseSettingsPage(content: @Composable () -> Unit = {}) {
                         Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = null)
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text("Settings", fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                    Text(title, fontSize = MaterialTheme.typography.titleLarge.fontSize)
+
+                    Spacer(Modifier.weight(1f))
+                    actions?.invoke()
                 }
                 Column(Modifier.statusBarsPadding()) {
                     Spacer(Modifier.height(56.dp))

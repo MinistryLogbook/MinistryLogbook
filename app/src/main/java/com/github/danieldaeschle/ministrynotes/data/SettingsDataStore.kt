@@ -38,8 +38,7 @@ class SettingsDataStore(val context: Context) {
     companion object {
         private val GOAL_KEY = intPreferencesKey("goal")
         private val ROLE_KEY = stringPreferencesKey("role")
-        private val FIRST_NAME_KEY = stringPreferencesKey("first_name")
-        private val LAST_NAME_KEY = stringPreferencesKey("last_name")
+        private val NAME_KEY = stringPreferencesKey("name")
     }
 
     val role = context.dataStore.data.map {
@@ -57,11 +56,14 @@ class SettingsDataStore(val context: Context) {
         }
     }
     val manuallySetGoal = context.dataStore.data.map { it[GOAL_KEY] }
-    val firstName = context.dataStore.data.map { it[FIRST_NAME_KEY] }
-    val lastName = context.dataStore.data.map { it[LAST_NAME_KEY] }
+    val name = context.dataStore.data.map { it[NAME_KEY] ?: "" }
 
     suspend fun setRole(role: Role) = context.dataStore.edit {
         it[ROLE_KEY] = role.toString()
+    }
+
+    suspend fun setName(name: String) = context.dataStore.edit {
+        it[NAME_KEY] = name
     }
 
     suspend fun setGoal(goal: Int) = context.dataStore.edit {
