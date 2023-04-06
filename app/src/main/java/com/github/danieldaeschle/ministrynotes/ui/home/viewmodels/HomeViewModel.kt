@@ -91,9 +91,9 @@ class HomeViewModel(
             kind = EntryKind.Transfer,
             transferredFrom = lastMonth
         )
-        _entries.value += transfer
         viewModelScope.launch {
-            _entryRepository.save(transfer)
+            val id = _entryRepository.save(transfer)
+            _entries.value += transfer.copy(id = id)
         }
     }
 

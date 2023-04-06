@@ -21,11 +21,10 @@ class EntryRepository(private val context: Context) {
             context.db().entryDao().getTransferredFrom(localDate.year, localDate.monthNumber)
         }
 
-
-    suspend fun save(entry: Entry): Long {
+    suspend fun save(entry: Entry): Int {
         return withContext(Dispatchers.IO) {
             context.db().entryDao().upsert(entry)
-        }.first()
+        }.first().toInt()
     }
 
     suspend fun delete(entry: Entry) {
