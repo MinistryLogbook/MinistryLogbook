@@ -3,32 +3,36 @@ package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.danieldaeschle.ministrynotes.data.Entry
+import com.github.danieldaeschle.ministrynotes.data.EntryKind
 import com.github.danieldaeschle.ministrynotes.data.EntryRepository
 import com.github.danieldaeschle.ministrynotes.data.SettingsDataStore
 import com.github.danieldaeschle.ministrynotes.data.StudyEntry
 import com.github.danieldaeschle.ministrynotes.data.StudyEntryRepository
-import com.github.danieldaeschle.ministrynotes.data.ministryTimeSum
-import com.github.danieldaeschle.ministrynotes.data.placements
-import com.github.danieldaeschle.ministrynotes.data.returnVisits
-import com.github.danieldaeschle.ministrynotes.data.theocraticAssignmentTimeSum
-import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
-import com.github.danieldaeschle.ministrynotes.data.videoShowings
+import com.github.danieldaeschle.ministrynotes.lib.Time
+import com.github.danieldaeschle.ministrynotes.lib.ministryTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.placements
+import com.github.danieldaeschle.ministrynotes.lib.returnVisits
+import com.github.danieldaeschle.ministrynotes.lib.theocraticAssignmentTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.theocraticSchoolTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.videoShowings
 import com.github.danieldaeschle.ministrynotes.ui.home.share.FieldServiceReport
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
 import kotlinx.datetime.todayIn
 import java.time.format.TextStyle
 import java.util.Locale
 
 class HomeViewModel(
-    private val year: Int,
-    private val monthNumber: Int,
+    val month: LocalDate,
     private val _entryRepository: EntryRepository,
     private val _studyEntryRepository: StudyEntryRepository,
     settingsDataStore: SettingsDataStore,
@@ -36,12 +40,15 @@ class HomeViewModel(
 
     private val _studyEntry = MutableStateFlow<StudyEntry?>(null)
     private val _entries = MutableStateFlow<List<Entry>>(listOf())
+    private val _restLastMonth = MutableStateFlow(Time.Empty)
+    private val _transferred = MutableStateFlow<List<Entry>>(listOf())
 
     val entries = _entries.asStateFlow()
-    val selectedMonth = LocalDate(year, monthNumber, 1)
     val studies = _studyEntry.asStateFlow().map { it?.count ?: 0 }
+    val restLastMonth = _restLastMonth.asStateFlow()
+    val transferred = _transferred.asStateFlow()
 
-    val monthTitle: String = selectedMonth.run {
+    val monthTitle: String = month.run {
         // TODO: locale based on user settings
         val monthName = this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
         val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
@@ -49,10 +56,11 @@ class HomeViewModel(
     }
 
     val fieldServiceReport =
-        _entries.combine(settingsDataStore.name) { entries, name -> Pair(entries, name) }
-            .map { pair ->
-                val entries = pair.first
-                val name = pair.second
+        combine(_entries, settingsDataStore.name, _studyEntry, ::Triple)
+            .map { triple ->
+                val entries = triple.first
+                val name = triple.second
+                val studyEntry = triple.third
                 val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
                 val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
                 val commentTheocraticAssignment =
@@ -67,17 +75,42 @@ class HomeViewModel(
                 FieldServiceReport(
                     name = name,
                     month = monthTitle,
-                    placements = _entries.value.placements(),
-                    hours = _entries.value.ministryTimeSum().hours,
-                    returnVisits = _entries.value.returnVisits(),
-                    videoShowings = _entries.value.videoShowings(),
-                    bibleStudies = _studyEntry.value?.count ?: 0,
+                    placements = entries.placements(),
+                    hours = entries.ministryTimeSum().hours,
+                    returnVisits = entries.returnVisits(),
+                    videoShowings = entries.videoShowings(),
+                    bibleStudies = studyEntry?.count ?: 0,
                     comments = comments,
                 )
             }
 
+    fun transfer(dismiss: Boolean = false) {
+        val lastMonth = month.minus(DatePeriod(months = 1))
+        val transfer = Entry(
+            minutes = if (dismiss) 0 else restLastMonth.value.minutes,
+            kind = EntryKind.Transfer,
+            transferredFrom = lastMonth
+        )
+        _entries.value += transfer
+        viewModelScope.launch {
+            _entryRepository.save(transfer)
+        }
+    }
+
     fun load() = viewModelScope.launch {
-        _entries.value = _entryRepository.getAllOfMonth(year, monthNumber)
-        _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
+        val lastMonth = month.minus(DatePeriod(months = 1))
+
+        val allDefer = async { _entryRepository.getAllOfMonth(month) }
+        val lastMonthTimeDefer = async {
+            val entriesLastMonth = _entryRepository.getAllOfMonth(lastMonth)
+            entriesLastMonth.ministryTimeSum()
+        }
+        val transferredDefer = async { _entryRepository.getTransferredFrom(month) }
+        val studyEntryDefer = async { _studyEntryRepository.getOfMonth(month) }
+
+        _studyEntry.value = studyEntryDefer.await()
+        _restLastMonth.value = Time(minutes = lastMonthTimeDefer.await().minutes)
+        _transferred.value = transferredDefer.await()
+        _entries.value = allDefer.await()
     }
 }

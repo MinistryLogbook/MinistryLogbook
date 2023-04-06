@@ -30,11 +30,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
-import com.github.danieldaeschle.ministrynotes.data.ministries
-import com.github.danieldaeschle.ministrynotes.data.placements
-import com.github.danieldaeschle.ministrynotes.data.returnVisits
-import com.github.danieldaeschle.ministrynotes.data.videoShowings
 import com.github.danieldaeschle.ministrynotes.lib.condition
+import com.github.danieldaeschle.ministrynotes.lib.ministries
+import com.github.danieldaeschle.ministrynotes.lib.placements
+import com.github.danieldaeschle.ministrynotes.lib.returnVisits
+import com.github.danieldaeschle.ministrynotes.lib.videoShowings
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
@@ -46,7 +46,6 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entries by homeViewModel.entries.collectAsState()
     val studies by homeViewModel.studies.collectAsState(0)
-    val selectedMonth = homeViewModel.selectedMonth
     val ministries by remember { derivedStateOf { entries.ministries() } }
     val placements by remember { derivedStateOf { ministries.placements() } }
     val returnVisits by remember { derivedStateOf { ministries.returnVisits() } }
@@ -93,7 +92,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
             }, onClick = {
                 navController.navigate(
                     HomeGraph.Studies.createRoute(
-                        selectedMonth.year, selectedMonth.monthNumber
+                        homeViewModel.month.year, homeViewModel.month.monthNumber,
                     )
                 )
             })

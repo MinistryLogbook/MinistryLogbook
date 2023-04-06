@@ -38,25 +38,28 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Role
-import com.github.danieldaeschle.ministrynotes.data.Time
-import com.github.danieldaeschle.ministrynotes.data.ministryTimeSum
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
-import com.github.danieldaeschle.ministrynotes.data.theocraticAssignmentTimeSum
-import com.github.danieldaeschle.ministrynotes.data.theocraticSchoolTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.Time
+import com.github.danieldaeschle.ministrynotes.lib.ministryTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.theocraticAssignmentTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.theocraticSchoolTimeSum
+import com.github.danieldaeschle.ministrynotes.lib.timeSum
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.theme.ProgressPositive
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
-    val entries = homeViewModel.entries.collectAsState()
+    val entries by homeViewModel.entries.collectAsState()
     val settingsDataStore = rememberSettingsDataStore()
     val role by settingsDataStore.role.collectAsState(Role.Publisher)
     val goal by settingsDataStore.goal.collectAsState(1)
     // credit will be added until 55 hours are reached
     val maxHoursWithCredit = Time(55, 0)
+    val transferred by homeViewModel.transferred.collectAsState()
+    val transferredTime by remember { derivedStateOf { transferred.timeSum() } }
 
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column {
         BoxWithConstraints {
             val widthDp = LocalDensity.current.run {
                 min(constraints.maxWidth.toDp(), LocalConfiguration.current.screenHeightDp.dp)
@@ -71,15 +74,15 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                         .width(widthDp / 2)
                 ) {
                     val ministryTime by remember {
-                        derivedStateOf { entries.value.ministryTimeSum() }
+                        derivedStateOf { entries.ministryTimeSum() - transferredTime }
                     }
                     val theocraticAssignmentsTime by remember {
                         derivedStateOf {
-                            entries.value.theocraticAssignmentTimeSum()
+                            entries.theocraticAssignmentTimeSum()
                         }
                     }
                     val theocraticSchoolTime by remember {
-                        derivedStateOf { entries.value.theocraticSchoolTimeSum() }
+                        derivedStateOf { entries.theocraticSchoolTimeSum() }
                     }
                     val credit by remember {
                         derivedStateOf {

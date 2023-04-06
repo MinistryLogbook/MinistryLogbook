@@ -3,20 +3,21 @@ package com.github.danieldaeschle.ministrynotes.data
 import android.content.Context
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.minus
 
 class StudyEntryRepository(private val context: Context) {
 
-    suspend fun getOfMonth(year: Int, month: Int) = withContext(Dispatchers.IO) {
-        val entry = context.db().studyEntryDao().getOfMonth(year, month)
+    suspend fun getOfMonth(month: LocalDate) = withContext(Dispatchers.IO) {
+        val entry = context.db().studyEntryDao().getOfMonth(month.year, month.monthNumber)
         if (entry == null) {
-            val lastYear = if (month <= 1) year - 1 else year
-            val lastMonth = if (month <= 1) 12 else month - 1
-            val lastMonthEntry = context.db().studyEntryDao().getOfMonth(lastYear, lastMonth)
-            val localDate = LocalDate(year, month, 1)
-            save(StudyEntry(month = localDate, count = lastMonthEntry?.count ?: 0))
+            val lastMonth = month.minus(DatePeriod(months = 1))
+            val lastMonthEntry =
+                context.db().studyEntryDao().getOfMonth(lastMonth.year, lastMonth.monthNumber)
+            save(StudyEntry(month = month, count = lastMonthEntry?.count ?: 0))
         }
-        context.db().studyEntryDao().getOfMonth(year, month)
+        context.db().studyEntryDao().getOfMonth(month.year, month.monthNumber)
     }
 
     suspend fun save(studyEntry: StudyEntry): Long {

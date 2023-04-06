@@ -82,7 +82,7 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
         }
         MonthPickerPopup(
             expanded = expanded,
-            selectedMonth = homeViewModel.selectedMonth,
+            selectedMonth = homeViewModel.month,
             onDismissRequest = {
                 expanded = !expanded
             },

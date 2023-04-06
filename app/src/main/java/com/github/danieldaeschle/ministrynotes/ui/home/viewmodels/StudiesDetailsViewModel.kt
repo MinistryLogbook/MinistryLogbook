@@ -8,10 +8,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 
 class StudiesDetailsViewModel(
-    private val year: Int,
-    private val monthNumber: Int,
+    private val month: LocalDate,
     private val _studyEntryRepository: StudyEntryRepository
 ) : ViewModel() {
 
@@ -28,7 +28,7 @@ class StudiesDetailsViewModel(
 
     init {
         viewModelScope.launch {
-            _studyEntry.value = _studyEntryRepository.getOfMonth(year, monthNumber)
+            _studyEntry.value = _studyEntryRepository.getOfMonth(month)
         }
     }
 }

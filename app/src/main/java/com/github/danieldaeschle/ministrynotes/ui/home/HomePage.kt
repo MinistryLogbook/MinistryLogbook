@@ -44,7 +44,7 @@ fun HomePage(homeViewModel: HomeViewModel = koinViewModel()) {
     var fabExtended by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val navController = LocalAppNavController.current
-    val entries = homeViewModel.entries.collectAsState()
+    val entries by homeViewModel.entries.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry.value?.destination?.route
 
@@ -89,9 +89,16 @@ fun HomePage(homeViewModel: HomeViewModel = koinViewModel()) {
                     Spacer(modifier = Modifier.height(56.dp))
                 }
 
-                DetailsSection()
+                Spacer(Modifier.height(16.dp))
 
-                if (entries.value.isNotEmpty()) {
+                Box(Modifier.padding(horizontal = 16.dp)) {
+                    DetailsSection()
+                }
+
+                TransferHint()
+
+                if (entries.isNotEmpty()) {
+                    Spacer(Modifier.height(16.dp))
                     Divider(color = MaterialTheme.colorScheme.onBackground.copy(0.05f))
                 }
 

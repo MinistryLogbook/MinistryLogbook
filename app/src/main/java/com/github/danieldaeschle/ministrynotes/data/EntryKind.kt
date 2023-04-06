@@ -8,18 +8,21 @@ import androidx.compose.ui.res.painterResource
 import com.github.danieldaeschle.ministrynotes.R
 
 enum class EntryKind {
-    Ministry, TheocraticAssignment, TheocraticSchool;
+    Ministry, TheocraticAssignment, TheocraticSchool, Transfer;
 
-    fun translate(): String  = when (this) {
+    fun translate(): String = when (this) {
         Ministry -> "Ministry"
         TheocraticAssignment -> "Theocratic Assignment"
         TheocraticSchool -> "Theocratic School"
+        Transfer -> "Transfer"
     }
+
     @Composable
     fun icon(): Painter = when (this) {
         Ministry -> painterResource(R.drawable.ic_work)
         TheocraticAssignment -> painterResource(R.drawable.ic_build)
         TheocraticSchool -> painterResource(R.drawable.ic_school)
+        Transfer -> painterResource(R.drawable.ic_tab_move)
     }
 
     @Composable
@@ -27,5 +30,6 @@ enum class EntryKind {
         Ministry -> MaterialTheme.colorScheme.primary
         TheocraticAssignment -> Color(0xFFFF9800)
         TheocraticSchool -> Color(0xFFFF9800)
+        Transfer -> Color(0xFF9E9E9E)
     }
 }

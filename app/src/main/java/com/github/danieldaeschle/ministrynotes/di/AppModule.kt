@@ -15,8 +15,8 @@ val appModule = module {
     single { StudyEntryRepository(androidContext()) }
     single { SettingsDataStore(androidContext()) }
     viewModel { params ->
-        HomeViewModel(year = params[0], monthNumber = params[1], get(), get(), get())
+        HomeViewModel(params.get(), get(), get(), get())
     }
-    viewModel { params -> StudiesDetailsViewModel(params[0], params[1], get()) }
+    viewModel { params -> StudiesDetailsViewModel(params.get(), get()) }
     viewModel { EntryDetailsViewModel(get()) }
 }

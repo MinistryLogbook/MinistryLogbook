@@ -23,6 +23,7 @@ import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.StudiesDetails
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.getViewModel
@@ -98,9 +99,10 @@ fun NavGraphBuilder.homeGraph() {
             val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
             val monthNumber =
                 it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
+            val month = LocalDate(year, monthNumber, 1)
 
             val homeViewModel =
-                getViewModel<HomeViewModel>(parameters = { parametersOf(year, monthNumber) })
+                getViewModel<HomeViewModel>(parameters = { parametersOf(month) })
             HomePage(homeViewModel)
         }
 
@@ -122,12 +124,10 @@ fun NavGraphBuilder.homeGraph() {
             val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
             val monthNumber =
                 it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
+            val month = LocalDate(year, monthNumber, 1)
 
             val studiesDetailsViewModel = getViewModel<StudiesDetailsViewModel>(parameters = {
-                parametersOf(
-                    year,
-                    monthNumber
-                )
+                parametersOf(month)
             })
             StudiesBottomSheetContent(studiesDetailsViewModel)
         }

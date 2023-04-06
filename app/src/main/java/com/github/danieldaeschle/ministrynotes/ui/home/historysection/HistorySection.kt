@@ -18,6 +18,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Entry
+import com.github.danieldaeschle.ministrynotes.lib.condition
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
@@ -38,8 +42,13 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val entries = homeViewModel.entries.collectAsState()
-    val orderedEntries = entries.value.sortedBy { it.datetime }.reversed()
+    val entries by homeViewModel.entries.collectAsState()
+    val orderedEntries by remember {
+        derivedStateOf {
+            entries.sortedBy { it.datetime }.reversed()
+        }
+    }
+    val transferred by homeViewModel.transferred.collectAsState()
 
     val handleClick: (entry: Entry) -> Unit = {
         navController.navigate(HomeGraph.EntryDetails.createRoute(it.id))
@@ -50,6 +59,9 @@ fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
+        transferred.forEach {
+            HistoryItem(it, subtract = true)
+        }
         orderedEntries.forEach {
             HistoryItem(it, onClick = { handleClick(it) })
         }
@@ -57,21 +69,27 @@ fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
 }
 
 @Composable
-fun HistoryItem(entry: Entry, onClick: () -> Unit) {
+fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? = null) {
     val formatter = DateTimeFormatter.ofPattern("E, dd. MMMM")
     val dateText = formatter.format(entry.datetime.toJavaLocalDate())
 
     Row(
         Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .condition(onClick != null) {
+                clickable(onClick = onClick!!)
+            }
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             Modifier
                 .clip(CircleShape)
-                .background(entry.kind.color().copy(0.2f))
+                .background(
+                    entry.kind
+                        .color()
+                        .copy(0.2f)
+                )
                 .padding(8.dp)
         ) {
             Icon(
@@ -101,13 +119,14 @@ fun HistoryItem(entry: Entry, onClick: () -> Unit) {
 
             Row {
                 if (entry.hours > 0 || entry.minutes > 0) {
+                    val sign = if (subtract) "-" else ""
                     val minutes =
                         if (entry.minutes > 0) ":${
                             entry.minutes.toString().padStart(2, '0')
                         }" else ""
                     HistoryItemChip(
                         icon = painterResource(R.drawable.ic_schedule),
-                        text = "${entry.hours}${minutes} hrs"
+                        text = "${sign}${entry.hours}${minutes} hrs"
                     )
                     Spacer(Modifier.width(8.dp))
                 }

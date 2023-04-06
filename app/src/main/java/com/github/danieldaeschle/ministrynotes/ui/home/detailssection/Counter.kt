@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import com.github.danieldaeschle.ministrynotes.R
-import com.github.danieldaeschle.ministrynotes.data.Time
+import com.github.danieldaeschle.ministrynotes.lib.Time
 import com.github.danieldaeschle.ministrynotes.ui.theme.MinistryNotesTheme
 
 @Composable
