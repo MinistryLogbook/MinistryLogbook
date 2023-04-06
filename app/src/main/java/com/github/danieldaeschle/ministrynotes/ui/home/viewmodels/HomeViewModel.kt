@@ -52,7 +52,7 @@ class HomeViewModel(
         // TODO: locale based on user settings
         val monthName = this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
         val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
-        if (this.year != currentYear) "$monthName $this.year" else monthName
+        if (this.year != currentYear) "$monthName ${this.year}" else monthName
     }
 
     val fieldServiceReport =

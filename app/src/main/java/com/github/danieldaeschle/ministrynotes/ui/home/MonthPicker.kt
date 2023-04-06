@@ -83,14 +83,17 @@ fun MonthPickerPopupPreview() {
 fun MonthPickerMonth(
     text: String, selected: Boolean = false, disabled: Boolean = false, onClick: () -> Unit
 ) {
-    var modifier: Modifier = Modifier.clip(RoundedCornerShape(8.dp))
-    if (selected) {
-        modifier = modifier.background(MaterialTheme.colorScheme.primary.copy(0.2f))
-    }
-    if (!disabled) {
-        modifier = modifier.clickable { onClick() }
-    }
-    modifier = modifier.padding(16.dp, 6.dp)
+    val selectedBackground = MaterialTheme.colorScheme.primary.copy(0.2f)
+    val modifier = Modifier
+        .clip(RoundedCornerShape(8.dp))
+        .condition(selected) {
+            background(selectedBackground)
+        }
+        .condition(!disabled) {
+            clickable(onClick = onClick)
+        }
+        .padding(16.dp, 6.dp)
+
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CompositionLocalProvider(
             LocalContentColor provides if (disabled) LocalContentColor.current.copy(0.4f)
@@ -111,16 +114,15 @@ fun MonthPickerPopup(
     val coroutineScope = rememberCoroutineScope()
     val months = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     val actualDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val thisYear = actualDate.year
-    var selectedYearIndex by remember { mutableStateOf(selectedMonth.year - thisYear) }
+    val actualYear = actualDate.year
+    var selectedYearIndex by remember(selectedMonth) { mutableStateOf(selectedMonth.year - actualYear) }
+    val selectedYear = actualYear + selectedYearIndex
     val expandedStates = remember { MutableTransitionState(false) }
+    val isActualMonth =
+        selectedMonth.year == actualYear && selectedMonth.monthNumber == actualDate.monthNumber
 
     LaunchedEffect(expanded) {
         expandedStates.targetState = expanded
-    }
-
-    LaunchedEffect(selectedMonth.year, thisYear) {
-        selectedYearIndex = selectedMonth.year - thisYear
     }
 
     suspend fun handleDismissRequest() {
@@ -148,9 +150,9 @@ fun MonthPickerPopup(
                 expandedStates = expandedStates,
                 transformOriginState = transformOriginState,
             ) {
-                YearPicker(selectedMonth.year + selectedYearIndex, onChange = {
-                    if (it < thisYear + 1) {
-                        selectedYearIndex = it - selectedMonth.year
+                YearPicker(selectedYear, onChange = {
+                    if (it < actualYear + 1) {
+                        selectedYearIndex = it - actualYear
                     }
                 })
                 Spacer(Modifier.height(8.dp))
@@ -165,9 +167,9 @@ fun MonthPickerPopup(
                         val monthName = Month(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
                         val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
                         val currentMonth = currentDate.month.value
-                        val currentYear = thisYear + selectedYearIndex
+                        val currentYear = actualYear + selectedYearIndex
                         val disabled =
-                            (month > currentMonth && currentYear == thisYear) || currentYear > thisYear
+                            (month > currentMonth && currentYear == actualYear) || currentYear > actualYear
 
                         MonthPickerMonth(
                             monthName,
@@ -182,29 +184,28 @@ fun MonthPickerPopup(
                         )
                     }
                 }
+
                 Spacer(Modifier.height(8.dp))
 
-                var modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(4.dp))
-                var disabled = false
-                modifier =
-                    if (selectedMonth.year != thisYear || selectedMonth.monthNumber != actualDate.monthNumber) {
-                        modifier.clickable {
-                            val currentMonth = LocalDate(
-                                thisYear, actualDate.monthNumber, 1
-                            )
-                            onSelectMonth(currentMonth)
-                        }
-                    } else {
-                        disabled = true
-                        modifier
-                    }.padding(top = 6.dp, bottom = 6.dp)
                 Box(
-                    modifier, contentAlignment = Alignment.Center
+                    Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(4.dp))
+                        .condition(!isActualMonth) {
+                            clickable {
+                                val currentMonth = LocalDate(
+                                    actualYear, actualDate.monthNumber, 1
+                                )
+                                onSelectMonth(currentMonth)
+                            }
+                        }
+                        .padding(top = 6.dp, bottom = 6.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
                     CompositionLocalProvider(
-                        LocalContentColor provides if (disabled) LocalContentColor.current.copy(0.4f)
+                        LocalContentColor provides if (isActualMonth) LocalContentColor.current.copy(
+                            0.4f
+                        )
                         else LocalContentColor.current,
                     ) {
                         Text("Current Month")
