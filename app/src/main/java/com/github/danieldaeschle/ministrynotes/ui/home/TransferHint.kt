@@ -26,19 +26,26 @@ fun TransferHint(homeViewModel: HomeViewModel = koinViewModel()) {
     val restLastMonth by homeViewModel.restLastMonth.collectAsState()
     val entries by homeViewModel.entries.collectAsState()
     val hasTransfer by remember { derivedStateOf { entries.any { it.kind == EntryKind.Transfer } } }
+    val show = restLastMonth.isNotEmpty() && !hasTransfer
 
-    if (restLastMonth.isNotEmpty() && !hasTransfer) {
-        Spacer(Modifier.height(16.dp))
-    }
+    Spacer(
+        Modifier
+            .animateContentSize()
+            .condition(!show) {
+                height(0.dp)
+            }
+            .condition(show) {
+                height(16.dp)
+            })
 
     Tile {
         Column(
             Modifier
                 .fillMaxWidth()
-                .condition(restLastMonth.isEmpty() || hasTransfer) {
+                .animateContentSize()
+                .condition(!show) {
                     height(0.dp)
-                }
-                .animateContentSize()) {
+                }) {
             Text(
                 "The last month has 10 minutes left. Do you want to transfer it to this month?",
                 modifier = Modifier.padding(
