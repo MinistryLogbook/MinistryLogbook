@@ -31,7 +31,6 @@
             android:exported="true"
             android:fitsSystemWindows="true"
             android:windowSoftInputMode="adjustResize"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.MinistryNotes.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
