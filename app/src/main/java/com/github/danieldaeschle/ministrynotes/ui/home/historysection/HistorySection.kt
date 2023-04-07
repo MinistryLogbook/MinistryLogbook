@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Entry
+import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.lib.condition
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
@@ -59,10 +60,10 @@ fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        transferred.forEach {
+        transferred.filter { it.time.isNotEmpty() }.forEach {
             HistoryItem(it, subtract = true)
         }
-        orderedEntries.forEach {
+        orderedEntries.filter { !(it.type == EntryType.Transfer && it.time.isEmpty()) }.forEach {
             HistoryItem(it, onClick = { handleClick(it) })
         }
     }
@@ -86,17 +87,17 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
             Modifier
                 .clip(CircleShape)
                 .background(
-                    entry.kind
+                    entry.type
                         .color()
                         .copy(0.2f)
                 )
                 .padding(8.dp)
         ) {
             Icon(
-                painter = entry.kind.icon(),
+                painter = entry.type.icon(),
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
-                tint = entry.kind.color().copy(0.8f),
+                tint = entry.type.color().copy(0.8f),
             )
         }
 
@@ -108,7 +109,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Text(entry.kind.translate(), modifier = Modifier.padding(bottom = 4.dp))
+                Text(entry.type.translate(), modifier = Modifier.padding(bottom = 4.dp))
 
                 Text(
                     dateText,

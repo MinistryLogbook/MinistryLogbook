@@ -23,8 +23,6 @@ enum class Role {
 
     @Composable
     fun translate(): String {
-//        val context = LocalContext.current
-
         return when (this@Role) {
             Publisher -> "Publisher"
             AuxiliaryPioneer -> "Auxiliary Pioneer"
@@ -42,13 +40,13 @@ class SettingsDataStore(val context: Context) {
     }
 
     val role = context.dataStore.data.map {
-        it[ROLE_KEY]?.let { it1 -> Role.valueOf(it1) } ?: Role.Publisher
+        it[ROLE_KEY]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
-    val goal = context.dataStore.data.map { it[GOAL_KEY] }.combine(role) { g, r ->
-        if (g != null) {
-            return@combine g
+    val goal = context.dataStore.data.map { it[GOAL_KEY] }.combine(role) { goal, role ->
+        if (goal != null) {
+            return@combine goal
         }
-        return@combine when (r) {
+        return@combine when (role) {
             Role.Publisher -> PublisherGoal
             Role.AuxiliaryPioneer -> AuxiliaryPioneerGoal
             Role.RegularPioneer -> RegularPioneerGoal
@@ -81,7 +79,7 @@ fun rememberSettingsDataStore(): SettingsDataStore {
     return remember { SettingsDataStore(context) }
 }
 
-private const val PublisherGoal = 1
-private const val AuxiliaryPioneerGoal = 30
-private const val RegularPioneerGoal = 50
-private const val SpecialPioneerGoal = 100
+const val PublisherGoal = 1
+const val AuxiliaryPioneerGoal = 30
+const val RegularPioneerGoal = 50
+const val SpecialPioneerGoal = 100

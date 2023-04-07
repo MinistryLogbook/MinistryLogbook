@@ -31,6 +31,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.data.PublisherGoal
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.lib.AlertDialog
@@ -125,7 +126,7 @@ fun GoalSetting() {
     val goal by settingsDataStore.goal.collectAsState(null)
     val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
 
-    val goalText = if (goal != null) {
+    val goalText = if (goal != PublisherGoal) {
         val prefix = if (goal != manuallySetGoal && manuallySetGoal != null) {
             "Manually set: "
         } else {

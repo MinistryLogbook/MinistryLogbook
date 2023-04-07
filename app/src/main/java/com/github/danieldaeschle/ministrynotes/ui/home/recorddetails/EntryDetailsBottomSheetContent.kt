@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -31,13 +30,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.github.danieldaeschle.ministrynotes.R
-import com.github.danieldaeschle.ministrynotes.data.EntryKind
+import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
-import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.EntryDetailsViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -52,14 +49,9 @@ import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EntryDetailsBottomSheetContent(
-    id: Int? = null,
-    entryDetailsViewModel: EntryDetailsViewModel = koinViewModel(),
-) {
+fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
-    val entry by entryDetailsViewModel.entry.collectAsState()
+    val entry by viewModel.entry.collectAsState()
     val isSavable by remember {
         derivedStateOf {
             entry.let {
@@ -68,14 +60,14 @@ fun EntryDetailsBottomSheetContent(
             }
         }
     }
-    val hasLoaded = (id ?: 0) == entry.id
+    val hasLoaded = (viewModel.id ?: 0) == entry.id
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isEntryKindDialogVisible by rememberSaveable { mutableStateOf(false) }
     val settingsDataStore = rememberSettingsDataStore()
     val role by settingsDataStore.role.collectAsState(Role.Publisher)
     val dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-    val isCreditEnabled = role.canHaveCredit || entry.isCredit
+    val isCreditEnabled by remember { derivedStateOf { role.canHaveCredit || entry.isCredit } }
     val dateMillis by remember {
         derivedStateOf {
             entry.datetime.atTime(0, 0).toInstant(TimeZone.currentSystemDefault())
@@ -95,58 +87,52 @@ fun EntryDetailsBottomSheetContent(
         navController.popBackStack()
     }
     val handleSave = {
-        entryDetailsViewModel.save()
+        viewModel.save()
         handleClose()
     }
     val handleDelete = {
-        entryDetailsViewModel.delete()
+        viewModel.delete()
         handleClose()
     }
     val handleChangeHours: (newValue: Int) -> Unit = {
         if (it in 0..99) {
-            entryDetailsViewModel.update(hours = it)
+            viewModel.update(hours = it)
         }
     }
     val handleChangeMinutes: (newValue: Int) -> Unit = {
         if (entry.hours > 0 && it < 0) {
-            entryDetailsViewModel.update(
+            viewModel.update(
                 hours = entry.hours - 1, minutes = 60 + it
             )
         } else if (it > 59) {
-            entryDetailsViewModel.update(
+            viewModel.update(
                 hours = entry.hours + 1, minutes = it - 60
             )
         } else if (it in 0..55) {
-            entryDetailsViewModel.update(minutes = it)
+            viewModel.update(minutes = it)
         }
     }
     val handleChangePlacements: (newValue: Int) -> Unit = {
         if (it in 0..999) {
-            entryDetailsViewModel.update(placements = it)
+            viewModel.update(placements = it)
         }
     }
 
     val handleChangeReturnVisits: (newValue: Int) -> Unit = {
         if (it in 0..99) {
-            entryDetailsViewModel.update(returnVisits = it)
+            viewModel.update(returnVisits = it)
         }
     }
     val handleChangeVideos: (newValue: Int) -> Unit = {
         if (it in 0..99) {
-            entryDetailsViewModel.update(videoShowings = it)
+            viewModel.update(videoShowings = it)
         }
     }
     val handleChangeDate: (newValue: LocalDate) -> Unit = {
-        entryDetailsViewModel.update(datetime = it)
+        viewModel.update(datetime = it)
     }
-    val handleKindDate: (newValue: EntryKind) -> Unit = {
-        entryDetailsViewModel.update(kind = it)
-    }
-
-    LaunchedEffect(id, currentRoute) {
-        if (currentRoute == HomeGraph.EntryDetails.route) {
-            entryDetailsViewModel.load(id)
-        }
+    val handleKindDate: (newValue: EntryType) -> Unit = {
+        viewModel.update(kind = it)
     }
 
     if (isDateDialogVisible) {
@@ -223,14 +209,15 @@ fun EntryDetailsBottomSheetContent(
         onClose = { isEntryKindDialogVisible = false },
         paddingValues = PaddingValues(vertical = 8.dp),
     ) {
-        val entryKinds =
-            if (role.canHaveCredit) EntryKind.values() else arrayOf(
-                EntryKind.Ministry,
-                entry.kind
-            )
+        val entryTypes = listOfNotNull(
+            EntryType.Ministry,
+            if (isCreditEnabled) EntryType.TheocraticAssignment else null,
+            if (isCreditEnabled) EntryType.TheocraticSchool else null,
+            if (!role.canHaveCredit) entry.type else null,
+        )
 
         Column {
-            entryKinds.forEach {
+            entryTypes.forEach {
                 Row(
                     Modifier
                         .fillMaxWidth()
@@ -243,7 +230,7 @@ fun EntryDetailsBottomSheetContent(
                 ) {
                     RadioButton(
                         modifier = Modifier.padding(horizontal = 20.dp),
-                        selected = it == entry.kind,
+                        selected = it == entry.type,
                         onClick = null,
                     )
                     Text(it.translate())
@@ -275,8 +262,8 @@ fun EntryDetailsBottomSheetContent(
             Box(Modifier.clickable { isEntryKindDialogVisible = true }) {
                 Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
                     UnitRow(
-                        entry.kind.translate(),
-                        icon = entry.kind.icon(),
+                        entry.type.translate(),
+                        icon = entry.type.icon(),
                     )
                 }
             }
@@ -300,7 +287,7 @@ fun EntryDetailsBottomSheetContent(
             }
 
             if (hasLoaded) {
-                AnimatedVisibility(visible = entry.kind == EntryKind.Ministry) {
+                AnimatedVisibility(visible = entry.type == EntryType.Ministry) {
                     Column {
                         UnitRow(
                             "Placements",

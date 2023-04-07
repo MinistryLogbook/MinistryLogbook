@@ -115,8 +115,10 @@ fun NavGraphBuilder.homeGraph() {
                 }
             }
 
-            val entryDetailsViewModel = getViewModel<EntryDetailsViewModel>()
-            EntryDetailsBottomSheetContent(id, entryDetailsViewModel)
+            val entryDetailsViewModel = getViewModel<EntryDetailsViewModel>(parameters = {
+                parametersOf(id)
+            })
+            EntryDetailsBottomSheetContent(entryDetailsViewModel)
         }
 
         bottomSheet(HomeGraph.Studies.route, arguments = HomeGraph.Root.arguments) {

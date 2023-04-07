@@ -1,7 +1,7 @@
 package com.github.danieldaeschle.ministrynotes.lib
 
 import com.github.danieldaeschle.ministrynotes.data.Entry
-import com.github.danieldaeschle.ministrynotes.data.EntryKind
+import com.github.danieldaeschle.ministrynotes.data.EntryType
 
 
 fun List<Entry>.timeSum(): Time {
@@ -14,18 +14,18 @@ fun List<Entry>.timeSum(): Time {
 
 fun List<Entry>.ministryTimeSum() = this.ministries().timeSum()
 
-fun List<Entry>.theocraticAssignments() = this.filter { it.kind == EntryKind.TheocraticAssignment }
+fun List<Entry>.theocraticAssignments() = this.filter { it.type == EntryType.TheocraticAssignment }
 
 fun List<Entry>.theocraticAssignmentTimeSum() = this.theocraticAssignments().timeSum()
 
-fun List<Entry>.theocraticSchools() = this.filter { it.kind == EntryKind.TheocraticSchool }
+fun List<Entry>.theocraticSchools() = this.filter { it.type == EntryType.TheocraticSchool }
 
 fun List<Entry>.theocraticSchoolTimeSum() = this.theocraticSchools().timeSum()
 
 fun List<Entry>.ministries() =
-    this.filter { it.kind in arrayOf(EntryKind.Ministry, EntryKind.Transfer) }
+    this.filter { it.type in arrayOf(EntryType.Ministry, EntryType.Transfer) }
 
-fun List<Entry>.transfers() = this.filter { it.kind == EntryKind.Transfer }
+fun List<Entry>.transfers() = this.filter { it.type == EntryType.Transfer }
 
 fun List<Entry>.placements() = this.ministries().sumOf { it.placements }
 

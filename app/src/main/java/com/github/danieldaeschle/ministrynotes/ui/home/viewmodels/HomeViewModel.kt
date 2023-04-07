@@ -3,8 +3,8 @@ package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.danieldaeschle.ministrynotes.data.Entry
-import com.github.danieldaeschle.ministrynotes.data.EntryKind
 import com.github.danieldaeschle.ministrynotes.data.EntryRepository
+import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.data.SettingsDataStore
 import com.github.danieldaeschle.ministrynotes.data.StudyEntry
 import com.github.danieldaeschle.ministrynotes.data.StudyEntryRepository
@@ -47,6 +47,9 @@ class HomeViewModel(
     val studies = _studyEntry.asStateFlow().map { it?.count ?: 0 }
     val restLastMonth = _restLastMonth.asStateFlow()
     val transferred = _transferred.asStateFlow()
+    val rest = _entries.combine(_transferred) { entries, transferred ->
+        entries.ministryTimeSum() - transferred.ministryTimeSum()
+    }
 
     val monthTitle: String = month.run {
         // TODO: locale based on user settings
@@ -56,39 +59,49 @@ class HomeViewModel(
     }
 
     val fieldServiceReport =
-        combine(_entries, settingsDataStore.name, _studyEntry, ::Triple)
-            .map { triple ->
-                val entries = triple.first
-                val name = triple.second
-                val studyEntry = triple.third
-                val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
-                val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
-                val commentTheocraticAssignment =
-                    "${theocraticAssignmentTime.hours} hours spent on theocratic assignments."
-                val commentTheocraticSchool =
-                    "${theocraticSchoolTime.hours} hours spent on theocratic schools."
-                val comments = listOfNotNull(
-                    commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
-                    commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },
-                ).joinToString("\n")
+        combine(_entries, settingsDataStore.name, _studyEntry) { entries, name, studyEntry ->
+            val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
+            val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
+            val commentTheocraticAssignment =
+                "${theocraticAssignmentTime.hours} hours spent on theocratic assignments."
+            val commentTheocraticSchool =
+                "${theocraticSchoolTime.hours} hours spent on theocratic schools."
+            val comments = listOfNotNull(
+                commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
+                commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },
+            ).joinToString("\n")
 
-                FieldServiceReport(
-                    name = name,
-                    month = monthTitle,
-                    placements = entries.placements(),
-                    hours = entries.ministryTimeSum().hours,
-                    returnVisits = entries.returnVisits(),
-                    videoShowings = entries.videoShowings(),
-                    bibleStudies = studyEntry?.count ?: 0,
-                    comments = comments,
-                )
-            }
+            FieldServiceReport(
+                name = name,
+                month = monthTitle,
+                placements = entries.placements(),
+                hours = entries.ministryTimeSum().hours,
+                returnVisits = entries.returnVisits(),
+                videoShowings = entries.videoShowings(),
+                bibleStudies = studyEntry?.count ?: 0,
+                comments = comments,
+            )
+        }
 
-    fun transfer(dismiss: Boolean = false) {
+    fun transferToNextMonth(minutes: Int) {
+        val transfer = Entry(
+            minutes = minutes,
+            type = EntryType.Transfer,
+            transferredFrom = month,
+        )
+        viewModelScope.launch {
+            val id = _entryRepository.save(transfer)
+            _transferred.value += transfer.copy(id = id)
+        }
+    }
+
+    /** Transferring 0 minutes dismisses the message and won't show a history item. */
+    fun transferFromLastMonth(minutes: Int) {
         val lastMonth = month.minus(DatePeriod(months = 1))
         val transfer = Entry(
-            minutes = if (dismiss) 0 else restLastMonth.value.minutes,
-            kind = EntryKind.Transfer,
+            datetime = month,
+            minutes = minutes,
+            type = EntryType.Transfer,
             transferredFrom = lastMonth
         )
         viewModelScope.launch {

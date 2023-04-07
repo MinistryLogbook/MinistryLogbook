@@ -1,4 +1,4 @@
-package com.github.danieldaeschle.ministrynotes.di
+package com.github.danieldaeschle.ministrynotes
 
 import com.github.danieldaeschle.ministrynotes.data.EntryRepository
 import com.github.danieldaeschle.ministrynotes.data.SettingsDataStore
@@ -18,5 +18,5 @@ val appModule = module {
         HomeViewModel(params.get(), get(), get(), get())
     }
     viewModel { params -> StudiesDetailsViewModel(params.get(), get()) }
-    viewModel { EntryDetailsViewModel(get()) }
+    viewModel { params -> EntryDetailsViewModel(params.getOrNull(), get()) }
 }

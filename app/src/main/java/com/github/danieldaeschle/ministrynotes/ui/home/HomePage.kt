@@ -40,17 +40,17 @@ import org.koin.androidx.compose.koinViewModel
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun HomePage(homeViewModel: HomeViewModel = koinViewModel()) {
+fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
     var fabExtended by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val navController = LocalAppNavController.current
-    val entries by homeViewModel.entries.collectAsState()
+    val entries by viewModel.entries.collectAsState()
     val backStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = backStackEntry.value?.destination?.route
 
     LaunchedEffect(currentRoute) {
         if (currentRoute == HomeGraph.Root.route) {
-            homeViewModel.load()
+            viewModel.load()
         }
     }
 
@@ -96,6 +96,8 @@ fun HomePage(homeViewModel: HomeViewModel = koinViewModel()) {
                 }
 
                 TransferHint()
+
+                RestHint()
 
                 if (entries.isNotEmpty()) {
                     Spacer(Modifier.height(16.dp))

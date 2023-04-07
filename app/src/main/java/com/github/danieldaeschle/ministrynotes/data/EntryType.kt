@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import com.github.danieldaeschle.ministrynotes.R
 
-enum class EntryKind {
+enum class EntryType {
     Ministry, TheocraticAssignment, TheocraticSchool, Transfer;
 
     fun translate(): String = when (this) {
