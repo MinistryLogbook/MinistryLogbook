@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
@@ -59,20 +60,22 @@ fun ProfileButton() {
 }
 
 @Composable
-fun ProfilePopup() {
+fun MenuPopup() {
     val navController = LocalAppNavController.current
 
-    Row(
+    Box(
         Modifier
+            .fillMaxWidth()
             .height(56.dp)
             .padding(horizontal = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
     ) {
-        ToolbarAction(onClick = {
+        ToolbarAction(Modifier.align(Alignment.CenterStart), onClick = {
             navController.popBackStack()
         }) {
             Icon(painterResource(R.drawable.ic_close), contentDescription = null)
         }
+
+        Text("Ministry Notes", modifier = Modifier.align(Alignment.Center), fontSize = 20.sp)
     }
 
     Divider()

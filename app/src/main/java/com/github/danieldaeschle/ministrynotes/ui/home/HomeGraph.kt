@@ -135,7 +135,7 @@ fun NavGraphBuilder.homeGraph() {
         }
 
         popup(HomeGraph.ProfileMenu.route) {
-            ProfilePopup()
+            MenuPopup()
         }
     }
 }
