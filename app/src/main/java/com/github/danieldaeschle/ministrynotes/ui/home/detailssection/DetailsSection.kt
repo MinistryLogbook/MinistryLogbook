@@ -56,7 +56,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
     val goal by settingsDataStore.goal.collectAsState(1)
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit = Time(goal + 5, 0)
+    val maxHoursWithCredit by remember { derivedStateOf { Time(goal + 5, 0) } }
     val transferred by homeViewModel.transferred.collectAsState()
     val transferredTime by remember { derivedStateOf { transferred.timeSum() } }
     val ministryTime by remember {
@@ -73,8 +73,8 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
     val credit by remember {
         derivedStateOf {
             minOf(
+                theocraticAssignmentsTime,
                 maxHoursWithCredit - ministryTime,
-                theocraticAssignmentsTime
             ) + theocraticSchoolTime
         }
     }
@@ -102,9 +102,11 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Box(modifier = Modifier
-                    .height(widthDp / 2)
-                    .width(widthDp / 2)) {
+                Box(
+                    modifier = Modifier
+                        .height(widthDp / 2)
+                        .width(widthDp / 2)
+                ) {
                     CircleProgress(
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
