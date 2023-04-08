@@ -1,9 +1,11 @@
 package com.github.danieldaeschle.ministrynotes.data
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.os.LocaleListCompat
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -12,6 +14,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
 
@@ -37,6 +40,7 @@ class SettingsDataStore(val context: Context) {
         private val GOAL_KEY = intPreferencesKey("goal")
         private val ROLE_KEY = stringPreferencesKey("role")
         private val NAME_KEY = stringPreferencesKey("name")
+        private val LANGUAGE_KEY = stringPreferencesKey("language")
     }
 
     val role = context.dataStore.data.map {
@@ -55,6 +59,9 @@ class SettingsDataStore(val context: Context) {
     }
     val manuallySetGoal = context.dataStore.data.map { it[GOAL_KEY] }
     val name = context.dataStore.data.map { it[NAME_KEY] ?: "" }
+    val locale by lazy {
+        AppCompatDelegate.getApplicationLocales().get(0)
+    }
 
     suspend fun setRole(role: Role) = context.dataStore.edit {
         it[ROLE_KEY] = role.toString()
@@ -62,6 +69,15 @@ class SettingsDataStore(val context: Context) {
 
     suspend fun setName(name: String) = context.dataStore.edit {
         it[NAME_KEY] = name
+    }
+
+    fun setLocale(locale: Locale?) {
+        if (locale == null) {
+            AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+            return
+        }
+        val localeList = LocaleListCompat.create(locale)
+        AppCompatDelegate.setApplicationLocales(localeList)
     }
 
     suspend fun setGoal(goal: Int) = context.dataStore.edit {

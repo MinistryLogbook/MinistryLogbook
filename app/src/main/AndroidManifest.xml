@@ -12,9 +12,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MinistryNotes"
         android:dataExtractionRules="@xml/data_extraction_rules"
-
+        android:localeConfig="@xml/locales_config"
         tools:targetApi="tiramisu"
         tools:ignore="DataExtractionRules">
+
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"

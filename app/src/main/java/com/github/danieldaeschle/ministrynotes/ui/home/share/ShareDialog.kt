@@ -134,21 +134,20 @@ fun ShareDialog(
 }
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {
-    val text = """
-        FIELD SERVICE REPORT
+    val text = """FIELD SERVICE REPORT
         
-        Name: ${report.name}
-        Month: ${report.month}
+        |Name: ${report.name}
+        |Month: ${report.month}
         
-        Placements (Printed and Electronic): ${report.placements}
-        Video showings: ${report.videoShowings}
-        Hours: ${report.hours}
-        Return visits: ${report.returnVisits}
-        Number of Different Bible Studies Conducted: ${report.bibleStudies}
+        |Placements (Printed and Electronic): ${report.placements}
+        |Video showings: ${report.videoShowings}
+        |Hours: ${report.hours}
+        |Return visits: ${report.returnVisits}
+        |Number of Different Bible Studies Conducted: ${report.bibleStudies}
         
-        Comments:
-        ${report.comments}
-    """.trimIndent()
+        |Comments:
+        |${report.comments}
+    """.trimMargin()
 
     val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
