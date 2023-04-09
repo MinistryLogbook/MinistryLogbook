@@ -22,9 +22,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ChevronLeft
-import androidx.compose.material.icons.rounded.ChevronRight
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -45,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
@@ -56,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
+import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.lib.condition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -225,7 +224,8 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(Icons.Rounded.ChevronLeft,
+        Icon(
+            painterResource(R.drawable.ic_chevron_left),
             contentDescription = "Arrow left",
             modifier = Modifier
                 .size(32.dp)
@@ -238,7 +238,8 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
         Text(selectedYear.toString())
 
         val disabled = selectedYear >= currentYear
-        Icon(Icons.Rounded.ChevronRight,
+        Icon(
+            painterResource(R.drawable.ic_chevron_right),
             modifier = Modifier
                 .size(32.dp)
                 .clip(RoundedCornerShape(100))
