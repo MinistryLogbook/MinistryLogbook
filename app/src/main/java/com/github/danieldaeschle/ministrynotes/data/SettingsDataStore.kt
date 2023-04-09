@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
 
@@ -19,6 +20,14 @@ enum class Role {
 
     val canHaveCredit: Boolean
         get() = this == RegularPioneer || this == SpecialPioneer
+
+    val goal: Int
+        get() = when (this) {
+            Publisher -> PublisherGoal
+            AuxiliaryPioneer -> AuxiliaryPioneerGoal
+            RegularPioneer -> RegularPioneerGoal
+            SpecialPioneer -> SpecialPioneerGoal
+        }
 
     @Composable
     fun translate(): String {
@@ -61,18 +70,9 @@ class SettingsDataStore(val context: Context) {
     val role = context.dataStore.data.map {
         it[ROLE_KEY]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
-    val goal = context.dataStore.data.map { it[GOAL_KEY] }.combine(role) { goal, role ->
-        if (goal != null) {
-            return@combine goal
-        }
-        return@combine when (role) {
-            Role.Publisher -> PublisherGoal
-            Role.AuxiliaryPioneer -> AuxiliaryPioneerGoal
-            Role.RegularPioneer -> RegularPioneerGoal
-            Role.SpecialPioneer -> SpecialPioneerGoal
-        }
-    }
+    val roleGoal = role.map { it.goal }
     val manuallySetGoal = context.dataStore.data.map { it[GOAL_KEY] }
+    val goal = roleGoal.combine(manuallySetGoal) { rg, msg -> msg ?: rg }
     val name = context.dataStore.data.map { it[NAME_KEY] ?: "" }
     val design = context.dataStore.data.map {
         val value = it[DESIGN_KEY]
@@ -84,8 +84,13 @@ class SettingsDataStore(val context: Context) {
         }
     }
 
-    suspend fun setRole(role: Role) = context.dataStore.edit {
-        it[ROLE_KEY] = role.name
+    suspend fun setRole(role: Role) = manuallySetGoal.collectLatest { msg ->
+        if (msg == role.goal) {
+            resetGoal()
+        }
+        context.dataStore.edit {
+            it[ROLE_KEY] = role.name
+        }
     }
 
     suspend fun setName(name: String) = context.dataStore.edit {
@@ -96,8 +101,14 @@ class SettingsDataStore(val context: Context) {
         it[DESIGN_KEY] = design.name
     }
 
-    suspend fun setGoal(goal: Int) = context.dataStore.edit {
-        it[GOAL_KEY] = goal
+    suspend fun setGoal(goal: Int?) = roleGoal.collectLatest { rg ->
+        if (rg == goal || goal == null) {
+            resetGoal()
+            return@collectLatest
+        }
+        context.dataStore.edit {
+            it[GOAL_KEY] = goal
+        }
     }
 
     suspend fun resetGoal() = context.dataStore.edit {

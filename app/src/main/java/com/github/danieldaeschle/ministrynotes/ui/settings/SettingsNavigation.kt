@@ -5,3 +5,5 @@ import androidx.navigation.NavHostController
 fun NavHostController.navigateToSettings() = navigate(SettingsGraph.Root.route)
 
 fun NavHostController.navigateToSettingsName() = navigate(SettingsGraph.Name.route)
+
+fun NavHostController.navigateToSettingsGoal() = navigate(SettingsGraph.Goal.route)

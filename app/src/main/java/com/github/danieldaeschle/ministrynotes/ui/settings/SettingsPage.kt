@@ -159,51 +159,26 @@ fun RoleSetting() {
 
 @Composable
 fun GoalSetting() {
-    var isGoalDialogOpen by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
+    val navController = LocalAppNavController.current
     val settingsDataStore = rememberSettingsDataStore()
     val goal by settingsDataStore.goal.collectAsState(null)
+    val roleGoal by settingsDataStore.roleGoal.collectAsState(PublisherGoal)
     val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
 
-    val goalText = if (goal != PublisherGoal) {
-        val prefix = if (goal != manuallySetGoal && manuallySetGoal != null) {
+    val goalText = if (goal == PublisherGoal && manuallySetGoal == null) {
+        "No goal set"
+    } else {
+        val prefix = if (manuallySetGoal != null && manuallySetGoal != roleGoal) {
             "Manually set: "
         } else {
             ""
         }
         "${prefix}${goal} hours"
-    } else {
-        "No goal set"
     }
 
-    val handleClose = {
-        isGoalDialogOpen = false
-    }
-
-    AlertDialog(isOpen = isGoalDialogOpen, onClose = handleClose, title = {
-        Text("Role")
-    }, negativeButton = {
-        TextButton(onClick = handleClose) {
-            Text("Cancel")
-        }
+    Setting(title = "Goal", onClick = {
+        navController.navigateToSettingsGoal()
     }) {
-        Role.values().map { role ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        coroutineScope.launch {
-                            settingsDataStore.setRole(role)
-                        }
-                        handleClose()
-                    }
-                    .padding(horizontal = 24.dp, vertical = 12.dp)) {
-                Text(role.translate())
-            }
-        }
-    }
-
-    Setting(title = "Goal", onClick = { }) {
         Text(
             goalText,
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,

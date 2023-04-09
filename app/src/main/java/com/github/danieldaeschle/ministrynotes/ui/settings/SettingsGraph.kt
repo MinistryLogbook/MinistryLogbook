@@ -15,6 +15,8 @@ sealed class SettingsGraph(val route: String) {
     object Root : SettingsGraph("/")
 
     object Name : SettingsGraph("/name")
+
+    object Goal : SettingsGraph("/goal")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -41,6 +43,10 @@ fun NavGraphBuilder.settingsGraph() {
 
         composable(SettingsGraph.Name.route) {
             NamePage()
+        }
+
+        composable(SettingsGraph.Goal.route) {
+            GoalPage()
         }
     }
 }
