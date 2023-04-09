@@ -56,7 +56,9 @@ fun BaseSettingsPage(
                     actions?.invoke()
                 }
                 Column(
-                    Modifier.statusBarsPadding(),
+                    Modifier
+                        .statusBarsPadding()
+                        .padding(bottom = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     Spacer(Modifier.height(56.dp))

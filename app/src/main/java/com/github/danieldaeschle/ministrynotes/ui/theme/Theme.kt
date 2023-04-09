@@ -3,11 +3,14 @@ package com.github.danieldaeschle.ministrynotes.ui.theme
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import com.github.danieldaeschle.ministrynotes.data.Design
+import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 
 fun lightColorPalette(useDynamicColors: Boolean = false): ColorScheme {
     return lightColorScheme(
@@ -77,7 +80,14 @@ fun darkColorPalette(useDynamicColors: Boolean = false): ColorScheme {
 fun MinistryNotesTheme(
     isDynamic: Boolean = true, content: @Composable () -> Unit
 ) {
-    val useDarkTheme = isSystemInDarkTheme()
+    val isSystemInDarkTheme = isSystemInDarkTheme()
+    val settingsDataStore = rememberSettingsDataStore()
+    val design by settingsDataStore.design.collectAsState(Design.System)
+    val useDarkTheme = when (design) {
+        Design.Light -> false
+        Design.Dark -> true
+        Design.System -> isSystemInDarkTheme
+    }
     val useDynamicColors = isDynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors =
         if (useDarkTheme) darkColorPalette(useDynamicColors) else lightColorPalette(useDynamicColors)

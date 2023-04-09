@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
+import com.github.danieldaeschle.ministrynotes.data.Design
 import com.github.danieldaeschle.ministrynotes.data.PublisherGoal
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
@@ -40,7 +41,55 @@ fun SettingsPage() {
         Column {
             Title("Appearance")
             LanguageSetting()
+            DesignSetting()
         }
+    }
+}
+
+@Composable
+fun DesignSetting() {
+    var isDialogOpen by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+    val settingsDataStore = rememberSettingsDataStore()
+    val design by settingsDataStore.design.collectAsState(Design.System)
+
+    val handleClose = {
+        isDialogOpen = false
+    }
+
+    AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
+        Text("Design")
+    }, negativeButton = {
+        TextButton(onClick = handleClose) {
+            Text("Cancel")
+        }
+    }) {
+        Design.values().map { d ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        coroutineScope.launch {
+                            d.apply()
+                            settingsDataStore.setDesign(d)
+                        }
+                        handleClose()
+                    }
+                    .padding(horizontal = 24.dp, vertical = 12.dp)) {
+                Text(d.translate())
+            }
+        }
+    }
+
+    Setting(
+        title = "Design",
+        onClick = { isDialogOpen = true },
+    ) {
+        Text(
+            design.translate(),
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+        )
     }
 }
 
