@@ -86,6 +86,10 @@ fun GoalPage() {
 
             TextButton(modifier = Modifier.align(Alignment.End), onClick = {
                 coroutineScope.launch {
+                    textFieldValueState = TextFieldValue(
+                        text = "",
+                        selection = TextRange(0)
+                    )
                     settingsDataStore.resetGoal()
                 }
             }) {
