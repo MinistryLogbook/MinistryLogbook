@@ -1,32 +1,18 @@
 package com.github.danieldaeschle.ministrynotes.ui.home.share
 
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.ExperimentalTextApi
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import com.github.danieldaeschle.ministrynotes.ui.theme.Caveat
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.DashPathEffect
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.text.Layout
+import android.text.StaticLayout
+import android.text.TextPaint
+import com.github.danieldaeschle.ministrynotes.R
+
 
 data class FieldServiceReport(
     val name: String,
@@ -39,235 +25,239 @@ data class FieldServiceReport(
     val comments: String,
 )
 
-// TODO: rewrite without canvas; pass data
-@OptIn(ExperimentalTextApi::class)
-@Composable
-fun FieldServiceReportImage(report: FieldServiceReport) {
-    val textMeasurer = rememberTextMeasurer()
-    val title = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                color = Color.Black,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        ) {
-            append("FIELD SERVICE REPORT")
-        }
-    }
-    val titleSize = textMeasurer.measure(title).size
-    val name = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                color = Color.Black,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        ) {
-            append("Name:")
-        }
-    }
-    val nameSize = textMeasurer.measure(name).size
-    val month = buildAnnotatedString {
-        withStyle(
-            style = SpanStyle(
-                color = Color.Black,
-                fontSize = 10.sp,
-                fontWeight = FontWeight.Bold,
-            )
-        ) {
-            append("Month:")
-        }
-    }
-    val monthSize = textMeasurer.measure(month).size
+fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
+    val width = 1000
+    val padding = 40f
+    // label row starting point
+    val textLabelX = 70f
+    val tableDividerX = 860f
+    val textValueX = 880f
 
-    val createRowString: (text: String) -> AnnotatedString = { text ->
-        buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    color = Color.Black,
-                    fontSize = 10.sp,
-                )
-            ) {
-                append(text)
-            }
-        }
+    val dottedLinePaint = Paint().apply {
+        color = Color.GRAY
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+        pathEffect = DashPathEffect(floatArrayOf(5f, 3f), 0f)
+    }
+    val labelPaint = Paint().apply {
+        color = Color.BLACK
+        textSize = 35f
+    }
+    val valueTypeface = resources.getFont(R.font.caveat_variable)
+    val valuePaint = TextPaint().apply {
+        color = Color.BLACK
+        textSize = 38f
+        typeface = Typeface.create(valueTypeface, Typeface.NORMAL)
     }
 
-    val createValueString: (text: String) -> AnnotatedString = { text ->
-        buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    color = Color.Black,
-                    fontSize = 12.sp,
-                    fontFamily = Caveat,
-                )
-            ) {
-                append(text)
-            }
-        }
+    // title
+    val title = "FIELD SERVICE REPORT"
+    val titlePaint = Paint().apply {
+        color = Color.BLACK
+        textSize = 45f
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+    }
+    val titleBounds = Rect()
+    titlePaint.getTextBounds(title, 0, title.length, titleBounds)
+
+    // name and month
+    val nameMonthPaint = Paint().apply {
+        color = Color.BLACK
+        textSize = 36f
+        typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
+    }
+    val nameLabel = "Name:"
+    val monthLabel = "Month:"
+    val nameLabelMetrics = Rect()
+    nameMonthPaint.getTextBounds(nameLabel, 0, nameLabel.length, nameLabelMetrics)
+    val monthLabelMetrics = Rect()
+    nameMonthPaint.getTextBounds(monthLabel, 0, monthLabel.length, monthLabelMetrics)
+
+    // table
+    val rowHeight = 50f
+    val tablePaint = Paint().apply {
+        color = Color.BLACK
+        style = Paint.Style.STROKE
+        strokeWidth = 2f
+    }
+    val tableTop = 260f
+    val tableBottom = tableTop + 5 * rowHeight
+
+    // placements
+    val placementsLabel = "Placements (Printed and Electronic)"
+    val placementsLineY = tableTop + rowHeight
+
+    // video showings
+    val videoShowingsLabel = "Video Showings"
+    val videoShowingsLineY = placementsLineY + rowHeight
+
+    // hours
+    val hoursLabel = "Hours"
+    val hoursLineY = videoShowingsLineY + rowHeight
+
+    // return visits
+    val returnVisitsLabel = "Return Visits"
+    val returnVisitsLineY = hoursLineY + rowHeight
+
+    // bible studies
+    val bibleStudiesLabel = "Number of Different Bible Studies Conducted"
+
+    // comments
+    val commentsTop = tableBottom + padding
+    val commentsMinHeight = 120f
+    val commentsLabel = "Comments:"
+    val commentsLabelLineHeight = 36f
+    val commentStaticLayout =
+        StaticLayout.Builder.obtain(
+            report.comments,
+            0,
+            report.comments.length,
+            valuePaint,
+            width - 2 * textLabelX.toInt()
+        )
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 0.8f)
+            .setIncludePad(true)
+            .build()
+    val commentsBottom =
+        commentsTop + maxOf(
+            commentsMinHeight,
+            commentsLabelLineHeight + 10 + commentStaticLayout.height
+        )
+
+    val height = commentsBottom + padding
+    val bitmap = Bitmap.createBitmap(width, height.toInt(), Bitmap.Config.ARGB_8888)
+    val canvas = Canvas(bitmap)
+
+    with(canvas) {
+        // background
+        drawRect(0f, 0f, width.toFloat(), height, Paint().apply {
+            color = Color.WHITE
+        })
+
+        // title
+        drawText(
+            title,
+            ((width - titleBounds.width()) / 2).toFloat(),
+            padding + titleBounds.height(),
+            titlePaint,
+        )
+
+        // name and month
+        drawText(nameLabel, textLabelX, 160f, nameMonthPaint)
+        drawText(report.name, textLabelX + nameLabelMetrics.width() + 40, 160f, valuePaint)
+        drawLine(
+            textLabelX + nameLabelMetrics.width() + 20,
+            165f,
+            width - textLabelX,
+            160f,
+            dottedLinePaint
+        )
+        drawText(monthLabel, textLabelX, 210f, nameMonthPaint)
+        drawText(report.month, textLabelX + monthLabelMetrics.width() + 40, 210f, valuePaint)
+        drawLine(
+            textLabelX + monthLabelMetrics.width() + 20,
+            215f,
+            width - textLabelX,
+            210f,
+            dottedLinePaint
+        )
+
+        // table
+        drawRect(padding, tableTop, width - padding, tableBottom, tablePaint)
+        drawLine(tableDividerX, tableTop, tableDividerX, tableBottom, tablePaint)
+
+        // placements
+        drawText(
+            placementsLabel,
+            textLabelX,
+            tableTop + 36f,
+            labelPaint,
+        )
+        drawText(
+            report.placements.toString(),
+            textValueX,
+            tableTop + 36f,
+            valuePaint,
+        )
+        drawLine(
+            padding,
+            placementsLineY,
+            width - padding,
+            placementsLineY,
+            tablePaint
+        )
+
+        // Video showings
+        drawText(
+            videoShowingsLabel,
+            textLabelX,
+            placementsLineY + 34f,
+            labelPaint,
+        )
+        drawText(
+            report.videoShowings.toString(),
+            textValueX,
+            placementsLineY + 36f,
+            valuePaint,
+        )
+        drawLine(padding, videoShowingsLineY, width - padding, videoShowingsLineY, tablePaint)
+
+        // hours
+        drawText(
+            hoursLabel,
+            textLabelX,
+            videoShowingsLineY + 36f,
+            labelPaint,
+        )
+        drawText(
+            report.hours.toString(),
+            textValueX,
+            videoShowingsLineY + 36f,
+            valuePaint,
+        )
+        drawLine(padding, hoursLineY, width - padding, hoursLineY, tablePaint)
+
+        // Return visits
+        drawText(
+            returnVisitsLabel,
+            textLabelX,
+            hoursLineY + 36f,
+            labelPaint,
+        )
+        drawText(
+            report.returnVisits.toString(),
+            textValueX,
+            hoursLineY + 36f,
+            valuePaint,
+        )
+        drawLine(padding, returnVisitsLineY, width - padding, returnVisitsLineY, tablePaint)
+
+        // Bible studies
+        drawText(
+            bibleStudiesLabel,
+            textLabelX,
+            returnVisitsLineY + 36f,
+            labelPaint,
+        )
+        drawText(
+            report.bibleStudies.toString(),
+            textValueX,
+            returnVisitsLineY + 36f,
+            valuePaint,
+        )
+
+        // Comments
+        drawRect(padding, commentsTop, width - padding, commentsBottom, tablePaint)
+        drawText(
+            commentsLabel,
+            textLabelX,
+            commentsTop + commentsLabelLineHeight,
+            labelPaint,
+        )
+        canvas.translate(textLabelX, commentsTop + 5 + commentsLabelLineHeight)
+        commentStaticLayout.draw(this)
     }
 
-    BoxWithConstraints(Modifier.fillMaxWidth()) {
-        val commentsTitle = createRowString("Comments:")
-        val comments = createValueString(report.comments)
-        val width = constraints.minWidth - 140f
-        val constraints = Constraints(minWidth = width.toInt(), maxWidth = width.toInt())
-
-        val minBoxHeight = 120f
-        val commentsBoxHeight = if (report.comments.isNotEmpty()) {
-            val commentsSize = textMeasurer.measure(comments, constraints = constraints).size
-            val commentsTitleSize =
-                textMeasurer.measure(commentsTitle, constraints = constraints).size
-            maxOf(minBoxHeight, commentsSize.height + commentsTitleSize.height + 10f)
-        } else {
-            minBoxHeight
-        }
-
-        Canvas(
-            Modifier
-                .fillMaxWidth()
-                .height(LocalDensity.current.run { (650 + commentsBoxHeight).toDp() })
-                .clip(RoundedCornerShape(8.dp))
-                .background(Color.White)
-        ) {
-            // title
-            drawText(
-                textMeasurer = textMeasurer,
-                text = title,
-                topLeft = Offset((size.width - titleSize.width) / 2, 40f)
-            )
-
-            // name
-            drawText(
-                textMeasurer = textMeasurer,
-                text = name,
-                topLeft = Offset(70f, 140f)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.name),
-                Offset(70f + nameSize.width + 20f, 130f),
-            )
-            drawLine(
-                Color.Gray,
-                Offset(70f + nameSize.width + 10f, 140f + nameSize.height - 10f),
-                Offset(size.width - 40f, 140f + nameSize.height - 10f),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 3f)),
-            )
-            // month
-            drawText(
-                textMeasurer = textMeasurer,
-                text = month,
-                topLeft = Offset(70f, 200f),
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.month),
-                Offset(70f + monthSize.width + 20f, 190f),
-            )
-            drawLine(
-                Color.Gray,
-                Offset(70f + monthSize.width + 10f, 200f + monthSize.height - 10f),
-                Offset(size.width - 40f, 200f + monthSize.height - 10f),
-                pathEffect = PathEffect.dashPathEffect(floatArrayOf(5f, 3f)),
-            )
-
-            // table
-            drawRect(
-                Color.Black,
-                topLeft = Offset(40f, 300f),
-                size = Size(size.width - 80f, 275f),
-                style = Stroke(),
-            )
-            drawLine(
-                Color.Black,
-                Offset(size.width - 140f, 300f),
-                Offset(size.width - 140f, 575f)
-            )
-
-            // placements row
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createRowString("Placements (Printed and Electronic)"),
-                Offset(70f, 300f)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.placements.toString()),
-                Offset(size.width - 140f + 20f, 300f)
-            )
-            drawLine(Color.Black, Offset(40f, 355f), Offset(size.width - 40f, 355f))
-
-            // video showings row
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createRowString("Video Showings"),
-                Offset(70f, 355f)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.videoShowings.toString()),
-                Offset(size.width - 140f + 20f, 355f)
-            )
-            drawLine(Color.Black, Offset(40f, 410f), Offset(size.width - 40f, 410f))
-
-            // hours row
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createRowString("Hours"),
-                Offset(70f, 410f)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.hours.toString()),
-                Offset(size.width - 140f + 20f, 410f)
-            )
-            drawLine(Color.Black, Offset(40f, 465f), Offset(size.width - 40f, 465f))
-
-            // return visits row
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createRowString("Return Visits"),
-                Offset(70f, 465f)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.returnVisits.toString()),
-                Offset(size.width - 140f + 20f, 465f)
-            )
-            drawLine(Color.Black, Offset(40f, 520f), Offset(size.width - 40f, 520f))
-
-            // bible studies row
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createRowString("Number of Different Bible Studies Conducted"),
-                Offset(70f, 520f)
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = createValueString(report.bibleStudies.toString()),
-                Offset(size.width - 140f + 20f, 520f)
-            )
-
-            // comments box
-            drawRect(
-                Color.Black,
-                topLeft = Offset(40f, 610f),
-                size = Size(size.width - 80f, commentsBoxHeight),
-                style = Stroke(),
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = commentsTitle,
-                Offset(70f, 610f),
-            )
-            drawText(
-                textMeasurer = textMeasurer,
-                text = comments,
-                topLeft = Offset(70f, 660f),
-                size = Size(height = Float.NaN, width = width),
-            )
-        }
-    }
+    return bitmap
 }
