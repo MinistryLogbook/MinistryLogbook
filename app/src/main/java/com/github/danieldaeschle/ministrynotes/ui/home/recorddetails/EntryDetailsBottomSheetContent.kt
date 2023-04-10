@@ -71,7 +71,9 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     val isCreditEnabled by remember { derivedStateOf { role.canHaveCredit || entry.isCredit } }
     val dateMillis by remember {
         derivedStateOf {
-            entry.datetime.atTime(0, 0).toInstant(TimeZone.currentSystemDefault())
+            entry.datetime
+                .atTime(0, 0)
+                .toInstant(TimeZone.UTC)
                 .toEpochMilliseconds()
         }
     }
