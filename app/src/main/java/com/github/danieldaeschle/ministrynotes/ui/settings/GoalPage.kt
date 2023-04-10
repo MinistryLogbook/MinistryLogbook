@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -52,17 +53,19 @@ fun GoalPage() {
     }
     val focusRequester = remember { FocusRequester() }
 
+    val handleSave = {
+        coroutineScope.launch {
+            settingsDataStore.setGoal(textFieldValueState.text.toIntOrNull())
+        }
+        navController.popBackStack()
+    }
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
     BaseSettingsPage(stringResource(R.string.goal), actions = {
-        ToolbarAction(onClick = {
-            coroutineScope.launch {
-                settingsDataStore.setGoal(textFieldValueState.text.toIntOrNull())
-            }
-            navController.popBackStack()
-        }) {
+        ToolbarAction(onClick = { handleSave() }) {
             Icon(
                 painterResource(R.drawable.ic_done),
                 contentDescription = null
@@ -78,6 +81,7 @@ fun GoalPage() {
                     capitalization = KeyboardCapitalization.Words,
                     keyboardType = KeyboardType.Number
                 ),
+                keyboardActions = KeyboardActions(onDone = { handleSave() }),
                 singleLine = true,
                 label = {
                     Text(stringResource(R.string.set_goal))

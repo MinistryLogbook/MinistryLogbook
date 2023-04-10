@@ -3,6 +3,7 @@ package com.github.danieldaeschle.ministrynotes.ui.settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -45,13 +46,15 @@ fun NamePage() {
         focusRequester.requestFocus()
     }
 
+    val handleSave = {
+        coroutineScope.launch {
+            settingsDataStore.setName(textFieldValueState.text)
+        }
+        navController.popBackStack()
+    }
+
     BaseSettingsPage(stringResource(R.string.name), actions = {
-        ToolbarAction(onClick = {
-            coroutineScope.launch {
-                settingsDataStore.setName(textFieldValueState.text)
-            }
-            navController.popBackStack()
-        }) {
+        ToolbarAction(onClick = { handleSave() }) {
             Icon(
                 painterResource(R.drawable.ic_done),
                 contentDescription = null // TODO: contentDescription
@@ -64,6 +67,7 @@ fun NamePage() {
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                keyboardActions = KeyboardActions(onDone = { handleSave() }),
                 singleLine = true,
                 label = {
                     Text(stringResource(R.string.set_name))
