@@ -28,6 +28,7 @@ import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import java.time.format.TextStyle
 import java.util.Locale
@@ -86,10 +87,14 @@ class HomeViewModel(
     }
 
     fun transferToNextMonth(minutes: Int) {
+        val firstOfMonth = LocalDate(month.year, month.month, 1)
+        val nextMonth = firstOfMonth + DatePeriod(months = 1)
+        val lastOfMonth = nextMonth - DatePeriod(days = 1)
         val transfer = Entry(
+            datetime = nextMonth,
             minutes = minutes,
             type = EntryType.Transfer,
-            transferredFrom = month,
+            transferredFrom = lastOfMonth,
         )
         viewModelScope.launch {
             val id = _entryRepository.save(transfer)
@@ -99,9 +104,10 @@ class HomeViewModel(
 
     /** Transferring 0 minutes dismisses the message and won't show a history item. */
     fun transferFromLastMonth(minutes: Int) {
-        val lastMonth = month.minus(DatePeriod(months = 1))
+        val firstOfMonth = LocalDate(month.year, month.month, 1)
+        val lastMonth = firstOfMonth - DatePeriod(days = 1)
         val transfer = Entry(
-            datetime = month,
+            datetime = firstOfMonth,
             minutes = minutes,
             type = EntryType.Transfer,
             transferredFrom = lastMonth
