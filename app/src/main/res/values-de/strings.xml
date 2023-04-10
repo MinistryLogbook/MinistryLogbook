@@ -74,7 +74,7 @@
     <string name="name_colon">Name:</string>
     <string name="month_colon">Monat:</string>
     <string name="history_entry_datetime_pattern">E, dd. MMMM</string>
-    <string name="hours_short_unit">%1$d Std</string>
+    <string name="hours_short_unit">%1$s Std</string>
     <string name="field_service_report_comments_placeholder">Z. B. Krankheit, LDC, Pionierschule usw.</string>
     <string name="comments_colon">Bemerkungen:</string>
     <string name="bible_studies_long_colon">Anzahl der verschiedenen Bibelstudien:</string>

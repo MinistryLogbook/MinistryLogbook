@@ -72,8 +72,8 @@ fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
 
 @Composable
 fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? = null) {
-    val formatter =
-        DateTimeFormatter.ofPattern(stringResource(R.string.history_entry_datetime_pattern))
+    val pattern = stringResource(R.string.history_entry_datetime_pattern)
+    val formatter = DateTimeFormatter.ofPattern(pattern)
     val dateText = formatter.format(entry.datetime.toJavaLocalDate())
 
     Row(
