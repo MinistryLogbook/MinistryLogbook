@@ -84,4 +84,5 @@
     <string name="placements_long_colon">Abgabe (gedruckt und elektronisch):</string>
     <string name="minutes">Minuten</string>
     <string name="share_with">Teilen mit</string>
+    <string name="video_showings_short">Videos</string>
 </resources>

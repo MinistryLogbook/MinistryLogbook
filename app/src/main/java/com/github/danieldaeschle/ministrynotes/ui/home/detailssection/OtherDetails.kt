@@ -62,7 +62,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail(stringResource(R.string.video_showings), videoShowings, icon = {
+            OtherDetail(stringResource(R.string.video_showings_short), videoShowings, icon = {
                 Icon(
                     painterResource(R.drawable.ic_play_circle),
                     contentDescription = null, // TODO: contentDescription

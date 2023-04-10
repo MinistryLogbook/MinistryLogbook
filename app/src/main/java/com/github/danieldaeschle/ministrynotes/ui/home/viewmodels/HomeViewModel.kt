@@ -36,7 +36,7 @@ class HomeViewModel(
     val month: LocalDate,
     application: Application,
     private val _entryRepository: EntryRepository,
-    private val _Bible_studyEntryRepository: BibleStudyEntryRepository,
+    private val _bibleStudyEntryRepository: BibleStudyEntryRepository,
     settingsDataStore: SettingsDataStore,
 ) : AndroidViewModel(application) {
 
@@ -121,7 +121,7 @@ class HomeViewModel(
             entriesLastMonth.ministryTimeSum()
         }
         val transferredDefer = async { _entryRepository.getTransferredFrom(month) }
-        val studyEntryDefer = async { _Bible_studyEntryRepository.getOfMonth(month) }
+        val studyEntryDefer = async { _bibleStudyEntryRepository.getOfMonth(month) }
 
         _bibleStudyEntry.value = studyEntryDefer.await()
         _restLastMonth.value = Time(minutes = lastMonthTimeDefer.await().minutes)
