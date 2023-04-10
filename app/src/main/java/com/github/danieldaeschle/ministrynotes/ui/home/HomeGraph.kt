@@ -23,8 +23,11 @@ import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.StudiesDetails
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
@@ -53,15 +56,15 @@ sealed class HomeGraph(val route: String, val arguments: List<NamedNavArgument> 
     }
 
     object EntryDetails : HomeGraph(
-        route = "entry-details/{id}", arguments = listOf(
+        route = "{year}/{monthNumber}/entry-details/{id}", arguments = listOf(
             navArgument("id") { nullable = true; defaultValue = null },
         )
     ) {
-        fun createRoute(id: Int? = null): String {
+        fun createRoute(month: LocalDate, id: Int? = null): String {
             if (id == null) {
-                return "entry-details/new"
+                return "${month.year}/${month.monthNumber}/entry-details/new"
             }
-            return "entry-details/$id"
+            return "${month.year}/${month.monthNumber}/entry-details/$id"
         }
     }
 
@@ -107,6 +110,16 @@ fun NavGraphBuilder.homeGraph() {
         }
 
         bottomSheet(HomeGraph.EntryDetails.route, arguments = HomeGraph.Root.arguments) {
+            val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
+            val monthNumber =
+                it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
+            val isCurrentMonth = year == currentDate.year && monthNumber == currentDate.monthNumber
+            val month = if (isCurrentMonth) {
+                currentDate
+            } else {
+                LocalDate(year, monthNumber, 1) + DatePeriod(months = 1) - DatePeriod(days = 1)
+            }
             val id = it.arguments?.getString("id")?.let { value ->
                 if (value == "new") {
                     null
@@ -116,7 +129,7 @@ fun NavGraphBuilder.homeGraph() {
             }
 
             val entryDetailsViewModel = getViewModel<EntryDetailsViewModel>(parameters = {
-                parametersOf(id)
+                parametersOf(month, id)
             })
             EntryDetailsBottomSheetContent(entryDetailsViewModel)
         }

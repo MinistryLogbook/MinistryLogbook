@@ -10,9 +10,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 
-class EntryDetailsViewModel(val id: Int?, private val _entryRepository: EntryRepository) :
+class EntryDetailsViewModel(
+    month: LocalDate,
+    val id: Int?,
+    private val _entryRepository: EntryRepository
+) :
     ViewModel() {
-    private val _entry = MutableStateFlow(Entry())
+    private val _entry = MutableStateFlow(Entry(datetime = month))
 
     val entry = _entry.asStateFlow()
 

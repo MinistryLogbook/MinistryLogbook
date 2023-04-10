@@ -19,5 +19,5 @@ val appModule = module {
         HomeViewModel(params.get(), androidContext() as Application, get(), get(), get())
     }
     viewModel { params -> StudiesDetailsViewModel(params.get(), get()) }
-    viewModel { params -> EntryDetailsViewModel(params.getOrNull(), get()) }
+    viewModel { params -> EntryDetailsViewModel(params.get(), params.getOrNull(), get()) }
 }

@@ -42,18 +42,18 @@ import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
+fun HistorySection(viewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val entries by homeViewModel.entries.collectAsState()
+    val entries by viewModel.entries.collectAsState()
     val orderedEntries by remember {
         derivedStateOf {
             entries.sortedBy { it.datetime }.reversed()
         }
     }
-    val transferred by homeViewModel.transferred.collectAsState()
+    val transferred by viewModel.transferred.collectAsState()
 
     val handleClick: (entry: Entry) -> Unit = {
-        navController.navigate(HomeGraph.EntryDetails.createRoute(it.id))
+        navController.navigate(HomeGraph.EntryDetails.createRoute(viewModel.month, it.id))
     }
 
     Column(
