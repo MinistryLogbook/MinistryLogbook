@@ -54,8 +54,8 @@ fun NamePage() {
         }) {
             Icon(
                 painterResource(R.drawable.ic_done),
-                contentDescription = null
-            ) // TODO: contentDescription
+                contentDescription = null // TODO: contentDescription
+            )
         }
     }) {
         Box(Modifier.padding(16.dp)) {

@@ -144,7 +144,7 @@ fun ShareDialog(
 }
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {
-    val text = """${getString(R.string.field_service_report)}
+    val text = """${getString(R.string.field_service_report).uppercase()}
         
         |${getString(R.string.name_colon)} ${report.name}
         |${getString(R.string.month_colon)} ${report.month}

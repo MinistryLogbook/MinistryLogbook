@@ -51,7 +51,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     }
 
     // title
-    val title = getString(R.string.field_service_report)
+    val title = getString(R.string.field_service_report).uppercase()
     val titlePaint = Paint().apply {
         color = Color.BLACK
         textSize = 45f

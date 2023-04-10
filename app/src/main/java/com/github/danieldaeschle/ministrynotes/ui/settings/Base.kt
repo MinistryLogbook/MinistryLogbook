@@ -49,8 +49,8 @@ fun BaseSettingsPage(
                     ToolbarAction(onClick = handleBack) {
                         Icon(
                             painterResource(R.drawable.ic_arrow_back),
-                            contentDescription = null
-                        ) // TODO: contentDescription
+                            contentDescription = null // TODO: contentDescription
+                        )
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(title, fontSize = MaterialTheme.typography.titleLarge.fontSize)
@@ -61,7 +61,8 @@ fun BaseSettingsPage(
                 Column(
                     Modifier
                         .statusBarsPadding()
-                        .padding(bottom = 20.dp)) {
+                        .padding(vertical = 10.dp)
+                ) {
                     Spacer(Modifier.height(56.dp))
                     Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                         content()
