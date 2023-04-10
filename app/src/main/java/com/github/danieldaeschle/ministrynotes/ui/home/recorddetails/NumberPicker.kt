@@ -48,7 +48,7 @@ fun NumberPicker(
                 .repeatingClickable { onChange(value - step) }
                 .clickable { onChange(value - step) }
                 .padding(4.dp),
-            contentDescription = "Minus",
+            contentDescription = "Minus", // TODO: translation
             tint = MaterialTheme.colorScheme.onSurface,
         )
         Spacer(Modifier.width(6.dp))
@@ -67,7 +67,7 @@ fun NumberPicker(
                 .repeatingClickable { onChange(value + step) }
                 .clickable { onChange(value + step) }
                 .padding(4.dp),
-            contentDescription = "Plus",
+            contentDescription = "Plus", // TODO: translation
             tint = MaterialTheme.colorScheme.onSurface,
         )
     }

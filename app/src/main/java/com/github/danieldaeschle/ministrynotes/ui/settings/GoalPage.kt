@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,14 +56,17 @@ fun GoalPage() {
         focusRequester.requestFocus()
     }
 
-    BaseSettingsPage("Goal", actions = {
+    BaseSettingsPage(stringResource(R.string.goal), actions = {
         ToolbarAction(onClick = {
             coroutineScope.launch {
                 settingsDataStore.setGoal(textFieldValueState.text.toIntOrNull())
             }
             navController.popBackStack()
         }) {
-            Icon(painterResource(R.drawable.ic_done), contentDescription = null)
+            Icon(
+                painterResource(R.drawable.ic_done),
+                contentDescription = null
+            ) // TODO: contentDescription
         }
     }) {
         Column(Modifier.padding(16.dp)) {
@@ -76,7 +80,7 @@ fun GoalPage() {
                 ),
                 singleLine = true,
                 label = {
-                    Text("Set goal")
+                    Text(stringResource(R.string.set_goal))
                 },
                 value = textFieldValueState,
                 onValueChange = { textFieldValueState = it },
@@ -93,7 +97,7 @@ fun GoalPage() {
                     settingsDataStore.resetGoal()
                 }
             }) {
-                Text("Reset goal")
+                Text(stringResource(R.string.reset_goal))
             }
         }
     }

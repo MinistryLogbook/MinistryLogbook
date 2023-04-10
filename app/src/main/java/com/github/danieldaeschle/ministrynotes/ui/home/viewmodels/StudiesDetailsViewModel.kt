@@ -2,8 +2,8 @@ package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.danieldaeschle.ministrynotes.data.StudyEntry
-import com.github.danieldaeschle.ministrynotes.data.StudyEntryRepository
+import com.github.danieldaeschle.ministrynotes.data.BibleStudyEntry
+import com.github.danieldaeschle.ministrynotes.data.BibleStudyEntryRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -12,23 +12,23 @@ import kotlinx.datetime.LocalDate
 
 class StudiesDetailsViewModel(
     private val month: LocalDate,
-    private val _studyEntryRepository: StudyEntryRepository
+    private val _Bible_studyEntryRepository: BibleStudyEntryRepository
 ) : ViewModel() {
 
-    private val _studyEntry = MutableStateFlow<StudyEntry?>(null)
+    private val _studyEntry = MutableStateFlow<BibleStudyEntry?>(null)
 
     val studyEntry = _studyEntry.asStateFlow()
 
     fun save(count: Int) = viewModelScope.launch {
         _studyEntry.value?.copy(count = count)?.let { studyEntry ->
-            _studyEntryRepository.save(studyEntry)
+            _Bible_studyEntryRepository.save(studyEntry)
             _studyEntry.update { studyEntry }
         }
     }
 
     init {
         viewModelScope.launch {
-            _studyEntry.value = _studyEntryRepository.getOfMonth(month)
+            _studyEntry.value = _Bible_studyEntryRepository.getOfMonth(month)
         }
     }
 }

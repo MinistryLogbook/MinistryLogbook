@@ -23,7 +23,7 @@
     <string name="transfer">Transfer</string>
     <string name="add_to_report">Add to report</string>
     <string name="january_short">Jan</string>
-    <string name="feburary_short">Feb</string>
+    <string name="february_short">Feb</string>
     <string name="march_short">Mar</string>
     <string name="april_short">Apr</string>
     <string name="may_short">May</string>
@@ -64,4 +64,24 @@
     <string name="light">Light</string>
     <string name="manually_set_colon">Manually set:</string>
     <string name="set_goal">Set goal</string>
+    <string name="hours_unit">%1$s hours</string>
+    <string name="reset_goal">Reset goal</string>
+    <string name="last_month_time_remaining_title">Time remaining in last month</string>
+    <string name="last_month_time_remaining_description">The last month has %1$d minutes left. Do you want to transfer it to this month?</string>
+    <string name="this_month_time_remaining_title">Time remaining in this month</string>
+    <string name="this_month_time_remaining_description">There are %1$d minutes left in this month. Would you like to transfer them over to next month?</string>
+    <string name="transfer_to_next_month">Transfer to next month</string>
+    <string name="name_colon">Name:</string>
+    <string name="month_colon">Month:</string>
+    <string name="history_entry_datetime_pattern">E, dd. MMMM</string>
+    <string name="hours_short_unit">%1$d hrs</string>
+    <string name="field_service_report_comments_placeholder">E.g., sickness, LDC, pioneer school etc.</string>
+    <string name="comments_colon">Comments:</string>
+    <string name="bible_studies_long_colon">Number of Different Bible Studies Conducted:</string>
+    <string name="return_visits_colon">Return Visits:</string>
+    <string name="hours_colon">Hours:</string>
+    <string name="video_showings_colon">Video Showings:</string>
+    <string name="placements_long_colon">Placements (Printed and Electronic):</string>
+    <string name="minutes">Minutes</string>
+    <string name="share_with">Share with</string>
 </resources>

@@ -30,7 +30,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.lib.AlertDialog
 import com.github.danieldaeschle.ministrynotes.lib.shareBitmap
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
@@ -68,7 +70,7 @@ fun ShareDialog(
         comments = ""
         onClose()
     }, paddingValues = PaddingValues(top = 24.dp), title = {
-        Text("Share Field Service Report")
+        Text(stringResource(R.string.share_field_service_report))
     }) {
         Column {
             Column(
@@ -83,7 +85,7 @@ fun ShareDialog(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(8.dp))
                                 .fillMaxWidth(),
-                            contentDescription = null
+                            contentDescription = null // TODO: contentDescription
                         )
                     }
 
@@ -94,11 +96,9 @@ fun ShareDialog(
                         value = comments,
                         onValueChange = { comments = it },
                         placeholder = {
-                            Text("E.g., sickness, LDC, pioneer school etc.")
+                            Text(stringResource(R.string.field_service_report_comments_placeholder))
                         },
-                        label = {
-                            Text("Comments")
-                        })
+                        label = { Text(stringResource(R.string.comments)) })
                 }
             }
 
@@ -115,7 +115,10 @@ fun ShareDialog(
                     .padding(12.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("Share as image", color = MaterialTheme.colorScheme.primary)
+                Text(
+                    stringResource(R.string.share_as_image),
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
 
             Divider(Modifier.fillMaxWidth())
@@ -131,25 +134,28 @@ fun ShareDialog(
                     .padding(12.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("Share as text", color = MaterialTheme.colorScheme.primary)
+                Text(
+                    stringResource(R.string.share_as_text),
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
         }
     }
 }
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {
-    val text = """FIELD SERVICE REPORT
+    val text = """${getString(R.string.field_service_report)}
         
-        |Name: ${report.name}
-        |Month: ${report.month}
+        |${getString(R.string.name_colon)} ${report.name}
+        |${getString(R.string.month_colon)} ${report.month}
         
-        |Placements (Printed and Electronic): ${report.placements}
-        |Video showings: ${report.videoShowings}
-        |Hours: ${report.hours}
-        |Return visits: ${report.returnVisits}
-        |Number of Different Bible Studies Conducted: ${report.bibleStudies}
+        |${getString(R.string.placements_long_colon)} ${report.placements}
+        |${getString(R.string.video_showings_colon)} ${report.videoShowings}
+        |${getString(R.string.hours_colon)} ${report.hours}
+        |${getString(R.string.return_visits_colon)} ${report.returnVisits}
+        |${getString(R.string.bible_studies_long_colon)} ${report.bibleStudies}
         
-        |Comments:
+        |${getString(R.string.comments_colon)}
         |${report.comments}
     """.trimMargin()
 

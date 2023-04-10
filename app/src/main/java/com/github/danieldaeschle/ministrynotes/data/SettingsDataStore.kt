@@ -3,12 +3,14 @@ package com.github.danieldaeschle.ministrynotes.data
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.github.danieldaeschle.ministrynotes.R
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
@@ -30,12 +32,14 @@ enum class Role {
         }
 
     @Composable
+    @ReadOnlyComposable
     fun translate(): String {
+        val context = LocalContext.current
         return when (this@Role) {
-            Publisher -> "Publisher"
-            AuxiliaryPioneer -> "Auxiliary Pioneer"
-            RegularPioneer -> "Regular Pioneer"
-            SpecialPioneer -> "Special Pioneer"
+            Publisher -> context.getString(R.string.publisher)
+            AuxiliaryPioneer -> context.getString(R.string.auxiliary_pioneer)
+            RegularPioneer -> context.getString(R.string.regular_pioneer)
+            SpecialPioneer -> context.getString(R.string.special_pioneer)
         }
     }
 }
@@ -50,11 +54,13 @@ enum class Design {
     }
 
     @Composable
+    @ReadOnlyComposable
     fun translate(): String {
+        val context = LocalContext.current
         return when (this@Design) {
-            System -> "System default"
-            Light -> "Light"
-            Dark -> "Dark"
+            System -> context.getString(R.string.system_default)
+            Light -> context.getString(R.string.light)
+            Dark -> context.getString(R.string.dark)
         }
     }
 }

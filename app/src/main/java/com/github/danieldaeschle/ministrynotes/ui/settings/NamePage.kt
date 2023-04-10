@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
@@ -44,14 +45,17 @@ fun NamePage() {
         focusRequester.requestFocus()
     }
 
-    BaseSettingsPage("Name", actions = {
+    BaseSettingsPage(stringResource(R.string.name), actions = {
         ToolbarAction(onClick = {
             coroutineScope.launch {
                 settingsDataStore.setName(textFieldValueState.text)
             }
             navController.popBackStack()
         }) {
-            Icon(painterResource(R.drawable.ic_done), contentDescription = null)
+            Icon(
+                painterResource(R.drawable.ic_done),
+                contentDescription = null
+            ) // TODO: contentDescription
         }
     }) {
         Box(Modifier.padding(16.dp)) {
@@ -62,7 +66,7 @@ fun NamePage() {
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
                 singleLine = true,
                 label = {
-                    Text("Set name")
+                    Text(stringResource(R.string.set_name))
                 },
                 value = textFieldValueState,
                 onValueChange = { textFieldValueState = it },

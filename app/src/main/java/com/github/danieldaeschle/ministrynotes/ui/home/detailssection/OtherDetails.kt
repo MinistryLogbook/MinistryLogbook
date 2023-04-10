@@ -24,9 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrynotes.R
@@ -45,7 +45,7 @@ import org.koin.androidx.compose.koinViewModel
 fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entries by homeViewModel.entries.collectAsState()
-    val studies by homeViewModel.studies.collectAsState(0)
+    val bibleStudies by homeViewModel.bibleStudies.collectAsState(0)
     val ministries by remember { derivedStateOf { entries.ministries() } }
     val placements by remember { derivedStateOf { ministries.placements() } }
     val returnVisits by remember { derivedStateOf { ministries.returnVisits() } }
@@ -53,19 +53,19 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
 
     Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
         Column(modifier = Modifier.weight(1f)) {
-            OtherDetail("Placements", placements, icon = {
+            OtherDetail(stringResource(R.string.placements_short), placements, icon = {
                 Icon(
                     painterResource(R.drawable.ic_article),
-                    contentDescription = null,
+                    contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail("Video showings", videoShowings, icon = {
+            OtherDetail(stringResource(R.string.video_showings), videoShowings, icon = {
                 Icon(
                     painterResource(R.drawable.ic_play_circle),
-                    contentDescription = null,
+                    contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
@@ -73,19 +73,19 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            OtherDetail("Return visits", returnVisits, icon = {
+            OtherDetail(stringResource(R.string.return_visits), returnVisits, icon = {
                 Icon(
                     painterResource(R.drawable.ic_group),
-                    contentDescription = null,
+                    contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail("Studies", studies, icon = {
+            OtherDetail(stringResource(R.string.bible_studies_short), bibleStudies, icon = {
                 Icon(
                     painterResource(R.drawable.ic_local_library),
-                    contentDescription = null,
+                    contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
                     tint = MaterialTheme.colorScheme.primary,
                 )
@@ -146,10 +146,4 @@ fun OtherDetail(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun OtherDetailRowPreview() {
-    OtherDetail(name = "Test", count = 5)
 }

@@ -35,12 +35,19 @@ fun UnitRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(26.dp))
+            Icon(
+                icon,
+                contentDescription = null,
+                modifier = Modifier.size(26.dp)
+            ) // TODO: contentDescription
             Spacer(Modifier.width(20.dp))
         } else {
             Spacer(Modifier.width(44.dp))
         }
-        Column(Modifier.padding(end = 16.dp).weight(1f)) {
+        Column(
+            Modifier
+                .padding(end = 16.dp)
+                .weight(1f)) {
             Text(text)
             if (description != null) {
                 Text(

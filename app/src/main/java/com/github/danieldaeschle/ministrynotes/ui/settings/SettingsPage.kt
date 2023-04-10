@@ -18,8 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
+import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Design
 import com.github.danieldaeschle.ministrynotes.data.PublisherGoal
 import com.github.danieldaeschle.ministrynotes.data.Role
@@ -31,15 +33,15 @@ import java.util.Locale
 
 @Composable
 fun SettingsPage() {
-    BaseSettingsPage("Settings") {
+    BaseSettingsPage(stringResource(R.string.settings)) {
         Column {
-            Title("Personal Information")
+            Title(stringResource(R.string.personal_information))
             NameSetting()
             RoleSetting()
             GoalSetting()
         }
         Column {
-            Title("Appearance")
+            Title(stringResource(R.string.appearance))
             LanguageSetting()
             DesignSetting()
         }
@@ -58,10 +60,10 @@ fun DesignSetting() {
     }
 
     AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
-        Text("Design")
+        Text(stringResource(R.string.design))
     }, negativeButton = {
         TextButton(onClick = handleClose) {
-            Text("Cancel")
+            Text(stringResource(R.string.cancel))
         }
     }) {
         Design.values().map { d ->
@@ -82,7 +84,7 @@ fun DesignSetting() {
     }
 
     Setting(
-        title = "Design",
+        title = stringResource(R.string.design),
         onClick = { isDialogOpen = true },
     ) {
         Text(
@@ -98,9 +100,10 @@ fun NameSetting() {
     val settingsDataStore = rememberSettingsDataStore()
     val navController = LocalAppNavController.current
     val name by settingsDataStore.name.collectAsState("")
-    val nameOrDefault by remember { derivedStateOf { name.ifEmpty { "No Name set" } } }
+    val noNameSetText = stringResource(R.string.no_name_set)
+    val nameOrDefault by remember { derivedStateOf { name.ifEmpty { noNameSetText } } }
 
-    Setting(title = "Name", onClick = {
+    Setting(title = stringResource(R.string.name), onClick = {
         navController.navigateToSettingsName()
     }) {
         Text(
@@ -123,10 +126,10 @@ fun RoleSetting() {
     }
 
     AlertDialog(isOpen = isRoleDialogOpen, onClose = handleClose, title = {
-        Text("Role")
+        Text(stringResource(R.string.role))
     }, negativeButton = {
         TextButton(onClick = handleClose) {
-            Text("Cancel")
+            Text(stringResource(R.string.cancel))
         }
     }) {
         Role.values().map { role ->
@@ -146,7 +149,7 @@ fun RoleSetting() {
     }
 
     Setting(
-        title = "Role",
+        title = stringResource(R.string.role),
         onClick = { isRoleDialogOpen = true },
     ) {
         Text(
@@ -166,15 +169,17 @@ fun GoalSetting() {
     val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
 
     val goalText = if (goal == PublisherGoal && manuallySetGoal == null) {
-        "No goal set"
+        stringResource(R.string.no_goal_set)
     } else {
         val prefix = if (manuallySetGoal != null && manuallySetGoal != roleGoal) {
-            "Manually set: "
+            stringResource(R.string.manually_set_colon) + " "
         } else {
             ""
         }
-        "${prefix}${goal} hours"
-    }
+        goal?.let {
+            prefix + stringResource(R.string.hours_unit, it)
+        }
+    } ?: ""
 
     Setting(title = "Goal", onClick = {
         navController.navigateToSettingsGoal()
@@ -191,22 +196,21 @@ fun GoalSetting() {
 fun LanguageSetting() {
     var isDialogOpen by remember { mutableStateOf(false) }
     val locale = AppCompatDelegate.getApplicationLocales().get(0)
-    val localeDisplayName =
-        if (locale != null) "${locale.getDisplayLanguage(locale)} (${
-            locale.getDisplayLanguage(
-                Locale.ENGLISH
-            )
-        })" else "System"
+    val localeDisplayName = if (locale != null) "${locale.getDisplayLanguage(locale)} (${
+        locale.getDisplayLanguage(
+            Locale.ENGLISH
+        )
+    })" else stringResource(R.string.system_default)
 
     val handleClose = {
         isDialogOpen = false
     }
 
     AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
-        Text("Role")
+        Text(stringResource(R.string.role))
     }, negativeButton = {
         TextButton(onClick = handleClose) {
-            Text("Cancel")
+            Text(stringResource(R.string.cancel))
         }
     }) {
         supportedLocales.map { supportedLocale ->
@@ -222,18 +226,19 @@ fun LanguageSetting() {
                     }
                     .padding(horizontal = 24.dp, vertical = 12.dp)) {
 
-                val supportedLocaleDisplayName = if (supportedLocale != null)
-                    "${supportedLocale.getDisplayLanguage(supportedLocale)} (${
-                        supportedLocale.getDisplayLanguage(
-                            Locale.ENGLISH
-                        )
-                    })" else "System"
+                val supportedLocaleDisplayName = if (supportedLocale != null) "${
+                    supportedLocale.getDisplayLanguage(supportedLocale)
+                } (${
+                    supportedLocale.getDisplayLanguage(
+                        Locale.ENGLISH
+                    )
+                })" else stringResource(R.string.system_default)
                 Text(supportedLocaleDisplayName)
             }
         }
     }
 
-    Setting(title = "Language", onClick = { isDialogOpen = true }) {
+    Setting(title = stringResource(R.string.language), onClick = { isDialogOpen = true }) {
         Text(
             localeDisplayName,
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,

@@ -1,13 +1,14 @@
 package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.danieldaeschle.ministrynotes.data.BibleStudyEntry
+import com.github.danieldaeschle.ministrynotes.data.BibleStudyEntryRepository
 import com.github.danieldaeschle.ministrynotes.data.Entry
 import com.github.danieldaeschle.ministrynotes.data.EntryRepository
 import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.data.SettingsDataStore
-import com.github.danieldaeschle.ministrynotes.data.StudyEntry
-import com.github.danieldaeschle.ministrynotes.data.StudyEntryRepository
 import com.github.danieldaeschle.ministrynotes.lib.Time
 import com.github.danieldaeschle.ministrynotes.lib.ministryTimeSum
 import com.github.danieldaeschle.ministrynotes.lib.placements
@@ -33,33 +34,27 @@ import java.util.Locale
 
 class HomeViewModel(
     val month: LocalDate,
+    application: Application,
     private val _entryRepository: EntryRepository,
-    private val _studyEntryRepository: StudyEntryRepository,
+    private val _Bible_studyEntryRepository: BibleStudyEntryRepository,
     settingsDataStore: SettingsDataStore,
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
-    private val _studyEntry = MutableStateFlow<StudyEntry?>(null)
+    private val _bibleStudyEntry = MutableStateFlow<BibleStudyEntry?>(null)
     private val _entries = MutableStateFlow<List<Entry>>(listOf())
     private val _restLastMonth = MutableStateFlow(Time.Empty)
     private val _transferred = MutableStateFlow<List<Entry>>(listOf())
 
     val entries = _entries.asStateFlow()
-    val studies = _studyEntry.asStateFlow().map { it?.count ?: 0 }
+    val bibleStudies = _bibleStudyEntry.asStateFlow().map { it?.count ?: 0 }
     val restLastMonth = _restLastMonth.asStateFlow()
     val transferred = _transferred.asStateFlow()
     val rest = _entries.combine(_transferred) { entries, transferred ->
         entries.ministryTimeSum() - transferred.ministryTimeSum()
     }
 
-    val monthTitle: String = month.run {
-        // TODO: locale based on user settings
-        val monthName = this.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)
-        val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
-        if (this.year != currentYear) "$monthName ${this.year}" else monthName
-    }
-
     val fieldServiceReport =
-        combine(_entries, settingsDataStore.name, _studyEntry) { entries, name, studyEntry ->
+        combine(_entries, settingsDataStore.name, _bibleStudyEntry) { entries, name, studyEntry ->
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
             val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
             val commentTheocraticAssignment =
@@ -70,10 +65,11 @@ class HomeViewModel(
                 commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
                 commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },
             ).joinToString("\n")
+            val locale = application.resources.configuration.locales.get(0)
 
             FieldServiceReport(
                 name = name,
-                month = monthTitle,
+                month = getMonthTitle(locale),
                 placements = entries.placements(),
                 hours = entries.ministryTimeSum().hours,
                 returnVisits = entries.returnVisits(),
@@ -82,6 +78,12 @@ class HomeViewModel(
                 comments = comments,
             )
         }
+
+    fun getMonthTitle(locale: Locale): String = month.run {
+        val monthName = this.month.getDisplayName(TextStyle.FULL, locale)
+        val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
+        if (this.year != currentYear) "$monthName ${this.year}" else monthName
+    }
 
     fun transferToNextMonth(minutes: Int) {
         val transfer = Entry(
@@ -119,9 +121,9 @@ class HomeViewModel(
             entriesLastMonth.ministryTimeSum()
         }
         val transferredDefer = async { _entryRepository.getTransferredFrom(month) }
-        val studyEntryDefer = async { _studyEntryRepository.getOfMonth(month) }
+        val studyEntryDefer = async { _Bible_studyEntryRepository.getOfMonth(month) }
 
-        _studyEntry.value = studyEntryDefer.await()
+        _bibleStudyEntry.value = studyEntryDefer.await()
         _restLastMonth.value = Time(minutes = lastMonthTimeDefer.await().minutes)
         _transferred.value = transferredDefer.await()
         _entries.value = allDefer.await()

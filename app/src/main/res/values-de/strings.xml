@@ -23,7 +23,7 @@
     <string name="transfer">Übertrag</string>
     <string name="add_to_report">Zum Bericht hinzufügen</string>
     <string name="january_short">Jan</string>
-    <string name="feburary_short">Feb</string>
+    <string name="february_short">Feb</string>
     <string name="march_short">Mär</string>
     <string name="april_short">Apr</string>
     <string name="may_short">Mai</string>
@@ -64,4 +64,24 @@
     <string name="light">Hell</string>
     <string name="manually_set_colon">Manuell gesetzt:</string>
     <string name="set_goal">Ziel festlegen</string>
+    <string name="hours_unit">%1$s Stunden</string>
+    <string name="reset_goal">Ziel zurücksetzen</string>
+    <string name="last_month_time_remaining_title">Verbleibende Zeit im letzten Monat</string>
+    <string name="last_month_time_remaining_description">Der letzte Monat hat noch %1$d Minuten übrig. Möchtest du sie auf diesen Monat übertragen?</string>
+    <string name="this_month_time_remaining_title">Verbleibende Zeit in diesem Monat</string>
+    <string name="this_month_time_remaining_description">In diesem Monat sind noch %1$d Minuten übrig. Möchten Sie diese auf den nächsten Monat übertragen?</string>
+    <string name="transfer_to_next_month">Auf den nächsten Monat übertragen</string>
+    <string name="name_colon">Name:</string>
+    <string name="month_colon">Monat:</string>
+    <string name="history_entry_datetime_pattern">E, dd. MMMM</string>
+    <string name="hours_short_unit">%1$d Std</string>
+    <string name="field_service_report_comments_placeholder">Z. B. Krankheit, LDC, Pionierschule usw.</string>
+    <string name="comments_colon">Bemerkungen:</string>
+    <string name="bible_studies_long_colon">Anzahl der verschiedenen Bibelstudien:</string>
+    <string name="return_visits_colon">Rückbesuche:</string>
+    <string name="hours_colon">Stunden:</string>
+    <string name="video_showings_colon">Videovorführungen:</string>
+    <string name="placements_long_colon">Abgabe (gedruckt und elektronisch):</string>
+    <string name="minutes">Minuten</string>
+    <string name="share_with">Teilen mit</string>
 </resources>

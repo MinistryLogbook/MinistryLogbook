@@ -47,7 +47,10 @@ fun BaseSettingsPage(
             Box {
                 Toolbar(padding = PaddingValues(horizontal = 12.dp)) {
                     ToolbarAction(onClick = handleBack) {
-                        Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = null)
+                        Icon(
+                            painterResource(R.drawable.ic_arrow_back),
+                            contentDescription = null
+                        ) // TODO: contentDescription
                     }
                     Spacer(Modifier.width(8.dp))
                     Text(title, fontSize = MaterialTheme.typography.titleLarge.fontSize)
@@ -95,7 +98,7 @@ fun Setting(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         icon?.let {
-            Icon(icon, contentDescription = null)
+            Icon(icon, contentDescription = null) // TODO: contentDescription
             Spacer(Modifier.width(20.dp))
         }
         Column {

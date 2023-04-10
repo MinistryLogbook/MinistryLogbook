@@ -24,8 +24,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.lib.getLocale
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.share.ShareDialog
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
@@ -50,7 +52,7 @@ fun ToolbarActions() {
         }) {
             Icon(
                 painterResource(R.drawable.ic_share),
-                contentDescription = "Share",
+                contentDescription = stringResource(R.string.share_field_service_report),
             )
         }
         ProfileButton()
@@ -58,9 +60,10 @@ fun ToolbarActions() {
 }
 
 @Composable
-fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
+fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     var expanded by remember { mutableStateOf(false) }
+    val locale = getLocale()
 
     Box {
         Row(
@@ -72,17 +75,17 @@ fun ToolbarMonthSelect(homeViewModel: HomeViewModel = koinViewModel()) {
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(homeViewModel.monthTitle, color = MaterialTheme.colorScheme.secondary)
+            Text(viewModel.getMonthTitle(locale), color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.width(6.dp))
             Icon(
                 Icons.Rounded.ArrowDropDown,
-                contentDescription = "Dropdown Arrow for Month selection",
+                contentDescription = "Dropdown Arrow for month selection", // TODO: translation
                 tint = MaterialTheme.colorScheme.secondary,
             )
         }
         MonthPickerPopup(
             expanded = expanded,
-            selectedMonth = homeViewModel.month,
+            selectedMonth = viewModel.month,
             onDismissRequest = {
                 expanded = !expanded
             },

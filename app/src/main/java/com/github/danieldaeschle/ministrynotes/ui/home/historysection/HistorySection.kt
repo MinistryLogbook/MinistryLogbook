@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -71,7 +72,8 @@ fun HistorySection(homeViewModel: HomeViewModel = koinViewModel()) {
 
 @Composable
 fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? = null) {
-    val formatter = DateTimeFormatter.ofPattern("E, dd. MMMM")
+    val formatter =
+        DateTimeFormatter.ofPattern(stringResource(R.string.history_entry_datetime_pattern))
     val dateText = formatter.format(entry.datetime.toJavaLocalDate())
 
     Row(
@@ -95,7 +97,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
         ) {
             Icon(
                 painter = entry.type.icon(),
-                contentDescription = null,
+                contentDescription = null, // TODO: contentDescription
                 modifier = Modifier.size(20.dp),
                 tint = entry.type.color().copy(0.8f),
             )
@@ -127,7 +129,10 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                         }" else ""
                     HistoryItemChip(
                         icon = painterResource(R.drawable.ic_schedule),
-                        text = "${sign}${entry.hours}${minutes} hrs"
+                        text = stringResource(
+                            R.string.hours_short_unit,
+                            "${sign}${entry.hours}${minutes}"
+                        )
                     )
                     Spacer(Modifier.width(8.dp))
                 }
@@ -168,7 +173,12 @@ fun HistoryItemChip(icon: Painter? = null, text: String) {
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp), tint = color)
+            Icon(
+                icon,
+                contentDescription = null, // TODO: contentDescription
+                modifier = Modifier.size(16.dp),
+                tint = color
+            )
         }
         Text(
             text, style = TextStyle(color = color), modifier = Modifier.padding(start = 4.dp)

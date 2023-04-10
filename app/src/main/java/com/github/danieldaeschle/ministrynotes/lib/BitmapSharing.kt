@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import androidx.core.content.FileProvider
+import com.github.danieldaeschle.ministrynotes.R
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
@@ -16,7 +17,7 @@ fun Context.shareBitmap(bitmap: Bitmap) {
     cachePath.mkdirs()
 
     // create png file
-    val file = File(cachePath, "Image_123.png")
+    val file = File(cachePath, "FieldServiceReport.png")
     val fileOutputStream: FileOutputStream
     try {
         fileOutputStream = FileOutputStream(file)
@@ -42,5 +43,5 @@ fun Context.shareBitmap(bitmap: Bitmap) {
     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
     intent.putExtra(Intent.EXTRA_STREAM, myImageFileUri)
     intent.type = "image/png"
-    startActivity(Intent.createChooser(intent, "Share with"))
+    startActivity(Intent.createChooser(intent, getString(R.string.share_with)))
 }

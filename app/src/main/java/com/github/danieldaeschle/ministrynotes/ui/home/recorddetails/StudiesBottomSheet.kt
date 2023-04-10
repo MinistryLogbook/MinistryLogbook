@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
@@ -20,9 +21,9 @@ import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.StudiesDetails
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun StudiesBottomSheetContent(studiesDetailsViewModel: StudiesDetailsViewModel = koinViewModel()) {
+fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val studyEntry = studiesDetailsViewModel.studyEntry.collectAsState()
+    val studyEntry = viewModel.studyEntry.collectAsState()
     var tempStudies by remember(studyEntry.value) { mutableStateOf(studyEntry.value?.count ?: 0) }
 
     val handleClose: () -> Unit = {
@@ -30,7 +31,7 @@ fun StudiesBottomSheetContent(studiesDetailsViewModel: StudiesDetailsViewModel =
     }
 
     val handleSave: () -> Unit = {
-        studiesDetailsViewModel.save(tempStudies)
+        viewModel.save(tempStudies)
         handleClose()
     }
 
@@ -54,8 +55,8 @@ fun StudiesBottomSheetContent(studiesDetailsViewModel: StudiesDetailsViewModel =
                 .fillMaxWidth()
         ) {
             UnitRow(
-                "Studies",
-                description = "Number of Different Bible Studies Conducted",
+                stringResource(R.string.bible_studies_short),
+                description = stringResource(R.string.bible_studies_long),
                 icon = painterResource(R.drawable.ic_local_library)
             ) {
                 NumberPicker(tempStudies, onChange = handleChange)

@@ -8,7 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.lib.Time
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import kotlinx.datetime.Clock
@@ -28,17 +30,15 @@ fun RestHint(viewModel: HomeViewModel = koinViewModel()) {
 
         Tile(
             title = {
-                Text("Time left in this month")
+                Text(stringResource(R.string.this_month_time_remaining_title))
             },
             actions = {
                 TextButton(onClick = { viewModel.transferToNextMonth(rest.minutes) }) {
-                    Text("Transfer to next month")
+                    Text(stringResource(R.string.transfer_to_next_month))
                 }
             }
         ) {
-            Text(
-                "There are ${rest.minutes} minutes left in this month. Would you like to transfer them over to next month?",
-            )
+            Text(stringResource(R.string.this_month_time_remaining_description, rest.minutes))
         }
     }
 }

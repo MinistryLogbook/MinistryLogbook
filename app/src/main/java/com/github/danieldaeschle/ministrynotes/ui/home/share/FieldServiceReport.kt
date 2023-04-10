@@ -51,7 +51,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     }
 
     // title
-    val title = "FIELD SERVICE REPORT"
+    val title = getString(R.string.field_service_report)
     val titlePaint = Paint().apply {
         color = Color.BLACK
         textSize = 45f
@@ -66,8 +66,8 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
         textSize = 36f
         typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     }
-    val nameLabel = "Name:"
-    val monthLabel = "Month:"
+    val nameLabel = getString(R.string.name_colon)
+    val monthLabel = getString(R.string.month_colon)
     val nameLabelMetrics = Rect()
     nameMonthPaint.getTextBounds(nameLabel, 0, nameLabel.length, nameLabelMetrics)
     val monthLabelMetrics = Rect()
@@ -84,28 +84,28 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     val tableBottom = tableTop + 5 * rowHeight
 
     // placements
-    val placementsLabel = "Placements (Printed and Electronic)"
+    val placementsLabel = getString(R.string.placements_long_colon)
     val placementsLineY = tableTop + rowHeight
 
     // video showings
-    val videoShowingsLabel = "Video Showings"
+    val videoShowingsLabel = getString(R.string.video_showings)
     val videoShowingsLineY = placementsLineY + rowHeight
 
     // hours
-    val hoursLabel = "Hours"
+    val hoursLabel = getString(R.string.hours)
     val hoursLineY = videoShowingsLineY + rowHeight
 
     // return visits
-    val returnVisitsLabel = "Return Visits"
+    val returnVisitsLabel = getString(R.string.return_visits)
     val returnVisitsLineY = hoursLineY + rowHeight
 
     // bible studies
-    val bibleStudiesLabel = "Number of Different Bible Studies Conducted"
+    val bibleStudiesLabel = getString(R.string.bible_studies_long)
 
     // comments
     val commentsTop = tableBottom + padding
     val commentsMinHeight = 120f
-    val commentsLabel = "Comments:"
+    val commentsLabel = getString(R.string.comments_colon)
     val commentsLabelLineHeight = 36f
     val commentStaticLayout =
         StaticLayout.Builder.obtain(

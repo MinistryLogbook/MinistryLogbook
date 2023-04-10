@@ -73,7 +73,10 @@ fun MenuPopup() {
         ToolbarAction(Modifier.align(Alignment.CenterStart), onClick = {
             navController.popBackStack()
         }) {
-            Icon(painterResource(R.drawable.ic_close), contentDescription = null)
+            Icon(
+                painterResource(R.drawable.ic_close),
+                contentDescription = null
+            ) // TODO: contentDescription
         }
 
         Text(
@@ -88,25 +91,13 @@ fun MenuPopup() {
     Row(
         Modifier
             .fillMaxWidth()
-            .clickable {
-                navController.navigateToSettings()
-            }
-            .padding(horizontal = 16.dp, vertical = 12.dp)) {
-        Icon(painterResource(R.drawable.ic_settings), contentDescription = null)
-        Spacer(Modifier.width(16.dp))
-        Text("Settings")
-    }
-
-    Row(
-        Modifier
-            .fillMaxWidth()
-            .clickable {}
+            .clickable { navController.navigateToSettings() }
             .padding(horizontal = 16.dp, vertical = 12.dp)) {
         Icon(
-            painterResource(R.drawable.ic_tips_and_updates),
+            painterResource(R.drawable.ic_settings),
             contentDescription = null
-        )
+        ) // TODO: contentDescription
         Spacer(Modifier.width(16.dp))
-        Text("News")
+        Text(stringResource(R.string.settings))
     }
 }

@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
 
@@ -38,14 +39,17 @@ fun Toolbar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton(onClick = onClose) {
-            Icon(painterResource(R.drawable.ic_close), contentDescription = "Close window")
+            Icon(
+                painterResource(R.drawable.ic_close),
+                contentDescription = "Close window"
+            ) // TODO: translation
         }
         Row {
             if (isDeletable) {
                 IconButton(onClick = onDelete) {
                     Icon(
                         painterResource(R.drawable.ic_delete_forever),
-                        contentDescription = "Delete entry"
+                        contentDescription = stringResource(R.string.delete_entry)
                     )
                 }
                 Spacer(Modifier.width(8.dp))
@@ -56,7 +60,7 @@ fun Toolbar(
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 6.dp),
                 enabled = isSavable,
                 onClick = { onSave() }) {
-                Text("Save")
+                Text(stringResource(R.string.save))
             }
         }
     }

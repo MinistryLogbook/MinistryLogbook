@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,8 +33,10 @@ fun Counter(
     val onBackgroundColor80 = MaterialTheme.colorScheme.onBackground.copy(0.8f).toArgb()
     val onBackgroundColor60 = MaterialTheme.colorScheme.onBackground.copy(0.6f).toArgb()
     val jostTypeface = ResourcesCompat.getFont(context, R.font.jost_variable)
-    val animatedHours by animateIntAsState(targetValue = time.hours, label = "placements")
-    val animatedMinutes by animateIntAsState(targetValue = time.minutes, label = "placements")
+    val animatedHours by animateIntAsState(targetValue = time.hours, label = "hours")
+    val animatedMinutes by animateIntAsState(targetValue = time.minutes, label = "minutes")
+    val hrsText = stringResource(R.string.hours_short)
+    val minText = stringResource(R.string.minutes_short)
 
     Canvas(modifier = modifier, onDraw = {
         val bigTextPaint = Paint().asFrameworkPaint().apply {
@@ -63,9 +66,9 @@ fun Counter(
             animatedMinutes.toString(), 0, animatedMinutes.toString().length, minutesBounds
         )
         val hrsUnitBounds = Rect()
-        unitTextPaint.getTextBounds("hrs", 0, 3, hrsUnitBounds)
+        unitTextPaint.getTextBounds(hrsText, 0, 3, hrsUnitBounds)
         val minUnitBounds = Rect()
-        unitTextPaint.getTextBounds("min", 0, 3, minUnitBounds)
+        unitTextPaint.getTextBounds(minText, 0, 3, minUnitBounds)
         val gap = 8.dp.toPx()
         val drawWidth = hoursBounds.width() + gap + minUnitBounds.width()
         val drawHeight = hoursBounds.height() + gap + minutesBounds.height()
@@ -83,8 +86,8 @@ fun Counter(
             it.nativeCanvas.drawText(
                 animatedMinutes.toString(), beginMinutesX, beginMinutesY, smallTextPaint
             )
-            it.nativeCanvas.drawText("hrs", beginUnitX, beginHoursY, unitTextPaint)
-            it.nativeCanvas.drawText("min", beginUnitX, beginMinY, unitTextPaint)
+            it.nativeCanvas.drawText(hrsText, beginUnitX, beginHoursY, unitTextPaint)
+            it.nativeCanvas.drawText(minText, beginUnitX, beginMinY, unitTextPaint)
         }
     })
 }

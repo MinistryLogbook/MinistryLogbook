@@ -29,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.EntryType
@@ -155,7 +156,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                     onClick = onDateChange,
                     enabled = datePickerConfirmEnabled
                 ) {
-                    Text("OK")
+                    Text(stringResource(R.string.ok))
                 }
             },
             dismissButton = {
@@ -164,7 +165,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                         isDateDialogVisible = false
                     }
                 ) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             }
         ) {
@@ -178,19 +179,15 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
         AlertDialog(
             onDismissRequest = onDismissRequest,
-            title = {
-                Text("Delete entry")
-            },
-            text = {
-                Text("Do you really want to delete this entry?")
-            },
+            title = { Text(stringResource(R.string.delete_entry)) },
+            text = { Text(stringResource(R.string.delete_entry_description)) },
             confirmButton = {
                 val onClick = {
                     isDeleteDialogVisible = false
                     handleDelete()
                 }
                 TextButton(onClick = onClick) {
-                    Text("Yes")
+                    Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
@@ -198,7 +195,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                     isDeleteDialogVisible = false
                 }
                 TextButton(onClick = onClick) {
-                    Text("Cancel")
+                    Text(stringResource(R.string.cancel))
                 }
             },
         )
@@ -274,13 +271,16 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
                 .fillMaxWidth()
         ) {
-            UnitRow("Hours", icon = painterResource(R.drawable.ic_schedule)) {
+            UnitRow(
+                stringResource(R.string.hours),
+                icon = painterResource(R.drawable.ic_schedule),
+            ) {
                 NumberPicker(entry.hours) {
                     handleChangeHours(it)
                 }
 
             }
-            UnitRow("Minutes") {
+            UnitRow(stringResource(R.string.minutes)) {
                 NumberPicker(entry.minutes, step = 5) {
                     handleChangeMinutes(it)
                 }
@@ -290,20 +290,26 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 AnimatedVisibility(visible = entry.type == EntryType.Ministry) {
                     Column {
                         UnitRow(
-                            "Placements",
-                            description = "Printed and Electronic",
+                            stringResource(R.string.placements_short),
+                            description = stringResource(R.string.printed_and_electronic),
                             icon = painterResource(R.drawable.ic_article)
                         ) {
                             NumberPicker(entry.placements) {
                                 handleChangePlacements(it)
                             }
                         }
-                        UnitRow("Videos", icon = painterResource(R.drawable.ic_play_circle)) {
+                        UnitRow(
+                            stringResource(R.string.video_showings),
+                            icon = painterResource(R.drawable.ic_play_circle)
+                        ) {
                             NumberPicker(entry.videoShowings) {
                                 handleChangeVideos(it)
                             }
                         }
-                        UnitRow("Return visits", icon = painterResource(R.drawable.ic_group)) {
+                        UnitRow(
+                            stringResource(R.string.return_visits),
+                            icon = painterResource(R.drawable.ic_group)
+                        ) {
                             NumberPicker(entry.returnVisits) {
                                 handleChangeReturnVisits(it)
                             }

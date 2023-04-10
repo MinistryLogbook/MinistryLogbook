@@ -25,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -66,9 +67,12 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
         ExtendableFloatingActionButton(onClick = {
             navController.navigate(HomeGraph.EntryDetails.createRoute())
         }, extended = fabExtended, icon = {
-            Icon(painterResource(R.drawable.ic_add), contentDescription = null)
+            Icon(
+                painterResource(R.drawable.ic_add),
+                contentDescription = null
+            ) // TODO: contentDescription
         }, text = {
-            Text("Add to report")
+            Text(stringResource(R.string.add_to_report))
         })
     }) {
         Box {

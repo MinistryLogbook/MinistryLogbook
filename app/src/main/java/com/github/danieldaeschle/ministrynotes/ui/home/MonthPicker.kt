@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
@@ -207,7 +208,7 @@ fun MonthPickerPopup(
                         )
                         else LocalContentColor.current,
                     ) {
-                        Text("Current Month")
+                        Text(stringResource(R.string.current_month))
                     }
                 }
             }
@@ -226,7 +227,7 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
     ) {
         Icon(
             painterResource(R.drawable.ic_chevron_left),
-            contentDescription = "Arrow left",
+            contentDescription = "Arrow left", // TODO: translation
             modifier = Modifier
                 .size(32.dp)
                 .clip(RoundedCornerShape(100))

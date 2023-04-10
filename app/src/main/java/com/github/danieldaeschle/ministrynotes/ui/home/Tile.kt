@@ -44,7 +44,7 @@ fun Tile(
                 IconButton(modifier = Modifier.align(Alignment.TopEnd), onClick = it) {
                     Icon(
                         painter = painterResource(R.drawable.ic_close),
-                        contentDescription = "Close",
+                        contentDescription = "Close",  // TODO: translation
                         modifier = Modifier.size(20.dp),
                     )
                 }

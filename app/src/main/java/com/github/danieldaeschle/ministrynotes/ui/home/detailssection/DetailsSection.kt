@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
@@ -164,11 +165,14 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
 
                                 Icon(
                                     painterResource(R.drawable.ic_volunteer_activism),
-                                    contentDescription = null,
+                                    contentDescription = null, // TODO: contentDescription
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(Modifier.width(4.dp))
-                                val text = "${credit.hours}${creditMinutes} hrs"
+                                val text = stringResource(
+                                    R.string.hours_short_unit,
+                                    "${credit.hours}${creditMinutes}"
+                                )
                                 Text(
                                     text,
                                     color = MaterialTheme.colorScheme.onSurface,

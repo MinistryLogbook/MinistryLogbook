@@ -11,7 +11,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.lib.condition
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
@@ -41,17 +43,17 @@ fun TransferHint(viewModel: HomeViewModel = koinViewModel()) {
                 height(0.dp)
             },
         title = {
-            Text("Last month has time left")
+            Text(stringResource(R.string.last_month_time_remaining_title))
         },
         actions = {
             TextButton(onClick = { viewModel.transferFromLastMonth(restLastMonth.minutes) }) {
-                Text("Transfer")
+                Text(stringResource(R.string.transfer))
             }
         },
         onDismiss = { viewModel.transferFromLastMonth(0) }
     ) {
         Text(
-            "The last month has ${restLastMonth.minutes} minutes left. Do you want to transfer it to this month?"
+            stringResource(R.string.last_month_time_remaining_description, restLastMonth.minutes)
         )
     }
 }
