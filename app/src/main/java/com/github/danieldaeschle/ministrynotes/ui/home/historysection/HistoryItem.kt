@@ -91,9 +91,9 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                 val text = if (!isTransfer) {
                     entry.type.translate()
                 } else if (subtract) {
-                    "${entry.minutes} min transferred to next month"
+                    stringResource(R.string.min_transferred_to_next_month, entry.minutes)
                 } else {
-                    "${entry.minutes} min transferred from last month"
+                    stringResource(R.string.min_transferred_from_last_month, entry.minutes)
                 }
                 Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
 

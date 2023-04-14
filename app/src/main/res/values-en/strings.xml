@@ -90,4 +90,6 @@
     <string name="undo_transfer_title">Undo transfer</string>
     <string name="undo_transfer_description">Are you sure you want to undo the transfer?</string>
     <string name="undo">Undo</string>
+    <string name="min_transferred_to_next_month">%1$s min transferred to next month</string>
+    <string name="min_transferred_from_last_month">%1$s min transferred from last month</string>
 </resources>
