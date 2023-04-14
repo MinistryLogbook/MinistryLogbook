@@ -20,6 +20,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
 sealed class AppGraph(val route: String) {
     object Home : AppGraph("home")
+
     object Settings : AppGraph("settings")
 }
 

@@ -87,4 +87,7 @@
     <string name="video_showings_short">Videos</string>
     <string name="to_transfer">Transfer</string>
     <string name="set_goal_error">Value must be a number greater than zero</string>
+    <string name="undo_transfer_title">Undo transfer</string>
+    <string name="undo_transfer_description">Are you sure you want to undo the transfer?</string>
+    <string name="undo">Undo</string>
 </resources>

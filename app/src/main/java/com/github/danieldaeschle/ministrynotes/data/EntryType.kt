@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.ui.theme.ProgressPositive
 
 enum class EntryType {
     Ministry, TheocraticAssignment, TheocraticSchool, Transfer;
@@ -29,7 +30,7 @@ enum class EntryType {
         Ministry -> painterResource(R.drawable.ic_work)
         TheocraticAssignment -> painterResource(R.drawable.ic_build)
         TheocraticSchool -> painterResource(R.drawable.ic_school)
-        Transfer -> painterResource(R.drawable.ic_tab_move)
+        Transfer -> painterResource(R.drawable.ic_exit_to_app)
     }
 
     @Composable
@@ -38,6 +39,6 @@ enum class EntryType {
         Ministry -> MaterialTheme.colorScheme.primary
         TheocraticAssignment -> Color(0xFFFF9800)
         TheocraticSchool -> Color(0xFFFF9800)
-        Transfer -> Color(0xFF9E9E9E)
+        Transfer -> ProgressPositive
     }
 }

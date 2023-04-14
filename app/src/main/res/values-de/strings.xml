@@ -87,4 +87,7 @@
     <string name="video_showings_short">Videos</string>
     <string name="to_transfer">Übertragen</string>
     <string name="set_goal_error">Der Wert muss eine Zahl sein, die größer als null ist</string>
+    <string name="undo_transfer_description">Bist du sicher, dass du den Übertrag rückgängig machen möchtest?</string>
+    <string name="undo_transfer_title">Transfer rückgängig machen</string>
+    <string name="undo">Rückgängig machen</string>
 </resources>

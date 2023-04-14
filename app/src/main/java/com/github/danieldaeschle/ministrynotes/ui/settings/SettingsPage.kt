@@ -61,7 +61,7 @@ fun DesignSetting() {
 
     AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
         Text(stringResource(R.string.design))
-    }, negativeButton = {
+    }, dismissButton = {
         TextButton(onClick = handleClose) {
             Text(stringResource(R.string.cancel))
         }
@@ -127,7 +127,7 @@ fun RoleSetting() {
 
     AlertDialog(isOpen = isRoleDialogOpen, onClose = handleClose, title = {
         Text(stringResource(R.string.role))
-    }, negativeButton = {
+    }, dismissButton = {
         TextButton(onClick = handleClose) {
             Text(stringResource(R.string.cancel))
         }
@@ -211,7 +211,7 @@ fun LanguageSetting() {
 
     AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
         Text(stringResource(R.string.role))
-    }, negativeButton = {
+    }, dismissButton = {
         TextButton(onClick = handleClose) {
             Text(stringResource(R.string.cancel))
         }

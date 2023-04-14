@@ -78,7 +78,7 @@ fun NavGraphBuilder.homeGraph() {
         enterTransition = {
             when (initialState.destination.route) {
                 HomeGraph.Root.route -> EnterTransition.None
-                else -> slideInHorizontally(tween(200)) { it / 3 } + fadeIn(tween(100))
+                else -> slideInHorizontally(tween(200)) { it / 8 } + fadeIn(tween(100))
             }
         },
         exitTransition = {
@@ -88,7 +88,7 @@ fun NavGraphBuilder.homeGraph() {
             }
         },
         popEnterTransition = {
-            slideInHorizontally(tween(200)) { -it / 3 } + fadeIn(tween(100))
+            slideInHorizontally(tween(200)) { -it / 8 } + fadeIn(tween(100))
         },
         popExitTransition = {
             slideOutHorizontally(tween(200)) { -it / 3 } + fadeOut(tween(100))

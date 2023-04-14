@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 fun AlertDialog(
     isOpen: Boolean = false,
     title: (@Composable () -> Unit)? = null,
-    negativeButton: (@Composable () -> Unit)? = null,
+    dismissButton: (@Composable () -> Unit)? = null,
+    confirmButton: (@Composable () -> Unit)? = null,
     onClose: () -> Unit = {},
     paddingValues: PaddingValues = PaddingValues(vertical = 24.dp),
     content: @Composable () -> Unit = {}
@@ -50,20 +51,21 @@ fun AlertDialog(
                         }
                     }
 
-                    Column(Modifier.condition(negativeButton != null) {
+                    Column(Modifier.condition(dismissButton != null) {
                         padding(bottom = 16.dp)
                     }) {
                         content()
                     }
 
-                    negativeButton?.let {
+                    if (dismissButton != null || confirmButton != null) {
                         Row(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(start = 24.dp, end = 24.dp),
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.End,
                         ) {
-                            negativeButton()
+                            dismissButton?.let { dismissButton() }
+                            confirmButton?.let { confirmButton() }
                         }
                     }
                 }

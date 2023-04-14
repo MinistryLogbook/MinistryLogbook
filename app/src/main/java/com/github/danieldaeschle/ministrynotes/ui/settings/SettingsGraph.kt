@@ -25,13 +25,13 @@ fun NavGraphBuilder.settingsGraph() {
         route = AppGraph.Settings.route,
         startDestination = SettingsGraph.Root.route,
         enterTransition = {
-            slideInHorizontally(tween(200)) { it / 3 } + fadeIn(tween(100))
+            slideInHorizontally(tween(200)) { it / 8 } + fadeIn(tween(100))
         },
         exitTransition = {
             slideOutHorizontally(tween(200)) { it / 3 } + fadeOut(tween(100))
         },
         popEnterTransition = {
-            slideInHorizontally(tween(200)) { -it / 3 } + fadeIn(tween(100))
+            slideInHorizontally(tween(200)) { -it / 8 } + fadeIn(tween(100))
         },
         popExitTransition = {
             slideOutHorizontally(tween(200)) { -it / 3 } + fadeOut(tween(100))

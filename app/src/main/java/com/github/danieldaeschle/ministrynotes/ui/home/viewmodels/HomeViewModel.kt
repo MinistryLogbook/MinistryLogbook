@@ -102,6 +102,14 @@ class HomeViewModel(
         }
     }
 
+    fun undoTransfer(transfer: Entry) {
+        viewModelScope.launch {
+            _entryRepository.delete(transfer)
+            _transferred.value = _transferred.value.filter { it.id != transfer.id }
+            _entries.value = _entries.value.filter { it.id != transfer.id }
+        }
+    }
+
     /** Transferring 0 minutes dismisses the message and won't show a history item. */
     fun transferFromLastMonth(minutes: Int) {
         val firstOfMonth = LocalDate(month.year, month.month, 1)
