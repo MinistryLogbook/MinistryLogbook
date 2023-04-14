@@ -11,8 +11,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.github.danieldaeschle.ministrynotes.R
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore("settings")
@@ -90,7 +90,8 @@ class SettingsDataStore(val context: Context) {
         }
     }
 
-    suspend fun setRole(role: Role) = manuallySetGoal.collectLatest { msg ->
+    suspend fun setRole(role: Role) {
+        val msg = manuallySetGoal.firstOrNull()
         if (msg == role.goal) {
             resetGoal()
         }
@@ -107,10 +108,11 @@ class SettingsDataStore(val context: Context) {
         it[DESIGN_KEY] = design.name
     }
 
-    suspend fun setGoal(goal: Int?) = roleGoal.collectLatest { rg ->
-        if (rg == goal || goal == null) {
+    suspend fun setGoal(goal: Int?) {
+        val rg = roleGoal.firstOrNull()
+        if (goal == null || goal == rg) {
             resetGoal()
-            return@collectLatest
+            return
         }
         context.dataStore.edit {
             it[GOAL_KEY] = goal

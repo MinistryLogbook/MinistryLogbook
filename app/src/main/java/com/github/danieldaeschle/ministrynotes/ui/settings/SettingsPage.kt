@@ -164,24 +164,27 @@ fun RoleSetting() {
 fun GoalSetting() {
     val navController = LocalAppNavController.current
     val settingsDataStore = rememberSettingsDataStore()
+    val role by settingsDataStore.role.collectAsState(null)
     val goal by settingsDataStore.goal.collectAsState(null)
     val roleGoal by settingsDataStore.roleGoal.collectAsState(PublisherGoal)
     val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
+    val noGoalSetText = stringResource(R.string.no_goal_set)
+    val manuallySetText = stringResource(R.string.manually_set_colon)
+    val goalUnitText = stringResource(R.string.hours_unit, goal ?: 0)
 
-    val goalText = if (goal == PublisherGoal && manuallySetGoal == null) {
-        stringResource(R.string.no_goal_set)
-    } else {
-        val prefix = if (manuallySetGoal != null && manuallySetGoal != roleGoal) {
-            stringResource(R.string.manually_set_colon) + " "
-        } else {
-            ""
+    val goalText by remember(role, goal, roleGoal, manuallySetGoal) {
+        derivedStateOf {
+            if (role == Role.Publisher && goal == roleGoal && manuallySetGoal == null) {
+                noGoalSetText
+            } else {
+                val showManuallySet = manuallySetGoal != null && manuallySetGoal != roleGoal
+                val prefix = if (showManuallySet) "$manuallySetText " else ""
+                goal?.let { prefix + goalUnitText } ?: ""
+            }
         }
-        goal?.let {
-            prefix + stringResource(R.string.hours_unit, it)
-        }
-    } ?: ""
+    }
 
-    Setting(title = "Goal", onClick = {
+    Setting(title = stringResource(R.string.goal), onClick = {
         navController.navigateToSettingsGoal()
     }) {
         Text(

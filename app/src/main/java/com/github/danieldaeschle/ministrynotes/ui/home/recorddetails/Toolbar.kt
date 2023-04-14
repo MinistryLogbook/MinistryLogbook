@@ -30,6 +30,7 @@ fun Toolbar(
     isSavable: Boolean = true,
     onDelete: () -> Unit = {},
     isDeletable: Boolean = false,
+    showSave: Boolean = true,
 ) {
     Row(
         modifier = Modifier
@@ -41,8 +42,8 @@ fun Toolbar(
         IconButton(onClick = onClose) {
             Icon(
                 painterResource(R.drawable.ic_close),
-                contentDescription = "Close window"
-            ) // TODO: translation
+                contentDescription = "Close window" // TODO: translation
+            )
         }
         Row {
             if (isDeletable) {
@@ -52,15 +53,21 @@ fun Toolbar(
                         contentDescription = stringResource(R.string.delete_entry)
                     )
                 }
-                Spacer(Modifier.width(8.dp))
             }
-            Button(modifier = Modifier
-                .clip(RoundedCornerShape(100))
-                .defaultMinSize(minWidth = 58.dp, minHeight = 20.dp),
-                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 6.dp),
-                enabled = isSavable,
-                onClick = { onSave() }) {
-                Text(stringResource(R.string.save))
+            if (showSave) {
+                if (isDeletable) {
+                    Spacer(Modifier.width(8.dp))
+                }
+                Button(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(100))
+                        .defaultMinSize(minWidth = 58.dp, minHeight = 20.dp),
+                    contentPadding = PaddingValues(horizontal = 20.dp, vertical = 6.dp),
+                    enabled = isSavable,
+                    onClick = { onSave() }
+                ) {
+                    Text(stringResource(R.string.save))
+                }
             }
         }
     }

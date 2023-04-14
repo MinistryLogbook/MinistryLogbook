@@ -69,8 +69,8 @@
     <string name="last_month_time_remaining_title">Verbleibende Zeit im letzten Monat</string>
     <string name="last_month_time_remaining_description">Der letzte Monat hat noch %1$d Minuten übrig. Möchtest du sie auf diesen Monat übertragen?</string>
     <string name="this_month_time_remaining_title">Verbleibende Zeit in diesem Monat</string>
-    <string name="this_month_time_remaining_description">In diesem Monat sind noch %1$d Minuten übrig. Möchten Sie diese auf den nächsten Monat übertragen?</string>
-    <string name="transfer_to_next_month">Auf den nächsten Monat übertragen</string>
+    <string name="this_month_time_remaining_description">In diesem Monat sind noch %1$d Minuten übrig. Möchtest du sie auf den nächsten Monat übertragen?</string>
+    <string name="transfer_to_next_month">In den nächsten Monat übertragen</string>
     <string name="name_colon">Name:</string>
     <string name="month_colon">Monat:</string>
     <string name="history_entry_datetime_pattern">E, dd. MMMM</string>
@@ -86,4 +86,5 @@
     <string name="share_with">Teilen mit</string>
     <string name="video_showings_short">Videos</string>
     <string name="to_transfer">Übertragen</string>
+    <string name="set_goal_error">Der Wert muss eine Zahl sein, die größer als null ist</string>
 </resources>

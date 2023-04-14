@@ -2,10 +2,7 @@ package com.github.danieldaeschle.ministrynotes.ui.shared
 
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -15,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -71,17 +69,17 @@ fun Toolbar(
 @Composable
 fun ToolbarAction(
     modifier: Modifier = Modifier,
+    disabled: Boolean = false,
     onClick: () -> Unit = {},
     content: @Composable () -> Unit = {},
 ) {
-    Column(
+    IconButton(
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .clickable(onClick = onClick)
             .then(modifier),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        onClick = onClick,
+        enabled = !disabled,
     ) {
         content()
     }

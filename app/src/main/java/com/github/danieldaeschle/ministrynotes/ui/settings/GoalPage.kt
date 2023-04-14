@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
+import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
@@ -40,17 +41,26 @@ import kotlinx.coroutines.launch
 fun GoalPage() {
     val settingsDataStore = rememberSettingsDataStore()
     val navController = LocalAppNavController.current
-    val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
+    val goal by settingsDataStore.goal.collectAsState(null)
+    val role by settingsDataStore.role.collectAsState(null)
+    val roleGoal by settingsDataStore.roleGoal.collectAsState(null)
     val coroutineScope = rememberCoroutineScope()
-
-    var textFieldValueState by remember(manuallySetGoal) {
+    var textFieldValueState by remember(goal, role, roleGoal) {
+        // publishers don't have a goal but internally it's 1
+        // we don't want to show that to the user
+        val goalToShow = if (role == Role.Publisher && goal == roleGoal) {
+            ""
+        } else {
+            goal?.toString() ?: ""
+        }
         mutableStateOf(
             TextFieldValue(
-                text = manuallySetGoal?.toString() ?: "",
-                selection = TextRange(manuallySetGoal.toString().length)
+                text = goalToShow,
+                selection = TextRange(goal.toString().length)
             )
         )
     }
+    val isSavable = (textFieldValueState.text.toIntOrNull() ?: 0) > 0
     val focusRequester = remember { FocusRequester() }
 
     val handleSave = {
@@ -60,16 +70,27 @@ fun GoalPage() {
         navController.popBackStack()
     }
 
+    val handleReset = {
+        coroutineScope.launch {
+            settingsDataStore.resetGoal()
+        }
+        textFieldValueState = TextFieldValue(
+            text = "",
+            selection = TextRange(0)
+        )
+        navController.popBackStack()
+    }
+
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
 
     BaseSettingsPage(stringResource(R.string.goal), actions = {
-        ToolbarAction(onClick = { handleSave() }) {
+        ToolbarAction(onClick = { handleSave() }, disabled = !isSavable) {
             Icon(
                 painterResource(R.drawable.ic_done),
-                contentDescription = null
-            ) // TODO: contentDescription
+                contentDescription = null, // TODO: contentDescription
+            )
         }
     }) {
         Column(Modifier.padding(16.dp)) {
@@ -83,23 +104,21 @@ fun GoalPage() {
                 ),
                 keyboardActions = KeyboardActions(onDone = { handleSave() }),
                 singleLine = true,
-                label = {
-                    Text(stringResource(R.string.set_goal))
+                label = { Text(stringResource(R.string.set_goal)) },
+                supportingText = {
+                    if (!isSavable) {
+                        Text(stringResource(R.string.set_goal_error))
+                    }
                 },
                 value = textFieldValueState,
                 onValueChange = { textFieldValueState = it },
+                isError = !isSavable
             )
 
             Spacer(Modifier.height(16.dp))
 
             TextButton(modifier = Modifier.align(Alignment.End), onClick = {
-                coroutineScope.launch {
-                    textFieldValueState = TextFieldValue(
-                        text = "",
-                        selection = TextRange(0)
-                    )
-                    settingsDataStore.resetGoal()
-                }
+                handleReset()
             }) {
                 Text(stringResource(R.string.reset_goal))
             }
