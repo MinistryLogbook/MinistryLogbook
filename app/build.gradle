@@ -7,6 +7,28 @@ plugins {
     id 'kotlin-kapt'
 }
 
+def getGitHash = { ->
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}
+
+def getTagName = { ->
+    def stdout = new ByteArrayOutputStream()
+    try {
+        exec {
+            commandLine 'git', 'describe', '--tags'
+            standardOutput = stdout
+        }
+    } catch (e) {
+        return ""
+    }
+    return stdout.toString().trim()
+}
+
 android {
     compileSdk 33
 
@@ -15,7 +37,7 @@ android {
         minSdk 28
         targetSdk 33
         versionCode 1
-        versionName "1.0"
+        versionName getTagName()
         resourceConfigurations += ["en", "de"]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -30,17 +52,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            versionNameSuffix getTagName() == "" ? getGitHash() : ".${getGitHash()}"
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = 11
     }
     buildFeatures {
         compose true
@@ -68,32 +93,32 @@ dependencies {
     implementation "io.insert-koin:koin-androidx-compose:3.4.2"
 
     implementation "androidx.core:core-splashscreen:1.0.0"
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation "androidx.datastore:datastore-preferences:1.0.0"
     implementation "androidx.navigation:navigation-compose:2.5.3"
-    implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-alpha01'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-alpha02'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4'
-    implementation "androidx.compose.ui:ui-tooling-preview:1.4.0"
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation "androidx.compose.ui:ui-tooling-preview:1.4.1"
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
-    implementation "androidx.compose.ui:ui:1.5.0-alpha01"
-    implementation "androidx.compose.material3:material3:1.1.0-beta01"
-    implementation "androidx.compose.foundation:foundation:1.5.0-alpha01"
+    implementation "androidx.compose.ui:ui:1.5.0-alpha02"
+    implementation "androidx.compose.material3:material3:1.1.0-beta02"
+    implementation "androidx.compose.foundation:foundation:1.5.0-alpha02"
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.29.1-alpha"
     implementation "com.google.accompanist:accompanist-navigation-material:0.29.1-alpha"
     implementation "com.google.accompanist:accompanist-navigation-animation:0.31.0-alpha"
-    implementation "androidx.compose.ui:ui-tooling:1.4.0"
+    implementation "androidx.compose.ui:ui-tooling:1.4.1"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
     implementation 'androidx.activity:activity-compose:1.7.0'
     implementation "org.jetbrains.kotlinx:kotlinx-datetime:0.4.0"
     testImplementation 'junit:junit:4.13.2'
-    debugImplementation "androidx.compose.ui:ui-tooling:1.4.0"
+    debugImplementation "androidx.compose.ui:ui-tooling:1.4.1"
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.0"
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:1.4.1"
 }
 
 kapt {

@@ -2,6 +2,7 @@ package com.github.danieldaeschle.ministrynotes.ui.settings
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
+import com.github.danieldaeschle.ministrynotes.BuildConfig
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Design
 import com.github.danieldaeschle.ministrynotes.data.PublisherGoal
@@ -44,6 +48,21 @@ fun SettingsPage() {
             Title(stringResource(R.string.appearance))
             LanguageSetting()
             DesignSetting()
+        }
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp), contentAlignment = Alignment.Center
+        ) {
+            Text(
+                stringResource(
+                    R.string.version,
+                    BuildConfig.VERSION_NAME,
+                    BuildConfig.VERSION_CODE
+                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
+                fontSize = 13.sp
+            )
         }
     }
 }

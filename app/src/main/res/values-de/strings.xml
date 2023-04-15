@@ -92,4 +92,5 @@
     <string name="undo">Rückgängig machen</string>
     <string name="min_transferred_to_next_month">%1$s min in den nächsten Monat übertragen</string>
     <string name="min_transferred_from_last_month">%1$s min vom letzten Monat übertragen</string>
+    <string name="version">Version %1$s (%2$s)</string>
 </resources>
