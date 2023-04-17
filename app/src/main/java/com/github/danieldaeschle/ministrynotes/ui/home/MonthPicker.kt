@@ -139,13 +139,15 @@ fun MonthPickerPopup(
             transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
         }
 
-        Popup(popupPositionProvider = popupPositionProvider,
+        Popup(
+            popupPositionProvider = popupPositionProvider,
             properties = PopupProperties(focusable = true),
             onDismissRequest = {
                 coroutineScope.launch {
                     handleDismissRequest()
                 }
-            }) {
+            },
+        ) {
             MonthPickerContent(
                 expandedStates = expandedStates,
                 transformOriginState = transformOriginState,
