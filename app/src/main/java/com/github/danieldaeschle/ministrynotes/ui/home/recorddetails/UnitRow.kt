@@ -37,9 +37,9 @@ fun UnitRow(
         if (icon != null) {
             Icon(
                 icon,
-                contentDescription = null,
+                contentDescription = null, // TODO: contentDescription
                 modifier = Modifier.size(26.dp)
-            ) // TODO: contentDescription
+            )
             Spacer(Modifier.width(20.dp))
         } else {
             Spacer(Modifier.width(44.dp))

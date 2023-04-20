@@ -95,14 +95,24 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                 } else {
                     stringResource(R.string.min_transferred_from_last_month, entry.minutes)
                 }
-                Text(text, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    text,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                )
 
                 if (!isTransfer) {
-                    Text(
-                        dateText,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
-                    )
+                    Row {
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            dateText,
+                            fontSize = 12.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
+                        )
+                    }
                 }
             }
 
