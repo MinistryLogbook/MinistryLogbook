@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="hours_spent_on_theocratic_assignments">
+        <item quantity="one">%1$d hour spent on theocratic assignments.</item>
+        <item quantity="other">%1$d hours spent on theocratic assignments.</item>
+    </plurals>
+    <plurals name="hours_spent_on_theocratic_schools">
+        <item quantity="one">%1$d hour spent on theocratic schools.</item>
+        <item quantity="other">%1$d hours spent on theocratic schools.</item>
+    </plurals>
+</resources>

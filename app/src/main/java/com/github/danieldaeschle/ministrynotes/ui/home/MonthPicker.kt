@@ -64,8 +64,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import java.time.format.TextStyle
-import java.util.Locale
 
 @Preview
 @Composable
@@ -166,7 +164,7 @@ fun MonthPickerPopup(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     items(months) { month ->
-                        val monthName = Month(month).getDisplayName(TextStyle.SHORT, Locale.ENGLISH)
+                        val monthName = Month(month).getShortDisplayName()
                         val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
                         val currentMonth = currentDate.month.value
                         val currentYear = actualYear + selectedYearIndex
@@ -216,6 +214,22 @@ fun MonthPickerPopup(
             }
         }
     }
+}
+
+@Composable
+private fun Month.getShortDisplayName() = when (this) {
+    Month.JANUARY -> stringResource(R.string.january_short)
+    Month.FEBRUARY -> stringResource(R.string.february_short)
+    Month.MARCH -> stringResource(R.string.march_short)
+    Month.APRIL -> stringResource(R.string.april_short)
+    Month.MAY -> stringResource(R.string.may_short)
+    Month.JUNE -> stringResource(R.string.june_short)
+    Month.JULY -> stringResource(R.string.july_short)
+    Month.AUGUST -> stringResource(R.string.august_short)
+    Month.SEPTEMBER -> stringResource(R.string.september_short)
+    Month.OCTOBER -> stringResource(R.string.october_short)
+    Month.NOVEMBER -> stringResource(R.string.november_short)
+    Month.DECEMBER -> stringResource(R.string.december_short)
 }
 
 @Composable

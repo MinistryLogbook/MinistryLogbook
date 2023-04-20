@@ -3,6 +3,7 @@ package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.BibleStudyEntry
 import com.github.danieldaeschle.ministrynotes.data.BibleStudyEntryRepository
 import com.github.danieldaeschle.ministrynotes.data.Entry
@@ -59,9 +60,17 @@ class HomeViewModel(
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
             val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
             val commentTheocraticAssignment =
-                "${theocraticAssignmentTime.hours} hours spent on theocratic assignments."
+                application.resources.getQuantityString(
+                    R.plurals.hours_spent_on_theocratic_assignments,
+                    theocraticAssignmentTime.hours,
+                    theocraticAssignmentTime.hours,
+                )
             val commentTheocraticSchool =
-                "${theocraticSchoolTime.hours} hours spent on theocratic schools."
+                application.resources.getQuantityString(
+                    R.plurals.hours_spent_on_theocratic_schools,
+                    theocraticSchoolTime.hours,
+                    theocraticSchoolTime.hours,
+                )
             val comments = listOfNotNull(
                 commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
                 commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },

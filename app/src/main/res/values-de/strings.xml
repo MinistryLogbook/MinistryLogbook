@@ -90,7 +90,7 @@
     <string name="undo_transfer_description">Bist du sicher, dass du den Übertrag rückgängig machen möchtest?</string>
     <string name="undo_transfer_title">Transfer rückgängig machen</string>
     <string name="undo">Rückgängig machen</string>
-    <string name="min_transferred_to_next_month">%1$s min in den nächsten Monat übertragen</string>
-    <string name="min_transferred_from_last_month">%1$s min vom letzten Monat übertragen</string>
+    <string name="min_transferred_to_next_month">%1$s Min. in den nächsten Monat übertragen</string>
+    <string name="min_transferred_from_last_month">%1$s Min. vom letzten Monat übertragen</string>
     <string name="version">Version %1$s (%2$s)</string>
 </resources>

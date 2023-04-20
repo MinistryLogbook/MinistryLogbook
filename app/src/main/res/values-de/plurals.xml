@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="hours_spent_on_theocratic_assignments">
+        <item quantity="one">%1$d Stunde in einer theokratischen Zuteilung verbracht.</item>
+        <item quantity="other">%1$d Stunden in einer theokratischen Zuteilung verbracht.</item>
+    </plurals>
+    <plurals name="hours_spent_on_theocratic_schools">
+        <item quantity="one">%1$d Stunde in einer theokratischen Schule verbracht.</item>
+        <item quantity="other">%1$d Stunden in einer theokratischen Schule verbracht.</item>
+    </plurals>
+</resources>
