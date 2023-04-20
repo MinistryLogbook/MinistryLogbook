@@ -63,7 +63,10 @@ fun GoalPage() {
     val isSavable = (textFieldValueState.text.toIntOrNull() ?: 0) > 0
     val focusRequester = remember { FocusRequester() }
 
-    val handleSave = {
+    val handleSave = handleSave@{
+        if (!isSavable) {
+            return@handleSave
+        }
         coroutineScope.launch {
             settingsDataStore.setGoal(textFieldValueState.text.toIntOrNull())
         }
@@ -79,6 +82,12 @@ fun GoalPage() {
             selection = TextRange(0)
         )
         navController.popBackStack()
+    }
+
+    val handleValueChange: (value: TextFieldValue) -> Unit = {
+        if (it.text.toIntOrNull() != null || it.text.isEmpty()) {
+            textFieldValueState = it
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -111,7 +120,7 @@ fun GoalPage() {
                     }
                 },
                 value = textFieldValueState,
-                onValueChange = { textFieldValueState = it },
+                onValueChange = handleValueChange,
                 isError = !isSavable
             )
 
