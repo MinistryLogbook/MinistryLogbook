@@ -65,18 +65,6 @@ import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-@Preview
-@Composable
-fun MonthPickerPopupPreview() {
-    Box {
-        val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        MonthPickerPopup(
-            expanded = true,
-            selectedMonth = currentDate,
-        )
-    }
-}
-
 @Composable
 fun MonthPickerMonth(
     text: String, selected: Boolean = false, disabled: Boolean = false, onClick: () -> Unit

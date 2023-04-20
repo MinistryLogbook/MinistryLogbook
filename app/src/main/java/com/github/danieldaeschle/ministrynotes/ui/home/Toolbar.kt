@@ -91,7 +91,9 @@ fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
             },
             onSelectMonth = { month ->
                 expanded = false
-                navController.navigate(HomeGraph.Root.createRoute(month.year, month.monthNumber))
+                navController.navigate(HomeGraph.Root.createRoute(month.year, month.monthNumber)) {
+                    navController.popBackStack()
+                }
             },
         )
     }
