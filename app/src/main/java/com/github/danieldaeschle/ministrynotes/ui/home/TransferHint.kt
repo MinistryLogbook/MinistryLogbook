@@ -24,7 +24,7 @@ fun TransferHint(viewModel: HomeViewModel = koinViewModel()) {
     val restLastMonth by viewModel.restLastMonth.collectAsState()
     val entries by viewModel.entries.collectAsState()
     val hasTransfer by remember { derivedStateOf { entries.any { it.type == EntryType.Transfer } } }
-    val show = restLastMonth.isNotEmpty() && !hasTransfer
+    val show = restLastMonth.isNotEmpty && !hasTransfer
 
     Spacer(
         Modifier

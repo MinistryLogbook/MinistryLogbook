@@ -72,7 +72,7 @@ fun HistorySection(viewModel: HomeViewModel = koinViewModel()) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        transferred.filter { it.time.isNotEmpty() }.forEach {
+        transferred.filter { it.time.isNotEmpty }.forEach {
             HistoryItem(it, subtract = true, onClick = { transferToUndo = it })
         }
         orderedEntries.filter { it.type != EntryType.Transfer }.forEach {

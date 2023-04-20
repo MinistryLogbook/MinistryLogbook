@@ -1,38 +1,60 @@
 package com.github.danieldaeschle.ministrynotes.lib
 
+import kotlin.math.abs
 
-data class Time(val hours: Int = 0, val minutes: Int = 0) : Comparable<Time> {
+class Time : Comparable<Time> {
+
+    private var internalRepresentation: Int = 0
+
+    val isNegative
+        get() = internalRepresentation < 0
+
+    val hours
+        get() = abs(internalRepresentation) / 60
+
+    val minutes
+        get() = abs(internalRepresentation) % 60
+
+    val isEmpty
+        get() = this == Empty
+
+    val isNotEmpty
+        get() = this != Empty
+
+    constructor(hours: Int, minutes: Int, isNegative: Boolean = false) {
+        if (hours < 0 || minutes < 0) {
+            throw IllegalArgumentException("Hours and minutes must be positive")
+        }
+        if (minutes > 59) {
+            throw IllegalArgumentException("Minutes must be less than 60")
+        }
+
+        if (isNegative) {
+            this.internalRepresentation = -(hours * 60 + minutes)
+        } else {
+            this.internalRepresentation = hours * 60 + minutes
+        }
+    }
+
+    private constructor(internalRepresentation: Int) {
+        this.internalRepresentation = internalRepresentation
+    }
+
+    operator fun plus(other: Time) =
+        Time(this.internalRepresentation + other.internalRepresentation)
+
+    operator fun minus(other: Time) =
+        Time(this.internalRepresentation - other.internalRepresentation)
+
+    override fun compareTo(other: Time) =
+        this.internalRepresentation.compareTo(other.internalRepresentation)
+
+    override fun equals(other: Any?) =
+        (other is Time) && this.internalRepresentation == other.internalRepresentation
+
+    override fun hashCode() = internalRepresentation.hashCode()
+
     companion object {
-        val Empty = Time()
+        val Empty = Time(0)
     }
-
-    operator fun plus(other: Time): Time {
-        var accumulatedHours = this.hours + other.hours
-        var accumulatedMinutes = this.minutes + other.minutes
-        accumulatedHours += accumulatedMinutes / 60
-        accumulatedMinutes %= 60
-        return Time(accumulatedHours, accumulatedMinutes)
-    }
-
-    operator fun minus(other: Time): Time {
-        var accumulatedHours = this.hours - other.hours
-        var accumulatedMinutes = this.minutes - other.minutes
-        if (accumulatedMinutes < 0) {
-            accumulatedHours -= 1
-            accumulatedMinutes += 60
-        }
-        return Time(accumulatedHours, accumulatedMinutes)
-    }
-
-    override fun compareTo(other: Time): Int {
-        val res = this.hours.compareTo(other.hours)
-        if (res == 0) {
-            return this.minutes.compareTo(other.minutes)
-        }
-        return res
-    }
-
-    fun isEmpty() = this == Empty
-
-    fun isNotEmpty() = this != Empty
 }

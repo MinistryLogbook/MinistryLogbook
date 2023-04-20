@@ -52,7 +52,12 @@ class HomeViewModel(
     val restLastMonth = _restLastMonth.asStateFlow()
     val transferred = _transferred.asStateFlow()
     val rest = _entries.combine(_transferred) { entries, transferred ->
-        entries.ministryTimeSum() - transferred.ministryTimeSum()
+        val result = entries.ministryTimeSum() - transferred.ministryTimeSum()
+        if (!result.isNegative) {
+            result
+        } else {
+            Time.Empty
+        }
     }
 
     val fieldServiceReport =
@@ -147,7 +152,12 @@ class HomeViewModel(
         val studyEntryDefer = async { _bibleStudyEntryRepository.getOfMonth(month) }
 
         _bibleStudyEntry.value = studyEntryDefer.await()
-        _restLastMonth.value = Time(minutes = lastMonthTimeDefer.await().minutes)
+        val lastMonthTime = lastMonthTimeDefer.await()
+        _restLastMonth.value = if (!lastMonthTime.isNegative) {
+            Time(hours = 0, minutes = lastMonthTime.minutes)
+        } else {
+            Time.Empty
+        }
         _transferred.value = transferredDefer.await()
         _entries.value = allDefer.await()
     }

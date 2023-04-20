@@ -58,8 +58,10 @@ fun Counter(
             typeface = jostTypeface
         }
         val hoursBounds = Rect()
+        val animatedHoursWithSign =
+            if (time.isNegative) "-$animatedHours" else animatedHours.toString()
         bigTextPaint.getTextBounds(
-            animatedHours.toString(), 0, animatedHours.toString().length, hoursBounds
+            animatedHoursWithSign, 0, animatedHoursWithSign.length, hoursBounds
         )
         val minutesBounds = Rect()
         smallTextPaint.getTextBounds(
@@ -81,7 +83,7 @@ fun Counter(
 
         drawIntoCanvas {
             it.nativeCanvas.drawText(
-                animatedHours.toString(), beginHoursX, beginHoursY, bigTextPaint
+                animatedHoursWithSign, beginHoursX, beginHoursY, bigTextPaint
             )
             it.nativeCanvas.drawText(
                 animatedMinutes.toString(), beginMinutesX, beginMinutesY, smallTextPaint
