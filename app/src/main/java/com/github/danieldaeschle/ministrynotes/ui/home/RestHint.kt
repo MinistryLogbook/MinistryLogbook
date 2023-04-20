@@ -33,7 +33,9 @@ fun RestHint(viewModel: HomeViewModel = koinViewModel()) {
                 Text(stringResource(R.string.this_month_time_remaining_title))
             },
             actions = {
-                TextButton(onClick = { viewModel.transferToNextMonth(rest.minutes) }) {
+                TextButton(
+                    onClick = { viewModel.transferToNextMonth(rest.minutes) },
+                ) {
                     Text(stringResource(R.string.transfer_to_next_month))
                 }
             }

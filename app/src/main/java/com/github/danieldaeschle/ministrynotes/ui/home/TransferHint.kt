@@ -46,7 +46,10 @@ fun TransferHint(viewModel: HomeViewModel = koinViewModel()) {
             Text(stringResource(R.string.last_month_time_remaining_title))
         },
         actions = {
-            TextButton(onClick = { viewModel.transferFromLastMonth(restLastMonth.minutes) }) {
+            TextButton(
+                onClick = { viewModel.transferFromLastMonth(restLastMonth.minutes) },
+                enabled = show,
+            ) {
                 Text(stringResource(R.string.to_transfer))
             }
         },
