@@ -92,7 +92,7 @@ class SettingsDataStore(val context: Context) {
 
     suspend fun setRole(role: Role) {
         val msg = manuallySetGoal.firstOrNull()
-        if (msg == role.goal) {
+        if (msg == role.goal && role != Role.Publisher) {
             resetGoal()
         }
         context.dataStore.edit {
@@ -110,7 +110,8 @@ class SettingsDataStore(val context: Context) {
 
     suspend fun setGoal(goal: Int?) {
         val rg = roleGoal.firstOrNull()
-        if (goal == null || goal == rg) {
+        val role = role.firstOrNull()
+        if (goal == null || (goal == rg && role != Role.Publisher)) {
             resetGoal()
             return
         }

@@ -196,7 +196,8 @@ fun GoalSetting() {
             if (role == Role.Publisher && goal == roleGoal && manuallySetGoal == null) {
                 noGoalSetText
             } else {
-                val showManuallySet = manuallySetGoal != null && manuallySetGoal != roleGoal
+                val showManuallySet =
+                    manuallySetGoal != null && manuallySetGoal != roleGoal && role != Role.Publisher
                 val prefix = if (showManuallySet) "$manuallySetText " else ""
                 goal?.let { prefix + goalUnitText } ?: ""
             }

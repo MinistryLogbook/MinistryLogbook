@@ -42,14 +42,16 @@ fun GoalPage() {
     val settingsDataStore = rememberSettingsDataStore()
     val navController = LocalAppNavController.current
     val goal by settingsDataStore.goal.collectAsState(null)
+    val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
     val role by settingsDataStore.role.collectAsState(null)
     val roleGoal by settingsDataStore.roleGoal.collectAsState(null)
     val coroutineScope = rememberCoroutineScope()
-    var textFieldValueState by remember(goal, role, roleGoal) {
+    var textFieldValueState by remember(goal, role, roleGoal, manuallySetGoal) {
         // publishers don't have a goal but internally it's 1
         // we don't want to show that to the user
-        val goalToShow = if (role == Role.Publisher && goal == roleGoal) {
-            ""
+        // if it was set manually by the user we will show it
+        val goalToShow = if (role == Role.Publisher) {
+            manuallySetGoal?.toString() ?: ""
         } else {
             goal?.toString() ?: ""
         }
