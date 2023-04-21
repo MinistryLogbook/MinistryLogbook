@@ -62,7 +62,8 @@ fun GoalPage() {
             )
         )
     }
-    val isSavable = (textFieldValueState.text.toIntOrNull() ?: 0) > 0
+    val isSavable =
+        (textFieldValueState.text.toIntOrNull() ?: 0) > 0 || textFieldValueState.text.isEmpty()
     val focusRequester = remember { FocusRequester() }
 
     val handleSave = handleSave@{

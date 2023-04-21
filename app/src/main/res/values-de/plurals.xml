@@ -8,4 +8,8 @@
         <item quantity="one">%1$d Stunde in einer theokratischen Schule verbracht.</item>
         <item quantity="other">%1$d Stunden in einer theokratischen Schule verbracht.</item>
     </plurals>
+    <plurals name="hours_unit">
+        <item quantity="one">%1$d Stunde</item>
+        <item quantity="other">%1$d Stunden</item>
+    </plurals>
 </resources>

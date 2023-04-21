@@ -64,12 +64,11 @@
     <string name="light">Hell</string>
     <string name="manually_set_colon">Manuell gesetzt:</string>
     <string name="set_goal">Ziel festlegen</string>
-    <string name="hours_unit">%1$s Stunden</string>
     <string name="reset_goal">Ziel zurücksetzen</string>
     <string name="last_month_time_remaining_title">Verbleibende Zeit im letzten Monat</string>
     <string name="last_month_time_remaining_description">Der letzte Monat hat noch %1$d Minuten übrig. Möchtest du sie auf diesen Monat übertragen?</string>
     <string name="this_month_time_remaining_title">Verbleibende Zeit in diesem Monat</string>
-    <string name="this_month_time_remaining_description">In diesem Monat sind noch %1$d Minuten übrig. Möchtest du sie auf den nächsten Monat übertragen?</string>
+    <string name="this_month_time_remaining_description">In diesem Monat sind noch %1$d Minuten übrig. Möchtest du sie in den nächsten Monat übertragen?</string>
     <string name="transfer_to_next_month">In den nächsten Monat übertragen</string>
     <string name="name_colon">Name:</string>
     <string name="month_colon">Monat:</string>
@@ -87,10 +86,10 @@
     <string name="video_showings_short">Videos</string>
     <string name="to_transfer">Übertragen</string>
     <string name="set_goal_error">Der Wert muss eine Zahl sein, die größer als null ist</string>
-    <string name="undo_transfer_description">Bist du sicher, dass du den Übertrag rückgängig machen möchtest?</string>
     <string name="undo_transfer_title">Transfer rückgängig machen</string>
+    <string name="undo_transfer_description">Bist du sicher, dass du den Übertrag rückgängig machen möchtest?</string>
     <string name="undo">Rückgängig machen</string>
-    <string name="min_transferred_to_next_month">%1$s Min. in den nächsten Monat übertragen</string>
-    <string name="min_transferred_from_last_month">%1$s Min. vom letzten Monat übertragen</string>
+    <string name="min_transferred_to_next_month">%1$s min in den nächsten Monat übertragen</string>
+    <string name="min_transferred_from_last_month">%1$s min vom letzten Monat übertragen</string>
     <string name="version">Version %1$s (%2$s)</string>
 </resources>

@@ -64,7 +64,6 @@
     <string name="light">Light</string>
     <string name="manually_set_colon">Manually set:</string>
     <string name="set_goal">Set goal</string>
-    <string name="hours_unit">%1$s hours</string>
     <string name="reset_goal">Reset goal</string>
     <string name="last_month_time_remaining_title">Time remaining in last month</string>
     <string name="last_month_time_remaining_description">The last month has %1$d minutes left. Do you want to transfer it to this month?</string>
@@ -88,7 +87,7 @@
     <string name="to_transfer">Transfer</string>
     <string name="set_goal_error">Value must be a number greater than zero</string>
     <string name="undo_transfer_title">Undo transfer</string>
-    <string name="undo_transfer_description">Are you sure you want to undo the transfer?</string>
+    <string name="undo_transfer_description">Are you sure you want to undo the transfer to the next month?</string>
     <string name="undo">Undo</string>
     <string name="min_transferred_to_next_month">%1$s min transferred to next month</string>
     <string name="min_transferred_from_last_month">%1$s min transferred from last month</string>

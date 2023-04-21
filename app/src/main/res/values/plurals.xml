@@ -8,4 +8,8 @@
         <item quantity="one">%1$d hour spent on theocratic schools.</item>
         <item quantity="other">%1$d hours spent on theocratic schools.</item>
     </plurals>
+    <plurals name="hours_unit">
+        <item quantity="one">%1$d Hour</item>
+        <item quantity="other">%1$d Hours</item>
+    </plurals>
 </resources>

@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -189,7 +190,7 @@ fun GoalSetting() {
     val manuallySetGoal by settingsDataStore.manuallySetGoal.collectAsState(null)
     val noGoalSetText = stringResource(R.string.no_goal_set)
     val manuallySetText = stringResource(R.string.manually_set_colon)
-    val goalUnitText = stringResource(R.string.hours_unit, goal ?: 0)
+    val goalUnitText = pluralStringResource(R.plurals.hours_unit, goal ?: 0, goal ?: 0)
 
     val goalText by remember(role, goal, roleGoal, manuallySetGoal) {
         derivedStateOf {
