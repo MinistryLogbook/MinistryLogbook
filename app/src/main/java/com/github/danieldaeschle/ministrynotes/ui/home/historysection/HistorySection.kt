@@ -28,7 +28,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HistorySection(viewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entries by viewModel.entries.collectAsState()
-    val orderedEntries by remember {
+    val orderedEntries by remember(entries) {
         derivedStateOf { entries.sortedBy { it.datetime }.reversed() }
     }
     var transferToUndo by remember { mutableStateOf<Entry?>(null) }

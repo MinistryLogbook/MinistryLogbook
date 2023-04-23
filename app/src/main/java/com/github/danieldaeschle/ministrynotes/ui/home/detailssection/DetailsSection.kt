@@ -57,21 +57,26 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
     val goal by settingsDataStore.goal.collectAsState(1)
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit by remember { derivedStateOf { Time(goal + 5, 0) } }
+    val maxHoursWithCredit by remember(goal) { derivedStateOf { Time(goal + 5, 0) } }
     val transferred by homeViewModel.transferred.collectAsState()
-    val transferredTime by remember { derivedStateOf { transferred.timeSum() } }
-    val ministryTime by remember {
+    val transferredTime by remember(transferred) { derivedStateOf { transferred.timeSum() } }
+    val ministryTime by remember(entries, transferredTime) {
         derivedStateOf { entries.ministryTimeSum() - transferredTime }
     }
-    val theocraticAssignmentsTime by remember {
+    val theocraticAssignmentsTime by remember(entries) {
         derivedStateOf {
             entries.theocraticAssignmentTimeSum()
         }
     }
-    val theocraticSchoolTime by remember {
+    val theocraticSchoolTime by remember(entries) {
         derivedStateOf { entries.theocraticSchoolTimeSum() }
     }
-    val credit by remember {
+    val credit by remember(
+        ministryTime,
+        theocraticAssignmentsTime,
+        maxHoursWithCredit,
+        theocraticSchoolTime
+    ) {
         derivedStateOf {
             minOf(
                 theocraticAssignmentsTime,
@@ -79,7 +84,12 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
             ) + theocraticSchoolTime
         }
     }
-    val accumulatedTime by remember {
+    val accumulatedTime by remember(
+        ministryTime,
+        theocraticAssignmentsTime,
+        maxHoursWithCredit,
+        theocraticSchoolTime
+    ) {
         derivedStateOf {
             ministryTime.let {
                 if (it.hours < maxHoursWithCredit.hours) {
@@ -187,6 +197,6 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        OtherDetails()
+        Metrics()
     }
 }

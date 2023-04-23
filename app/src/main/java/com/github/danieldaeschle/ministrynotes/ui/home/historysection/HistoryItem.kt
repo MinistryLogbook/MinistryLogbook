@@ -44,7 +44,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
     val pattern = stringResource(R.string.history_entry_datetime_pattern)
     val formatter = DateTimeFormatter.ofPattern(pattern)
     val dateText = formatter.format(entry.datetime.toJavaLocalDate())
-    val formattedTime by remember {
+    val formattedTime by remember(entry) {
         derivedStateOf {
             "${entry.hours}" + if (entry.minutes > 0) ":${
                 entry.minutes.toString().padStart(2, '0')

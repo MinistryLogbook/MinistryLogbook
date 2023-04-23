@@ -42,18 +42,18 @@ import org.koin.androidx.compose.koinViewModel
 
 
 @Composable
-fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
+fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entries by homeViewModel.entries.collectAsState()
     val bibleStudies by homeViewModel.bibleStudies.collectAsState(0)
-    val ministries by remember { derivedStateOf { entries.ministries() } }
-    val placements by remember { derivedStateOf { ministries.placements() } }
-    val returnVisits by remember { derivedStateOf { ministries.returnVisits() } }
-    val videoShowings by remember { derivedStateOf { ministries.videoShowings() } }
+    val ministries by remember(entries) { derivedStateOf { entries.ministries() } }
+    val placements by remember(ministries) { derivedStateOf { ministries.placements() } }
+    val returnVisits by remember(ministries) { derivedStateOf { ministries.returnVisits() } }
+    val videoShowings by remember(ministries) { derivedStateOf { ministries.videoShowings() } }
 
     Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
         Column(modifier = Modifier.weight(1f)) {
-            OtherDetail(stringResource(R.string.placements_short), placements, icon = {
+            Metric(stringResource(R.string.placements_short), placements, icon = {
                 Icon(
                     painterResource(R.drawable.ic_article),
                     contentDescription = null, // TODO: contentDescription
@@ -62,7 +62,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail(stringResource(R.string.video_showings_short), videoShowings, icon = {
+            Metric(stringResource(R.string.video_showings_short), videoShowings, icon = {
                 Icon(
                     painterResource(R.drawable.ic_play_circle),
                     contentDescription = null, // TODO: contentDescription
@@ -73,7 +73,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
         }
         Spacer(modifier = Modifier.width(16.dp))
         Column(modifier = Modifier.weight(1f)) {
-            OtherDetail(stringResource(R.string.return_visits), returnVisits, icon = {
+            Metric(stringResource(R.string.return_visits), returnVisits, icon = {
                 Icon(
                     painterResource(R.drawable.ic_group),
                     contentDescription = null, // TODO: contentDescription
@@ -82,7 +82,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
-            OtherDetail(stringResource(R.string.bible_studies_short), bibleStudies, icon = {
+            Metric(stringResource(R.string.bible_studies_short), bibleStudies, icon = {
                 Icon(
                     painterResource(R.drawable.ic_local_library),
                     contentDescription = null, // TODO: contentDescription
@@ -101,7 +101,7 @@ fun OtherDetails(homeViewModel: HomeViewModel = koinViewModel()) {
 }
 
 @Composable
-fun OtherDetail(
+fun Metric(
     name: String, count: Int, icon: (@Composable () -> Unit)? = null, onClick: (() -> Unit)? = null
 ) {
     Column(
