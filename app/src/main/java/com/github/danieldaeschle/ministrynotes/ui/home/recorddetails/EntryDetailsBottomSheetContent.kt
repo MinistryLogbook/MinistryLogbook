@@ -53,7 +53,7 @@ import java.time.format.FormatStyle
 fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entry by viewModel.entry.collectAsState()
-    val isSavable by remember {
+    val isSavable by remember(entry) {
         derivedStateOf {
             entry.let {
                 it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0
@@ -68,8 +68,10 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     val settingsDataStore = rememberSettingsDataStore()
     val role by settingsDataStore.role.collectAsState(Role.Publisher)
     val dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
-    val isCreditEnabled by remember { derivedStateOf { role.canHaveCredit || entry.isCredit } }
-    val dateMillis by remember {
+    val isCreditEnabled by remember(role, entry) {
+        derivedStateOf { role.canHaveCredit || entry.isCredit }
+    }
+    val dateMillis by remember(entry) {
         derivedStateOf {
             entry.datetime
                 .atTime(0, 0)
@@ -81,7 +83,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         initialSelectedDateMillis = dateMillis,
         initialDisplayedMonthMillis = dateMillis,
     )
-    val datePickerConfirmEnabled by remember {
+    val datePickerConfirmEnabled by remember(datePickerState) {
         derivedStateOf { datePickerState.selectedDateMillis != null }
     }
 
