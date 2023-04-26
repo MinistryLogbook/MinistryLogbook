@@ -65,7 +65,7 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
 
     Scaffold(contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp), floatingActionButton = {
         ExtendableFloatingActionButton(onClick = {
-            navController.navigate(HomeGraph.EntryDetails.createRoute(viewModel.month))
+            navController.navigateToEntryDetails(viewModel.month)
         }, extended = fabExtended, icon = {
             Icon(
                 painterResource(R.drawable.ic_add),
