@@ -31,15 +31,13 @@ fun Tile(
     content: @Composable () -> Unit,
 ) {
     Surface(
-        Modifier.padding(horizontal = 16.dp),
+        Modifier
+            .padding(horizontal = 16.dp)
+            .then(modifier),
         tonalElevation = 4.dp,
         shape = MaterialTheme.shapes.medium,
     ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .then(modifier)
-        ) {
+        Box(Modifier.fillMaxWidth()) {
             onDismiss?.let {
                 IconButton(modifier = Modifier.align(Alignment.TopEnd), onClick = it) {
                     Icon(

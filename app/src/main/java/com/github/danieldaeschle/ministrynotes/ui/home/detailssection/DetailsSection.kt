@@ -1,9 +1,12 @@
 package com.github.danieldaeschle.ministrynotes.ui.home.detailssection
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -147,17 +150,18 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
 
                         AnimatedVisibility(
                             visible = role.canHaveCredit && credit > Time(0, 0),
-                            enter = fadeIn(
-                                animationSpec = tween(
+                            enter = expandVertically(
+                                tween(
                                     durationMillis = 200,
-                                    delayMillis = 600
+                                    delayMillis = 600,
                                 )
-                            ) + expandVertically(
-                                animationSpec = tween(
+                            ) + fadeIn(tween(delayMillis = 850)),
+                            exit = shrinkVertically(
+                                tween(
                                     durationMillis = 200,
-                                    delayMillis = 600
+                                    delayMillis = AnimationConstants.DefaultDurationMillis + 50,
                                 )
-                            )
+                            ) + fadeOut(tween())
                         ) {
                             Row(
                                 Modifier
