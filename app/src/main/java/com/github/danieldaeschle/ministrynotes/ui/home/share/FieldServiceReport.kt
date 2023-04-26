@@ -19,7 +19,8 @@ data class FieldServiceReport(
     val month: String,
     val placements: Int,
     val videoShowings: Int,
-    val hours: Int,
+    // Should only be integer or if less than one hour it can be 0.25, 0.5 or 0.75
+    val hours: Float,
     val returnVisits: Int,
     val bibleStudies: Int,
     val comments: String,
@@ -108,13 +109,14 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     val commentsLabel = getString(R.string.comments_colon)
     val commentsLabelLineHeight = 36f
     val commentStaticLayout =
-        StaticLayout.Builder.obtain(
-            report.comments,
-            0,
-            report.comments.length,
-            valuePaint,
-            width - 2 * textLabelX.toInt()
-        )
+        StaticLayout.Builder
+            .obtain(
+                report.comments,
+                0,
+                report.comments.length,
+                valuePaint,
+                width - 2 * textLabelX.toInt()
+            )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 0.8f)
             .setIncludePad(true)
@@ -210,8 +212,10 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             videoShowingsLineY + 36f,
             labelPaint,
         )
+        val hours =
+            if (report.hours >= 1) report.hours.toInt().toString() else report.hours.toString()
         drawText(
-            report.hours.toString(),
+            hours,
             textValueX,
             videoShowingsLineY + 36f,
             valuePaint,

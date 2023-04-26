@@ -82,11 +82,18 @@ class HomeViewModel(
             ).joinToString("\n")
             val locale = application.resources.configuration.locales.get(0)
 
+            val ministryTimeSum = entries.ministryTimeSum()
+            val hours = if (ministryTimeSum.hours > 0) {
+                ministryTimeSum.hours.toFloat()
+            } else {
+                ministryTimeSum.minutes.toFloat() / 60
+            }
+
             FieldServiceReport(
                 name = name,
                 month = getMonthTitle(locale),
                 placements = entries.placements(),
-                hours = entries.ministryTimeSum().hours,
+                hours = hours,
                 returnVisits = entries.returnVisits(),
                 videoShowings = entries.videoShowings(),
                 bibleStudies = studyEntry?.count ?: 0,
