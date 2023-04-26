@@ -36,7 +36,7 @@ import com.github.danieldaeschle.ministrynotes.lib.placements
 import com.github.danieldaeschle.ministrynotes.lib.returnVisits
 import com.github.danieldaeschle.ministrynotes.lib.videoShowings
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
-import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
+import com.github.danieldaeschle.ministrynotes.ui.home.navigateToStudies
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -90,10 +90,9 @@ fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }, onClick = {
-                navController.navigate(
-                    HomeGraph.Studies.createRoute(
-                        homeViewModel.month.year, homeViewModel.month.monthNumber,
-                    )
+                navController.navigateToStudies(
+                    homeViewModel.month.year,
+                    homeViewModel.month.monthNumber
                 )
             })
         }

@@ -43,7 +43,7 @@ fun ProfileButton() {
             .size(40.dp)
             .clip(RoundedCornerShape(100f))
             .clickable(onClick = {
-                navController.navigate(HomeGraph.ProfileMenu.route)
+                navController.navigate(HomeGraph.Menu.route)
             })
             .padding(4.dp), contentAlignment = Alignment.Center
     ) {

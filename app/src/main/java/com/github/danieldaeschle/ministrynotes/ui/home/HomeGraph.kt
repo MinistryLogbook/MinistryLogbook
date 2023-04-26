@@ -68,7 +68,7 @@ sealed class HomeGraph(val route: String, val arguments: List<NamedNavArgument> 
         }
     }
 
-    object ProfileMenu : HomeGraph(route = "profile")
+    object Menu : HomeGraph(route = "menu")
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -147,7 +147,7 @@ fun NavGraphBuilder.homeGraph() {
             StudiesBottomSheetContent(studiesDetailsViewModel)
         }
 
-        popup(HomeGraph.ProfileMenu.route) {
+        popup(HomeGraph.Menu.route) {
             MenuPopup()
         }
     }

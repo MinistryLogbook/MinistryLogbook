@@ -20,7 +20,7 @@ import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.Entry
 import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
-import com.github.danieldaeschle.ministrynotes.ui.home.HomeGraph
+import com.github.danieldaeschle.ministrynotes.ui.home.navigateToEntryDetails
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -35,7 +35,7 @@ fun HistorySection(viewModel: HomeViewModel = koinViewModel()) {
     val transferred by viewModel.transferred.collectAsState()
 
     val handleClick: (entry: Entry) -> Unit = {
-        navController.navigate(HomeGraph.EntryDetails.createRoute(viewModel.month, it.id))
+        navController.navigateToEntryDetails(viewModel.month, it.id)
     }
 
     val handleUndoTransfer: () -> Unit = {
