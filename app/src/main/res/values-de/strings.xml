@@ -92,4 +92,7 @@
     <string name="min_transferred_to_next_month">%1$s min in den nächsten Monat übertragen</string>
     <string name="min_transferred_from_last_month">%1$s min vom letzten Monat übertragen</string>
     <string name="version">Version %1$s (%2$s)</string>
+    <string name="share_as">Teilen als</string>
+    <string name="text">Text</string>
+    <string name="image">Bild</string>
 </resources>

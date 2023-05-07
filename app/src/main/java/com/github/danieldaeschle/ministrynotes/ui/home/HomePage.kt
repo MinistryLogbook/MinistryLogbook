@@ -34,7 +34,7 @@ import com.github.danieldaeschle.ministrynotes.lib.ExtendableFloatingActionButto
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.detailssection.DetailsSection
 import com.github.danieldaeschle.ministrynotes.ui.home.historysection.HistorySection
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.shared.Toolbar
 import org.koin.androidx.compose.koinViewModel
 

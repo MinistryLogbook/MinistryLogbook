@@ -17,9 +17,9 @@ import com.github.danieldaeschle.ministrynotes.lib.popup
 import com.github.danieldaeschle.ministrynotes.ui.AppGraph
 import com.github.danieldaeschle.ministrynotes.ui.home.recorddetails.EntryDetailsBottomSheetContent
 import com.github.danieldaeschle.ministrynotes.ui.home.recorddetails.StudiesBottomSheetContent
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.EntryDetailsViewModel
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.StudiesDetailsViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.EntryDetailsViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.StudiesDetailsViewModel
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 import kotlinx.datetime.Clock
@@ -32,43 +32,49 @@ import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
-sealed class HomeGraph(val route: String, val arguments: List<NamedNavArgument> = listOf()) {
+sealed class HomeGraph(
+    private val rawRoute: String,
+    val arguments: List<NamedNavArgument> = listOf()
+) {
     object Root : HomeGraph(
-        route = "?year={year}&monthNumber={monthNumber}", arguments = listOf(
+        rawRoute = "?year={year}&monthNumber={monthNumber}", arguments = listOf(
             navArgument("year") { nullable = true; defaultValue = null },
             navArgument("monthNumber") { nullable = true; defaultValue = null },
         )
     ) {
-        fun createRoute(year: Int, monthNumber: Int): String {
-            return "?year=${year}&monthNumber=${monthNumber}"
+        fun createDestination(year: Int, monthNumber: Int): String {
+            return "${AppGraph.Home.route}?year=${year}&monthNumber=${monthNumber}"
         }
     }
 
     object Studies : HomeGraph(
-        route = "{year}/{monthNumber}/studies", arguments = listOf(
+        rawRoute = "{year}/{monthNumber}/studies", arguments = listOf(
             navArgument("year") { type = NavType.IntType },
             navArgument("monthNumber") { type = NavType.IntType },
         )
     ) {
-        fun createRoute(year: Int, monthNumber: Int): String {
-            return "${year}/${monthNumber}/studies"
+        fun createDestination(year: Int, monthNumber: Int): String {
+            return "${AppGraph.Home.route}/${year}/${monthNumber}/studies"
         }
     }
 
     object EntryDetails : HomeGraph(
-        route = "{year}/{monthNumber}/entry-details/{id}", arguments = listOf(
+        rawRoute = "{year}/{monthNumber}/entry-details/{id}", arguments = listOf(
             navArgument("id") { nullable = true; defaultValue = null },
         )
     ) {
-        fun createRoute(month: LocalDate, id: Int? = null): String {
+        fun createDestination(month: LocalDate, id: Int? = null): String {
             if (id == null) {
-                return "${month.year}/${month.monthNumber}/entry-details/new"
+                return "${AppGraph.Home.route}/${month.year}/${month.monthNumber}/entry-details/new"
             }
-            return "${month.year}/${month.monthNumber}/entry-details/$id"
+            return "${AppGraph.Home.route}/${month.year}/${month.monthNumber}/entry-details/$id"
         }
     }
 
-    object Menu : HomeGraph(route = "menu")
+    object Menu : HomeGraph(rawRoute = "menu")
+
+    val route
+        get() = "${AppGraph.Home.route}/${rawRoute}"
 }
 
 @OptIn(ExperimentalAnimationApi::class)

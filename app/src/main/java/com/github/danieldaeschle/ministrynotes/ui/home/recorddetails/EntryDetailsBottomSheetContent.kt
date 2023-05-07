@@ -36,7 +36,7 @@ import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.EntryDetailsViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.EntryDetailsViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone

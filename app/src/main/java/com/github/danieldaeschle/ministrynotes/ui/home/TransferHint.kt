@@ -22,7 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.data.EntryType
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

@@ -48,7 +48,7 @@ import com.github.danieldaeschle.ministrynotes.lib.ministryTimeSum
 import com.github.danieldaeschle.ministrynotes.lib.theocraticAssignmentTimeSum
 import com.github.danieldaeschle.ministrynotes.lib.theocraticSchoolTimeSum
 import com.github.danieldaeschle.ministrynotes.lib.timeSum
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
 import com.github.danieldaeschle.ministrynotes.ui.theme.ProgressPositive
 import org.koin.androidx.compose.koinViewModel
 

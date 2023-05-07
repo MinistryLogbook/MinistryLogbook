@@ -21,7 +21,7 @@ import com.github.danieldaeschle.ministrynotes.data.Entry
 import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.navigateToEntryDetails
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable

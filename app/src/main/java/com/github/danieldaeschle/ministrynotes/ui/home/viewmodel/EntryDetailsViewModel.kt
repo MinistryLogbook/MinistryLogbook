@@ -1,4 +1,4 @@
-package com.github.danieldaeschle.ministrynotes.ui.home.viewmodels
+package com.github.danieldaeschle.ministrynotes.ui.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

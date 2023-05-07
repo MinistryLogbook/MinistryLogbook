@@ -15,6 +15,7 @@ import com.github.danieldaeschle.ministrynotes.lib.rememberBottomSheetNavigator
 import com.github.danieldaeschle.ministrynotes.lib.rememberPopupNavigator
 import com.github.danieldaeschle.ministrynotes.ui.home.homeGraph
 import com.github.danieldaeschle.ministrynotes.ui.settings.settingsGraph
+import com.github.danieldaeschle.ministrynotes.ui.share.shareGraph
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
@@ -22,6 +23,8 @@ sealed class AppGraph(val route: String) {
     object Home : AppGraph("home")
 
     object Settings : AppGraph("settings")
+
+    object Share : AppGraph("share")
 }
 
 val LocalAppNavController =
@@ -55,6 +58,7 @@ fun AppNavHost(
                 ) {
                     homeGraph()
                     settingsGraph()
+                    shareGraph()
                 }
             }
         }

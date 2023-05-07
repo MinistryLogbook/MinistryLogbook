@@ -11,12 +11,15 @@ import com.github.danieldaeschle.ministrynotes.ui.AppGraph
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 
-sealed class SettingsGraph(val route: String) {
+sealed class SettingsGraph(private val rawRoute: String) {
     object Root : SettingsGraph("/")
 
-    object Name : SettingsGraph("/name")
+    object Name : SettingsGraph("name")
 
-    object Goal : SettingsGraph("/goal")
+    object Goal : SettingsGraph("goal")
+
+    val route
+        get() = "${AppGraph.Settings.route}/${rawRoute}"
 }
 
 @OptIn(ExperimentalAnimationApi::class)

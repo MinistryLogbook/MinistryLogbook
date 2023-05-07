@@ -1,4 +1,4 @@
-package com.github.danieldaeschle.ministrynotes.ui.home.share
+package com.github.danieldaeschle.ministrynotes.ui.share
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -213,7 +213,8 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             labelPaint,
         )
         val hours =
-            if (report.hours >= 1) report.hours.toInt().toString() else report.hours.toString()
+            if (report.hours >= 1 || report.hours == 0f) report.hours.toInt()
+                .toString() else report.hours.toString()
         drawText(
             hours,
             textValueX,

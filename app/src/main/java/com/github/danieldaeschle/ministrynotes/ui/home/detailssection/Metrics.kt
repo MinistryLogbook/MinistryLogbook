@@ -37,7 +37,7 @@ import com.github.danieldaeschle.ministrynotes.lib.returnVisits
 import com.github.danieldaeschle.ministrynotes.lib.videoShowings
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrynotes.ui.home.navigateToStudies
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 

@@ -29,26 +29,21 @@ import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrynotes.R
 import com.github.danieldaeschle.ministrynotes.lib.getLocale
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
-import com.github.danieldaeschle.ministrynotes.ui.home.share.ShareDialog
-import com.github.danieldaeschle.ministrynotes.ui.home.viewmodels.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.HomeViewModel
+import com.github.danieldaeschle.ministrynotes.ui.share.navigateToShare
 import com.github.danieldaeschle.ministrynotes.ui.shared.ToolbarAction
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ToolbarActions() {
-    var isShareDialogOpen by remember { mutableStateOf(false) }
-
-    ShareDialog(
-        isOpen = isShareDialogOpen,
-        onClose = { isShareDialogOpen = false },
-    )
+fun ToolbarActions(viewModel: HomeViewModel = koinViewModel()) {
+    val navController = LocalAppNavController.current
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ToolbarAction(onClick = {
-            isShareDialogOpen = true
+            navController.navigateToShare(viewModel.month.year, viewModel.month.monthNumber)
         }) {
             Icon(
                 painterResource(R.drawable.ic_share),
