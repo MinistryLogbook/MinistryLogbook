@@ -1,10 +1,8 @@
 package com.github.danieldaeschle.ministrynotes.ui.settings
 
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +31,7 @@ import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.lib.AlertDialog
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
+import com.github.danieldaeschle.ministrynotes.ui.home.OptionList
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -86,19 +85,15 @@ fun DesignSetting() {
             Text(stringResource(R.string.cancel))
         }
     }) {
-        Design.values().map { d ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        coroutineScope.launch {
-                            d.apply()
-                            settingsDataStore.setDesign(d)
-                        }
-                        handleClose()
+        OptionList {
+            Design.values().map { d ->
+                Option(text = d.translate(), selected = d == design, onClick = {
+                    coroutineScope.launch {
+                        d.apply()
+                        settingsDataStore.setDesign(d)
                     }
-                    .padding(horizontal = 24.dp, vertical = 12.dp)) {
-                Text(d.translate())
+                    handleClose()
+                })
             }
         }
     }
@@ -152,18 +147,14 @@ fun RoleSetting() {
             Text(stringResource(R.string.cancel))
         }
     }) {
-        Role.values().map { role ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        coroutineScope.launch {
-                            settingsDataStore.setRole(role)
-                        }
-                        handleClose()
+        OptionList {
+            Role.values().map { r ->
+                Option(text = r.translate(), selected = r == role, onClick = {
+                    coroutineScope.launch {
+                        settingsDataStore.setRole(r)
                     }
-                    .padding(horizontal = 24.dp, vertical = 12.dp)) {
-                Text(role.translate())
+                    handleClose()
+                })
             }
         }
     }
@@ -237,27 +228,23 @@ fun LanguageSetting() {
             Text(stringResource(R.string.cancel))
         }
     }) {
-        supportedLocales.map { supportedLocale ->
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        val localeList =
-                            if (supportedLocale != null) LocaleListCompat.create(supportedLocale)
-                            else LocaleListCompat.getEmptyLocaleList()
-                        AppCompatDelegate.setApplicationLocales(localeList)
-                        handleClose()
-                    }
-                    .padding(horizontal = 24.dp, vertical = 12.dp)) {
+        OptionList {
+            supportedLocales.map { supportedLocale ->
+                val supportedLocaleDisplayName = if (supportedLocale != null) {
+                    "${supportedLocale.getDisplayLanguage(supportedLocale)} (${
+                        supportedLocale.getDisplayLanguage(Locale.ENGLISH)
+                    })"
+                } else {
+                    stringResource(R.string.system_default)
+                }
 
-                val supportedLocaleDisplayName = if (supportedLocale != null) "${
-                    supportedLocale.getDisplayLanguage(supportedLocale)
-                } (${
-                    supportedLocale.getDisplayLanguage(
-                        Locale.ENGLISH
-                    )
-                })" else stringResource(R.string.system_default)
-                Text(supportedLocaleDisplayName)
+                Option(supportedLocaleDisplayName, onClick = {
+                    val localeList =
+                        if (supportedLocale != null) LocaleListCompat.create(supportedLocale)
+                        else LocaleListCompat.getEmptyLocaleList()
+                    AppCompatDelegate.setApplicationLocales(localeList)
+                    handleClose()
+                })
             }
         }
     }

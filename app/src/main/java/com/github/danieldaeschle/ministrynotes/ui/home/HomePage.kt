@@ -69,8 +69,8 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
         }, extended = fabExtended, icon = {
             Icon(
                 painterResource(R.drawable.ic_add),
-                contentDescription = null
-            ) // TODO: contentDescription
+                contentDescription = null, // TODO: contentDescription
+            )
         }, text = {
             Text(stringResource(R.string.add_to_report))
         })

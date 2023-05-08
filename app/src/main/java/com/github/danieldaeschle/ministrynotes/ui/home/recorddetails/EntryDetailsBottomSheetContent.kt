@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -14,7 +13,6 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -26,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +33,7 @@ import com.github.danieldaeschle.ministrynotes.data.EntryType
 import com.github.danieldaeschle.ministrynotes.data.Role
 import com.github.danieldaeschle.ministrynotes.data.rememberSettingsDataStore
 import com.github.danieldaeschle.ministrynotes.ui.LocalAppNavController
+import com.github.danieldaeschle.ministrynotes.ui.home.OptionList
 import com.github.danieldaeschle.ministrynotes.ui.home.viewmodel.EntryDetailsViewModel
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -217,25 +215,12 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             if (!role.canHaveCredit) entry.type else null,
         )
 
-        Column {
+        OptionList(bullets = true) {
             entryTypes.forEach {
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            handleKindDate(it)
-                            isEntryKindDialogVisible = false
-                        }
-                        .padding(vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    RadioButton(
-                        modifier = Modifier.padding(horizontal = 20.dp),
-                        selected = it == entry.type,
-                        onClick = null,
-                    )
-                    Text(it.translate())
-                }
+                Option(it.translate(), selected = it == entry.type, onClick = {
+                    handleKindDate(it)
+                    isEntryKindDialogVisible = false
+                })
             }
         }
     }
