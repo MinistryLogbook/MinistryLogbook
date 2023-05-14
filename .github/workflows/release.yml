@@ -19,6 +19,7 @@ jobs:
         uses: timheuer/base64-to-file@v1
         with:
           fileName: 'keystore/MinistryLogbook.jks'
+          fileDir: ${{ github.workspace }}
           encodedString: ${{ secrets.KEYSTORE }}
 
       - uses: actions/checkout@v2

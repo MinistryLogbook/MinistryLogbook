@@ -37,18 +37,8 @@ android {
     }
 
     signingConfigs {
-        // for github CI
-        val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-        val allFilesFromDir = File(tmpFilePath).listFiles()
-        val jksFile = file("../keystore/MinistryLogbook.jks")
-
-        if (allFilesFromDir != null) {
-            val keystoreFile = allFilesFromDir.first()
-            keystoreFile.renameTo(jksFile)
-        }
-
         create("release") {
-            storeFile = jksFile
+            storeFile = File("../keystore/MinistryLogbook.jks")
             storePassword = System.getenv("SIGNING_STORE_PASSWORD")
             keyAlias = System.getenv("SIGNING_KEY_ALIAS")
             keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
