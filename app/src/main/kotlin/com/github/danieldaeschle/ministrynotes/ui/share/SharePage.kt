@@ -131,7 +131,10 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                         )
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text("Share", fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                    Text(
+                        stringResource(R.string.share),
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+                    )
                 }
                 Column(Modifier.statusBarsPadding()) {
                     Spacer(Modifier.height(56.dp))
