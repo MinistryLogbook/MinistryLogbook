@@ -52,7 +52,6 @@ android {
     buildTypes {
         debug {
             versionNameSuffix = if (getTagName() == "") getGitHash() else ".${getGitHash()}"
-            signingConfig = if (hasSigningConfig()) signingConfigs.getByName("release") else null
         }
         release {
             isMinifyEnabled = false

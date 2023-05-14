@@ -24,6 +24,13 @@ jobs:
           fileDir: '${{ github.workspace }}/MinistryLogbook'
           encodedString: ${{ secrets.KEYSTORE }}
 
+      - name: Test
+        run: |
+          ls ${{ github.workspace }}
+          ls ${{ github.workspace }}/MinistryLogbook
+          ls .
+          pwd
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
