@@ -20,11 +20,12 @@ android {
         versionCode = 1
         versionName = getTagName()
         resourceConfigurations += listOf("en", "de")
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
         vectorDrawables {
             useSupportLibrary = true
         }
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += mapOf(
@@ -32,6 +33,24 @@ android {
                     "room.incremental" to "true",
                 )
             }
+        }
+    }
+
+    signingConfigs {
+        create("release") {
+            val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+            val allFilesFromDir = File(tmpFilePath).listFiles()
+            val jksFile = file("keystore/your_keystore.jks")
+
+            if (allFilesFromDir != null) {
+                val keystoreFile = allFilesFromDir.first()
+                keystoreFile.renameTo(jksFile)
+            }
+
+            storeFile = jksFile
+            storePassword = System.getenv("SIGNING_STORE_PASSWORD")
+            keyAlias = System.getenv("SIGNING_KEY_ALIAS")
+            keyPassword = System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
 
@@ -51,22 +70,28 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
         compose = true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.0"
     }
+
     packaging {
         resources.excludes += "META-INF/*"
     }
+
     namespace = "com.github.danieldaeschle.ministrylogbook"
 }
 
