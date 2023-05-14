@@ -47,7 +47,8 @@ fun UnitRow(
         Column(
             Modifier
                 .padding(end = 16.dp)
-                .weight(1f)) {
+                .weight(1f)
+        ) {
             Text(text)
             if (description != null) {
                 Text(

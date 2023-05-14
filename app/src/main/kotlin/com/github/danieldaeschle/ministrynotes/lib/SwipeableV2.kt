@@ -100,33 +100,35 @@ internal fun <T> Modifier.swipeAnchors(
     possibleValues: Set<T>,
     anchorChangeHandler: AnchorChangeHandler<T>? = null,
     calculateAnchor: (value: T, layoutSize: IntSize) -> Float?,
-) = this.then(SwipeAnchorsModifier(onDensityChanged = { state.density = it },
-    onSizeChanged = { layoutSize ->
-        val previousAnchors = state.anchors
-        val newAnchors = mutableMapOf<T, Float>()
-        possibleValues.forEach {
-            val anchorValue = calculateAnchor(it, layoutSize)
-            if (anchorValue != null) {
-                newAnchors[it] = anchorValue
+) = this.then(
+    SwipeAnchorsModifier(onDensityChanged = { state.density = it },
+        onSizeChanged = { layoutSize ->
+            val previousAnchors = state.anchors
+            val newAnchors = mutableMapOf<T, Float>()
+            possibleValues.forEach {
+                val anchorValue = calculateAnchor(it, layoutSize)
+                if (anchorValue != null) {
+                    newAnchors[it] = anchorValue
+                }
             }
-        }
-        if (previousAnchors != newAnchors) {
-            val previousTarget = state.targetValue
-            val stateRequiresCleanup = state.updateAnchors(newAnchors)
-            if (stateRequiresCleanup) {
-                anchorChangeHandler?.onAnchorsChanged(
-                    previousTarget, previousAnchors, newAnchors
-                )
+            if (previousAnchors != newAnchors) {
+                val previousTarget = state.targetValue
+                val stateRequiresCleanup = state.updateAnchors(newAnchors)
+                if (stateRequiresCleanup) {
+                    anchorChangeHandler?.onAnchorsChanged(
+                        previousTarget, previousAnchors, newAnchors
+                    )
+                }
             }
-        }
-    },
-    inspectorInfo = debugInspectorInfo {
-        name = "swipeAnchors"
-        properties["state"] = state
-        properties["possibleValues"] = possibleValues
-        properties["anchorChangeHandler"] = anchorChangeHandler
-        properties["calculateAnchor"] = calculateAnchor
-    }))
+        },
+        inspectorInfo = debugInspectorInfo {
+            name = "swipeAnchors"
+            properties["state"] = state
+            properties["possibleValues"] = possibleValues
+            properties["anchorChangeHandler"] = anchorChangeHandler
+            properties["calculateAnchor"] = calculateAnchor
+        })
+)
 
 /**
  * State of the [swipeableV2] modifier.

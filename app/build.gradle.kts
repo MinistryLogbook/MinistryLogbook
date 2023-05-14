@@ -35,6 +35,10 @@ android {
         }
     }
 
+    sourceSets.all {
+        kotlin.srcDir("src/$name/kotlin")
+    }
+
     buildTypes {
         debug {
             versionNameSuffix = if (getTagName() == "") getGitHash() else ".${getGitHash()}"

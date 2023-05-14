@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.SaveableStateHolder
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.compose.LocalOwnersProvider
 import kotlinx.coroutines.flow.distinctUntilChanged
