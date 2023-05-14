@@ -33,7 +33,7 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: build prod
-        run: ./gradlew app:bundleRelease
+        run: ./gradlew app:bundleRelease app:assembleDebug app:assembleRelease
         env:
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
@@ -44,7 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          prerelease: contains(github.ref_name, 'beta')
+          prerelease: ${{ contains(github.ref_name, 'beta') }}
           files: |
             ./app/build/outputs/bundle/release/app-release.aab
             ./app/build/outputs/apk/release/app-release.apk
