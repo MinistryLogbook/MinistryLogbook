@@ -52,6 +52,7 @@ android {
     buildTypes {
         debug {
             versionNameSuffix = if (getTagName() == "") getGitHash() else ".${getGitHash()}"
+            signingConfig = if (hasSigningConfig()) signingConfigs.getByName("release") else null
         }
         release {
             isMinifyEnabled = false
@@ -59,7 +60,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (hasSigningConfig()) signingConfigs.getByName("release") else null
         }
     }
 
@@ -151,3 +152,5 @@ fun getTagName() = ByteArrayOutputStream().use {
     }
     it.toString().trim()
 }
+
+fun hasSigningConfig() = System.getenv("SIGNING_STORE_PASSWORD") != null
