@@ -14,7 +14,7 @@ android {
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.github.danieldaeschle.ministrynotes"
+        applicationId = "com.github.danieldaeschle.ministrylogbook"
         minSdk = 28
         targetSdk = 33
         versionCode = 1
@@ -67,7 +67,7 @@ android {
     packaging {
         resources.excludes += "META-INF/*"
     }
-    namespace = "com.github.danieldaeschle.ministrynotes"
+    namespace = "com.github.danieldaeschle.ministrylogbook"
 }
 
 tasks.withType<KotlinCompile>().configureEach {

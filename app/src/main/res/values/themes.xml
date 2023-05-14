@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MinistryNotes" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.MinistryLogbook" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/green_600</item>
         <item name="colorPrimaryVariant">@color/green_800</item>
@@ -18,12 +18,12 @@
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/mn</item>
     </style>
 
-    <style name="Theme.MinistryNotes.NoActionBar">
+    <style name="Theme.MinistryLogbook.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.MinistryNotes.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.MinistryLogbook.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.MinistryNotes.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.MinistryLogbook.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

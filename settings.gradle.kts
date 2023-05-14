@@ -1,3 +1,5 @@
+@file:Suppress("UnstableApiUsage")
+
 pluginManagement {
     repositories {
         google()
@@ -10,9 +12,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        // jcenter() // Warning: this repository is going to shut down soon
     }
 }
 
-rootProject.name = "MinistryNotes"
+rootProject.name = "MinistryLogbook"
 include(":app")
