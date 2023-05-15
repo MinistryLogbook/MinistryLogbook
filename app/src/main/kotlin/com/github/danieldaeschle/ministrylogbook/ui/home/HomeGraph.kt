@@ -38,12 +38,16 @@ sealed class HomeGraph(
 ) {
     object Root : HomeGraph(
         rawRoute = "?year={year}&monthNumber={monthNumber}", arguments = listOf(
-            navArgument("year") { nullable = true; defaultValue = null },
-            navArgument("monthNumber") { nullable = true; defaultValue = null },
+            navArgument("year") {
+                nullable = true
+            },
+            navArgument("monthNumber") {
+                nullable = true
+            },
         )
     ) {
         fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Home.route}?year=${year}&monthNumber=${monthNumber}"
+            return "${AppGraph.Home.route}/?year=${year}&monthNumber=${monthNumber}"
         }
     }
 
@@ -105,9 +109,10 @@ fun NavGraphBuilder.homeGraph() {
             arguments = HomeGraph.Root.arguments,
         ) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
-            val monthNumber =
-                it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
+            val yearArgument = it.arguments?.getString("year")
+            val year = yearArgument?.toInt() ?: currentDate.year
+            val monthNumberArgument = it.arguments?.getString("monthNumber")
+            val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
             val month = LocalDate(year, monthNumber, 1)
 
             val homeViewModel =
