@@ -1,20 +1,16 @@
 package com.github.danieldaeschle.ministrylogbook.ui.home
 
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.github.danieldaeschle.ministrylogbook.lib.bottomSheet
 import com.github.danieldaeschle.ministrylogbook.lib.popup
+import com.github.danieldaeschle.ministrylogbook.lib.stayOut
 import com.github.danieldaeschle.ministrylogbook.ui.AppGraph
+import com.github.danieldaeschle.ministrylogbook.ui.SlideOutTransitionMillis
 import com.github.danieldaeschle.ministrylogbook.ui.home.recorddetails.EntryDetailsBottomSheetContent
 import com.github.danieldaeschle.ministrylogbook.ui.home.recorddetails.StudiesBottomSheetContent
 import com.github.danieldaeschle.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
@@ -85,24 +81,8 @@ sealed class HomeGraph(
 fun NavGraphBuilder.homeGraph() {
     navigation(
         route = AppGraph.Home.route, startDestination = HomeGraph.Root.route,
-        enterTransition = {
-            when (initialState.destination.route) {
-                HomeGraph.Root.route -> EnterTransition.None
-                else -> slideInHorizontally(tween(200)) { it / 8 } + fadeIn(tween(100))
-            }
-        },
-        exitTransition = {
-            when (targetState.destination.route) {
-                HomeGraph.Root.route -> ExitTransition.None
-                else -> slideOutHorizontally(tween(200)) { it / 3 } + fadeOut(tween(100))
-            }
-        },
-        popEnterTransition = {
-            slideInHorizontally(tween(200)) { -it / 8 } + fadeIn(tween(100))
-        },
-        popExitTransition = {
-            slideOutHorizontally(tween(200)) { -it / 3 } + fadeOut(tween(100))
-        },
+        enterTransition = { EnterTransition.None },
+        exitTransition = { stayOut(SlideOutTransitionMillis) },
     ) {
         composable(
             HomeGraph.Root.route,

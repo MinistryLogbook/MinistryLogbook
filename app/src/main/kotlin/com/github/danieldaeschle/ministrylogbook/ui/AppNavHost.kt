@@ -27,9 +27,6 @@ sealed class AppGraph(val route: String) {
     object Share : AppGraph("share")
 }
 
-val LocalAppNavController =
-    compositionLocalOf<NavHostController> { error("NavHostController error") }
-
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavHost(
@@ -65,3 +62,10 @@ fun AppNavHost(
     }
 }
 
+val LocalAppNavController =
+    compositionLocalOf<NavHostController> { error("NavHostController error") }
+
+val SlideInTransitionMillis = 250
+val SlideOutTransitionMillis = 250
+val FadeInTransitionMillis = 150
+val FadeOutTransitionMillis = 150

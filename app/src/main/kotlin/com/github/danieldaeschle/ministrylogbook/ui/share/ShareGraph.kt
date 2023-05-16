@@ -10,6 +10,10 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navArgument
 import com.github.danieldaeschle.ministrylogbook.ui.AppGraph
+import com.github.danieldaeschle.ministrylogbook.ui.FadeInTransitionMillis
+import com.github.danieldaeschle.ministrylogbook.ui.FadeOutTransitionMillis
+import com.github.danieldaeschle.ministrylogbook.ui.SlideInTransitionMillis
+import com.github.danieldaeschle.ministrylogbook.ui.SlideOutTransitionMillis
 import com.github.danieldaeschle.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
@@ -48,16 +52,18 @@ fun NavGraphBuilder.shareGraph() {
         route = AppGraph.Share.route,
         startDestination = ShareGraph.Root.route,
         enterTransition = {
-            slideInHorizontally(tween(200)) { it / 8 } + fadeIn(tween(100))
+            slideInHorizontally(tween(SlideInTransitionMillis)) { it / 6 } + fadeIn(
+                tween(
+                    FadeInTransitionMillis
+                )
+            )
         },
         exitTransition = {
-            slideOutHorizontally(tween(200)) { it / 3 } + fadeOut(tween(100))
-        },
-        popEnterTransition = {
-            slideInHorizontally(tween(200)) { -it / 8 } + fadeIn(tween(100))
-        },
-        popExitTransition = {
-            slideOutHorizontally(tween(200)) { -it / 3 } + fadeOut(tween(100))
+            slideOutHorizontally(tween(SlideOutTransitionMillis)) { it / 6 } + fadeOut(
+                tween(
+                    FadeOutTransitionMillis
+                )
+            )
         },
     ) {
         composable(ShareGraph.Root.route, ShareGraph.Root.arguments) {
