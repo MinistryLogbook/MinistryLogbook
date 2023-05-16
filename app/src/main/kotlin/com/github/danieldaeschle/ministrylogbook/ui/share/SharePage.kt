@@ -265,7 +265,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                     onClick = handleShare,
                                     enabled = selectedShareAs != null
                                 ) {
-                                    Text("Share")
+                                    Text(stringResource(R.string.share))
                                 }
                             }
                         }
