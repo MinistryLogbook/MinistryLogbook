@@ -9,17 +9,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      - name: Decode Keystore
+        uses: timheuer/base64-to-file@v1
+        with:
+          fileName: 'keystore/MinistryLogbook.jks'
+          fileDir: ${{ github.workspace }}
+          encodedString: ${{ secrets.KEYSTORE }}
 
-    - name: Cache Gradle and wrapper
-      uses: actions/cache@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Cache Gradle and wrapper
+        uses: actions/cache@v3
       with:
         path: |
           ~/.gradle/caches
