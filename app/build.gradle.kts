@@ -149,7 +149,7 @@ fun getGitHash() = ByteArrayOutputStream().use {
 fun getTagName() = ByteArrayOutputStream().use {
     try {
         project.exec {
-            commandLine("git", "rev-parse", "--short", "HEAD")
+            commandLine("git", "describe", "--tags")
             standardOutput = it
         }
     } catch (e: Exception) {
