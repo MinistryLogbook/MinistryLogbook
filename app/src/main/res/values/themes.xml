@@ -15,7 +15,9 @@
         <!-- Customize your theme here. -->
         <item name="android:windowLightStatusBar">true</item>
 
-        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/mn</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">
+            @mipmap/ic_launcher_foreground
+        </item>
     </style>
 
     <style name="Theme.MinistryLogbook.NoActionBar">
