@@ -96,4 +96,5 @@
     <string name="text">Text</string>
     <string name="image">Bild</string>
     <string name="share">Teilen</string>
+    <string name="date_in_future">Datum liegt in der Zukunft</string>
 </resources>

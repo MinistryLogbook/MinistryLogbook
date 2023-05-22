@@ -1,18 +1,26 @@
 package com.github.danieldaeschle.ministrylogbook.ui.home.recorddetails
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
@@ -24,24 +32,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.github.danieldaeschle.ministrylogbook.R
 import com.github.danieldaeschle.ministrylogbook.data.EntryType
 import com.github.danieldaeschle.ministrylogbook.data.Role
 import com.github.danieldaeschle.ministrylogbook.data.rememberSettingsDataStore
+import com.github.danieldaeschle.ministrylogbook.lib.ExpandAnimationVisibility
 import com.github.danieldaeschle.ministrylogbook.ui.LocalAppNavController
 import com.github.danieldaeschle.ministrylogbook.ui.home.OptionList
 import com.github.danieldaeschle.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
+import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
+import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -51,12 +67,22 @@ import java.time.format.FormatStyle
 fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val entry by viewModel.entry.collectAsState()
-    val isSavable by remember(entry) {
+    val isInFuture by remember(entry) {
+        derivedStateOf {
+            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val firstDayOfNextMonth = LocalDate(today.year, today.month, 1).plus(
+                DatePeriod(months = 1)
+            )
+            // if it's in next month, one can create entries in the current month or past
+            entry.datetime >= firstDayOfNextMonth
+        }
+    }
+    val isSavable by remember(entry, isInFuture) {
         derivedStateOf {
             entry.let {
                 it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0
                         || it.videoShowings > 0
-            }
+            } && !isInFuture
         }
     }
     val hasLoaded = (viewModel.id ?: 0) == entry.id
@@ -235,12 +261,37 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             isDeletable = entry.id != 0,
         )
         Divider()
-        Box(Modifier.clickable { isDateDialogVisible = true }) {
-            Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
-                val dateStr = dateTimeFormatter.format(
-                    entry.datetime.toJavaLocalDate()
-                )
-                UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
+        Column(
+            Modifier
+                .clickable { isDateDialogVisible = true }
+                .padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
+            val dateStr = dateTimeFormatter.format(
+                entry.datetime.toJavaLocalDate()
+            )
+            UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
+
+            ExpandAnimationVisibility(show = isInFuture) {
+                Row(
+                    Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                        .padding(horizontal = 6.dp, vertical = 4.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Icon(
+                        painterResource(R.drawable.ic_error),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        stringResource(R.string.date_in_future),
+                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 13.sp,
+                    )
+                }
             }
         }
         if (isCreditEnabled) {

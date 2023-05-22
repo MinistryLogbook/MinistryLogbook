@@ -1,12 +1,5 @@
 package com.github.danieldaeschle.ministrylogbook.ui.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.AnimationConstants
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,6 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.github.danieldaeschle.ministrylogbook.R
 import com.github.danieldaeschle.ministrylogbook.data.EntryType
+import com.github.danieldaeschle.ministrylogbook.lib.ExpandAnimationVisibility
 import com.github.danieldaeschle.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -32,16 +26,7 @@ fun TransferHint(viewModel: HomeViewModel = koinViewModel()) {
     val hasTransfer by remember { derivedStateOf { entries.any { it.type == EntryType.Transfer } } }
     val show = restLastMonth.isNotEmpty && !hasTransfer
 
-    AnimatedVisibility(
-        visible = show,
-        enter = expandVertically(tween(durationMillis = 200)) + fadeIn(tween(delayMillis = 250)),
-        exit = shrinkVertically(
-            tween(
-                durationMillis = 200,
-                delayMillis = AnimationConstants.DefaultDurationMillis + 50
-            )
-        ) + fadeOut(tween()),
-    ) {
+    ExpandAnimationVisibility(show) {
         Column {
             Spacer(Modifier.height(16.dp))
 
