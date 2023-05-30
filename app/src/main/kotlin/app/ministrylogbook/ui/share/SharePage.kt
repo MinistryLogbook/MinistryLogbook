@@ -278,10 +278,10 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {
     val text = """${getString(R.string.field_service_report).uppercase()}
-        
+        |
         |${getString(R.string.name_colon)} ${report.name}
         |${getString(R.string.month_colon)} ${report.month}
-        
+        |
         |${getString(R.string.placements_long_colon)} ${report.placements}
         |${getString(R.string.video_showings_colon)} ${report.videoShowings}
         |${getString(R.string.hours_colon)} ${report.hours}
@@ -290,7 +290,7 @@ fun Context.shareFieldServiceReport(report: FieldServiceReport) {
     """.trimMargin()
 
     val commentsSection = """
-        
+        |
         |${getString(R.string.comments_colon)}
         |${report.comments}
     """.trimMargin()
