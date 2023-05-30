@@ -287,14 +287,23 @@ fun Context.shareFieldServiceReport(report: FieldServiceReport) {
         |${getString(R.string.hours_colon)} ${report.hours}
         |${getString(R.string.return_visits_colon)} ${report.returnVisits}
         |${getString(R.string.bible_studies_long_colon)} ${report.bibleStudies}
+    """.trimMargin()
+
+    val commentsSection = """
         
         |${getString(R.string.comments_colon)}
         |${report.comments}
     """.trimMargin()
 
+    val textWithComments = if (report.comments.isNotBlank()) {
+        text + commentsSection
+    } else {
+        text
+    }
+
     val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, text)
+        putExtra(Intent.EXTRA_TEXT, textWithComments)
         type = "text/plain"
     }
 
