@@ -50,4 +50,3 @@ jobs:
             ./app/build/outputs/mapping/release/*.txt
             ./app/build/outputs/apk/release/app-release.apk
             ./app/build/outputs/apk/debug/app-debug.apk
-            ./app/build/outputs/apk/debug/app-debug.apk
