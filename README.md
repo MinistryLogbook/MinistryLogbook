@@ -5,13 +5,18 @@
 
 [![Build Status](https://github.com/danieldaeschle/MinistryLogbook/workflows/Build/badge.svg)](https://github.com/danieldaeschle/MinistryLogbook/actions/workflows/test.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
 </div>
 
 ---
 
 ## Features
 
-_tbd_
+- Track your ministry activity including placements, videos, hours, return visits, bible studies,
+  theocratic schools/class, and theocratic assignments
+- Share your Field Service Report as either image or text
+- Up-to-date design
+- Dark and light mode
 
 ## Installation
 
