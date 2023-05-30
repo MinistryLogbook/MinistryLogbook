@@ -65,7 +65,7 @@ fun AppNavHost(
 val LocalAppNavController =
     compositionLocalOf<NavHostController> { error("NavHostController error") }
 
-val SlideInTransitionMillis = 250
-val SlideOutTransitionMillis = 250
-val FadeInTransitionMillis = 150
-val FadeOutTransitionMillis = 150
+const val SlideInTransitionMillis = 250
+const val SlideOutTransitionMillis = 250
+const val FadeInTransitionMillis = 150
+const val FadeOutTransitionMillis = 150

@@ -33,12 +33,16 @@ sealed class ShareGraph(
 ) {
     object Root : ShareGraph(
         "?year={year}&monthNumber={monthNumber}", arguments = listOf(
-            navArgument("year") { nullable = true; defaultValue = null },
-            navArgument("monthNumber") { nullable = true; defaultValue = null },
+            navArgument("year") {
+                nullable = true
+            },
+            navArgument("monthNumber") {
+                nullable = true
+            },
         )
     ) {
         fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Share.route}?year=${year}&monthNumber=${monthNumber}"
+            return "${AppGraph.Share.route}/?year=${year}&monthNumber=${monthNumber}"
         }
     }
 
