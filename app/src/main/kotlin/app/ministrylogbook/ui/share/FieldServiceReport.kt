@@ -19,8 +19,7 @@ data class FieldServiceReport(
     val month: String,
     val placements: Int,
     val videoShowings: Int,
-    // Should only be integer or if less than one hour it can be 0.25, 0.5 or 0.75
-    val hours: Float,
+    val hours: Int,
     val returnVisits: Int,
     val bibleStudies: Int,
     val comments: String,
@@ -212,9 +211,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             videoShowingsLineY + 36f,
             labelPaint,
         )
-        val hours =
-            if (report.hours >= 1 || report.hours == 0f) report.hours.toInt()
-                .toString() else report.hours.toString()
+        val hours = report.hours.toString()
         drawText(
             hours,
             textValueX,
