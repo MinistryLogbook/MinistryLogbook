@@ -39,7 +39,8 @@ fun AppNavHost(
 
     CompositionLocalProvider(LocalAppNavController provides navController) {
         ModalBottomSheetLayout(
-            bottomSheetNavigator = bottomSheetNavigator,
+            sheetContent = bottomSheetNavigator.sheetContent,
+            sheetState = bottomSheetNavigator.sheetState,
             sheetShape = MaterialTheme.shapes.large.copy(
                 bottomStart = CornerSize(0),
                 bottomEnd = CornerSize(0)
