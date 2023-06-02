@@ -13,7 +13,6 @@ fun stayOut(durationMillis: Int) = fadeOut(stay(durationMillis))
 
 fun <T> stay(durationMillis: Int) = tween<T>(1, delayMillis = durationMillis)
 
-
 @Composable
 fun ExpandAnimationVisibility(show: Boolean, content: @Composable () -> Unit) {
     AnimatedVisibility(
@@ -24,7 +23,7 @@ fun ExpandAnimationVisibility(show: Boolean, content: @Composable () -> Unit) {
                 durationMillis = 200,
                 delayMillis = AnimationConstants.DefaultDurationMillis + 50
             )
-        ) + fadeOut(tween()),
+        ) + fadeOut(tween())
     ) {
         content()
     }

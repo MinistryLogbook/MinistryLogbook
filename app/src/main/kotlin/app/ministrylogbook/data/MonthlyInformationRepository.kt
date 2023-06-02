@@ -18,7 +18,7 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
                 MonthlyInformation(
                     month = month,
                     bibleStudies = lastMonthInfo?.bibleStudies ?: 0,
-                    goal = lastMonthInfo?.goal,
+                    goal = lastMonthInfo?.goal
                 )
             )
         }

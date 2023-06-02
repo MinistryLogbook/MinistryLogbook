@@ -35,7 +35,7 @@ val appModule = module {
             androidContext() as Application,
             get(),
             get(),
-            get(),
+            get()
         )
     }
     viewModel { SettingsViewModel(get(), get()) }

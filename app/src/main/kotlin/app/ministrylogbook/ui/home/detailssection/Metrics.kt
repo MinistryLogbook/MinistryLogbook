@@ -40,7 +40,6 @@ import app.ministrylogbook.ui.home.navigateToStudies
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
-
 @Composable
 fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
@@ -58,7 +57,7 @@ fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
                     painterResource(R.drawable.ic_article),
                     contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.primary
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
@@ -67,7 +66,7 @@ fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
                     painterResource(R.drawable.ic_play_circle),
                     contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.primary
                 )
             })
         }
@@ -78,7 +77,7 @@ fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
                     painterResource(R.drawable.ic_group),
                     contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.primary
                 )
             })
             Spacer(modifier = Modifier.height(16.dp))
@@ -87,7 +86,7 @@ fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
                     painterResource(R.drawable.ic_local_library),
                     contentDescription = null, // TODO: contentDescription
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }, onClick = {
                 navController.navigateToStudies(
@@ -101,11 +100,14 @@ fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
 
 @Composable
 fun Metric(
-    name: String, count: Int, icon: (@Composable () -> Unit)? = null, onClick: (() -> Unit)? = null
+    name: String,
+    count: Int,
+    icon: (@Composable () -> Unit)? = null,
+    onClick: (() -> Unit)? = null
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(Modifier.padding(2.dp)) {
             val modifier = Modifier
@@ -131,7 +133,9 @@ fun Metric(
 
                 Column {
                     Text(
-                        count.toString(), fontSize = 20.sp, fontWeight = FontWeight.Bold
+                        count.toString(),
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
                     )
 
                     Text(
@@ -139,7 +143,7 @@ fun Metric(
                         color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
                         fontSize = 12.sp,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }

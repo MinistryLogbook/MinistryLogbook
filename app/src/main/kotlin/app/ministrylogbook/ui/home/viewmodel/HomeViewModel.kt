@@ -32,7 +32,7 @@ class HomeViewModel(
     application: Application,
     settingsDataStore: SettingsDataStore,
     private val _entryRepository: EntryRepository,
-    private val _monthlyInformationRepository: MonthlyInformationRepository,
+    private val _monthlyInformationRepository: MonthlyInformationRepository
 ) : AndroidViewModel(application) {
 
     private val _monthlyInformation = MutableStateFlow<MonthlyInformation?>(null)
@@ -72,7 +72,7 @@ class HomeViewModel(
             datetime = nextMonth,
             minutes = minutes,
             type = EntryType.Transfer,
-            transferredFrom = lastOfMonth,
+            transferredFrom = lastOfMonth
         )
         viewModelScope.launch {
             val id = _entryRepository.save(transfer)

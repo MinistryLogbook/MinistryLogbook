@@ -32,7 +32,7 @@ class ShareViewModel(
     application: Application,
     private val _entryRepository: EntryRepository,
     private val _monthlyInformationRepository: MonthlyInformationRepository,
-    settingsDataStore: SettingsDataStore,
+    settingsDataStore: SettingsDataStore
 ) : AndroidViewModel(application) {
 
     private val _monthlyInformation = MutableStateFlow<MonthlyInformation?>(null)
@@ -50,17 +50,17 @@ class ShareViewModel(
                 application.resources.getQuantityString(
                     R.plurals.hours_spent_on_theocratic_assignments,
                     theocraticAssignmentTime.hours,
-                    theocraticAssignmentTime.hours,
+                    theocraticAssignmentTime.hours
                 )
             val commentTheocraticSchool =
                 application.resources.getQuantityString(
                     R.plurals.hours_spent_on_theocratic_schools,
                     theocraticSchoolTime.hours,
-                    theocraticSchoolTime.hours,
+                    theocraticSchoolTime.hours
                 )
             val comments = listOfNotNull(
                 commentTheocraticAssignment.takeIf { theocraticAssignmentTime.hours > 0 },
-                commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 },
+                commentTheocraticSchool.takeIf { theocraticSchoolTime.hours > 0 }
             ).joinToString("\n")
             val locale = application.resources.configuration.locales.get(0)
 
@@ -74,7 +74,7 @@ class ShareViewModel(
                 returnVisits = entries.returnVisits(),
                 videoShowings = entries.videoShowings(),
                 bibleStudies = studyEntry?.bibleStudies ?: 0,
-                comments = comments,
+                comments = comments
             )
         }
 

@@ -47,7 +47,7 @@ fun ToolbarActions(viewModel: HomeViewModel = koinViewModel()) {
         }) {
             Icon(
                 painterResource(R.drawable.ic_share),
-                contentDescription = stringResource(R.string.share_field_service_report),
+                contentDescription = stringResource(R.string.share_field_service_report)
             )
         }
         ProfileButton()
@@ -68,14 +68,14 @@ fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
                 .background(MaterialTheme.colorScheme.tertiary.copy(0.15f))
                 .clickable { expanded = true }
                 .padding(start = 16.dp, end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(viewModel.getMonthTitle(locale), color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.width(6.dp))
             Icon(
                 Icons.Rounded.ArrowDropDown,
                 contentDescription = "Dropdown Arrow for month selection", // TODO: translation
-                tint = MaterialTheme.colorScheme.secondary,
+                tint = MaterialTheme.colorScheme.secondary
             )
         }
         MonthPickerPopup(
@@ -88,7 +88,7 @@ fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
                 expanded = false
                 // TODO: wait for animation to finish
                 navController.navigateToMonth(month.year, month.monthNumber)
-            },
+            }
         )
     }
 }

@@ -19,9 +19,11 @@ import kotlinx.parcelize.Parcelize
 @Entity
 data class MonthlyInformation(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "month") val month: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+    @ColumnInfo(name = "month") val month: LocalDate = Clock.System.todayIn(
+        TimeZone.currentSystemDefault()
+    ),
     @ColumnInfo(name = "bible_studies") val bibleStudies: Int? = null,
-    @ColumnInfo(name = "goal") val goal: Int? = null,
+    @ColumnInfo(name = "goal") val goal: Int? = null
 ) : Parcelable {
     private companion object : Parceler<MonthlyInformation> {
         override fun create(parcel: Parcel) = MonthlyInformation(
@@ -29,7 +31,7 @@ data class MonthlyInformation(
             month = Instant.fromEpochMilliseconds(parcel.readLong())
                 .toLocalDateTime(TimeZone.currentSystemDefault()).date,
             bibleStudies = parcel.readValue(Int::class.java.classLoader) as Int?,
-            goal = parcel.readValue(Int::class.java.classLoader) as Int?,
+            goal = parcel.readValue(Int::class.java.classLoader) as Int?
         )
 
         override fun MonthlyInformation.write(parcel: Parcel, flags: Int) {

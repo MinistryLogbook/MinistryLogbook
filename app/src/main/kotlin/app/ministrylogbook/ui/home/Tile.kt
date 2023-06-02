@@ -28,22 +28,22 @@ fun Tile(
     title: @Composable () -> Unit,
     actions: @Composable () -> Unit,
     onDismiss: (() -> Unit)? = null,
-    content: @Composable () -> Unit,
+    content: @Composable () -> Unit
 ) {
     Surface(
         Modifier
             .padding(horizontal = 16.dp)
             .then(modifier),
         tonalElevation = 4.dp,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.medium
     ) {
         Box(Modifier.fillMaxWidth()) {
             onDismiss?.let {
                 IconButton(modifier = Modifier.align(Alignment.TopEnd), onClick = it) {
                     Icon(
                         painter = painterResource(R.drawable.ic_close),
-                        contentDescription = "Close",  // TODO: translation
-                        modifier = Modifier.size(20.dp),
+                        contentDescription = "Close", // TODO: translation
+                        modifier = Modifier.size(20.dp)
                     )
                 }
             }
@@ -56,7 +56,7 @@ fun Tile(
                         TextStyle(
                             fontSize = 14.sp,
                             color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
-                            lineHeight = 20.sp,
+                            lineHeight = 20.sp
                         )
                     ) {
                         content()

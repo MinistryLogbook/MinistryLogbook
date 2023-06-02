@@ -79,8 +79,8 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     val isSavable by remember(entry, isInFuture) {
         derivedStateOf {
             entry.let {
-                it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0
-                        || it.videoShowings > 0
+                it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0 ||
+                    it.videoShowings > 0
             } && !isInFuture
         }
     }
@@ -103,7 +103,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     }
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = dateMillis,
-        initialDisplayedMonthMillis = dateMillis,
+        initialDisplayedMonthMillis = dateMillis
     )
     val datePickerConfirmEnabled by remember(datePickerState) {
         derivedStateOf { datePickerState.selectedDateMillis != null }
@@ -129,11 +129,13 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     val handleChangeMinutes: (newValue: Int) -> Unit = {
         if (entry.hours > 0 && it < 0) {
             viewModel.update(
-                hours = entry.hours - 1, minutes = 60 + it
+                hours = entry.hours - 1,
+                minutes = 60 + it
             )
         } else if (it > 59) {
             viewModel.update(
-                hours = entry.hours + 1, minutes = it - 60
+                hours = entry.hours + 1,
+                minutes = it - 60
             )
         } else if (it in 0..55) {
             viewModel.update(minutes = it)
@@ -223,20 +225,20 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 TextButton(onClick = onClick) {
                     Text(stringResource(R.string.cancel))
                 }
-            },
+            }
         )
     }
 
     app.ministrylogbook.lib.AlertDialog(
         isOpen = isEntryKindDialogVisible,
         onClose = { isEntryKindDialogVisible = false },
-        paddingValues = PaddingValues(vertical = 8.dp),
+        paddingValues = PaddingValues(vertical = 8.dp)
     ) {
         val entryTypes = listOfNotNull(
             EntryType.Ministry,
             if (isCreditEnabled) EntryType.TheocraticAssignment else null,
             if (isCreditEnabled) EntryType.TheocraticSchool else null,
-            if (!role.canHaveCredit) entry.type else null,
+            if (!role.canHaveCredit) entry.type else null
         )
 
         OptionList(bullets = true) {
@@ -256,13 +258,14 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             onSave = handleSave,
             isSavable = isSavable,
             onDelete = { isDeleteDialogVisible = true },
-            isDeletable = entry.id != 0,
+            isDeletable = entry.id != 0
         )
         Divider()
         Column(
             Modifier
                 .clickable { isDateDialogVisible = true }
-                .padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
+                .padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)
+        ) {
             val dateStr = dateTimeFormatter.format(
                 entry.datetime.toJavaLocalDate()
             )
@@ -275,7 +278,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                         .background(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
                         .padding(horizontal = 6.dp, vertical = 4.dp)
                         .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painterResource(R.drawable.ic_error),
@@ -287,7 +290,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                     Text(
                         stringResource(R.string.date_in_future),
                         color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp,
+                        fontSize = 13.sp
                     )
                 }
             }
@@ -298,7 +301,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
                     UnitRow(
                         entry.type.translate(),
-                        icon = entry.type.icon(),
+                        icon = entry.type.icon()
                     )
                 }
             }
@@ -311,12 +314,11 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         ) {
             UnitRow(
                 stringResource(R.string.hours),
-                icon = painterResource(R.drawable.ic_schedule),
+                icon = painterResource(R.drawable.ic_schedule)
             ) {
                 NumberPicker(entry.hours) {
                     handleChangeHours(it)
                 }
-
             }
             UnitRow(stringResource(R.string.minutes)) {
                 NumberPicker(entry.minutes, step = 5) {

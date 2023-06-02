@@ -26,7 +26,6 @@ import app.ministrylogbook.ui.theme.ProgressNegative
 import app.ministrylogbook.ui.theme.ProgressPositive
 import kotlin.math.min
 
-
 data class Progress(val percent: Int = 0, val color: Color)
 
 @Composable
@@ -35,7 +34,7 @@ fun CircleProgress(
     strokeWidth: Dp = 8.dp,
     animationSpec: AnimationSpec<Float> = tween(400),
     progresses: List<Progress>,
-    baseLineColor: Color,
+    baseLineColor: Color
 ) {
     val initialValue = 0.0001f
 
@@ -47,7 +46,7 @@ fun CircleProgress(
                 baseLineColor,
                 radius = radius,
                 center = Offset(radius + strokeWidthPx / 2, radius + strokeWidthPx / 2),
-                style = Stroke(width = strokeWidthPx),
+                style = Stroke(width = strokeWidthPx)
             )
         }
 
@@ -94,8 +93,8 @@ fun CircleProgressPreview() {
                 baseLineColor = ProgressPositive,
                 progresses = listOf(
                     Progress(percent = 60, ProgressNegative),
-                    Progress(percent = 45, ProgressPositive),
-                ),
+                    Progress(percent = 45, ProgressPositive)
+                )
             )
         }
     }

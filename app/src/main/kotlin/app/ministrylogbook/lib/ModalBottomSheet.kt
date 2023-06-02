@@ -111,7 +111,7 @@ fun ModalBottomSheetState(
     density: Density,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     confirmValueChange: (ModalBottomSheetValue) -> Boolean = { true },
-    isSkipHalfExpanded: Boolean = false,
+    isSkipHalfExpanded: Boolean = false
 ) = ModalBottomSheetState(
     initialValue = initialValue,
     animationSpec = animationSpec,
@@ -137,7 +137,7 @@ fun ModalBottomSheetState(
  */
 @Deprecated(
     "This constructor is deprecated. Density must be provided by the component. " +
-            "Please use the constructor that provides a [Density].",
+        "Please use the constructor that provides a [Density].",
     ReplaceWith(
         """
             ModalBottomSheetState(
@@ -177,14 +177,16 @@ fun ModalBottomSheetState(
  * [IllegalArgumentException] will be thrown.
  * @param confirmStateChange Optional callback invoked to confirm or veto a pending state change.
  */
-class ModalBottomSheetState @Deprecated(
+class ModalBottomSheetState
+@Deprecated(
     message = "This constructor is deprecated. confirmStateChange has been renamed to " +
-            "confirmValueChange.",
+        "confirmValueChange.",
     replaceWith = ReplaceWith(
         "ModalBottomSheetState(" +
-                "initialValue, animationSpec, confirmStateChange, isSkipHalfExpanded)"
+            "initialValue, animationSpec, confirmStateChange, isSkipHalfExpanded)"
     )
-) constructor(
+)
+constructor(
     initialValue: ModalBottomSheetValue,
     internal val animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     internal val isSkipHalfExpanded: Boolean = false,
@@ -233,10 +235,10 @@ class ModalBottomSheetState @Deprecated(
 
     @Deprecated(
         message = "This constructor is deprecated. confirmStateChange has been renamed to " +
-                "confirmValueChange.",
+            "confirmValueChange.",
         replaceWith = ReplaceWith(
             "ModalBottomSheetState(" +
-                    "initialValue, animationSpec, confirmStateChange, false)"
+                "initialValue, animationSpec, confirmStateChange, false)"
         )
     )
     @Suppress("Deprecation")
@@ -250,7 +252,7 @@ class ModalBottomSheetState @Deprecated(
         if (isSkipHalfExpanded) {
             require(initialValue != ModalBottomSheetValue.HalfExpanded) {
                 "The initial value must not be set to HalfExpanded if skipHalfExpanded is set to" +
-                        " true."
+                    " true."
             }
         }
     }
@@ -321,7 +323,7 @@ class ModalBottomSheetState @Deprecated(
     internal var density: Density? = null
     private fun requireDensity() = requireNotNull(density) {
         "The density on ModalBottomSheetState ($this) was not set. Did you use " +
-                "ModalBottomSheetState with the ModalBottomSheetLayout composable?"
+            "ModalBottomSheetState with the ModalBottomSheetLayout composable?"
     }
 
     companion object {
@@ -355,17 +357,17 @@ class ModalBottomSheetState @Deprecated(
          */
         @Deprecated(
             message = "This function is deprecated. Please use the overload where Density is" +
-                    " provided.",
+                " provided.",
             replaceWith = ReplaceWith(
                 "Saver(animationSpec, confirmValueChange, density, " +
-                        "skipHalfExpanded)"
+                    "skipHalfExpanded)"
             )
         )
         @Suppress("Deprecation")
         fun Saver(
             animationSpec: AnimationSpec<Float>,
             confirmValueChange: (ModalBottomSheetValue) -> Boolean,
-            skipHalfExpanded: Boolean,
+            skipHalfExpanded: Boolean
         ): Saver<ModalBottomSheetState, *> = Saver(
             save = { it.currentValue },
             restore = {
@@ -385,10 +387,10 @@ class ModalBottomSheetState @Deprecated(
          */
         @Deprecated(
             message = "This function is deprecated. confirmStateChange has been renamed to " +
-                    "confirmValueChange.",
+                "confirmValueChange.",
             replaceWith = ReplaceWith(
                 "Saver(animationSpec, confirmStateChange, " +
-                        "skipHalfExpanded)"
+                    "skipHalfExpanded)"
             )
         )
         @Suppress("Deprecation")
@@ -422,7 +424,7 @@ fun rememberModalBottomSheetState(
     initialValue: ModalBottomSheetValue,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     confirmValueChange: (ModalBottomSheetValue) -> Boolean = { true },
-    skipHalfExpanded: Boolean = false,
+    skipHalfExpanded: Boolean = false
 ): ModalBottomSheetState {
     val density = LocalDensity.current
     // Key the rememberSaveable against the initial value. If it changed we don't want to attempt
@@ -430,7 +432,11 @@ fun rememberModalBottomSheetState(
     // b/152014032
     return key(initialValue) {
         rememberSaveable(
-            initialValue, animationSpec, skipHalfExpanded, confirmValueChange, density,
+            initialValue,
+            animationSpec,
+            skipHalfExpanded,
+            confirmValueChange,
+            density,
             saver = ModalBottomSheetState.Saver(
                 density = density,
                 animationSpec = animationSpec,
@@ -464,10 +470,10 @@ fun rememberModalBottomSheetState(
  */
 @Deprecated(
     message = "This function is deprecated. confirmStateChange has been renamed to " +
-            "confirmValueChange.",
+        "confirmValueChange.",
     replaceWith = ReplaceWith(
         "rememberModalBottomSheetState(" +
-                "initialValue, animationSpec, confirmStateChange, false)"
+            "initialValue, animationSpec, confirmStateChange, false)"
     )
 )
 @Composable
@@ -475,7 +481,7 @@ fun rememberModalBottomSheetState(
     initialValue: ModalBottomSheetValue,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
     skipHalfExpanded: Boolean,
-    confirmStateChange: (ModalBottomSheetValue) -> Boolean,
+    confirmStateChange: (ModalBottomSheetValue) -> Boolean
 ): ModalBottomSheetState = rememberModalBottomSheetState(
     initialValue = initialValue,
     animationSpec = animationSpec,
@@ -492,17 +498,17 @@ fun rememberModalBottomSheetState(
  */
 @Deprecated(
     message = "This function is deprecated. confirmStateChange has been renamed to " +
-            "confirmValueChange.",
+        "confirmValueChange.",
     replaceWith = ReplaceWith(
         "rememberModalBottomSheetState(" +
-                "initialValue, animationSpec, confirmValueChange = confirmStateChange)"
+            "initialValue, animationSpec, confirmValueChange = confirmStateChange)"
     )
 )
 @Composable
 fun rememberModalBottomSheetState(
     initialValue: ModalBottomSheetValue,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    confirmStateChange: (ModalBottomSheetValue) -> Boolean,
+    confirmStateChange: (ModalBottomSheetValue) -> Boolean
 ): ModalBottomSheetState = rememberModalBottomSheetState(
     initialValue = initialValue,
     animationSpec = animationSpec,
@@ -572,7 +578,10 @@ fun ModalBottomSheetLayout(
             Scrim(
                 color = scrimColor,
                 onDismiss = {
-                    if (sheetState.anchoredDraggableState.confirmValueChange(ModalBottomSheetValue.Hidden)) {
+                    if (sheetState.anchoredDraggableState.confirmValueChange(
+                            ModalBottomSheetValue.Hidden
+                        )
+                    ) {
                         scope.launch { sheetState.hide() }
                     }
                 },
@@ -594,7 +603,9 @@ fun ModalBottomSheetLayout(
                                 )
                             }
                         )
-                    } else Modifier
+                    } else {
+                        Modifier
+                    }
                 )
                 .offset {
                     IntOffset(
@@ -608,7 +619,7 @@ fun ModalBottomSheetLayout(
                     state = sheetState.anchoredDraggableState,
                     orientation = orientation,
                     enabled = sheetGesturesEnabled &&
-                            sheetState.anchoredDraggableState.currentValue != ModalBottomSheetValue.Hidden,
+                        sheetState.anchoredDraggableState.currentValue != ModalBottomSheetValue.Hidden
                 )
                 .onSizeChanged { sheetSize ->
                     val anchors = buildMap {
@@ -665,13 +676,15 @@ fun ModalBottomSheetLayout(
                                 }
                             }
                         }
-                    } else Modifier
+                    } else {
+                        Modifier
+                    }
                 ),
             shape = sheetShape,
             shadowElevation = sheetElevation,
             tonalElevation = sheetElevation,
             color = sheetBackgroundColor,
-            contentColor = sheetContentColor,
+            contentColor = sheetContentColor
         ) {
             Column(content = sheetContent)
         }
@@ -687,7 +700,8 @@ private fun Scrim(
     if (color.isSpecified) {
         val alpha by animateFloatAsState(
             targetValue = if (visible) 1f else 0f,
-            animationSpec = TweenSpec(), label = ""
+            animationSpec = TweenSpec(),
+            label = ""
         )
         val closeSheet = getString(Strings.CloseSheet)
         val dismissModifier = if (visible) {
@@ -784,31 +798,35 @@ private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
 private fun ModalBottomSheetAnchorChangeCallback(
     state: ModalBottomSheetState,
     scope: CoroutineScope
-) =
-    AnchoredDraggableState.AnchorChangedCallback<ModalBottomSheetValue> { prevTarget, prevAnchors, newAnchors ->
-        val previousTargetOffset = prevAnchors[prevTarget]
-        val newTarget = when (prevTarget) {
-            ModalBottomSheetValue.Hidden -> ModalBottomSheetValue.Hidden
-            ModalBottomSheetValue.HalfExpanded, ModalBottomSheetValue.Expanded -> {
-                val hasHalfExpandedState =
-                    newAnchors.containsKey(ModalBottomSheetValue.HalfExpanded)
-                val newTarget = if (hasHalfExpandedState) ModalBottomSheetValue.HalfExpanded
-                else if (newAnchors.containsKey(ModalBottomSheetValue.Expanded)) ModalBottomSheetValue.Expanded else ModalBottomSheetValue.Hidden
-                newTarget
-            }
-        }
-        val newTargetOffset = newAnchors.getValue(newTarget)
-        if (newTargetOffset != previousTargetOffset) {
-            if (state.isAnimationRunning) {
-                // Re-target the animation to the new offset if it changed
-                scope.launch { state.animateTo(newTarget, velocity = state.lastVelocity) }
+) = AnchoredDraggableState.AnchorChangedCallback<ModalBottomSheetValue> { prevTarget, prevAnchors, newAnchors ->
+    val previousTargetOffset = prevAnchors[prevTarget]
+    val newTarget = when (prevTarget) {
+        ModalBottomSheetValue.Hidden -> ModalBottomSheetValue.Hidden
+        ModalBottomSheetValue.HalfExpanded, ModalBottomSheetValue.Expanded -> {
+            val hasHalfExpandedState =
+                newAnchors.containsKey(ModalBottomSheetValue.HalfExpanded)
+            val newTarget = if (hasHalfExpandedState) {
+                ModalBottomSheetValue.HalfExpanded
+            } else if (newAnchors.containsKey(ModalBottomSheetValue.Expanded)) {
+                ModalBottomSheetValue.Expanded
             } else {
-                // Snap to the new offset value of the target if no animation was running
-                val didSnapSynchronously = state.trySnapTo(newTarget)
-                if (!didSnapSynchronously) scope.launch { state.snapTo(newTarget) }
+                ModalBottomSheetValue.Hidden
             }
+            newTarget
         }
     }
+    val newTargetOffset = newAnchors.getValue(newTarget)
+    if (newTargetOffset != previousTargetOffset) {
+        if (state.isAnimationRunning) {
+            // Re-target the animation to the new offset if it changed
+            scope.launch { state.animateTo(newTarget, velocity = state.lastVelocity) }
+        } else {
+            // Snap to the new offset value of the target if no animation was running
+            val didSnapSynchronously = state.trySnapTo(newTarget)
+            if (!didSnapSynchronously) scope.launch { state.snapTo(newTarget) }
+        }
+    }
+}
 
 private val ModalBottomSheetPositionalThreshold = 56.dp
 private val ModalBottomSheetVelocityThreshold = 125.dp

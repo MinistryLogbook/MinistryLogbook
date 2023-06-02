@@ -33,18 +33,17 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.res.ResourcesCompat
 import app.ministrylogbook.R
 
-
 data class Bar(val value: Float, val name: String, val color: Color, val width: Dp = 10.dp)
 
 enum class VerticalMarkerStyle {
-    Line, Dashed,
+    Line, Dashed
 }
 
 data class VerticalMarker(
     val value: Float,
     val color: Color,
     val style: VerticalMarkerStyle = VerticalMarkerStyle.Line,
-    val width: Dp = 1.dp,
+    val width: Dp = 1.dp
 )
 
 @Composable
@@ -53,7 +52,7 @@ fun Chart(
     bars: Array<Bar>,
     horizontalPadding: Dp = 0.dp,
     markers: Array<VerticalMarker> = arrayOf(),
-    animationSpec: AnimationSpec<Float> = tween(400),
+    animationSpec: AnimationSpec<Float> = tween(400)
 ) {
     val progress = remember { Animatable(0f) }
     val context = LocalContext.current
@@ -67,8 +66,11 @@ fun Chart(
 
     Canvas(modifier = modifier, onDraw = {
         val maxValue = bars.maxOf { it.value }
-        val width = if (markers.isEmpty()) size.width
-        else size.width - 2 * horizontalPadding.toPx() - 16.dp.toPx()
+        val width = if (markers.isEmpty()) {
+            size.width
+        } else {
+            size.width - 2 * horizontalPadding.toPx() - 16.dp.toPx()
+        }
 
         markers.forEach { marker ->
             val markerHeight = size.height - size.height / maxValue * marker.value
@@ -90,10 +92,16 @@ fun Chart(
                 typeface = jostTypeface
             }
             val bounds = android.graphics.Rect()
-            val text = if (marker.value % 1.0 == 0.0) marker.value.toInt().toString()
-            else "%.1f".format(marker.value)
+            val text = if (marker.value % 1.0 == 0.0) {
+                marker.value.toInt().toString()
+            } else {
+                "%.1f".format(marker.value)
+            }
             textPaint.getTextBounds(
-                text, 0, text.length, bounds
+                text,
+                0,
+                text.length,
+                bounds
             )
             val beginX = size.width - bounds.width() - 16.dp.toPx()
             val beginY = markerHeight - 4.dp.toPx()
@@ -113,13 +121,13 @@ fun Chart(
                         RoundRect(
                             rect = Rect(
                                 offset = Offset(offsetX, offsetY),
-                                size = Size(bar.width.toPx(), barHeight),
+                                size = Size(bar.width.toPx(), barHeight)
                             ),
-                            cornerRadius = cornerRadius,
+                            cornerRadius = cornerRadius
                         )
                     )
                 },
-                color = bar.color,
+                color = bar.color
             )
         }
     })
@@ -137,7 +145,7 @@ fun Chart(
                     text = it.name,
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
             }
         }

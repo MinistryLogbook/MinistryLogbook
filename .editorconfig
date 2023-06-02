@@ -1,0 +1,4 @@
+[*.{kt,kts}]
+ktlint_code_style = android
+max_line_length = 119
+no_wildcard_imports = false

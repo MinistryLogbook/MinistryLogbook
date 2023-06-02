@@ -29,7 +29,6 @@ import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction
 import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 
-
 @Composable
 fun BaseSettingsPage(
     title: String,
@@ -78,7 +77,7 @@ fun Title(text: String) {
     Text(
         text,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(bottom = 8.dp, start = 20.dp, end = 20.dp),
+        modifier = Modifier.padding(bottom = 8.dp, start = 20.dp, end = 20.dp)
     )
 }
 
@@ -96,7 +95,7 @@ fun Setting(
                 clickable(onClick = onClick!!)
             }
             .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         icon?.let {
             Icon(icon, contentDescription = null) // TODO: contentDescription

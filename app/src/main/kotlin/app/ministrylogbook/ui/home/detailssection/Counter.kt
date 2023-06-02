@@ -26,7 +26,7 @@ import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 @Composable
 fun Counter(
     modifier: Modifier = Modifier,
-    time: Time,
+    time: Time
 ) {
     val context = LocalContext.current
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground.toArgb()
@@ -61,11 +61,17 @@ fun Counter(
         val animatedHoursWithSign =
             if (time.isNegative) "-$animatedHours" else animatedHours.toString()
         bigTextPaint.getTextBounds(
-            animatedHoursWithSign, 0, animatedHoursWithSign.length, hoursBounds
+            animatedHoursWithSign,
+            0,
+            animatedHoursWithSign.length,
+            hoursBounds
         )
         val minutesBounds = Rect()
         smallTextPaint.getTextBounds(
-            animatedMinutes.toString(), 0, animatedMinutes.toString().length, minutesBounds
+            animatedMinutes.toString(),
+            0,
+            animatedMinutes.toString().length,
+            minutesBounds
         )
         val hrsUnitBounds = Rect()
         unitTextPaint.getTextBounds(hrsText, 0, 3, hrsUnitBounds)
@@ -83,10 +89,16 @@ fun Counter(
 
         drawIntoCanvas {
             it.nativeCanvas.drawText(
-                animatedHoursWithSign, beginHoursX, beginHoursY, bigTextPaint
+                animatedHoursWithSign,
+                beginHoursX,
+                beginHoursY,
+                bigTextPaint
             )
             it.nativeCanvas.drawText(
-                animatedMinutes.toString(), beginMinutesX, beginMinutesY, smallTextPaint
+                animatedMinutes.toString(),
+                beginMinutesX,
+                beginMinutesY,
+                smallTextPaint
             )
             it.nativeCanvas.drawText(hrsText, beginUnitX, beginHoursY, unitTextPaint)
             it.nativeCanvas.drawText(minText, beginUnitX, beginMinY, unitTextPaint)
@@ -102,7 +114,7 @@ fun CounterPreview() {
             modifier = Modifier
                 .height(120.dp)
                 .width(120.dp),
-            time = Time(1, 30),
+            time = Time(1, 30)
         )
     }
 }

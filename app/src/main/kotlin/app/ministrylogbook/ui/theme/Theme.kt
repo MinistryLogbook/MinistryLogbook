@@ -75,7 +75,9 @@ fun darkColorPalette(useDynamicColors: Boolean = false): ColorScheme {
 
 @Composable
 fun MinistryLogbookTheme(
-    design: Design = Design.System, isDynamic: Boolean = true, content: @Composable () -> Unit
+    design: Design = Design.System,
+    isDynamic: Boolean = true,
+    content: @Composable () -> Unit
 ) {
     val isSystemInDarkTheme = isSystemInDarkTheme()
     val useDarkTheme = when (design) {
@@ -85,9 +87,17 @@ fun MinistryLogbookTheme(
     }
     val useDynamicColors = isDynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors =
-        if (useDarkTheme) darkColorPalette(useDynamicColors) else lightColorPalette(useDynamicColors)
+        if (useDarkTheme) {
+            darkColorPalette(useDynamicColors)
+        } else {
+            lightColorPalette(
+                useDynamicColors
+            )
+        }
 
     MaterialTheme(
-        colorScheme = colors, typography = Typography, content = content
+        colorScheme = colors,
+        typography = Typography,
+        content = content
     )
 }

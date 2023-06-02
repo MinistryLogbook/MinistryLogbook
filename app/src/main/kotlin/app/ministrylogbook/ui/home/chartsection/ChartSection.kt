@@ -82,14 +82,16 @@ fun ChartSection() {
                 Bar(72f, "Sep", color = barColor),
                 Bar(12f, "Oct", color = barColor),
                 Bar(55f, "Nov", color = barColor),
-                Bar(72f, "Dec", color = barColor),
+                Bar(72f, "Dec", color = barColor)
             ),
             markers = arrayOf(
                 VerticalMarker(40f, MaterialTheme.colorScheme.onSurface.copy(0.6f), width = 0.5.dp),
                 VerticalMarker(
-                    70f, MaterialTheme.colorScheme.primary, style = VerticalMarkerStyle.Dashed
-                ),
-            ),
+                    70f,
+                    MaterialTheme.colorScheme.primary,
+                    style = VerticalMarkerStyle.Dashed
+                )
+            )
         )
         Row(
             modifier = Modifier
@@ -97,9 +99,10 @@ fun ChartSection() {
                 .padding(top = 16.dp),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(modifier = Modifier
-                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-                .height(28.dp),
+            Button(
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+                    .height(28.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
                 elevation = null,
                 shape = RoundedCornerShape(10.dp),
@@ -107,27 +110,31 @@ fun ChartSection() {
                     containerColor = MaterialTheme.colorScheme.primary.copy(
                         0.2f
                     ),
-                    contentColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ),
-                onClick = {}) {
+                onClick = {}
+            ) {
                 Text("Year", style = TextStyle(fontSize = 14.sp))
             }
             Spacer(Modifier.width(8.dp))
-            Button(modifier = Modifier
-                .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
-                .height(28.dp),
+            Button(
+                modifier = Modifier
+                    .defaultMinSize(minWidth = 1.dp, minHeight = 1.dp)
+                    .height(28.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
                 elevation = null,
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.textButtonColors(
-                    contentColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.primary
                 ),
                 border = BorderStroke(
-                    1.dp, MaterialTheme.colorScheme.primary.copy(
+                    1.dp,
+                    MaterialTheme.colorScheme.primary.copy(
                         0.2f
                     )
                 ),
-                onClick = {}) {
+                onClick = {}
+            ) {
                 Text("Month", style = TextStyle(fontSize = 14.sp))
             }
         }

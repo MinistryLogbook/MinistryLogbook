@@ -19,20 +19,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-
 @Composable
 fun UnitRow(
     text: String,
     modifier: Modifier = Modifier,
     description: String? = null,
     icon: Painter? = null,
-    rightSide: @Composable () -> Unit = {},
+    rightSide: @Composable () -> Unit = {}
 ) {
     Row(
         Modifier
             .height(48.dp)
             .then(modifier),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
             Icon(
@@ -55,7 +54,7 @@ fun UnitRow(
                     description,
                     fontSize = 10.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

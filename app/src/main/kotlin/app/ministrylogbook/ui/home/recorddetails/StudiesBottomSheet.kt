@@ -50,7 +50,7 @@ fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel
         Toolbar(
             onClose = handleClose,
             onSave = handleSave,
-            isSavable = true,
+            isSavable = true
         )
         Divider()
         Column(

@@ -31,7 +31,7 @@ sealed class AppGraph(val route: String) {
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
-    startDestination: String = AppGraph.Home.route,
+    startDestination: String = AppGraph.Home.route
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val popupNavigator = rememberPopupNavigator()
@@ -46,13 +46,13 @@ fun AppNavHost(
                 bottomEnd = CornerSize(0)
             ),
             sheetElevation = 2.dp,
-            scrimColor = MaterialTheme.colorScheme.surface.copy(0.5f),
+            scrimColor = MaterialTheme.colorScheme.surface.copy(0.5f)
         ) {
             PopupLayout(popupNavigator = popupNavigator) {
                 AnimatedNavHost(
                     modifier = modifier,
                     navController = navController,
-                    startDestination = startDestination,
+                    startDestination = startDestination
                 ) {
                     homeGraph()
                     settingsGraph()

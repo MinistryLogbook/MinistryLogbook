@@ -37,7 +37,7 @@ class EntryDetailsViewModel(
         hours: Int? = null,
         minutes: Int? = null,
         returnVisits: Int? = null,
-        kind: EntryType? = null,
+        kind: EntryType? = null
     ) {
         _entry.value = _entry.value.copy(
             datetime = datetime ?: _entry.value.datetime,
@@ -46,7 +46,7 @@ class EntryDetailsViewModel(
             hours = hours ?: _entry.value.hours,
             minutes = minutes ?: _entry.value.minutes,
             returnVisits = returnVisits ?: _entry.value.returnVisits,
-            type = kind ?: _entry.value.type,
+            type = kind ?: _entry.value.type
         )
     }
 

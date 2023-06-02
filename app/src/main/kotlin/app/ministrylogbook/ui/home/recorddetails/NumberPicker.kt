@@ -32,13 +32,15 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun NumberPicker(
-    value: Int, step: Int = 1, onChange: (newValue: Int) -> Unit = {}
+    value: Int,
+    step: Int = 1,
+    onChange: (newValue: Int) -> Unit = {}
 ) {
     Row(
         Modifier
             .clip(RoundedCornerShape(100))
             .background(MaterialTheme.colorScheme.onSurface.copy(0.05f)),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             painterResource(R.drawable.ic_remove),
@@ -49,7 +51,7 @@ fun NumberPicker(
                 .clickable { onChange(value - step) }
                 .padding(4.dp),
             contentDescription = "Minus", // TODO: translation
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface
         )
         Spacer(Modifier.width(6.dp))
         Text(
@@ -68,7 +70,7 @@ fun NumberPicker(
                 .clickable { onChange(value + step) }
                 .padding(4.dp),
             contentDescription = "Plus", // TODO: translation
-            tint = MaterialTheme.colorScheme.onSurface,
+            tint = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -76,7 +78,7 @@ fun NumberPicker(
 fun Modifier.repeatingClickable(
     initialDelay: Long = 700,
     delay: Long = 120,
-    onClick: () -> Unit,
+    onClick: () -> Unit
 ): Modifier = composed {
     val currentClickListener by rememberUpdatedState(onClick)
 

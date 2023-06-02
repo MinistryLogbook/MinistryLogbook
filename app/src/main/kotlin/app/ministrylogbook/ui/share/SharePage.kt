@@ -120,7 +120,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
             Box {
                 Toolbar(
                     padding = PaddingValues(horizontal = 12.dp),
-                    elevation = if (scrollState.value > 0) 4.dp else 0.dp,
+                    elevation = if (scrollState.value > 0) 4.dp else 0.dp
                 ) {
                     ToolbarAction(onClick = handleBack) {
                         Icon(
@@ -161,9 +161,13 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                     value = comments,
                                     onValueChange = { comments = it },
                                     placeholder = {
-                                        Text(stringResource(R.string.field_service_report_comments_placeholder))
+                                        Text(
+                                            stringResource(
+                                                R.string.field_service_report_comments_placeholder
+                                            )
+                                        )
                                     },
-                                    label = { Text(stringResource(R.string.comments)) },
+                                    label = { Text(stringResource(R.string.comments)) }
                                 )
 
                                 Spacer(Modifier.height(32.dp))
@@ -208,7 +212,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                         AnimatedVisibility(
                                             visible = selectedShareAs == ShareAs.Text,
                                             enter = enterAnimation,
-                                            exit = exitAnimation,
+                                            exit = exitAnimation
                                         ) {
                                             Icon(
                                                 painterResource(R.drawable.ic_check),
@@ -232,12 +236,12 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                             selectedColors
                                         } else {
                                             outlinedColors
-                                        },
+                                        }
                                     ) {
                                         AnimatedVisibility(
                                             visible = selectedShareAs == ShareAs.Image,
                                             enter = enterAnimation,
-                                            exit = exitAnimation,
+                                            exit = exitAnimation
                                         ) {
                                             Icon(
                                                 painterResource(R.drawable.ic_check),
@@ -257,7 +261,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                 Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 16.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.End,
+                                horizontalArrangement = Arrangement.End
                             ) {
                                 TextButton(
                                     onClick = handleShare,

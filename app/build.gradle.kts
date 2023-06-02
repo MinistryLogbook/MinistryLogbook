@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlinter)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
 }
 
@@ -30,7 +31,7 @@ android {
             annotationProcessorOptions {
                 arguments += mapOf(
                     "room.schemaLocation" to "$projectDir/schemas",
-                    "room.incremental" to "true",
+                    "room.incremental" to "true"
                 )
             }
         }
@@ -55,9 +56,13 @@ android {
             versionNameSuffix = if (getTagName() == "") getGitHash() else ".${getGitHash()}"
             applicationIdSuffix = ".debug"
             signingConfig =
-                if (hasSigningConfig()) signingConfigs.getByName("release") else signingConfigs.getByName(
-                    "debug"
-                )
+                if (hasSigningConfig()) {
+                    signingConfigs.getByName("release")
+                } else {
+                    signingConfigs.getByName(
+                        "debug"
+                    )
+                }
         }
         release {
             isMinifyEnabled = true
@@ -84,7 +89,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.0"
+        kotlinCompilerExtensionVersion = "1.4.1"
     }
 
     packaging {

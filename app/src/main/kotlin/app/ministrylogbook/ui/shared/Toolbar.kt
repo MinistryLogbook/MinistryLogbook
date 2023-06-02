@@ -52,14 +52,14 @@ fun Toolbar(
             .fillMaxWidth()
             .then(modifier),
         color = animatedBackground.value,
-        shadowElevation = elevation,
+        shadowElevation = elevation
     ) {
         Row(
             modifier = Modifier
                 .padding(padding)
                 .statusBarsPadding()
                 .height(56.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             content()
         }
@@ -71,7 +71,7 @@ fun ToolbarAction(
     modifier: Modifier = Modifier,
     disabled: Boolean = false,
     onClick: () -> Unit = {},
-    content: @Composable () -> Unit = {},
+    content: @Composable () -> Unit = {}
 ) {
     IconButton(
         modifier = Modifier
@@ -79,7 +79,7 @@ fun ToolbarAction(
             .clip(CircleShape)
             .then(modifier),
         onClick = onClick,
-        enabled = !disabled,
+        enabled = !disabled
     ) {
         content()
     }

@@ -30,7 +30,7 @@ internal fun ColumnScope.SheetContentHost(
     sheetState: ModalBottomSheetState,
     saveableStateHolder: SaveableStateHolder,
     onSheetShown: (entry: NavBackStackEntry) -> Unit,
-    onSheetDismissed: (entry: NavBackStackEntry) -> Unit,
+    onSheetDismissed: (entry: NavBackStackEntry) -> Unit
 ) {
     if (backStackEntry != null) {
         val currentOnSheetShown by rememberUpdatedState(onSheetShown)

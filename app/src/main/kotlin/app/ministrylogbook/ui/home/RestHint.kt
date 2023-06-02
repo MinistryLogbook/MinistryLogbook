@@ -22,8 +22,10 @@ import org.koin.androidx.compose.koinViewModel
 fun RestHint(viewModel: HomeViewModel = koinViewModel()) {
     val rest by viewModel.rest.collectAsState(Time.Empty)
     val actualDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val show = rest.minutes > 0 && (viewModel.month.year < actualDate.year
-            || viewModel.month.monthNumber < actualDate.monthNumber)
+    val show = rest.minutes > 0 && (
+        viewModel.month.year < actualDate.year ||
+            viewModel.month.monthNumber < actualDate.monthNumber
+        )
 
     if (show) {
         Spacer(Modifier.height(16.dp))
@@ -34,7 +36,7 @@ fun RestHint(viewModel: HomeViewModel = koinViewModel()) {
             },
             actions = {
                 TextButton(
-                    onClick = { viewModel.transferToNextMonth(rest.minutes) },
+                    onClick = { viewModel.transferToNextMonth(rest.minutes) }
                 ) {
                     Text(stringResource(R.string.transfer_to_next_month))
                 }

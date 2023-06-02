@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
 
-
 @Composable
 fun Toolbar(
     onClose: () -> Unit = {},
@@ -30,7 +29,7 @@ fun Toolbar(
     isSavable: Boolean = true,
     onDelete: () -> Unit = {},
     isDeletable: Boolean = false,
-    showSave: Boolean = true,
+    showSave: Boolean = true
 ) {
     Row(
         modifier = Modifier

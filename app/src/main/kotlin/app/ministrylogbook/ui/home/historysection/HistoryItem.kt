@@ -46,9 +46,13 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
     val dateText = formatter.format(entry.datetime.toJavaLocalDate())
     val formattedTime by remember(entry) {
         derivedStateOf {
-            "${entry.hours}" + if (entry.minutes > 0) ":${
-                entry.minutes.toString().padStart(2, '0')
-            }" else ""
+            "${entry.hours}" + if (entry.minutes > 0) {
+                ":${
+                    entry.minutes.toString().padStart(2, '0')
+                }"
+            } else {
+                ""
+            }
         }
     }
     val isTransfer = entry.type == EntryType.Transfer
@@ -76,7 +80,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                 painter = iconResource,
                 contentDescription = null, // TODO: contentDescription
                 modifier = Modifier.size(20.dp),
-                tint = tint.copy(0.8f),
+                tint = tint.copy(0.8f)
             )
         }
 
@@ -86,7 +90,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
             Row(
                 Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 val text = if (!isTransfer) {
                     entry.type.translate()
@@ -101,7 +105,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f),
+                        .weight(1f)
                 )
 
                 if (!isTransfer) {
@@ -110,7 +114,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                         Text(
                             dateText,
                             fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                         )
                     }
                 }
@@ -161,7 +165,7 @@ fun HistoryItemChip(icon: Painter? = null, text: String) {
             .clip(shape = RoundedCornerShape(6.dp))
             .background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
             .padding(horizontal = 4.dp, vertical = 2.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         if (icon != null) {
             Icon(
@@ -172,7 +176,9 @@ fun HistoryItemChip(icon: Painter? = null, text: String) {
             )
         }
         Text(
-            text, style = TextStyle(color = color), modifier = Modifier.padding(start = 4.dp)
+            text,
+            style = TextStyle(color = color),
+            modifier = Modifier.padding(start = 4.dp)
         )
     }
 }

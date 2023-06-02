@@ -33,34 +33,37 @@ sealed class HomeGraph(
     val arguments: List<NamedNavArgument> = listOf()
 ) {
     object Root : HomeGraph(
-        rawRoute = "?year={year}&monthNumber={monthNumber}", arguments = listOf(
+        rawRoute = "?year={year}&monthNumber={monthNumber}",
+        arguments = listOf(
             navArgument("year") {
                 nullable = true
             },
             navArgument("monthNumber") {
                 nullable = true
-            },
+            }
         )
     ) {
         fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Home.route}/?year=${year}&monthNumber=${monthNumber}"
+            return "${AppGraph.Home.route}/?year=$year&monthNumber=$monthNumber"
         }
     }
 
     object Studies : HomeGraph(
-        rawRoute = "{year}/{monthNumber}/studies", arguments = listOf(
+        rawRoute = "{year}/{monthNumber}/studies",
+        arguments = listOf(
             navArgument("year") { type = NavType.IntType },
-            navArgument("monthNumber") { type = NavType.IntType },
+            navArgument("monthNumber") { type = NavType.IntType }
         )
     ) {
         fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Home.route}/${year}/${monthNumber}/studies"
+            return "${AppGraph.Home.route}/$year/$monthNumber/studies"
         }
     }
 
     object EntryDetails : HomeGraph(
-        rawRoute = "{year}/{monthNumber}/entry-details/{id}", arguments = listOf(
-            navArgument("id") { nullable = true; defaultValue = null },
+        rawRoute = "{year}/{monthNumber}/entry-details/{id}",
+        arguments = listOf(
+            navArgument("id") { nullable = true; defaultValue = null }
         )
     ) {
         fun createDestination(month: LocalDate, id: Int? = null): String {
@@ -74,19 +77,20 @@ sealed class HomeGraph(
     object Menu : HomeGraph(rawRoute = "menu")
 
     val route
-        get() = "${AppGraph.Home.route}/${rawRoute}"
+        get() = "${AppGraph.Home.route}/$rawRoute"
 }
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.homeGraph() {
     navigation(
-        route = AppGraph.Home.route, startDestination = HomeGraph.Root.route,
+        route = AppGraph.Home.route,
+        startDestination = HomeGraph.Root.route,
         enterTransition = { EnterTransition.None },
-        exitTransition = { stayOut(SlideOutTransitionMillis) },
+        exitTransition = { stayOut(SlideOutTransitionMillis) }
     ) {
         composable(
             HomeGraph.Root.route,
-            arguments = HomeGraph.Root.arguments,
+            arguments = HomeGraph.Root.arguments
         ) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val yearArgument = it.arguments?.getString("year")

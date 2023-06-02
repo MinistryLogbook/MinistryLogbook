@@ -11,10 +11,14 @@ interface EntryDao {
     @Query("SELECT * FROM entry WHERE id = :id")
     suspend fun get(id: Int): Entry
 
-    @Query("SELECT * from entry WHERE strftime('%Y%m', datetime) = :year || substr('00' || :month, -2, 2)")
+    @Query(
+        "SELECT * from entry WHERE strftime('%Y%m', datetime) = :year || substr('00' || :month, -2, 2)"
+    )
     suspend fun getAllOfMonth(year: Int, month: Int): List<Entry>
 
-    @Query("SELECT * from entry WHERE strftime('%Y%m', transferred_from) = :year || substr('00' || :month, -2, 2)")
+    @Query(
+        "SELECT * from entry WHERE strftime('%Y%m', transferred_from) = :year || substr('00' || :month, -2, 2)"
+    )
     suspend fun getTransferredFrom(year: Int, month: Int): List<Entry>
 
     @Upsert

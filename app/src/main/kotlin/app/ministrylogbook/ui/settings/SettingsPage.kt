@@ -39,7 +39,6 @@ import java.util.Locale
 
 @Composable
 fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
-
     LaunchedEffect(Unit) {
         viewModel.load()
     }
@@ -59,7 +58,8 @@ fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
         Box(
             Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp), contentAlignment = Alignment.Center
+                .padding(vertical = 8.dp),
+            contentAlignment = Alignment.Center
         ) {
             Text(
                 stringResource(
@@ -106,7 +106,7 @@ fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
 
     Setting(
         title = stringResource(R.string.design),
-        onClick = { isDialogOpen = true },
+        onClick = { isDialogOpen = true }
     ) {
         Text(
             design.translate(),
@@ -165,7 +165,7 @@ fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
 
     Setting(
         title = stringResource(R.string.role),
-        onClick = { isRoleDialogOpen = true },
+        onClick = { isRoleDialogOpen = true }
     ) {
         Text(
             role.translate(),
@@ -214,11 +214,15 @@ fun GoalSetting(viewModel: SettingsViewModel = koinViewModel()) {
 fun LanguageSetting() {
     var isDialogOpen by remember { mutableStateOf(false) }
     val locale = AppCompatDelegate.getApplicationLocales().get(0)
-    val localeDisplayName = if (locale != null) "${locale.getDisplayLanguage(locale)} (${
-        locale.getDisplayLanguage(
-            Locale.ENGLISH
-        )
-    })" else stringResource(R.string.system_default)
+    val localeDisplayName = if (locale != null) {
+        "${locale.getDisplayLanguage(locale)} (${
+            locale.getDisplayLanguage(
+                Locale.ENGLISH
+            )
+        })"
+    } else {
+        stringResource(R.string.system_default)
+    }
 
     val handleClose = {
         isDialogOpen = false
@@ -243,8 +247,11 @@ fun LanguageSetting() {
 
                 Option(supportedLocaleDisplayName, onClick = {
                     val localeList =
-                        if (supportedLocale != null) LocaleListCompat.create(supportedLocale)
-                        else LocaleListCompat.getEmptyLocaleList()
+                        if (supportedLocale != null) {
+                            LocaleListCompat.create(supportedLocale)
+                        } else {
+                            LocaleListCompat.getEmptyLocaleList()
+                        }
                     AppCompatDelegate.setApplicationLocales(localeList)
                     handleClose()
                 })

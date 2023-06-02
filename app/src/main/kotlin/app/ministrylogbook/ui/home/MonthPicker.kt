@@ -67,7 +67,10 @@ import kotlinx.datetime.todayIn
 
 @Composable
 fun MonthPickerMonth(
-    text: String, selected: Boolean = false, disabled: Boolean = false, onClick: () -> Unit
+    text: String,
+    selected: Boolean = false,
+    disabled: Boolean = false,
+    onClick: () -> Unit
 ) {
     val selectedBackground = MaterialTheme.colorScheme.primary.copy(0.2f)
     val modifier = Modifier
@@ -82,8 +85,11 @@ fun MonthPickerMonth(
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CompositionLocalProvider(
-            LocalContentColor provides if (disabled) LocalContentColor.current.copy(0.4f)
-            else LocalContentColor.current,
+            LocalContentColor provides if (disabled) {
+                LocalContentColor.current.copy(0.4f)
+            } else {
+                LocalContentColor.current
+            }
         ) {
             Text(text)
         }
@@ -101,7 +107,11 @@ fun MonthPickerPopup(
     val months = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     val actualDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val actualYear = actualDate.year
-    var selectedYearIndex by remember(selectedMonth) { mutableStateOf(selectedMonth.year - actualYear) }
+    var selectedYearIndex by remember(selectedMonth) {
+        mutableStateOf(
+            selectedMonth.year - actualYear
+        )
+    }
     val selectedYear = actualYear + selectedYearIndex
     val expandedStates = remember { MutableTransitionState(false) }
     val isActualMonth =
@@ -120,7 +130,8 @@ fun MonthPickerPopup(
         val density = LocalDensity.current
         val transformOriginState = remember { mutableStateOf(TransformOrigin.Center) }
         val popupPositionProvider = MonthPickerPositionProvider(
-            DpOffset(0.dp, 8.dp), density
+            DpOffset(0.dp, 8.dp),
+            density
         ) { parentBounds, menuBounds ->
             transformOriginState.value = calculateTransformOrigin(parentBounds, menuBounds)
         }
@@ -132,11 +143,11 @@ fun MonthPickerPopup(
                 coroutineScope.launch {
                     handleDismissRequest()
                 }
-            },
+            }
         ) {
             MonthPickerContent(
                 expandedStates = expandedStates,
-                transformOriginState = transformOriginState,
+                transformOriginState = transformOriginState
             ) {
                 YearPicker(selectedYear, onChange = {
                     if (it < actualYear + 1) {
@@ -149,26 +160,30 @@ fun MonthPickerPopup(
                     columns = GridCells.Fixed(3),
                     userScrollEnabled = false,
                     verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(months) { month ->
                         val monthName = Month(month).getShortDisplayName()
                         val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
                         val currentMonth = currentDate.month.value
                         val currentYear = actualYear + selectedYearIndex
-                        val disabled =
-                            (month > currentMonth && currentYear == actualYear) || currentYear > actualYear
+                        val disabled = (month > currentMonth && currentYear == actualYear) ||
+                            currentYear > actualYear
+                        val selected = currentYear == selectedMonth.year &&
+                            month == selectedMonth.monthNumber
 
                         MonthPickerMonth(
                             monthName,
-                            selected = currentYear == selectedMonth.year && month == selectedMonth.monthNumber,
+                            selected = selected,
                             disabled = disabled,
                             onClick = {
                                 val newMonth = LocalDate(
-                                    currentYear, month, 1
+                                    currentYear,
+                                    month,
+                                    1
                                 )
                                 onSelectMonth(newMonth)
-                            },
+                            }
                         )
                     }
                 }
@@ -182,19 +197,24 @@ fun MonthPickerPopup(
                         .condition(!isActualMonth) {
                             clickable {
                                 val currentMonth = LocalDate(
-                                    actualYear, actualDate.monthNumber, 1
+                                    actualYear,
+                                    actualDate.monthNumber,
+                                    1
                                 )
                                 onSelectMonth(currentMonth)
                             }
                         }
                         .padding(top = 6.dp, bottom = 6.dp),
-                    contentAlignment = Alignment.Center,
+                    contentAlignment = Alignment.Center
                 ) {
                     CompositionLocalProvider(
-                        LocalContentColor provides if (isActualMonth) LocalContentColor.current.copy(
-                            0.4f
-                        )
-                        else LocalContentColor.current,
+                        LocalContentColor provides if (isActualMonth) {
+                            LocalContentColor.current.copy(
+                                0.4f
+                            )
+                        } else {
+                            LocalContentColor.current
+                        }
                     ) {
                         Text(stringResource(R.string.current_month))
                     }
@@ -238,7 +258,8 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
                 .clickable {
                     onChange(selectedYear - 1)
                 }
-                .padding(6.dp))
+                .padding(6.dp)
+        )
 
         Text(selectedYear.toString())
 
@@ -255,7 +276,8 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
                 }
                 .padding(6.dp),
             contentDescription = "Arrow right",
-            tint = if (disabled) LocalContentColor.current.copy(0.4f) else LocalContentColor.current)
+            tint = if (disabled) LocalContentColor.current.copy(0.4f) else LocalContentColor.current
+        )
     }
 }
 
@@ -280,16 +302,17 @@ fun MonthPickerContent(
                 // Dismissed to expanded
                 tween(
                     durationMillis = InTransitionDuration,
-                    easing = LinearOutSlowInEasing,
+                    easing = LinearOutSlowInEasing
                 )
             } else {
                 // Expanded to dismissed.
                 tween(
                     durationMillis = OutTransitionDuration,
-                    easing = LinearOutSlowInEasing,
+                    easing = LinearOutSlowInEasing
                 )
             }
-        }, label = ""
+        },
+        label = ""
     ) {
         if (it) {
             // Menu is expanded.
@@ -309,7 +332,8 @@ fun MonthPickerContent(
                 // Expanded to dismissed.
                 tween(durationMillis = OutTransitionDuration)
             }
-        }, label = ""
+        },
+        label = ""
     ) {
         if (it) {
             // Menu is expanded.
@@ -331,11 +355,11 @@ fun MonthPickerContent(
             .width(240.dp),
         shape = RoundedCornerShape(10.dp),
         tonalElevation = 3.dp,
-        shadowElevation = 3.dp,
+        shadowElevation = 3.dp
     ) {
         Column(
             modifier = modifier.padding(10.dp),
-            content = content,
+            content = content
         )
     }
 }
@@ -364,14 +388,16 @@ internal data class MonthPickerPositionProvider(
         val toDisplayLeft = 0
         val x = if (layoutDirection == LayoutDirection.Ltr) {
             sequenceOf(
-                toRight, toLeft,
+                toRight,
+                toLeft,
                 // If the anchor gets outside of the window on the left, we want to position
                 // toDisplayLeft for proximity to the anchor. Otherwise, toDisplayRight.
                 if (anchorBounds.left >= 0) toDisplayRight else toDisplayLeft
             )
         } else {
             sequenceOf(
-                toLeft, toRight,
+                toLeft,
+                toRight,
                 // If the anchor gets outside of the window on the right, we want to position
                 // toDisplayRight for proximity to the anchor. Otherwise, toDisplayLeft.
                 if (anchorBounds.right <= windowSize.width) toDisplayLeft else toDisplayRight
@@ -386,27 +412,33 @@ internal data class MonthPickerPositionProvider(
         val toCenter = anchorBounds.top - popupContentSize.height / 2
         val toDisplayBottom = windowSize.height - popupContentSize.height - verticalMargin
         val y = sequenceOf(toBottom, toTop, toCenter, toDisplayBottom).firstOrNull {
-            it >= verticalMargin && it + popupContentSize.height <= windowSize.height - verticalMargin
+            it >= verticalMargin &&
+                it + popupContentSize.height <= windowSize.height - verticalMargin
         } ?: toTop
 
         onPositionCalculated(
-            anchorBounds, IntRect(x, y, x + popupContentSize.width, y + popupContentSize.height)
+            anchorBounds,
+            IntRect(x, y, x + popupContentSize.width, y + popupContentSize.height)
         )
         return IntOffset(x, y)
     }
 }
 
 internal fun calculateTransformOrigin(
-    parentBounds: IntRect, menuBounds: IntRect
+    parentBounds: IntRect,
+    menuBounds: IntRect
 ): TransformOrigin {
     val pivotX = when {
         menuBounds.left >= parentBounds.right -> 0f
         menuBounds.right <= parentBounds.left -> 1f
         menuBounds.width == 0 -> 0f
         else -> {
-            val intersectionCenter = (kotlin.math.max(
-                parentBounds.left, menuBounds.left
-            ) + kotlin.math.min(parentBounds.right, menuBounds.right)) / 2
+            val intersectionCenter = (
+                kotlin.math.max(
+                    parentBounds.left,
+                    menuBounds.left
+                ) + kotlin.math.min(parentBounds.right, menuBounds.right)
+                ) / 2
             (intersectionCenter - menuBounds.left).toFloat() / menuBounds.width
         }
     }
@@ -415,9 +447,12 @@ internal fun calculateTransformOrigin(
         menuBounds.bottom <= parentBounds.top -> 1f
         menuBounds.height == 0 -> 0f
         else -> {
-            val intersectionCenter = (kotlin.math.max(
-                parentBounds.top, menuBounds.top
-            ) + kotlin.math.min(parentBounds.bottom, menuBounds.bottom)) / 2
+            val intersectionCenter = (
+                kotlin.math.max(
+                    parentBounds.top,
+                    menuBounds.top
+                ) + kotlin.math.min(parentBounds.bottom, menuBounds.bottom)
+                ) / 2
             (intersectionCenter - menuBounds.top).toFloat() / menuBounds.height
         }
     }

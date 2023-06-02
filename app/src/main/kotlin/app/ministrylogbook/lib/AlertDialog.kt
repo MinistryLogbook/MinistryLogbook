@@ -36,7 +36,7 @@ fun AlertDialog(
                     .wrapContentHeight()
                     .fillMaxWidth(),
                 shape = MaterialTheme.shapes.large,
-                tonalElevation = AlertDialogDefaults.TonalElevation,
+                tonalElevation = AlertDialogDefaults.TonalElevation
             ) {
                 Column(Modifier.padding(paddingValues)) {
                     title?.let {
@@ -51,9 +51,11 @@ fun AlertDialog(
                         }
                     }
 
-                    Column(Modifier.condition(dismissButton != null) {
-                        padding(bottom = 16.dp)
-                    }) {
+                    Column(
+                        Modifier.condition(dismissButton != null) {
+                            padding(bottom = 16.dp)
+                        }
+                    ) {
                         content()
                     }
 
@@ -62,7 +64,7 @@ fun AlertDialog(
                             Modifier
                                 .fillMaxWidth()
                                 .padding(start = 24.dp, end = 24.dp),
-                            horizontalArrangement = Arrangement.End,
+                            horizontalArrangement = Arrangement.End
                         ) {
                             dismissButton?.let { dismissButton() }
                             confirmButton?.let { confirmButton() }

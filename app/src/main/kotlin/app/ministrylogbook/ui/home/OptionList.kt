@@ -39,7 +39,7 @@ internal class OptionListScopeImpl(private val bullets: Boolean) : OptionListSco
                 .condition(!bullets) {
                     padding(horizontal = 24.dp, vertical = 12.dp)
                 },
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             if (bullets) {
                 RadioButton(selected = selected, onClick = { onClick() })

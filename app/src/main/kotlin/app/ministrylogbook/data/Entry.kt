@@ -20,14 +20,16 @@ import kotlinx.parcelize.Parcelize
 @Entity
 data class Entry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "datetime") val datetime: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+    @ColumnInfo(name = "datetime") val datetime: LocalDate = Clock.System.todayIn(
+        TimeZone.currentSystemDefault()
+    ),
     @ColumnInfo(name = "placements") val placements: Int = 0,
     @ColumnInfo(name = "video_showings") val videoShowings: Int = 0,
     @ColumnInfo(name = "hours") val hours: Int = 0,
     @ColumnInfo(name = "minutes") val minutes: Int = 0,
     @ColumnInfo(name = "return_visits") val returnVisits: Int = 0,
     @ColumnInfo(name = "type") val type: EntryType = EntryType.Ministry,
-    @ColumnInfo(name = "transferred_from") val transferredFrom: LocalDate? = null,
+    @ColumnInfo(name = "transferred_from") val transferredFrom: LocalDate? = null
 ) : Parcelable {
 
     val isCredit: Boolean

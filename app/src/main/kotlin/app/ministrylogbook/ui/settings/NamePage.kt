@@ -69,7 +69,7 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
                     Text(stringResource(R.string.set_name))
                 },
                 value = textFieldValueState,
-                onValueChange = { textFieldValueState = it },
+                onValueChange = { textFieldValueState = it }
             )
         }
     }

@@ -165,7 +165,9 @@ internal class AnchoredDraggableState<T>(
             val currentOffset = offset
             if (!currentOffset.isNaN()) {
                 computeTarget(currentOffset, currentValue, velocity = 0f)
-            } else currentValue
+            } else {
+                currentValue
+            }
         }
     }
 
@@ -179,7 +181,9 @@ internal class AnchoredDraggableState<T>(
             val currentOffset = offset
             if (!currentOffset.isNaN()) {
                 computeTargetWithoutThresholds(currentOffset, currentValue)
-            } else currentValue
+            } else {
+                currentValue
+            }
         }
     }
 
@@ -204,7 +208,7 @@ internal class AnchoredDraggableState<T>(
     fun requireOffset(): Float {
         check(!offset.isNaN()) {
             "The offset was read before being initialized. Did you access the offset in a phase " +
-                    "before layout, like effects or composition?"
+                "before layout, like effects or composition?"
         }
         return offset
     }
@@ -227,7 +231,9 @@ internal class AnchoredDraggableState<T>(
             val progress = (this.requireOffset() - a) / (b - a)
             // If we are very close to 0f or 1f, we round to the closest
             if (progress < 1e-6f) 0f else if (progress > 1 - 1e-6f) 1f else progress
-        } else 1f
+        } else {
+            1f
+        }
     }
 
     /**
@@ -357,7 +363,7 @@ internal class AnchoredDraggableState<T>(
 
     private fun computeTargetWithoutThresholds(
         offset: Float,
-        currentValue: T,
+        currentValue: T
     ): T {
         val currentAnchors = anchors
         val currentAnchor = currentAnchors[currentValue]
@@ -524,7 +530,7 @@ internal class AnchoredDraggableState<T>(
         fun onAnchorsChanged(
             previousTargetValue: T,
             previousAnchors: Map<T, Float>,
-            newAnchors: Map<T, Float>,
+            newAnchors: Map<T, Float>
         )
     }
 }
@@ -559,7 +565,7 @@ internal suspend fun <T> AnchoredDraggableState<T>.snapTo(targetValue: T) {
  */
 internal suspend fun <T> AnchoredDraggableState<T>.animateTo(
     targetValue: T,
-    velocity: Float = this.lastVelocity,
+    velocity: Float = this.lastVelocity
 ) {
     anchoredDrag(targetValue = targetValue) { anchors ->
         val targetOffset = anchors[targetValue]
@@ -593,13 +599,17 @@ internal fun <T : Any> rememberAnchoredDraggableState(
     val positionalThreshold = AnchoredDraggableDefaults.positionalThreshold
     val velocityThreshold = AnchoredDraggableDefaults.velocityThreshold
     return rememberSaveable(
-        initialValue, animationSpec, confirmValueChange, positionalThreshold, velocityThreshold,
+        initialValue,
+        animationSpec,
+        confirmValueChange,
+        positionalThreshold,
+        velocityThreshold,
         saver = AnchoredDraggableState.Saver(
             animationSpec = animationSpec,
             confirmValueChange = confirmValueChange,
             positionalThreshold = positionalThreshold,
             velocityThreshold = velocityThreshold
-        ),
+        )
     ) {
         AnchoredDraggableState(
             initialValue = initialValue,

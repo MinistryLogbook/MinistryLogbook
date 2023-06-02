@@ -45,7 +45,8 @@ fun ProfileButton(viewModel: HomeViewModel = koinViewModel()) {
             .clickable(onClick = {
                 navController.navigateToMenu()
             })
-            .padding(4.dp), contentAlignment = Alignment.Center
+            .padding(4.dp),
+        contentAlignment = Alignment.Center
     ) {
         Box(
             Modifier
@@ -68,7 +69,7 @@ fun MenuPopup() {
         Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
     ) {
         ToolbarAction(Modifier.align(Alignment.CenterStart), onClick = {
             navController.popBackStack()
@@ -92,7 +93,8 @@ fun MenuPopup() {
         Modifier
             .fillMaxWidth()
             .clickable { navController.navigateToSettings() }
-            .padding(horizontal = 16.dp, vertical = 12.dp)) {
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
         Icon(
             painterResource(R.drawable.ic_settings),
             contentDescription = null

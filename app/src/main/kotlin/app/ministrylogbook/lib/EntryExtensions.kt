@@ -3,7 +3,6 @@ package app.ministrylogbook.lib
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
 
-
 fun List<Entry>.timeSum(): Time {
     var hours = this.sumOf { it.hours }
     var minutes = this.sumOf { it.minutes }

@@ -42,8 +42,14 @@ internal fun getString(string: Strings): String {
         Strings.NavigationMenu -> resources.getString(androidx.compose.ui.R.string.navigation_menu)
         Strings.CloseDrawer -> resources.getString(androidx.compose.ui.R.string.close_drawer)
         Strings.CloseSheet -> resources.getString(androidx.compose.ui.R.string.close_sheet)
-        Strings.DefaultErrorMessage -> resources.getString(androidx.compose.ui.R.string.default_error_message)
-        Strings.ExposedDropdownMenu -> resources.getString(androidx.compose.ui.R.string.dropdown_menu)
+        Strings.DefaultErrorMessage -> resources.getString(
+            androidx.compose.ui.R.string.default_error_message
+        )
+
+        Strings.ExposedDropdownMenu -> resources.getString(
+            androidx.compose.ui.R.string.dropdown_menu
+        )
+
         Strings.SliderRangeStart -> resources.getString(androidx.compose.ui.R.string.range_start)
         Strings.SliderRangeEnd -> resources.getString(androidx.compose.ui.R.string.range_end)
         else -> ""

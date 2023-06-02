@@ -81,7 +81,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
         derivedStateOf {
             minOf(
                 theocraticAssignmentsTime,
-                maxHoursWithCredit - ministryTime,
+                maxHoursWithCredit - ministryTime
             ) + theocraticSchoolTime
         }
     }
@@ -125,13 +125,13 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                         progresses = listOfNotNull(
                             Progress(
                                 percent = (100 / goal * accumulatedTime.hours),
-                                color = ProgressPositive.copy(0.6f),
+                                color = ProgressPositive.copy(0.6f)
                             ).takeIf { role.canHaveCredit && credit > Time(0, 0) },
                             Progress(
                                 percent = (100 / goal * ministryTime.hours),
-                                color = ProgressPositive,
-                            ),
-                        ),
+                                color = ProgressPositive
+                            )
+                        )
                     )
                     Column(
                         modifier = Modifier
@@ -143,7 +143,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                             modifier = Modifier
                                 .weight(1f)
                                 .fillMaxWidth(),
-                            time = ministryTime,
+                            time = ministryTime
                         )
 
                         AnimatedVisibility(
@@ -151,13 +151,13 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                             enter = expandVertically(
                                 tween(
                                     durationMillis = 200,
-                                    delayMillis = 600,
+                                    delayMillis = 600
                                 )
                             ) + fadeIn(tween(delayMillis = 850)),
                             exit = shrinkVertically(
                                 tween(
                                     durationMillis = 200,
-                                    delayMillis = AnimationConstants.DefaultDurationMillis + 50,
+                                    delayMillis = AnimationConstants.DefaultDurationMillis + 50
                                 )
                             ) + fadeOut(tween())
                         ) {
@@ -168,12 +168,16 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                                     .background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
                                     .padding(horizontal = 8.dp, vertical = 4.dp),
                                 horizontalArrangement = Arrangement.End,
-                                verticalAlignment = Alignment.CenterVertically,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
                                 val creditMinutes =
-                                    if (credit.minutes > 0) ":${
-                                        credit.minutes.toString().padStart(2, '0')
-                                    }" else ""
+                                    if (credit.minutes > 0) {
+                                        ":${
+                                            credit.minutes.toString().padStart(2, '0')
+                                        }"
+                                    } else {
+                                        ""
+                                    }
 
                                 Icon(
                                     painterResource(R.drawable.ic_volunteer_activism),
@@ -183,7 +187,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                                 Spacer(Modifier.width(4.dp))
                                 val text = stringResource(
                                     R.string.hours_short_unit,
-                                    "${credit.hours}${creditMinutes}"
+                                    "${credit.hours}$creditMinutes"
                                 )
                                 Text(
                                     text,

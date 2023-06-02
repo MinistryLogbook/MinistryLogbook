@@ -58,7 +58,9 @@ internal class InternalMutatorMutex {
                     oldMutator?.cancel()
                     break
                 }
-            } else throw CancellationException("Current mutation had a higher priority")
+            } else {
+                throw CancellationException("Current mutation had a higher priority")
+            }
         }
     }
 

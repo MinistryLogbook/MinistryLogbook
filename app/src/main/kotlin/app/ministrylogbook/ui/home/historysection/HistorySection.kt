@@ -63,7 +63,7 @@ fun HistorySection(viewModel: HomeViewModel = koinViewModel()) {
                     Text(stringResource(R.string.undo))
                 }
             },
-            onDismissRequest = { transferToUndo = null },
+            onDismissRequest = { transferToUndo = null }
         )
     }
 

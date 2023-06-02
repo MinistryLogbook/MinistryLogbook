@@ -25,7 +25,7 @@ sealed class SettingsGraph(private val rawRoute: String) {
     object Goal : SettingsGraph("goal")
 
     val route
-        get() = "${AppGraph.Settings.route}/${rawRoute}"
+        get() = "${AppGraph.Settings.route}/$rawRoute"
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -58,7 +58,7 @@ fun NavGraphBuilder.settingsGraph() {
                     FadeOutTransitionMillis
                 )
             )
-        },
+        }
     ) {
         composable(SettingsGraph.Root.route) {
             SettingsPage()

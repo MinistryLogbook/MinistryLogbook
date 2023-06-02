@@ -102,7 +102,7 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
         ToolbarAction(onClick = { handleSave() }, disabled = !isSavable) {
             Icon(
                 painterResource(R.drawable.ic_done),
-                contentDescription = null, // TODO: contentDescription
+                contentDescription = null // TODO: contentDescription
             )
         }
     }) {

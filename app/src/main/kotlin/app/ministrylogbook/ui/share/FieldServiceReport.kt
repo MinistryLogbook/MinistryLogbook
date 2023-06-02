@@ -14,7 +14,6 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import app.ministrylogbook.R
 
-
 data class FieldServiceReport(
     val name: String,
     val month: String,
@@ -23,7 +22,7 @@ data class FieldServiceReport(
     val hours: Int,
     val returnVisits: Int,
     val bibleStudies: Int,
-    val comments: String,
+    val comments: String
 )
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {
@@ -166,16 +165,22 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
 
     with(canvas) {
         // background
-        drawRect(0f, 0f, width.toFloat(), height, Paint().apply {
-            color = Color.WHITE
-        })
+        drawRect(
+            0f,
+            0f,
+            width.toFloat(),
+            height,
+            Paint().apply {
+                color = Color.WHITE
+            }
+        )
 
         // title
         drawText(
             title,
             ((width - titleBounds.width()) / 2).toFloat(),
             padding + titleBounds.height(),
-            titlePaint,
+            titlePaint
         )
 
         // name and month
@@ -207,13 +212,13 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             placementsLabel,
             textLabelX,
             tableTop + 36f,
-            labelPaint,
+            labelPaint
         )
         drawText(
             report.placements.toString(),
             textValueX,
             tableTop + 36f,
-            valuePaint,
+            valuePaint
         )
         drawLine(
             padding,
@@ -228,13 +233,13 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             videoShowingsLabel,
             textLabelX,
             placementsLineY + 34f,
-            labelPaint,
+            labelPaint
         )
         drawText(
             report.videoShowings.toString(),
             textValueX,
             placementsLineY + 36f,
-            valuePaint,
+            valuePaint
         )
         drawLine(padding, videoShowingsLineY, width - padding, videoShowingsLineY, tablePaint)
 
@@ -243,14 +248,14 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             hoursLabel,
             textLabelX,
             videoShowingsLineY + 36f,
-            labelPaint,
+            labelPaint
         )
         val hours = report.hours.toString()
         drawText(
             hours,
             textValueX,
             videoShowingsLineY + 36f,
-            valuePaint,
+            valuePaint
         )
         drawLine(padding, hoursLineY, width - padding, hoursLineY, tablePaint)
 
@@ -259,13 +264,13 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             returnVisitsLabel,
             textLabelX,
             hoursLineY + 36f,
-            labelPaint,
+            labelPaint
         )
         drawText(
             report.returnVisits.toString(),
             textValueX,
             hoursLineY + 36f,
-            valuePaint,
+            valuePaint
         )
         drawLine(padding, returnVisitsLineY, width - padding, returnVisitsLineY, tablePaint)
 
@@ -274,13 +279,13 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             bibleStudiesLabel,
             textLabelX,
             returnVisitsLineY + 36f,
-            labelPaint,
+            labelPaint
         )
         drawText(
             report.bibleStudies.toString(),
             textValueX,
             returnVisitsLineY + 36f,
-            valuePaint,
+            valuePaint
         )
 
         // Comments
@@ -289,7 +294,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             commentsLabel,
             textLabelX,
             commentsTop + commentsLabelLineHeight,
-            labelPaint,
+            labelPaint
         )
         canvas.translate(textLabelX, commentsTop + 5 + commentsLabelLineHeight)
         commentStaticLayout.draw(this)

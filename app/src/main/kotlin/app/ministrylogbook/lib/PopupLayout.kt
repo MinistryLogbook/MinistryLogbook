@@ -92,7 +92,7 @@ fun PopupLayout(popupNavigator: PopupNavigator, content: @Composable () -> Unit)
                     popupNavigator.popupState.hide()
                 }
             },
-            visible = visibility == PopupVisibility.Visible,
+            visible = visibility == PopupVisibility.Visible
         )
 
         if (visibleBackStackEntry != null && !animVisibleState.targetState && !animVisibleState.currentState) {
@@ -108,14 +108,15 @@ fun PopupLayout(popupNavigator: PopupNavigator, content: @Composable () -> Unit)
                 visibleState = animVisibleState,
                 enter = scaleIn(
                     tween(durationMillis = 200),
-                    transformOrigin = TransformOrigin(1f, 0f),
+                    transformOrigin = TransformOrigin(1f, 0f)
                 ),
-                exit = fadeOut(tween(durationMillis = 100)),
+                exit = fadeOut(tween(durationMillis = 100))
             ) {
                 Surface(
                     Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp)), tonalElevation = 8.dp
+                        .clip(RoundedCornerShape(8.dp)),
+                    tonalElevation = 8.dp
                 ) {
                     Column {
                         (visibleBackStackEntry?.destination as PopupNavigator.Destination?)?.let {
@@ -130,7 +131,7 @@ fun PopupLayout(popupNavigator: PopupNavigator, content: @Composable () -> Unit)
 
 enum class PopupVisibility {
     Visible,
-    Hidden,
+    Hidden
 }
 
 class PopupState(initialValue: PopupVisibility = PopupVisibility.Hidden) {
@@ -228,7 +229,9 @@ class PopupNavigator(val popupState: PopupState) : Navigator<PopupNavigator.Dest
     }
 
     override fun navigate(
-        entries: List<NavBackStackEntry>, navOptions: NavOptions?, navigatorExtras: Extras?
+        entries: List<NavBackStackEntry>,
+        navOptions: NavOptions?,
+        navigatorExtras: Extras?
     ) {
         entries.forEach { entry ->
             state.push(entry)
@@ -248,15 +251,18 @@ fun NavGraphBuilder.popup(
     deepLinks: List<NavDeepLink> = emptyList(),
     content: @Composable ColumnScope.(backstackEntry: NavBackStackEntry) -> Unit
 ) {
-    addDestination(PopupNavigator.Destination(
-        provider[PopupNavigator::class], content
-    ).apply {
-        this.route = route
-        arguments.forEach { (argumentName, argument) ->
-            addArgument(argumentName, argument)
+    addDestination(
+        PopupNavigator.Destination(
+            provider[PopupNavigator::class],
+            content
+        ).apply {
+            this.route = route
+            arguments.forEach { (argumentName, argument) ->
+                addArgument(argumentName, argument)
+            }
+            deepLinks.forEach { deepLink ->
+                addDeepLink(deepLink)
+            }
         }
-        deepLinks.forEach { deepLink ->
-            addDeepLink(deepLink)
-        }
-    })
+    )
 }

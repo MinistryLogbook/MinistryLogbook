@@ -32,22 +32,23 @@ sealed class ShareGraph(
     val arguments: List<NamedNavArgument> = listOf()
 ) {
     object Root : ShareGraph(
-        "?year={year}&monthNumber={monthNumber}", arguments = listOf(
+        "?year={year}&monthNumber={monthNumber}",
+        arguments = listOf(
             navArgument("year") {
                 nullable = true
             },
             navArgument("monthNumber") {
                 nullable = true
-            },
+            }
         )
     ) {
         fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Share.route}/?year=${year}&monthNumber=${monthNumber}"
+            return "${AppGraph.Share.route}/?year=$year&monthNumber=$monthNumber"
         }
     }
 
     val route
-        get() = "${AppGraph.Share.route}/${rawRoute}"
+        get() = "${AppGraph.Share.route}/$rawRoute"
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -68,7 +69,7 @@ fun NavGraphBuilder.shareGraph() {
                     FadeOutTransitionMillis
                 )
             )
-        },
+        }
     ) {
         composable(ShareGraph.Root.route, ShareGraph.Root.arguments) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())

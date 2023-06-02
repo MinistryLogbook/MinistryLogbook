@@ -38,7 +38,6 @@ import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.shared.Toolbar
 import org.koin.androidx.compose.koinViewModel
 
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
@@ -69,7 +68,7 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
         }, extended = fabExtended, icon = {
             Icon(
                 painterResource(R.drawable.ic_add),
-                contentDescription = null, // TODO: contentDescription
+                contentDescription = null // TODO: contentDescription
             )
         }, text = {
             Text(stringResource(R.string.add_to_report))
@@ -78,7 +77,7 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
         Box {
             Toolbar(
                 modifier = Modifier.zIndex(1f),
-                elevation = if (scrollState.value > 0) 4.dp else 0.dp,
+                elevation = if (scrollState.value > 0) 4.dp else 0.dp
             ) {
                 ToolbarMonthSelect()
                 Spacer(Modifier.weight(1f))

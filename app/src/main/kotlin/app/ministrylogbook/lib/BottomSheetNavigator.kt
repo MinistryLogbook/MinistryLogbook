@@ -31,7 +31,9 @@ fun rememberBottomSheetNavigator(
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec
 ): BottomSheetNavigator {
     val sheetState = rememberModalBottomSheetState(
-        ModalBottomSheetValue.Hidden, animationSpec = animationSpec, skipHalfExpanded = true
+        ModalBottomSheetValue.Hidden,
+        animationSpec = animationSpec,
+        skipHalfExpanded = true
     )
     return remember { BottomSheetNavigator(sheetState) }
 }
@@ -97,7 +99,8 @@ class BottomSheetNavigator(
         // While the back stack is updated immediately, we might still be hiding the sheet, so
         // we keep the entry around until the sheet is hidden
         val retainedEntry by produceState<NavBackStackEntry?>(
-            initialValue = null, key1 = backStack
+            initialValue = null,
+            key1 = backStack
         ) {
             backStack.transform { backStackEntries ->
                 // Always hide the sheet when the back stack is updated
@@ -117,7 +120,8 @@ class BottomSheetNavigator(
             }
         }
 
-        SheetContentHost(backStackEntry = retainedEntry,
+        SheetContentHost(
+            backStackEntry = retainedEntry,
             sheetState = sheetState,
             saveableStateHolder = saveableStateHolder,
             onSheetShown = {
@@ -136,7 +140,8 @@ class BottomSheetNavigator(
                 else {
                     state.pop(popUpTo = backStackEntry, saveState = false)
                 }
-            })
+            }
+        )
     }
 
     override fun onAttach(state: NavigatorState) {
@@ -147,7 +152,9 @@ class BottomSheetNavigator(
     override fun createDestination(): Destination = Destination(navigator = this, content = {})
 
     override fun navigate(
-        entries: List<NavBackStackEntry>, navOptions: NavOptions?, navigatorExtras: Extras?
+        entries: List<NavBackStackEntry>,
+        navOptions: NavOptions?,
+        navigatorExtras: Extras?
     ) {
         entries.forEach { entry ->
             state.pushWithTransition(entry)

@@ -15,17 +15,17 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 
-
 @Composable
 fun Scrim(
     color: Color,
     onDismiss: () -> Unit,
     visible: Boolean,
-    semanticsContentDescription: String? = null,
+    semanticsContentDescription: String? = null
 ) {
     if (color.isSpecified) {
         val alpha by animateFloatAsState(
-            targetValue = if (visible) 1f else 0f, animationSpec = TweenSpec()
+            targetValue = if (visible) 1f else 0f,
+            animationSpec = TweenSpec()
         )
         val dismissModifier = if (visible) {
             Modifier

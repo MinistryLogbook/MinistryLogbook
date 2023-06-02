@@ -21,7 +21,7 @@ fun ExtendableFloatingActionButton(
 ) {
     FloatingActionButton(
         modifier = modifier,
-        onClick = onClick,
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier.padding(
