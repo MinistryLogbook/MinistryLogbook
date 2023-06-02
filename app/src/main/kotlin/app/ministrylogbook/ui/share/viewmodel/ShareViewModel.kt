@@ -16,6 +16,8 @@ import app.ministrylogbook.lib.theocraticAssignmentTimeSum
 import app.ministrylogbook.lib.theocraticSchoolTimeSum
 import app.ministrylogbook.lib.videoShowings
 import app.ministrylogbook.ui.share.FieldServiceReport
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -24,8 +26,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import java.time.format.TextStyle
-import java.util.Locale
 
 class ShareViewModel(
     val month: LocalDate,

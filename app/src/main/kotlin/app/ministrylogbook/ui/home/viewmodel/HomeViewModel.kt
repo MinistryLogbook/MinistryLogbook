@@ -11,6 +11,8 @@ import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsDataStore
 import app.ministrylogbook.lib.Time
 import app.ministrylogbook.lib.ministryTimeSum
+import java.time.format.TextStyle
+import java.util.Locale
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -24,8 +26,6 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
-import java.time.format.TextStyle
-import java.util.Locale
 
 class HomeViewModel(
     val month: LocalDate,

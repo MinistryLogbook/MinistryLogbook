@@ -33,9 +33,9 @@ import app.ministrylogbook.lib.AlertDialog
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.OptionList
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
+import java.util.Locale
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
-import java.util.Locale
 
 @Composable
 fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {

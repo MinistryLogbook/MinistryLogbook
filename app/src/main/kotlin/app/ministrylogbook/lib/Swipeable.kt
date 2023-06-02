@@ -51,15 +51,15 @@ import app.ministrylogbook.lib.SwipeableDefaults.StandardResistanceFactor
 import app.ministrylogbook.lib.SwipeableDefaults.VelocityThreshold
 import app.ministrylogbook.lib.SwipeableDefaults.resistanceConfig
 import com.google.android.material.math.MathUtils.lerp
+import kotlin.math.PI
+import kotlin.math.abs
+import kotlin.math.sign
+import kotlin.math.sin
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlin.math.PI
-import kotlin.math.abs
-import kotlin.math.sign
-import kotlin.math.sin
 
 /**
  * State of the [swipeable] modifier.

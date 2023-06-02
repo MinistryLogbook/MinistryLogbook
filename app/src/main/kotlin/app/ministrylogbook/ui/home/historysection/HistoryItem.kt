@@ -36,8 +36,8 @@ import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.lib.condition
-import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
+import kotlinx.datetime.toJavaLocalDate
 
 @Composable
 fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? = null) {

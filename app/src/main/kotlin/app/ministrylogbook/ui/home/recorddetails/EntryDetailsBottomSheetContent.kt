@@ -46,6 +46,8 @@ import app.ministrylogbook.lib.ExpandAnimationVisibility
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.OptionList
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
@@ -58,8 +60,6 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
