@@ -15,14 +15,14 @@ import android.text.TextPaint
 import app.ministrylogbook.R
 
 data class FieldServiceReport(
-    val name: String,
-    val month: String,
-    val placements: Int,
-    val videoShowings: Int,
-    val hours: Int,
-    val returnVisits: Int,
-    val bibleStudies: Int,
-    val comments: String
+    val name: String = "",
+    val month: String = "",
+    val placements: Int = 0,
+    val videoShowings: Int = 0,
+    val hours: Int = 0,
+    val returnVisits: Int = 0,
+    val bibleStudies: Int = 0,
+    val comments: String = ""
 )
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {

@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.lib.ExpandAnimationVisibility
@@ -21,8 +22,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TransferHint(viewModel: HomeViewModel = koinViewModel()) {
-    val restLastMonth by viewModel.restLastMonth.collectAsState()
-    val entries by viewModel.entries.collectAsState()
+    val restLastMonth by viewModel.restLastMonth.collectAsStateWithLifecycle()
+    val entries by viewModel.entries.collectAsStateWithLifecycle()
     val hasTransfer by remember { derivedStateOf { entries.any { it.type == EntryType.Transfer } } }
     val show = restLastMonth.isNotEmpty && !hasTransfer
 

@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +25,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
@@ -36,7 +36,7 @@ import org.koin.androidx.compose.koinViewModel
 fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val scrollState = rememberScrollState()
-    val name by viewModel.name.collectAsState("")
+    val name by viewModel.name.collectAsStateWithLifecycle()
     var textFieldValueState by remember(name) {
         mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
     }
@@ -44,7 +44,6 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-        viewModel.load()
     }
 
     val handleSave = {

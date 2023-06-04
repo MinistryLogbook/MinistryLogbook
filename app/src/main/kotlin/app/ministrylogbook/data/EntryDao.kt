@@ -4,22 +4,23 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EntryDao {
 
     @Query("SELECT * FROM entry WHERE id = :id")
-    suspend fun get(id: Int): Entry
+    fun get(id: Int): Flow<Entry>
 
     @Query(
         "SELECT * from entry WHERE strftime('%Y%m', datetime) = :year || substr('00' || :month, -2, 2)"
     )
-    suspend fun getAllOfMonth(year: Int, month: Int): List<Entry>
+    fun getAllOfMonth(year: Int, month: Int): Flow<List<Entry>>
 
     @Query(
         "SELECT * from entry WHERE strftime('%Y%m', transferred_from) = :year || substr('00' || :month, -2, 2)"
     )
-    suspend fun getTransferredFrom(year: Int, month: Int): List<Entry>
+    fun getTransferredFrom(year: Int, month: Int): Flow<List<Entry>>
 
     @Upsert
     suspend fun upsert(vararg entries: Entry): List<Long>

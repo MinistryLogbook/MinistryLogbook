@@ -35,8 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -50,7 +48,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.lib.shareBitmap
 import app.ministrylogbook.ui.LocalAppNavController
@@ -68,14 +66,12 @@ enum class ShareAs {
 fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     val context = LocalContext.current
     val navController = LocalAppNavController.current
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
     val scrollState = rememberScrollState()
     var selectedShareAs by remember { mutableStateOf<ShareAs?>(null) }
 
-    val fieldServiceReport by viewModel.fieldServiceReport.collectAsState(null)
+    val fieldServiceReport by viewModel.fieldServiceReport.collectAsStateWithLifecycle()
     var comments by remember { mutableStateOf("") }
-    val fieldServiceReportWithComments = fieldServiceReport?.run {
+    val fieldServiceReportWithComments = fieldServiceReport.run {
         val concatenatedComments = if (this.comments.isBlank()) {
             comments
         } else if (comments.isNotBlank()) {
@@ -87,7 +83,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     }
     val bitmap by remember(fieldServiceReportWithComments) {
         derivedStateOf {
-            fieldServiceReportWithComments?.let {
+            fieldServiceReportWithComments.let {
                 context.createFieldServiceReportImage(it)
             }
         }
@@ -99,19 +95,13 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
 
     val handleShare: () -> Unit = {
         if (selectedShareAs == ShareAs.Text) {
-            fieldServiceReportWithComments?.let {
+            fieldServiceReportWithComments.let {
                 context.shareFieldServiceReport(it)
             }
         } else if (selectedShareAs == ShareAs.Image) {
-            bitmap?.let {
+            bitmap.let {
                 context.shareBitmap(it)
             }
-        }
-    }
-
-    LaunchedEffect(currentRoute) {
-        if (currentRoute == ShareGraph.Root.route) {
-            viewModel.load()
         }
     }
 
@@ -143,7 +133,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                 .weight(1f)
                         ) {
                             Column(Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
-                                bitmap?.let {
+                                bitmap.let {
                                     Image(
                                         it.asImageBitmap(),
                                         modifier = Modifier

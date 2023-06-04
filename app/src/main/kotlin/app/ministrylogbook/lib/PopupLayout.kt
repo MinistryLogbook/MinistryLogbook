@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.FloatingWindow
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavBackStackEntry
@@ -53,7 +54,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PopupLayout(popupNavigator: PopupNavigator, content: @Composable () -> Unit) {
     val scope = rememberCoroutineScope()
-    val visibility by popupNavigator.popupState.visibility.collectAsState()
+    val visibility by popupNavigator.popupState.visibility.collectAsStateWithLifecycle()
     val visibleBackStackEntry by popupNavigator.currentVisibleBackStackEntryAsState()
     val backStackEntry by popupNavigator.currentBackStackEntryAsState()
     val animVisibleState = remember { MutableTransitionState(false) }

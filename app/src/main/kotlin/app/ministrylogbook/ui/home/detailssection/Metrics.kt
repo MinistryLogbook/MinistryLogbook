@@ -16,7 +16,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -29,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.lib.condition
 import app.ministrylogbook.lib.ministries
@@ -43,8 +43,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun Metrics(homeViewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val entries by homeViewModel.entries.collectAsState()
-    val bibleStudies by homeViewModel.bibleStudies.collectAsState(0)
+    val entries by homeViewModel.entries.collectAsStateWithLifecycle()
+    val bibleStudies by homeViewModel.bibleStudies.collectAsStateWithLifecycle()
     val ministries by remember(entries) { derivedStateOf { entries.ministries() } }
     val placements by remember(ministries) { derivedStateOf { ministries.placements() } }
     val returnVisits by remember(ministries) { derivedStateOf { ministries.returnVisits() } }

@@ -12,8 +12,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +25,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.os.LocaleListCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.BuildConfig
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Design
-import app.ministrylogbook.data.PublisherGoal
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.lib.AlertDialog
 import app.ministrylogbook.ui.LocalAppNavController
@@ -41,12 +39,8 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
+fun SettingsPage() {
     val scrollState = rememberScrollState()
-
-    LaunchedEffect(Unit) {
-        viewModel.load()
-    }
 
     BaseSettingsPage(stringResource(R.string.settings), toolbarElevation = scrollState.canScrollBackward) {
         Column(
@@ -92,7 +86,7 @@ fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
 fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
     var isDialogOpen by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val design by viewModel.design.collectAsState(Design.System)
+    val design by viewModel.design.collectAsStateWithLifecycle()
 
     val handleClose = {
         isDialogOpen = false
@@ -133,7 +127,7 @@ fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
 @Composable
 fun NameSetting(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val name by viewModel.name.collectAsState("")
+    val name by viewModel.name.collectAsStateWithLifecycle()
     val noNameSetText = stringResource(R.string.no_name_set)
     val nameOrDefault by remember { derivedStateOf { name.ifEmpty { noNameSetText } } }
 
@@ -152,7 +146,7 @@ fun NameSetting(viewModel: SettingsViewModel = koinViewModel()) {
 fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
     var isRoleDialogOpen by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val role by viewModel.role.collectAsState(Role.Publisher)
+    val role by viewModel.role.collectAsStateWithLifecycle()
 
     val handleClose = {
         isRoleDialogOpen = false
@@ -192,10 +186,10 @@ fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
 @Composable
 fun GoalSetting(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val role by viewModel.role.collectAsState(null)
-    val goal by viewModel.goal.collectAsState(null)
-    val roleGoal by viewModel.roleGoal.collectAsState(PublisherGoal)
-    val manuallySetGoal by viewModel.manuallySetGoal.collectAsState(null)
+    val role by viewModel.role.collectAsStateWithLifecycle()
+    val goal by viewModel.goal.collectAsStateWithLifecycle()
+    val roleGoal by viewModel.roleGoal.collectAsStateWithLifecycle()
+    val manuallySetGoal by viewModel.manuallySetGoal.collectAsStateWithLifecycle()
     val noGoalSetText = stringResource(R.string.no_goal_set)
     val manuallySetText = stringResource(R.string.manually_set_colon)
     val goalUnitText = pluralStringResource(R.plurals.hours_unit, goal ?: 0, goal ?: 0)

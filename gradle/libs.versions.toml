@@ -17,17 +17,16 @@ kotlinParcelze = "1.8.21"
 kotlinxCoroutinesAndroid = "1.7.1"
 kotlinxDatetime = "0.4.0"
 ksp = "1.8.21-1.0.11"
-lifecycleKtx = "2.6.1"
 material = "1.9.0"
 material3 = "1.2.0-alpha02"
 navigationCompose = "2.5.3"
 room = "2.5.1"
 junit = "4.13.2"
-runtimeLivedata = "1.5.0-beta01"
 ui = "1.5.0-beta01"
 uiTooling = "1.4.3"
 kotlinter = "3.15.0"
 aboutLicenses = "10.7.0"
+androidLifecycle = "2.6.1"
 
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
@@ -41,11 +40,10 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 androidx-espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espressoCore" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundation" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidXJUnit" }
-androidx-lifecycle-livedata-ktx = { module = "androidx.lifecycle:lifecycle-livedata-ktx", version.ref = "lifecycleKtx" }
-androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleKtx" }
+androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidLifecycle" }
+androidx-lifecycle-runtimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidLifecycle" }
 androidx-material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
-androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 androidx-ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
 androidx-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "uiTooling" }
 androidx-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiTooling" }

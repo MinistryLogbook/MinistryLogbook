@@ -3,14 +3,14 @@ package app.ministrylogbook.ui.settings.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.Design
-import app.ministrylogbook.data.MonthlyInformation
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsDataStore
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -20,21 +20,39 @@ class SettingsViewModel(
     private val _settingsDataStore: SettingsDataStore,
     private val _monthlyInformationRepository: MonthlyInformationRepository
 ) : ViewModel() {
-    private val _monthlyInfo = MutableStateFlow<MonthlyInformation?>(null)
+    private val _currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    private val _monthlyInfo = _monthlyInformationRepository.getOfMonth(_currentMonth)
 
-    val name = _settingsDataStore.name
-    val design = _settingsDataStore.design
-    val role = _settingsDataStore.role
-    val roleGoal = _settingsDataStore.roleGoal
-    val manuallySetGoal = _monthlyInfo.map { it?.goal }
-    val goal = roleGoal.combine(manuallySetGoal) { rg, msg -> msg ?: rg }
-
-    fun load() {
-        val currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        viewModelScope.launch {
-            _monthlyInfo.value = _monthlyInformationRepository.getOfMonth(currentMonth)
-        }
-    }
+    val name = _settingsDataStore.name.stateIn(
+        scope = viewModelScope,
+        initialValue = "",
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val design = _settingsDataStore.design.stateIn(
+        scope = viewModelScope,
+        initialValue = Design.System,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val role = _settingsDataStore.role.stateIn(
+        scope = viewModelScope,
+        initialValue = Role.Publisher,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val roleGoal = _settingsDataStore.roleGoal.stateIn(
+        scope = viewModelScope,
+        initialValue = 0,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val manuallySetGoal = _monthlyInfo.map { it.goal }.stateIn(
+        scope = viewModelScope,
+        initialValue = null,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val goal = roleGoal.combine(manuallySetGoal) { rg, msg -> msg ?: rg }.stateIn(
+        scope = viewModelScope,
+        initialValue = null,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
 
     fun setGoal(value: Int?) = viewModelScope.launch {
         val rg = roleGoal.firstOrNull()
@@ -71,3 +89,5 @@ class SettingsViewModel(
         _settingsDataStore.setName(text)
     }
 }
+
+private const val DEFAULT_TIMEOUT = 5000L

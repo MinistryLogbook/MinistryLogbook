@@ -4,9 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
-import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryRepository
-import app.ministrylogbook.data.MonthlyInformation
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsDataStore
 import app.ministrylogbook.lib.ministryTimeSum
@@ -18,10 +16,9 @@ import app.ministrylogbook.lib.videoShowings
 import app.ministrylogbook.ui.share.FieldServiceReport
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -30,13 +27,13 @@ import kotlinx.datetime.todayIn
 class ShareViewModel(
     val month: LocalDate,
     application: Application,
-    private val _entryRepository: EntryRepository,
-    private val _monthlyInformationRepository: MonthlyInformationRepository,
+    entryRepository: EntryRepository,
+    monthlyInformationRepository: MonthlyInformationRepository,
     settingsDataStore: SettingsDataStore
 ) : AndroidViewModel(application) {
 
-    private val _monthlyInformation = MutableStateFlow<MonthlyInformation?>(null)
-    private val _entries = MutableStateFlow<List<Entry>>(listOf())
+    private val _monthlyInformation = monthlyInformationRepository.getOfMonth(month)
+    private val _entries = entryRepository.getAllOfMonth(month)
 
     val fieldServiceReport =
         combine(
@@ -73,18 +70,14 @@ class ShareViewModel(
                 hours = ministryTimeSum.hours,
                 returnVisits = entries.returnVisits(),
                 videoShowings = entries.videoShowings(),
-                bibleStudies = studyEntry?.bibleStudies ?: 0,
+                bibleStudies = studyEntry.bibleStudies ?: 0,
                 comments = comments
             )
-        }
-
-    fun load() = viewModelScope.launch {
-        val allDefer = async { _entryRepository.getAllOfMonth(month) }
-        val studyEntryDefer = async { _monthlyInformationRepository.getOfMonth(month) }
-
-        _monthlyInformation.value = studyEntryDefer.await()
-        _entries.value = allDefer.await()
-    }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
+            initialValue = FieldServiceReport()
+        )
 
     private fun getMonthTitle(locale: Locale): String = month.run {
         val monthName = this.month.getDisplayName(TextStyle.FULL, locale)
@@ -92,3 +85,5 @@ class ShareViewModel(
         if (this.year != currentYear) "$monthName ${this.year}" else monthName
     }
 }
+
+private const val DEFAULT_TIMEOUT = 5000L

@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -40,8 +39,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
-import app.ministrylogbook.data.Role
 import app.ministrylogbook.lib.Time
 import app.ministrylogbook.lib.ministryTimeSum
 import app.ministrylogbook.lib.theocraticAssignmentTimeSum
@@ -53,13 +52,13 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
-    val entries by homeViewModel.entries.collectAsState()
-    val role by homeViewModel.role.collectAsState(Role.Publisher)
-    val goal by homeViewModel.goal.collectAsState(1)
+    val entries by homeViewModel.entries.collectAsStateWithLifecycle()
+    val role by homeViewModel.role.collectAsStateWithLifecycle()
+    val goal by homeViewModel.goal.collectAsStateWithLifecycle()
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
     val maxHoursWithCredit by remember(goal) { derivedStateOf { Time(goal + 5, 0) } }
-    val transferred by homeViewModel.transferred.collectAsState()
+    val transferred by homeViewModel.transferred.collectAsStateWithLifecycle()
     val transferredTime by remember(transferred) { derivedStateOf { transferred.timeSum() } }
     val ministryTime by remember(entries, transferredTime) {
         derivedStateOf { entries.ministryTimeSum() - transferredTime }
@@ -126,7 +125,7 @@ fun DetailsSection(homeViewModel: HomeViewModel = koinViewModel()) {
                             Progress(
                                 percent = (100 / goal * accumulatedTime.hours),
                                 color = ProgressPositive.copy(0.6f)
-                            ).takeIf { role.canHaveCredit && credit > Time(0, 0) },
+                            ).takeIf { role.canHaveCredit && (credit > Time(0, 0)) },
                             Progress(
                                 percent = (100 / goal * ministryTime.hours),
                                 color = ProgressPositive

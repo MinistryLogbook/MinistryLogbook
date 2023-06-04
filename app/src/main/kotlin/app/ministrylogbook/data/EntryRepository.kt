@@ -6,19 +6,11 @@ import kotlinx.datetime.LocalDate
 
 class EntryRepository(private val entryDao: EntryDao) {
 
-    suspend fun get(id: Int) = withContext(Dispatchers.IO) {
-        entryDao.get(id)
-    }
+    fun get(id: Int) = entryDao.get(id)
 
-    suspend fun getAllOfMonth(month: LocalDate) =
-        withContext(Dispatchers.IO) {
-            entryDao.getAllOfMonth(month.year, month.monthNumber)
-        }
+    fun getAllOfMonth(month: LocalDate) = entryDao.getAllOfMonth(month.year, month.monthNumber)
 
-    suspend fun getTransferredFrom(localDate: LocalDate) =
-        withContext(Dispatchers.IO) {
-            entryDao.getTransferredFrom(localDate.year, localDate.monthNumber)
-        }
+    fun getTransferredFrom(localDate: LocalDate) = entryDao.getTransferredFrom(localDate.year, localDate.monthNumber)
 
     suspend fun save(entry: Entry): Int {
         return withContext(Dispatchers.IO) {

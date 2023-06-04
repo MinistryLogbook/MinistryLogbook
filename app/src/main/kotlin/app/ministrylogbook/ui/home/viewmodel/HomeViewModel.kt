@@ -6,18 +6,18 @@ import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.data.MonthlyInformation
 import app.ministrylogbook.data.MonthlyInformationRepository
+import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsDataStore
 import app.ministrylogbook.lib.Time
 import app.ministrylogbook.lib.ministryTimeSum
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
@@ -32,23 +32,59 @@ class HomeViewModel(
     application: Application,
     settingsDataStore: SettingsDataStore,
     private val _entryRepository: EntryRepository,
-    private val _monthlyInformationRepository: MonthlyInformationRepository
+    monthlyInformationRepository: MonthlyInformationRepository
 ) : AndroidViewModel(application) {
 
-    private val _monthlyInformation = MutableStateFlow<MonthlyInformation?>(null)
-    private val _entries = MutableStateFlow<List<Entry>>(listOf())
-    private val _restLastMonth = MutableStateFlow(Time.Empty)
-    private val _transferred = MutableStateFlow<List<Entry>>(listOf())
-    private val _manuallySetGoal = _monthlyInformation.map { it?.goal }
+    private val _lastMonth = month.minus(DatePeriod(months = 1))
+    private val _monthlyInformation = monthlyInformationRepository.getOfMonth(month)
+    private val _entries = _entryRepository.getAllOfMonth(month)
+    private val _restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform<List<Entry>, Time> {
+        val lastMonthTime = it.ministryTimeSum()
+        if (!lastMonthTime.isNegative) {
+            Time(hours = 0, minutes = lastMonthTime.minutes)
+        } else {
+            Time.Empty
+        }
+    }
+    private val _transferred = _entryRepository.getTransferredFrom(month)
+    private val _manuallySetGoal = _monthlyInformation.map { it.goal }
     private val _roleGoal = settingsDataStore.roleGoal
 
-    val name = settingsDataStore.name
-    val goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
-    val role = settingsDataStore.role
-    val entries = _entries.asStateFlow()
-    val bibleStudies = _monthlyInformation.asStateFlow().map { it?.bibleStudies ?: 0 }
-    val restLastMonth = _restLastMonth.asStateFlow()
-    val transferred = _transferred.asStateFlow()
+    val name = settingsDataStore.name.stateIn(
+        scope = viewModelScope,
+        initialValue = "",
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }.stateIn(
+        scope = viewModelScope,
+        initialValue = 1,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val role = settingsDataStore.role.stateIn(
+        scope = viewModelScope,
+        initialValue = Role.Publisher,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val entries = _entries.stateIn(
+        scope = viewModelScope,
+        initialValue = listOf(),
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val bibleStudies = _monthlyInformation.map { it.bibleStudies ?: 0 }.stateIn(
+        scope = viewModelScope,
+        initialValue = 0,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val restLastMonth = _restLastMonth.stateIn(
+        scope = viewModelScope,
+        initialValue = Time.Empty,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val transferred = _transferred.stateIn(
+        scope = viewModelScope,
+        initialValue = listOf(),
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
     val rest = _entries.combine(_transferred) { entries, transferred ->
         val result = entries.ministryTimeSum() - transferred.ministryTimeSum()
         if (!result.isNegative) {
@@ -56,7 +92,11 @@ class HomeViewModel(
         } else {
             Time.Empty
         }
-    }
+    }.stateIn(
+        scope = viewModelScope,
+        initialValue = Time.Empty,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
 
     fun getMonthTitle(locale: Locale): String = month.run {
         val monthName = this.month.getDisplayName(TextStyle.FULL, locale)
@@ -75,16 +115,13 @@ class HomeViewModel(
             transferredFrom = lastOfMonth
         )
         viewModelScope.launch {
-            val id = _entryRepository.save(transfer)
-            _transferred.value += transfer.copy(id = id)
+            _entryRepository.save(transfer)
         }
     }
 
     fun undoTransfer(transfer: Entry) {
         viewModelScope.launch {
             _entryRepository.delete(transfer)
-            _transferred.value = _transferred.value.filter { it.id != transfer.id }
-            _entries.value = _entries.value.filter { it.id != transfer.id }
         }
     }
 
@@ -99,30 +136,9 @@ class HomeViewModel(
             transferredFrom = lastMonth
         )
         viewModelScope.launch {
-            val id = _entryRepository.save(transfer)
-            _entries.value += transfer.copy(id = id)
+            _entryRepository.save(transfer)
         }
-    }
-
-    fun load() = viewModelScope.launch {
-        val lastMonth = month.minus(DatePeriod(months = 1))
-
-        val allDefer = async { _entryRepository.getAllOfMonth(month) }
-        val lastMonthTimeDefer = async {
-            val entriesLastMonth = _entryRepository.getAllOfMonth(lastMonth)
-            entriesLastMonth.ministryTimeSum()
-        }
-        val transferredDefer = async { _entryRepository.getTransferredFrom(month) }
-        val studyEntryDefer = async { _monthlyInformationRepository.getOfMonth(month) }
-
-        _monthlyInformation.value = studyEntryDefer.await()
-        val lastMonthTime = lastMonthTimeDefer.await()
-        _restLastMonth.value = if (!lastMonthTime.isNegative) {
-            Time(hours = 0, minutes = lastMonthTime.minutes)
-        } else {
-            Time.Empty
-        }
-        _transferred.value = transferredDefer.await()
-        _entries.value = allDefer.await()
     }
 }
+
+private const val DEFAULT_TIMEOUT = 5000L

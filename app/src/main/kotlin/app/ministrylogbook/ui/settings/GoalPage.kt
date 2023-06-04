@@ -15,7 +15,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.ui.LocalAppNavController
@@ -44,10 +44,10 @@ import org.koin.androidx.compose.koinViewModel
 fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val scrollState = rememberScrollState()
-    val goal by viewModel.goal.collectAsState(null)
-    val manuallySetGoal by viewModel.manuallySetGoal.collectAsState(null)
-    val role by viewModel.role.collectAsState(null)
-    val roleGoal by viewModel.roleGoal.collectAsState(null)
+    val goal by viewModel.goal.collectAsStateWithLifecycle()
+    val manuallySetGoal by viewModel.manuallySetGoal.collectAsStateWithLifecycle()
+    val role by viewModel.role.collectAsStateWithLifecycle()
+    val roleGoal by viewModel.roleGoal.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     var textFieldValueState by remember(goal, role, roleGoal, manuallySetGoal) {
         // publishers don't have a goal but internally it's 1
@@ -98,7 +98,6 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
-        viewModel.load()
     }
 
     BaseSettingsPage(

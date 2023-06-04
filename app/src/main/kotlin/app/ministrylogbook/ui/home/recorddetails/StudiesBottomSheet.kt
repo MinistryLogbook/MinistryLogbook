@@ -6,15 +6,15 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
@@ -23,12 +23,8 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val studyEntry = viewModel.studyEntry.collectAsState()
-    var tempStudies by remember(studyEntry.value) {
-        mutableStateOf(
-            studyEntry.value?.bibleStudies ?: 0
-        )
-    }
+    val bibleStudies by viewModel.bibleStudies.collectAsStateWithLifecycle()
+    var tempStudies by remember(bibleStudies) { mutableIntStateOf(bibleStudies) }
 
     val handleClose: () -> Unit = {
         navController.popBackStack()

@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
@@ -27,12 +28,12 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HistorySection(viewModel: HomeViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val entries by viewModel.entries.collectAsState()
+    val entries by viewModel.entries.collectAsStateWithLifecycle()
     val orderedEntries by remember(entries) {
         derivedStateOf { entries.sortedBy { it.datetime }.reversed() }
     }
     var transferToUndo by remember { mutableStateOf<Entry?>(null) }
-    val transferred by viewModel.transferred.collectAsState()
+    val transferred by viewModel.transferred.collectAsStateWithLifecycle()
 
     val handleClick: (entry: Entry) -> Unit = {
         navController.navigateToEntryDetails(viewModel.month, it.id)

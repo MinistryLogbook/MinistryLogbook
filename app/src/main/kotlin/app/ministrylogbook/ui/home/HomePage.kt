@@ -28,7 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.lib.ExtendableFloatingActionButton
 import app.ministrylogbook.ui.LocalAppNavController
@@ -44,15 +44,15 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
     var fabExtended by remember { mutableStateOf(true) }
     val scrollState = rememberScrollState()
     val navController = LocalAppNavController.current
-    val entries by viewModel.entries.collectAsState()
-    val backStackEntry = navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry.value?.destination?.route
+    val entries by viewModel.entries.collectAsStateWithLifecycle()
+//    val backStackEntry = navController.currentBackStackEntryAsState()
+//    val currentRoute = backStackEntry.value?.destination?.route
 
-    LaunchedEffect(currentRoute) {
-        if (currentRoute == HomeGraph.Root.route) {
-            viewModel.load()
-        }
-    }
+//    LaunchedEffect(currentRoute) {
+//        if (currentRoute == HomeGraph.Root.route) {
+//            viewModel.load()
+//        }
+//    }
 
     LaunchedEffect(scrollState) {
         var prev = 0

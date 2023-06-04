@@ -25,7 +25,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,9 +38,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.data.Role
 import app.ministrylogbook.lib.ExpandAnimationVisibility
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.OptionList
@@ -65,7 +64,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
-    val entry by viewModel.entry.collectAsState()
+    val entry by viewModel.entry.collectAsStateWithLifecycle()
     val isInFuture by remember(entry) {
         derivedStateOf {
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -88,7 +87,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isEntryKindDialogVisible by rememberSaveable { mutableStateOf(false) }
-    val role by viewModel.role.collectAsState(Role.Publisher)
+    val role by viewModel.role.collectAsStateWithLifecycle()
     val dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)
     val isCreditEnabled by remember(role, entry) {
         derivedStateOf { role.canHaveCredit || entry.isCredit }
@@ -161,7 +160,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         viewModel.update(datetime = it)
     }
     val handleKindDate: (newValue: EntryType) -> Unit = {
-        viewModel.update(kind = it)
+        viewModel.update(type = it)
     }
 
     if (isDateDialogVisible) {
