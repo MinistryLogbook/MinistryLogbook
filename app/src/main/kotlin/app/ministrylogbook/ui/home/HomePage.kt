@@ -17,7 +17,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,14 +44,6 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
     val scrollState = rememberScrollState()
     val navController = LocalAppNavController.current
     val entries by viewModel.entries.collectAsStateWithLifecycle()
-//    val backStackEntry = navController.currentBackStackEntryAsState()
-//    val currentRoute = backStackEntry.value?.destination?.route
-
-//    LaunchedEffect(currentRoute) {
-//        if (currentRoute == HomeGraph.Root.route) {
-//            viewModel.load()
-//        }
-//    }
 
     LaunchedEffect(scrollState) {
         var prev = 0
