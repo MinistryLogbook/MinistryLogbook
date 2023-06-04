@@ -17,11 +17,12 @@
   theocratic schools/class, and theocratic assignments
 - Share your Field Service Report as either image or text
 - Up-to-date design
+- Transfer rest of the month's time to the next month
 - Dark and light mode
 
-## Installation
+## Download
 
-[![Get it on Google Play](resources/google-play-badge.png)](https://play.google.com/store/apps/details?id=app.ministrylogbook)
+[<img height="80" src="resources/google-play-badge.png" alt="Get it on Google Play">](https://play.google.com/store/apps/details?id=app.ministrylogbook)
 
 ## License
 
