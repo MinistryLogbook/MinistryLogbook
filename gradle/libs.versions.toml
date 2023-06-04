@@ -12,11 +12,11 @@ foundation = "1.5.0-beta01"
 koin = "3.4.0"
 koinCompose = "3.4.4"
 androidGradlePlugin = "8.0.2"
-kotlin = "1.8.0"
+kotlin = "1.8.21"
 kotlinParcelze = "1.8.21"
 kotlinxCoroutinesAndroid = "1.7.1"
 kotlinxDatetime = "0.4.0"
-ksp = "1.8.0-1.0.9"
+ksp = "1.8.21-1.0.11"
 lifecycleKtx = "2.6.1"
 material = "1.9.0"
 material3 = "1.2.0-alpha02"
@@ -27,6 +27,7 @@ runtimeLivedata = "1.5.0-beta01"
 ui = "1.5.0-beta01"
 uiTooling = "1.4.3"
 kotlinter = "3.15.0"
+aboutLicenses = "10.7.0"
 
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
@@ -60,6 +61,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
+aboutlicenses-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLicenses" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
@@ -67,3 +69,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
+aboutlicenses = { id ="com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLicenses" }
+

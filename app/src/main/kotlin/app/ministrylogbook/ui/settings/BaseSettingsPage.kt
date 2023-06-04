@@ -1,7 +1,6 @@
 package app.ministrylogbook.ui.settings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
 import app.ministrylogbook.lib.condition
@@ -32,6 +32,7 @@ import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 @Composable
 fun BaseSettingsPage(
     title: String,
+    toolbarElevation: Boolean = false,
     actions: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit = {}
 ) {
@@ -44,7 +45,10 @@ fun BaseSettingsPage(
     MinistryLogbookTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Box {
-                Toolbar(padding = PaddingValues(horizontal = 12.dp)) {
+                Toolbar(
+                    padding = PaddingValues(horizontal = 12.dp),
+                    elevation = if (toolbarElevation) 4.dp else 0.dp
+                ) {
                     ToolbarAction(onClick = handleBack) {
                         Icon(
                             painterResource(R.drawable.ic_arrow_back),
@@ -52,20 +56,19 @@ fun BaseSettingsPage(
                         )
                     }
                     Spacer(Modifier.width(8.dp))
-                    Text(title, fontSize = MaterialTheme.typography.titleLarge.fontSize)
+                    Text(
+                        title,
+                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 1
+                    )
 
                     Spacer(Modifier.weight(1f))
                     actions?.invoke()
                 }
-                Column(
-                    Modifier
-                        .statusBarsPadding()
-                        .padding(vertical = 10.dp)
-                ) {
+                Column(Modifier.statusBarsPadding()) {
                     Spacer(Modifier.height(56.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
-                        content()
-                    }
+                    content()
                 }
             }
         }

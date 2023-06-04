@@ -14,3 +14,12 @@ fun NavHostController.navigateToSettingsName() = navigate(SettingsGraph.Name.rou
 fun NavHostController.navigateToSettingsGoal() = navigate(SettingsGraph.Goal.route) {
     popUpTo(SettingsGraph.Root.route)
 }
+
+fun NavHostController.navigateToOpenSourceLicenses() = navigate(SettingsGraph.Licenses.route) {
+    popUpTo(SettingsGraph.Root.route)
+}
+
+fun NavHostController.navigateToLicenseDetail(id: String) =
+    navigate(SettingsGraph.LicenseDetail.createDestination(id)) {
+        popUpTo(SettingsGraph.Licenses.route)
+    }

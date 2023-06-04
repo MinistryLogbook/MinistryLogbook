@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -41,6 +43,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
+    val scrollState = rememberScrollState()
     val goal by viewModel.goal.collectAsState(null)
     val manuallySetGoal by viewModel.manuallySetGoal.collectAsState(null)
     val role by viewModel.role.collectAsState(null)
@@ -98,15 +101,19 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
         viewModel.load()
     }
 
-    BaseSettingsPage(stringResource(R.string.goal), actions = {
-        ToolbarAction(onClick = { handleSave() }, disabled = !isSavable) {
-            Icon(
-                painterResource(R.drawable.ic_done),
-                contentDescription = null // TODO: contentDescription
-            )
+    BaseSettingsPage(
+        title = stringResource(R.string.goal),
+        toolbarElevation = scrollState.canScrollBackward,
+        actions = {
+            ToolbarAction(onClick = { handleSave() }, disabled = !isSavable) {
+                Icon(
+                    painterResource(R.drawable.ic_done),
+                    contentDescription = null // TODO: contentDescription
+                )
+            }
         }
-    }) {
-        Column(Modifier.padding(16.dp)) {
+    ) {
+        Column(Modifier.verticalScroll(scrollState).padding(16.dp)) {
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()

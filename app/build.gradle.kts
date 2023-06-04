@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
+    alias(libs.plugins.aboutlicenses)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
 }
 
@@ -89,7 +90,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.1"
+        kotlinCompilerExtensionVersion = "1.4.7"
     }
 
     packaging {
@@ -99,14 +100,10 @@ android {
     namespace = "app.ministrylogbook"
 }
 
-tasks.withType<KotlinCompile>().configureEach {
+tasks.withType<KotlinCompile>().all {
     kotlinOptions {
         jvmTarget = "11"
     }
-}
-
-tasks.check {
-    dependsOn("installKotlinterPrePushHook")
 }
 
 dependencies {
@@ -119,6 +116,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.aboutlicenses.core)
     implementation(libs.core.ktx)
     implementation(libs.material)
     implementation(libs.kotlinx.datetime)
@@ -159,7 +157,7 @@ fun getGitHash() = ByteArrayOutputStream().use {
 fun getTagName() = ByteArrayOutputStream().use {
     try {
         project.exec {
-            commandLine("git", "describe", "--tags")
+            commandLine("git", "describe", "--tags", "--abbrev=0")
             standardOutput = it
         }
     } catch (e: Exception) {

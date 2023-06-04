@@ -3,8 +3,10 @@ package app.ministrylogbook.ui.settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -33,6 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
+    val scrollState = rememberScrollState()
     val name by viewModel.name.collectAsState("")
     var textFieldValueState by remember(name) {
         mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
@@ -49,15 +52,19 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
         navController.popBackStack()
     }
 
-    BaseSettingsPage(stringResource(R.string.name), actions = {
-        ToolbarAction(onClick = { handleSave() }) {
-            Icon(
-                painterResource(R.drawable.ic_done),
-                contentDescription = null // TODO: contentDescription
-            )
+    BaseSettingsPage(
+        title = stringResource(R.string.name),
+        toolbarElevation = scrollState.canScrollBackward,
+        actions = {
+            ToolbarAction(onClick = { handleSave() }) {
+                Icon(
+                    painterResource(R.drawable.ic_done),
+                    contentDescription = null // TODO: contentDescription
+                )
+            }
         }
-    }) {
-        Box(Modifier.padding(16.dp)) {
+    ) {
+        Box(Modifier.verticalScroll(scrollState).padding(16.dp)) {
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()

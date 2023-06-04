@@ -43,9 +43,8 @@ sealed class HomeGraph(
             }
         )
     ) {
-        fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Home.route}/?year=$year&monthNumber=$monthNumber"
-        }
+        fun createDestination(year: Int, monthNumber: Int) =
+            "${AppGraph.Home.route}/?year=$year&monthNumber=$monthNumber"
     }
 
     object Studies : HomeGraph(
@@ -55,9 +54,7 @@ sealed class HomeGraph(
             navArgument("monthNumber") { type = NavType.IntType }
         )
     ) {
-        fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Home.route}/$year/$monthNumber/studies"
-        }
+        fun createDestination(year: Int, monthNumber: Int) = "${AppGraph.Home.route}/$year/$monthNumber/studies"
     }
 
     object EntryDetails : HomeGraph(

@@ -1,10 +1,13 @@
 package app.ministrylogbook.ui.settings
 
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,37 +42,48 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
+    val scrollState = rememberScrollState()
+
     LaunchedEffect(Unit) {
         viewModel.load()
     }
 
-    BaseSettingsPage(stringResource(R.string.settings)) {
-        Column {
-            Title(stringResource(R.string.personal_information))
-            NameSetting()
-            RoleSetting()
-            GoalSetting()
-        }
-        Column {
-            Title(stringResource(R.string.appearance))
-            LanguageSetting()
-            DesignSetting()
-        }
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            contentAlignment = Alignment.Center
+    BaseSettingsPage(stringResource(R.string.settings), toolbarElevation = scrollState.canScrollBackward) {
+        Column(
+            Modifier.padding(vertical = 10.dp).verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            Text(
-                stringResource(
-                    R.string.version,
-                    BuildConfig.VERSION_NAME,
-                    BuildConfig.VERSION_CODE
-                ),
-                color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
-                fontSize = 13.sp
-            )
+            Column {
+                Title(stringResource(R.string.personal_information))
+                NameSetting()
+                RoleSetting()
+                GoalSetting()
+            }
+            Column {
+                Title(stringResource(R.string.appearance))
+                LanguageSetting()
+                DesignSetting()
+            }
+            Column {
+                Title(stringResource(R.string.legal))
+                OpenSourceLicenses()
+            }
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    stringResource(
+                        R.string.version,
+                        BuildConfig.VERSION_NAME,
+                        BuildConfig.VERSION_CODE
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
+                    fontSize = 13.sp
+                )
+            }
         }
     }
 }
@@ -269,3 +283,12 @@ fun LanguageSetting() {
 }
 
 private val supportedLocales = listOf(null, Locale.ENGLISH, Locale.GERMAN)
+
+@Composable
+fun OpenSourceLicenses() {
+    val navController = LocalAppNavController.current
+
+    Setting(title = stringResource(R.string.open_source_licenses), onClick = {
+        navController.navigateToOpenSourceLicenses()
+    })
+}
