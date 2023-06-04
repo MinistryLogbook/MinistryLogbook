@@ -5,7 +5,6 @@
 
 [![Build Status](https://github.com/danieldaeschle/MinistryLogbook/workflows/Build/badge.svg)](https://github.com/danieldaeschle/MinistryLogbook/actions/workflows/test.yml)
 [![Release](https://img.shields.io/github/v/release/MinistryLogbook/MinistryLogbook?include_prereleases)](https://github.com/MinistryLogbook/MinistryLogbook/releases)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 </div>
 
@@ -23,8 +22,3 @@
 ## Download
 
 [<img height="80" src="resources/google-play-badge.png" alt="Get it on Google Play">](https://play.google.com/store/apps/details?id=app.ministrylogbook)
-
-## License
-
-**Ministry Logbook** is distributed under the terms of the GNU General Public License 3. See
-the [license](LICENSE) for more information.
