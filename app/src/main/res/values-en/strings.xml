@@ -99,4 +99,6 @@
     <string name="date_in_future">Date is in the future</string>
     <string name="legal">Legal</string>
     <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="pioneer_since_month_pattern">MMMM yyyy</string>
+    <string name="pioneer_since">Pioneer since</string>
 </resources>

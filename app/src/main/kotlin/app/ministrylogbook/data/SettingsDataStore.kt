@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.ministrylogbook.R
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.LocalDate
 
 private val Context.dataStore by preferencesDataStore("settings")
 
@@ -64,6 +65,7 @@ enum class Design {
 class SettingsDataStore(val context: Context) {
     companion object {
         private val ROLE_KEY = stringPreferencesKey("role")
+        private val PIONEER_SINCE_KEY = stringPreferencesKey("pioneer_since")
         private val NAME_KEY = stringPreferencesKey("name")
         private val DESIGN_KEY = stringPreferencesKey("design")
     }
@@ -71,6 +73,8 @@ class SettingsDataStore(val context: Context) {
     val role = context.dataStore.data.map {
         it[ROLE_KEY]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
+    val pioneerSince =
+        context.dataStore.data.map { it[PIONEER_SINCE_KEY]?.let { dateStr -> LocalDate.parse(dateStr) } }
     val roleGoal = role.map { it.goal }
     val name = context.dataStore.data.map { it[NAME_KEY] ?: "" }
     val design = context.dataStore.data.map {
@@ -83,10 +87,16 @@ class SettingsDataStore(val context: Context) {
         }
     }
 
-    suspend fun setRole(role: Role) {
-        context.dataStore.edit {
-            it[ROLE_KEY] = role.name
+    suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {
+        if (date == null) {
+            it.remove(PIONEER_SINCE_KEY)
+            return@edit
         }
+        it[PIONEER_SINCE_KEY] = date.toString()
+    }
+
+    suspend fun setRole(role: Role) = context.dataStore.edit {
+        it[ROLE_KEY] = role.name
     }
 
     suspend fun setName(name: String) = context.dataStore.edit {

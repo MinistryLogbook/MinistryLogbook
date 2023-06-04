@@ -27,6 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
+import app.ministrylogbook.lib.MonthPickerPopup
 import app.ministrylogbook.lib.getLocale
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
@@ -84,7 +85,7 @@ fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
             onDismissRequest = {
                 expanded = !expanded
             },
-            onSelectMonth = { month ->
+            onSelect = { month ->
                 expanded = false
                 // TODO: wait for animation to finish
                 navController.navigateToMonth(month.year, month.monthNumber)

@@ -229,8 +229,9 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     }
 
     app.ministrylogbook.lib.AlertDialog(
+        modifier = Modifier.fillMaxWidth(),
         isOpen = isEntryKindDialogVisible,
-        onClose = { isEntryKindDialogVisible = false },
+        onDismissRequest = { isEntryKindDialogVisible = false },
         paddingValues = PaddingValues(vertical = 8.dp)
     ) {
         val entryTypes = listOfNotNull(

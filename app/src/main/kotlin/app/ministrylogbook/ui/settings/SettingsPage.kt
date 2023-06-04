@@ -31,11 +31,17 @@ import app.ministrylogbook.R
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.lib.AlertDialog
+import app.ministrylogbook.lib.MonthPickerDialog
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.OptionList
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
+import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -51,6 +57,7 @@ fun SettingsPage() {
                 Title(stringResource(R.string.personal_information))
                 NameSetting()
                 RoleSetting()
+                PioneerSinceSetting()
                 GoalSetting()
             }
             Column {
@@ -92,13 +99,19 @@ fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
         isDialogOpen = false
     }
 
-    AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
-        Text(stringResource(R.string.design))
-    }, dismissButton = {
-        TextButton(onClick = handleClose) {
-            Text(stringResource(R.string.cancel))
+    AlertDialog(
+        modifier = Modifier.fillMaxWidth(),
+        isOpen = isDialogOpen,
+        onDismissRequest = handleClose,
+        title = {
+            Text(stringResource(R.string.design))
+        },
+        dismissButton = {
+            TextButton(onClick = handleClose) {
+                Text(stringResource(R.string.cancel))
+            }
         }
-    }) {
+    ) {
         OptionList {
             Design.values().map { d ->
                 Option(text = d.translate(), selected = d == design, onClick = {
@@ -152,13 +165,19 @@ fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
         isRoleDialogOpen = false
     }
 
-    AlertDialog(isOpen = isRoleDialogOpen, onClose = handleClose, title = {
-        Text(stringResource(R.string.role))
-    }, dismissButton = {
-        TextButton(onClick = handleClose) {
-            Text(stringResource(R.string.cancel))
+    AlertDialog(
+        modifier = Modifier.fillMaxWidth(),
+        isOpen = isRoleDialogOpen,
+        onDismissRequest = handleClose,
+        title = {
+            Text(stringResource(R.string.role))
+        },
+        dismissButton = {
+            TextButton(onClick = handleClose) {
+                Text(stringResource(R.string.cancel))
+            }
         }
-    }) {
+    ) {
         OptionList {
             Role.values().map { r ->
                 Option(text = r.translate(), selected = r == role, onClick = {
@@ -180,6 +199,39 @@ fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
         )
+    }
+}
+
+@Composable
+fun PioneerSinceSetting(viewModel: SettingsViewModel = koinViewModel()) {
+    val role by viewModel.role.collectAsStateWithLifecycle()
+
+    if (role == Role.RegularPioneer || role == Role.SpecialPioneer) {
+        var isDialogOpen by remember { mutableStateOf(false) }
+        val pioneerSince by viewModel.pioneerSince.collectAsStateWithLifecycle()
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+        MonthPickerDialog(
+            isOpen = isDialogOpen,
+            initialMonth = pioneerSince ?: today,
+            onDismissRequest = { isDialogOpen = false },
+            onSelect = {
+                viewModel.setPioneerSince(it)
+                isDialogOpen = false
+            }
+        )
+
+        Setting(title = stringResource(R.string.pioneer_since), onClick = { isDialogOpen = true }) {
+            val pattern = stringResource(R.string.pioneer_since_month_pattern)
+            val formatter = DateTimeFormatter.ofPattern(pattern)
+            val monthText = formatter.format((pioneerSince ?: today).toJavaLocalDate())
+
+            Text(
+                monthText,
+                fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+            )
+        }
     }
 }
 
@@ -236,13 +288,19 @@ fun LanguageSetting() {
         isDialogOpen = false
     }
 
-    AlertDialog(isOpen = isDialogOpen, onClose = handleClose, title = {
-        Text(stringResource(R.string.role))
-    }, dismissButton = {
-        TextButton(onClick = handleClose) {
-            Text(stringResource(R.string.cancel))
+    AlertDialog(
+        modifier = Modifier.fillMaxWidth(),
+        isOpen = isDialogOpen,
+        onDismissRequest = handleClose,
+        title = {
+            Text(stringResource(R.string.role))
+        },
+        dismissButton = {
+            TextButton(onClick = handleClose) {
+                Text(stringResource(R.string.cancel))
+            }
         }
-    }) {
+    ) {
         OptionList {
             supportedLocales.map { supportedLocale ->
                 val supportedLocaleDisplayName = if (supportedLocale != null) {

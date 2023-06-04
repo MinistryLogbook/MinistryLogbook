@@ -21,20 +21,21 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertDialog(
+    modifier: Modifier = Modifier,
     isOpen: Boolean = false,
     title: (@Composable () -> Unit)? = null,
     dismissButton: (@Composable () -> Unit)? = null,
     confirmButton: (@Composable () -> Unit)? = null,
-    onClose: () -> Unit = {},
+    onDismissRequest: () -> Unit = {},
     paddingValues: PaddingValues = PaddingValues(vertical = 24.dp),
     content: @Composable () -> Unit = {}
 ) {
     if (isOpen) {
-        androidx.compose.material3.AlertDialog(onDismissRequest = onClose) {
+        androidx.compose.material3.AlertDialog(onDismissRequest = onDismissRequest) {
             Surface(
                 modifier = Modifier
                     .wrapContentHeight()
-                    .fillMaxWidth(),
+                    .then(modifier),
                 shape = MaterialTheme.shapes.large,
                 tonalElevation = AlertDialogDefaults.TonalElevation
             ) {
@@ -63,7 +64,7 @@ fun AlertDialog(
                         Row(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(start = 24.dp, end = 24.dp),
+                                .padding(horizontal = 24.dp),
                             horizontalArrangement = Arrangement.End
                         ) {
                             dismissButton?.let { dismissButton() }

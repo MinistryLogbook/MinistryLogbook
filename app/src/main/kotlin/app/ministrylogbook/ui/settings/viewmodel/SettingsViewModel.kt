@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
@@ -38,6 +39,11 @@ class SettingsViewModel(
         initialValue = Role.Publisher,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+    val pioneerSince = _settingsDataStore.pioneerSince.stateIn(
+        scope = viewModelScope,
+        initialValue = null,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
     val roleGoal = _settingsDataStore.roleGoal.stateIn(
         scope = viewModelScope,
         initialValue = 0,
@@ -53,6 +59,10 @@ class SettingsViewModel(
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
+    fun setPioneerSince(date: LocalDate) = viewModelScope.launch {
+        _settingsDataStore.setPioneerSince(date)
+    }
 
     fun setGoal(value: Int?) = viewModelScope.launch {
         val rg = roleGoal.firstOrNull()
@@ -82,11 +92,22 @@ class SettingsViewModel(
         if (msg == role.firstOrNull()?.goal && role.firstOrNull() != Role.Publisher) {
             resetGoal()
         }
+        if (isAnyPioneer(r) && !isAnyPioneer(role.value)) {
+            setPioneerSince(_currentMonth)
+        } else if (!isAnyPioneer(r)) {
+            resetPioneerSince()
+        }
         _settingsDataStore.setRole(r)
     }
 
     fun setName(text: String) = viewModelScope.launch {
         _settingsDataStore.setName(text)
+    }
+
+    private fun isAnyPioneer(role: Role) = role == Role.RegularPioneer || role == Role.SpecialPioneer
+
+    private fun resetPioneerSince() = viewModelScope.launch {
+        _settingsDataStore.setPioneerSince(null)
     }
 }
 

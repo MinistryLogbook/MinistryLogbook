@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home
+package app.ministrylogbook.lib
 
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.MutableTransitionState
@@ -10,7 +10,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,17 +20,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,7 +46,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntOffset
@@ -56,7 +57,6 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import app.ministrylogbook.R
-import app.ministrylogbook.lib.condition
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -74,7 +74,7 @@ fun MonthPickerMonth(
 ) {
     val selectedBackground = MaterialTheme.colorScheme.primary.copy(0.2f)
     val modifier = Modifier
-        .clip(RoundedCornerShape(8.dp))
+        .clip(CircleShape)
         .condition(selected) {
             background(selectedBackground)
         }
@@ -97,25 +97,125 @@ fun MonthPickerMonth(
 }
 
 @Composable
-fun MonthPickerPopup(
-    expanded: Boolean,
-    selectedMonth: LocalDate,
+fun MonthPickerDialog(
+    isOpen: Boolean,
+    initialMonth: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     onDismissRequest: () -> Unit = {},
-    onSelectMonth: (month: LocalDate) -> Unit = {}
+    onSelect: (month: LocalDate) -> Unit = {}
 ) {
-    val coroutineScope = rememberCoroutineScope()
+    var selectedMonth by remember { mutableStateOf(initialMonth) }
+
+    AlertDialog(
+        modifier = Modifier.width(240.dp),
+        isOpen = isOpen,
+        onDismissRequest = onDismissRequest,
+        confirmButton = {
+            TextButton(onClick = { onSelect(selectedMonth) }) {
+                Text(stringResource(android.R.string.ok))
+            }
+        }
+    ) {
+        Box(Modifier.padding(horizontal = 24.dp)) {
+            MonthPicker(selectedMonth, onSelect = { selectedMonth = it })
+        }
+    }
+}
+
+@Composable
+fun MonthPicker(selectedMonth: LocalDate, onSelect: (month: LocalDate) -> Unit = {}) {
     val months = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     val actualDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val actualYear = actualDate.year
     var selectedYearIndex by remember(selectedMonth) {
-        mutableStateOf(
-            selectedMonth.year - actualYear
-        )
+        mutableIntStateOf(selectedMonth.year - actualYear)
     }
     val selectedYear = actualYear + selectedYearIndex
-    val expandedStates = remember { MutableTransitionState(false) }
     val isActualMonth =
         selectedMonth.year == actualYear && selectedMonth.monthNumber == actualDate.monthNumber
+
+    Column {
+        YearPicker(selectedYear, onChange = {
+            if (it < actualYear + 1) {
+                selectedYearIndex = it - actualYear
+            }
+        })
+        Spacer(Modifier.height(8.dp))
+        LazyVerticalGrid(
+            modifier = Modifier.fillMaxWidth(),
+            columns = GridCells.Fixed(3),
+            userScrollEnabled = false,
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(months) { month ->
+                val monthName = Month(month).getShortDisplayName()
+                val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                val currentMonth = currentDate.month.value
+                val currentYear = actualYear + selectedYearIndex
+                val disabled = (month > currentMonth && currentYear == actualYear) ||
+                    currentYear > actualYear
+                val selected = currentYear == selectedMonth.year &&
+                    month == selectedMonth.monthNumber
+
+                MonthPickerMonth(
+                    monthName,
+                    selected = selected,
+                    disabled = disabled,
+                    onClick = {
+                        val newMonth = LocalDate(
+                            currentYear,
+                            month,
+                            1
+                        )
+                        onSelect(newMonth)
+                    }
+                )
+            }
+        }
+
+        Spacer(Modifier.height(8.dp))
+
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(4.dp))
+                .condition(!isActualMonth) {
+                    clickable {
+                        val currentMonth = LocalDate(
+                            actualYear,
+                            actualDate.monthNumber,
+                            1
+                        )
+                        onSelect(currentMonth)
+                    }
+                }
+                .height(52.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            CompositionLocalProvider(
+                LocalContentColor provides if (isActualMonth) {
+                    LocalContentColor.current.copy(
+                        0.4f
+                    )
+                } else {
+                    LocalContentColor.current
+                }
+            ) {
+                Text(stringResource(R.string.current_month))
+            }
+        }
+    }
+}
+
+@Composable
+fun MonthPickerPopup(
+    expanded: Boolean,
+    selectedMonth: LocalDate,
+    onDismissRequest: () -> Unit = {},
+    onSelect: (month: LocalDate) -> Unit = {}
+) {
+    val coroutineScope = rememberCoroutineScope()
+    val expandedStates = remember { MutableTransitionState(false) }
 
     LaunchedEffect(expanded) {
         expandedStates.targetState = expanded
@@ -145,80 +245,11 @@ fun MonthPickerPopup(
                 }
             }
         ) {
-            MonthPickerContent(
+            MonthPickerPopupContent(
                 expandedStates = expandedStates,
                 transformOriginState = transformOriginState
             ) {
-                YearPicker(selectedYear, onChange = {
-                    if (it < actualYear + 1) {
-                        selectedYearIndex = it - actualYear
-                    }
-                })
-                Spacer(Modifier.height(8.dp))
-                LazyVerticalGrid(
-                    modifier = Modifier.fillMaxWidth(),
-                    columns = GridCells.Fixed(3),
-                    userScrollEnabled = false,
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(months) { month ->
-                        val monthName = Month(month).getShortDisplayName()
-                        val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-                        val currentMonth = currentDate.month.value
-                        val currentYear = actualYear + selectedYearIndex
-                        val disabled = (month > currentMonth && currentYear == actualYear) ||
-                            currentYear > actualYear
-                        val selected = currentYear == selectedMonth.year &&
-                            month == selectedMonth.monthNumber
-
-                        MonthPickerMonth(
-                            monthName,
-                            selected = selected,
-                            disabled = disabled,
-                            onClick = {
-                                val newMonth = LocalDate(
-                                    currentYear,
-                                    month,
-                                    1
-                                )
-                                onSelectMonth(newMonth)
-                            }
-                        )
-                    }
-                }
-
-                Spacer(Modifier.height(8.dp))
-
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(4.dp))
-                        .condition(!isActualMonth) {
-                            clickable {
-                                val currentMonth = LocalDate(
-                                    actualYear,
-                                    actualDate.monthNumber,
-                                    1
-                                )
-                                onSelectMonth(currentMonth)
-                            }
-                        }
-                        .padding(top = 6.dp, bottom = 6.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CompositionLocalProvider(
-                        LocalContentColor provides if (isActualMonth) {
-                            LocalContentColor.current.copy(
-                                0.4f
-                            )
-                        } else {
-                            LocalContentColor.current
-                        }
-                    ) {
-                        Text(stringResource(R.string.current_month))
-                    }
-                }
+                MonthPicker(selectedMonth, onSelect)
             }
         }
     }
@@ -253,12 +284,12 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
             painterResource(R.drawable.ic_chevron_left),
             contentDescription = "Arrow left", // TODO: translation
             modifier = Modifier
-                .size(32.dp)
+                .size(48.dp)
                 .clip(RoundedCornerShape(100))
                 .clickable {
                     onChange(selectedYear - 1)
                 }
-                .padding(6.dp)
+                .padding(12.dp)
         )
 
         Text(selectedYear.toString())
@@ -267,32 +298,25 @@ fun YearPicker(selectedYear: Int, onChange: (newYear: Int) -> Unit) {
         Icon(
             painterResource(R.drawable.ic_chevron_right),
             modifier = Modifier
-                .size(32.dp)
+                .size(48.dp)
                 .clip(RoundedCornerShape(100))
                 .condition(!disabled) {
                     clickable {
                         onChange(selectedYear + 1)
                     }
                 }
-                .padding(6.dp),
+                .padding(12.dp),
             contentDescription = "Arrow right",
             tint = if (disabled) LocalContentColor.current.copy(0.4f) else LocalContentColor.current
         )
     }
 }
 
-@Preview
 @Composable
-fun YearPickerPreview() {
-    YearPicker(2023, onChange = {})
-}
-
-@Composable
-fun MonthPickerContent(
+fun MonthPickerPopupContent(
     expandedStates: MutableTransitionState<Boolean>,
     transformOriginState: MutableState<TransformOrigin>,
-    modifier: Modifier = Modifier,
-    content: @Composable ColumnScope.() -> Unit
+    content: @Composable () -> Unit
 ) {
     val transition = updateTransition(expandedStates, "MonthPickerContent")
 
@@ -357,10 +381,9 @@ fun MonthPickerContent(
         tonalElevation = 3.dp,
         shadowElevation = 3.dp
     ) {
-        Column(
-            modifier = modifier.padding(10.dp),
-            content = content
-        )
+        Box(Modifier.padding(10.dp)) {
+            content()
+        }
     }
 }
 
