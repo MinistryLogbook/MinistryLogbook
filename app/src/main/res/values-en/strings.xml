@@ -101,4 +101,5 @@
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="pioneer_since_month_pattern">MMMM yyyy</string>
     <string name="pioneer_since">Pioneer since</string>
+    <string name="privacy_policy">Privacy policy</string>
 </resources>

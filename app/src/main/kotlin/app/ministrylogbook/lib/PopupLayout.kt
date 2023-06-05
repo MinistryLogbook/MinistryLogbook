@@ -110,12 +110,12 @@ fun PopupLayout(popupNavigator: PopupNavigator, content: @Composable () -> Unit)
                     tween(durationMillis = 200),
                     transformOrigin = TransformOrigin(1f, 0f)
                 ),
-                exit = fadeOut(tween(durationMillis = 100))
+                exit = fadeOut(tween(durationMillis = 150))
             ) {
                 Surface(
                     Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(RoundedCornerShape(28.dp)),
                     tonalElevation = 8.dp
                 ) {
                     Column {

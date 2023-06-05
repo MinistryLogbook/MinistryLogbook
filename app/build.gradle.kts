@@ -134,6 +134,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.browser)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.navigation.material)
     implementation(libs.accompanist.navigation.animation)
