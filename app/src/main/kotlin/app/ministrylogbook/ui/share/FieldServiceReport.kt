@@ -26,10 +26,11 @@ data class FieldServiceReport(
 )
 
 fun Context.shareFieldServiceReport(report: FieldServiceReport) {
+    val nameLine = if (report.name.isNotBlank()) "|${getString(R.string.name_colon)} ${report.name}\n" else ""
+
     val text = """${getString(R.string.field_service_report).uppercase()}
         |
-        |${getString(R.string.name_colon)} ${report.name}
-        |${getString(R.string.month_colon)} ${report.month}
+        $nameLine|${getString(R.string.month_colon)} ${report.month}
         |
         |${getString(R.string.placements_long_colon)} ${report.placements}
         |${getString(R.string.video_showings_colon)} ${report.videoShowings}
@@ -51,6 +52,7 @@ fun Context.shareFieldServiceReport(report: FieldServiceReport) {
     val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, textWithComments)
+        putExtra(Intent.EXTRA_SUBJECT, getString(R.string.field_service_report_subject, report.month))
         type = "text/plain"
     }
 

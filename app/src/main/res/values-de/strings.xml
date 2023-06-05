@@ -101,4 +101,6 @@
     <string name="open_source_licenses">Open-Source-Lizenzen</string>
     <string name="pioneer_since_month_pattern">MMMM yyyy</string>
     <string name="pioneer_since">Pionier seit</string>
+    <string name="privacy_policy">Datenschutzerklärung</string>
+    <string name="field_service_report_subject">Predigtdienstbericht für %1$s</string>
 </resources>

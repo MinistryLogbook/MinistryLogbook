@@ -10,7 +10,7 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 
-fun Context.shareBitmap(bitmap: Bitmap) {
+fun Context.shareBitmap(bitmap: Bitmap, subject: String? = null) {
     // Save bitmap to external cache directory
     // get cache directory
     val cachePath = File(externalCacheDir, "images/")
@@ -38,10 +38,15 @@ fun Context.shareBitmap(bitmap: Bitmap) {
     )
 
     // create a intent
-    val intent = Intent(Intent.ACTION_SEND)
-    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    intent.putExtra(Intent.EXTRA_STREAM, myImageFileUri)
-    intent.type = "image/png"
+    val intent = Intent(Intent.ACTION_SEND).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        putExtra(Intent.EXTRA_STREAM, myImageFileUri)
+        subject?.let {
+            putExtra(Intent.EXTRA_SUBJECT, it)
+        }
+        type = "image/png"
+    }
+
     startActivity(Intent.createChooser(intent, getString(R.string.share_with)))
 }

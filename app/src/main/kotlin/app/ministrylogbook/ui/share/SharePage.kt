@@ -68,8 +68,9 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val scrollState = rememberScrollState()
     var selectedShareAs by remember { mutableStateOf<ShareAs?>(null) }
-
     val fieldServiceReport by viewModel.fieldServiceReport.collectAsStateWithLifecycle()
+    val fieldServiceReportSubject = stringResource(R.string.field_service_report_subject, fieldServiceReport.month)
+
     var comments by remember { mutableStateOf("") }
     val fieldServiceReportWithComments = fieldServiceReport.run {
         val concatenatedComments = if (this.comments.isBlank()) {
@@ -100,7 +101,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
             }
         } else if (selectedShareAs == ShareAs.Image) {
             bitmap.let {
-                context.shareBitmap(it)
+                context.shareBitmap(it, subject = fieldServiceReportSubject)
             }
         }
     }
