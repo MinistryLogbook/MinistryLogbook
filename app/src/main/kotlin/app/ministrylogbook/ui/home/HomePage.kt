@@ -62,7 +62,7 @@ fun HomePage(viewModel: HomeViewModel = koinViewModel()) {
                 contentDescription = null // TODO: contentDescription
             )
         }, text = {
-            Text(stringResource(R.string.add_to_report))
+            Text(stringResource(R.string.create_entry))
         })
     }) {
         Box {

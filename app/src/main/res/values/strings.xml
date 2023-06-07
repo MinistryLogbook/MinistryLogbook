@@ -21,7 +21,7 @@
     <string name="minutes_short">min</string>
     <string name="ministry">Ministry</string>
     <string name="transfer">Transfer</string>
-    <string name="add_to_report">Add to report</string>
+    <string name="create_entry">Create entry</string>
     <string name="january_short">Jan</string>
     <string name="february_short">Feb</string>
     <string name="march_short">Mar</string>
@@ -103,4 +103,5 @@
     <string name="pioneer_since">Pioneer since</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="field_service_report_subject">Field Service Report for %1$s</string>
+    <string name="report_share_file_name">Field_Service_Report_%1$s_%2$d</string>
 </resources>

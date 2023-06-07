@@ -70,6 +70,11 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     var selectedShareAs by remember { mutableStateOf<ShareAs?>(null) }
     val fieldServiceReport by viewModel.fieldServiceReport.collectAsStateWithLifecycle()
     val fieldServiceReportSubject = stringResource(R.string.field_service_report_subject, fieldServiceReport.month)
+    val reportShareFileName = stringResource(
+        R.string.report_share_file_name,
+        fieldServiceReport.month,
+        viewModel.month.year
+    )
 
     var comments by remember { mutableStateOf("") }
     val fieldServiceReportWithComments = fieldServiceReport.run {
@@ -101,7 +106,11 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
             }
         } else if (selectedShareAs == ShareAs.Image) {
             bitmap.let {
-                context.shareBitmap(it, subject = fieldServiceReportSubject)
+                context.shareBitmap(
+                    it,
+                    reportShareFileName,
+                    subject = fieldServiceReportSubject
+                )
             }
         }
     }

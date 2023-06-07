@@ -21,7 +21,7 @@
     <string name="minutes_short">Min</string>
     <string name="ministry">Predigtdienst</string>
     <string name="transfer">Übertrag</string>
-    <string name="add_to_report">Zum Bericht hinzufügen</string>
+    <string name="create_entry">Eintrag erstellen</string>
     <string name="january_short">Jan</string>
     <string name="february_short">Feb</string>
     <string name="march_short">Mär</string>
@@ -103,4 +103,5 @@
     <string name="pioneer_since">Pionier seit</string>
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="field_service_report_subject">Predigtdienstbericht für %1$s</string>
+    <string name="report_share_file_name">Predigtdienstbericht_%1$s_%2$d</string>
 </resources>
