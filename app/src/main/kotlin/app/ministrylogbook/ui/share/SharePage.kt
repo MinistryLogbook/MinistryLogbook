@@ -35,11 +35,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
@@ -56,12 +58,16 @@ import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction
 import app.ministrylogbook.ui.theme.MinistryLogbookTheme
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import org.koin.androidx.compose.koinViewModel
 
 enum class ShareAs {
     Text, Image
 }
 
+@OptIn(FlowPreview::class)
 @Composable
 fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     val context = LocalContext.current
@@ -75,8 +81,9 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
         fieldServiceReport.month,
         viewModel.month.year
     )
-
-    var comments by remember { mutableStateOf("") }
+    val initialComments by viewModel.comments.collectAsStateWithLifecycle()
+    var comments by remember(initialComments) { mutableStateOf(initialComments) }
+    val commentsFlow = snapshotFlow { comments }
     val fieldServiceReportWithComments = fieldServiceReport.run {
         val concatenatedComments = if (this.comments.isBlank()) {
             comments
@@ -115,6 +122,12 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
         }
     }
 
+    LaunchedEffect(commentsFlow) {
+        commentsFlow.debounce(250).collectLatest {
+            viewModel.updateComments(it)
+        }
+    }
+
     MinistryLogbookTheme {
         Surface(modifier = Modifier.fillMaxSize()) {
             Box {
@@ -143,16 +156,14 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                 .weight(1f)
                         ) {
                             Column(Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
-                                bitmap.let {
-                                    Image(
-                                        it.asImageBitmap(),
-                                        modifier = Modifier
-                                            .clip(RoundedCornerShape(8.dp))
-                                            .fillMaxSize(),
-                                        contentScale = ContentScale.FillWidth,
-                                        contentDescription = null // TODO: contentDescription
-                                    )
-                                }
+                                Image(
+                                    bitmap.asImageBitmap(),
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(8.dp))
+                                        .fillMaxSize(),
+                                    contentScale = ContentScale.FillWidth,
+                                    contentDescription = null // TODO: contentDescription
+                                )
 
                                 Spacer(Modifier.height(20.dp))
 

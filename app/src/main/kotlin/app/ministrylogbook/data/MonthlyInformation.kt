@@ -23,7 +23,8 @@ data class MonthlyInformation(
         TimeZone.currentSystemDefault()
     ),
     @ColumnInfo(name = "bible_studies") val bibleStudies: Int? = null,
-    @ColumnInfo(name = "goal") val goal: Int? = null
+    @ColumnInfo(name = "goal") val goal: Int? = null,
+    @ColumnInfo(name = "report_comment", defaultValue = "") val reportComment: String = ""
 ) : Parcelable {
     private companion object : Parceler<MonthlyInformation> {
         override fun create(parcel: Parcel) = MonthlyInformation(

@@ -18,7 +18,10 @@ import java.time.format.TextStyle
 import java.util.Locale
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -28,12 +31,18 @@ class ShareViewModel(
     val month: LocalDate,
     application: Application,
     entryRepository: EntryRepository,
-    monthlyInformationRepository: MonthlyInformationRepository,
+    private val monthlyInfoRepository: MonthlyInformationRepository,
     settingsDataStore: SettingsDataStore
 ) : AndroidViewModel(application) {
 
-    private val _monthlyInformation = monthlyInformationRepository.getOfMonth(month)
+    private val _monthlyInformation = monthlyInfoRepository.getOfMonth(month)
     private val _entries = entryRepository.getAllOfMonth(month)
+
+    val comments = _monthlyInformation.map { it.reportComment }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
+        initialValue = ""
+    )
 
     val fieldServiceReport =
         combine(
@@ -78,6 +87,12 @@ class ShareViewModel(
             started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
             initialValue = FieldServiceReport()
         )
+
+    fun updateComments(text: String) = viewModelScope.launch {
+        _monthlyInformation.firstOrNull()?.let {
+            monthlyInfoRepository.save(it.copy(reportComment = text))
+        }
+    }
 
     private fun getMonthTitle(locale: Locale): String = month.run {
         val monthName = this.month.getDisplayName(TextStyle.FULL, locale)
