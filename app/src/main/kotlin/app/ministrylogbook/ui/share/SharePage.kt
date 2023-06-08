@@ -50,7 +50,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
-import app.ministrylogbook.lib.shareBitmap
+import app.ministrylogbook.shared.shareBitmap
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import app.ministrylogbook.ui.shared.Toolbar

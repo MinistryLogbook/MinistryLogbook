@@ -9,23 +9,15 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import app.ministrylogbook.lib.ModalBottomSheetLayout
-import app.ministrylogbook.lib.PopupLayout
-import app.ministrylogbook.lib.rememberBottomSheetNavigator
-import app.ministrylogbook.lib.rememberPopupNavigator
+import app.ministrylogbook.shared.ModalBottomSheetLayout
+import app.ministrylogbook.shared.PopupLayout
+import app.ministrylogbook.shared.rememberBottomSheetNavigator
+import app.ministrylogbook.shared.rememberPopupNavigator
 import app.ministrylogbook.ui.home.homeGraph
 import app.ministrylogbook.ui.settings.settingsGraph
 import app.ministrylogbook.ui.share.shareGraph
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
-
-sealed class AppGraph(val route: String) {
-    object Home : AppGraph("home")
-
-    object Settings : AppGraph("settings")
-
-    object Share : AppGraph("share")
-}
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -35,7 +27,7 @@ fun AppNavHost(
 ) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val popupNavigator = rememberPopupNavigator()
-    val navController = rememberAnimatedNavController(bottomSheetNavigator, popupNavigator)
+    val navController = rememberAnimatedNavController(popupNavigator, bottomSheetNavigator)
 
     CompositionLocalProvider(LocalAppNavController provides navController) {
         ModalBottomSheetLayout(
@@ -48,7 +40,7 @@ fun AppNavHost(
             sheetElevation = 2.dp,
             scrimColor = MaterialTheme.colorScheme.surface.copy(0.5f)
         ) {
-            PopupLayout(popupNavigator = popupNavigator) {
+            PopupLayout(popupNavigator = popupNavigator, popupState = popupNavigator.popupState) {
                 AnimatedNavHost(
                     modifier = modifier,
                     navController = navController,
@@ -63,8 +55,10 @@ fun AppNavHost(
     }
 }
 
+typealias AppNavHostController = NavHostController
+
 val LocalAppNavController =
-    compositionLocalOf<NavHostController> { error("NavHostController error") }
+    compositionLocalOf<AppNavHostController> { error("LocalNavHostController error") }
 
 const val SlideInTransitionMillis = 250
 const val SlideOutTransitionMillis = 250

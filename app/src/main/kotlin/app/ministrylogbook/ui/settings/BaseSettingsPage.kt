@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
-import app.ministrylogbook.lib.condition
+import app.ministrylogbook.shared.condition
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction

@@ -94,7 +94,7 @@ android {
     }
 
     packaging {
-        resources.excludes += "META-INF/*"
+        // resources.excludes += "META-INF/*"
     }
 
     namespace = "app.ministrylogbook"

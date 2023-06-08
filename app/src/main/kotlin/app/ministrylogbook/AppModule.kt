@@ -8,6 +8,7 @@ import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsDataStore
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
+import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
 import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
@@ -25,7 +26,7 @@ val appModule = module {
     single { MonthlyInformationRepository(get()) }
     single { SettingsDataStore(androidContext()) }
     viewModel { params ->
-        HomeViewModel(params.get(), androidContext() as Application, get(), get(), get())
+        OverviewViewModel(params.get(), androidContext() as Application, get(), get(), get())
     }
     viewModel { params -> StudiesDetailsViewModel(params.get(), get()) }
     viewModel { params -> EntryDetailsViewModel(params.get(), params.getOrNull(), get(), get()) }
@@ -39,4 +40,5 @@ val appModule = module {
         )
     }
     viewModel { SettingsViewModel(get(), get()) }
+    viewModel { HomeViewModel(get()) }
 }

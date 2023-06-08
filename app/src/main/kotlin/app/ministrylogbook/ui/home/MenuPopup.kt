@@ -56,7 +56,7 @@ fun ProfileButton(viewModel: HomeViewModel = koinViewModel()) {
             .size(40.dp)
             .clip(CircleShape)
             .clickable(onClick = {
-                navController.navigateToMenu()
+                navController.navigateToHomeMenu()
             })
             .padding(4.dp),
         contentAlignment = Alignment.Center
@@ -89,8 +89,8 @@ fun MenuPopup() {
         }) {
             Icon(
                 painterResource(R.drawable.ic_close),
-                contentDescription = null
-            ) // TODO: contentDescription
+                contentDescription = null // TODO: contentDescription
+            )
         }
 
         Text(

@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,16 +28,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
-import app.ministrylogbook.lib.MonthPickerPopup
-import app.ministrylogbook.lib.getLocale
+import app.ministrylogbook.shared.MonthPickerPopup
+import app.ministrylogbook.shared.getLocale
 import app.ministrylogbook.ui.LocalAppNavController
-import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.share.navigateToShare
 import app.ministrylogbook.ui.shared.ToolbarAction
-import org.koin.androidx.compose.koinViewModel
+import java.time.format.TextStyle
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 @Composable
-fun ToolbarActions(viewModel: HomeViewModel = koinViewModel()) {
+fun ToolbarActions(month: LocalDate) {
     val navController = LocalAppNavController.current
 
     Row(
@@ -44,7 +48,7 @@ fun ToolbarActions(viewModel: HomeViewModel = koinViewModel()) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         ToolbarAction(onClick = {
-            navController.navigateToShare(viewModel.month.year, viewModel.month.monthNumber)
+            navController.navigateToShare(month.year, month.monthNumber)
         }) {
             Icon(
                 painterResource(R.drawable.ic_share),
@@ -56,22 +60,31 @@ fun ToolbarActions(viewModel: HomeViewModel = koinViewModel()) {
 }
 
 @Composable
-fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
-    val navController = LocalAppNavController.current
-    var expanded by remember { mutableStateOf(false) }
+fun ToolbarMonthSelect(
+    selectedMonth: LocalDate,
+    onSelect: (newDate: LocalDate) -> Unit = {}
+) {
     val locale = getLocale()
+    val monthTitle by remember(selectedMonth) {
+        derivedStateOf {
+            val monthName = selectedMonth.month.getDisplayName(TextStyle.FULL, locale)
+            val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
+            if (selectedMonth.year != currentYear) "$monthName ${selectedMonth.year}" else monthName
+        }
+    }
+    var expanded by remember { mutableStateOf(false) }
 
     Box {
         Row(
             modifier = Modifier
                 .height(32.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.tertiary.copy(0.15f))
+                .background(MaterialTheme.colorScheme.secondary.copy(0.15f))
                 .clickable { expanded = true }
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(viewModel.getMonthTitle(locale), color = MaterialTheme.colorScheme.secondary)
+            Text(monthTitle, color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.width(6.dp))
             Icon(
                 Icons.Rounded.ArrowDropDown,
@@ -81,14 +94,13 @@ fun ToolbarMonthSelect(viewModel: HomeViewModel = koinViewModel()) {
         }
         MonthPickerPopup(
             expanded = expanded,
-            selectedMonth = viewModel.month,
+            selectedMonth = selectedMonth,
             onDismissRequest = {
                 expanded = !expanded
             },
             onSelect = { month ->
                 expanded = false
-                // TODO: wait for animation to finish
-                navController.navigateToMonth(month.year, month.monthNumber)
+                onSelect(month)
             }
         )
     }

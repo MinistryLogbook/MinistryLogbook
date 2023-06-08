@@ -1,6 +1,6 @@
 package app.ministrylogbook
 
-import app.ministrylogbook.lib.Time
+import app.ministrylogbook.shared.Time
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test

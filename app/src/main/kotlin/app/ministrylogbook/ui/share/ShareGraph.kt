@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navArgument
 import app.ministrylogbook.ui.AppGraph
@@ -89,3 +90,6 @@ fun NavGraphBuilder.shareGraph() {
         }
     }
 }
+
+fun NavController.navigateToShare(year: Int, monthNumber: Int) =
+    navigate(ShareGraph.Root.createDestination(year, monthNumber))
