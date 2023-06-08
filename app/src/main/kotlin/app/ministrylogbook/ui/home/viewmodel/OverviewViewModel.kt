@@ -13,8 +13,10 @@ import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsDataStore
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.ministryTimeSum
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
+import kotlinx.datetime.monthsUntil
 import kotlinx.datetime.plus
 
 class OverviewViewModel(
@@ -32,9 +35,27 @@ class OverviewViewModel(
     monthlyInformationRepository: MonthlyInformationRepository
 ) : AndroidViewModel(application) {
 
+    private val _pioneerSince = settingsDataStore.pioneerSince
+    private val _serviceYearBegin = if (month.monthNumber >= 9) {
+        LocalDate(month.year, 9, 1)
+    } else {
+        LocalDate(month.year - 1, 9, 1)
+    }
+    private val _beginOfPioneeringInServiceYear = _pioneerSince.map { pioneerSince ->
+        if (pioneerSince != null && pioneerSince >= _serviceYearBegin) {
+            pioneerSince
+        } else {
+            _serviceYearBegin
+        }
+    }
     private val _lastMonth = month.minus(DatePeriod(months = 1))
     private val _monthlyInformation = monthlyInformationRepository.getOfMonth(month)
     private val _entries = _entryRepository.getAllOfMonth(month)
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
+        _entryRepository.getAllFrom(it)
+    }
     private val _restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform<List<Entry>, Time> {
         val lastMonthTime = it.ministryTimeSum()
         if (!lastMonthTime.isNegative) {
@@ -46,13 +67,22 @@ class OverviewViewModel(
     private val _transferred = _entryRepository.getTransferredFrom(month)
     private val _manuallySetGoal = _monthlyInformation.map { it.goal }
     private val _roleGoal = settingsDataStore.roleGoal
+    private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
 
     val name = settingsDataStore.name.stateIn(
         scope = viewModelScope,
         initialValue = "",
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }.stateIn(
+    val goal = _goal.stateIn(
+        scope = viewModelScope,
+        initialValue = 1,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val yearlyGoal = _goal.combine(_beginOfPioneeringInServiceYear) { g, beginOfPioneeringInServiceYear ->
+        val lastMonthInServiceYear = _serviceYearBegin + DatePeriod(months = 12)
+        g * beginOfPioneeringInServiceYear.monthsUntil(lastMonthInServiceYear)
+    }.stateIn(
         scope = viewModelScope,
         initialValue = 1,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -65,6 +95,11 @@ class OverviewViewModel(
     val entries = _entries.stateIn(
         scope = viewModelScope,
         initialValue = listOf(),
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val entriesInServiceYear = _entriesInServiceYear.stateIn(
+        scope = viewModelScope,
+        initialValue = listOf<Entry>(),
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
     val bibleStudies = _monthlyInformation.map { it.bibleStudies ?: 0 }.stateIn(
@@ -92,6 +127,11 @@ class OverviewViewModel(
     }.stateIn(
         scope = viewModelScope,
         initialValue = Time.Empty,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val pioneerSince = _pioneerSince.stateIn(
+        scope = viewModelScope,
+        initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 

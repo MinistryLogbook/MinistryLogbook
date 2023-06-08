@@ -4,7 +4,6 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import app.ministrylogbook.shared.bottomSheet
 import app.ministrylogbook.shared.popup
@@ -33,23 +32,13 @@ sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNa
 
     object Menu : HomeGraph(rawRoute = "menu")
 
-    object Studies : HomeGraph(
-        rawRoute = "{year}/{monthNumber}/studies",
-        arguments = listOf(
-            navArgument("year") { type = NavType.IntType },
-            navArgument("monthNumber") { type = NavType.IntType }
-        )
-    ) {
+    object Studies : HomeGraph(rawRoute = "{year}/{monthNumber}/studies") {
         fun createDestination(year: Int, monthNumber: Int) = "${AppGraph.Home}/$year/$monthNumber/studies"
     }
 
     object EntryDetails : HomeGraph(
         rawRoute = "{year}/{monthNumber}/entry-details/{id}",
-        arguments = listOf(
-            navArgument("year") { type = NavType.IntType },
-            navArgument("monthNumber") { type = NavType.IntType },
-            navArgument("id") { nullable = true; defaultValue = null }
-        )
+        arguments = listOf(navArgument("id") { nullable = true; defaultValue = null })
     ) {
         fun createDestination(month: LocalDate, id: Int? = null): String {
             if (id == null) {

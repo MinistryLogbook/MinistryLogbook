@@ -43,6 +43,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.ministryTimeSum
+import app.ministrylogbook.shared.progress.CircleProgressIndicator
+import app.ministrylogbook.shared.progress.Progress
 import app.ministrylogbook.shared.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.timeSum
@@ -118,16 +120,16 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                         .height(widthDp / 2)
                         .width(widthDp / 2)
                 ) {
-                    CircleProgress(
+                    CircleProgressIndicator(
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
                         progresses = listOfNotNull(
                             Progress(
-                                percent = (100 / goal * accumulatedTime.hours),
+                                percent = (1f / goal * accumulatedTime.hours),
                                 color = ProgressPositive.copy(0.6f)
                             ).takeIf { role.canHaveCredit && (credit > Time(0, 0)) },
                             Progress(
-                                percent = (100 / goal * ministryTime.hours),
+                                percent = (1f / goal * ministryTime.hours),
                                 color = ProgressPositive
                             )
                         )

@@ -104,4 +104,6 @@
     <string name="privacy_policy">Privacy policy</string>
     <string name="field_service_report_subject">Field Service Report for %1$s</string>
     <string name="report_share_file_name">Field_Service_Report_%1$s_%2$d</string>
+    <string name="of">of</string>
+    <string name="hours_value_short_unit">%1$d h</string>
 </resources>

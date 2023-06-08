@@ -26,7 +26,7 @@ import app.ministrylogbook.R
 fun Tile(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
-    actions: @Composable () -> Unit,
+    actions: (@Composable () -> Unit)? = null,
     onDismiss: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
@@ -49,7 +49,8 @@ fun Tile(
             }
 
             Column {
-                Column(Modifier.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = 4.dp)) {
+                val bottomPadding = if (actions != null) 4.dp else 16.dp
+                Column(Modifier.padding(top = 16.dp, end = 16.dp, start = 16.dp, bottom = bottomPadding)) {
                     title()
                     Spacer(Modifier.height(8.dp))
                     ProvideTextStyle(
@@ -63,9 +64,11 @@ fun Tile(
                     }
                 }
 
-                Row(Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
-                    Spacer(Modifier.weight(1f))
-                    actions()
+                actions?.let {
+                    Row(Modifier.padding(vertical = 4.dp, horizontal = 8.dp)) {
+                        Spacer(Modifier.weight(1f))
+                        actions()
+                    }
                 }
             }
         }

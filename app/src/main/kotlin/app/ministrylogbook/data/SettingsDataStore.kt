@@ -74,7 +74,12 @@ class SettingsDataStore(val context: Context) {
         it[ROLE_KEY]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
     val pioneerSince =
-        context.dataStore.data.map { it[PIONEER_SINCE_KEY]?.let { dateStr -> LocalDate.parse(dateStr) } }
+        context.dataStore.data.map {
+            it[PIONEER_SINCE_KEY]?.let { dateStr ->
+                val date = LocalDate.parse(dateStr)
+                LocalDate(date.year, date.month, 1)
+            }
+        }
     val roleGoal = role.map { it.goal }
     val name = context.dataStore.data.map { it[NAME_KEY] ?: "" }
     val design = context.dataStore.data.map {

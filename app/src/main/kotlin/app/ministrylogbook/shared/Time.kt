@@ -58,3 +58,9 @@ class Time : Comparable<Time> {
         val Empty = Time(0)
     }
 }
+
+fun Iterable<Time>.sum(): Time {
+    var sum = Time.Empty
+    this.forEach { sum += it }
+    return sum
+}

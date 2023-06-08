@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.shared.progress
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
@@ -24,12 +24,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.ui.theme.ProgressNegative
 import app.ministrylogbook.ui.theme.ProgressPositive
-import kotlin.math.min
-
-data class Progress(val percent: Int = 0, val color: Color)
 
 @Composable
-fun CircleProgress(
+fun CircleProgressIndicator(
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
     animationSpec: AnimationSpec<Float> = tween(400),
@@ -54,11 +51,7 @@ fun CircleProgress(
             val animatable = remember { Animatable(initialValue) }
 
             LaunchedEffect(progress.percent) {
-                val finalPercent = if (progress.percent == 0) {
-                    initialValue
-                } else {
-                    min(progress.percent, 100) / 100f
-                }
+                val finalPercent = progress.percent.coerceIn(0f, 1f)
                 animatable.animateTo(finalPercent, animationSpec = animationSpec)
             }
 
@@ -81,19 +74,19 @@ fun CircleProgress(
 
 @Preview
 @Composable
-fun CircleProgressPreview() {
+fun CircleProgressIndicatorPreview() {
     MaterialTheme {
         Box(
             modifier = Modifier
                 .height(200.dp)
                 .width(200.dp)
         ) {
-            CircleProgress(
+            CircleProgressIndicator(
                 modifier = Modifier.size(200.dp, 200.dp),
                 baseLineColor = ProgressPositive,
                 progresses = listOf(
-                    Progress(percent = 60, ProgressNegative),
-                    Progress(percent = 45, ProgressPositive)
+                    Progress(percent = .6f, ProgressNegative),
+                    Progress(percent = .45f, ProgressPositive)
                 )
             )
         }

@@ -13,6 +13,8 @@ fun List<Entry>.timeSum(): Time {
 
 fun List<Entry>.ministryTimeSum() = this.ministries().timeSum()
 
+fun List<Entry>.credits() = this.filter { it.isCredit }
+
 fun List<Entry>.theocraticAssignments() = this.filter { it.type == EntryType.TheocraticAssignment }
 
 fun List<Entry>.theocraticAssignmentTimeSum() = this.theocraticAssignments().timeSum()
@@ -31,3 +33,25 @@ fun List<Entry>.placements() = this.ministries().sumOf { it.placements }
 fun List<Entry>.returnVisits() = this.ministries().sumOf { it.returnVisits }
 
 fun List<Entry>.videoShowings() = this.ministries().sumOf { it.videoShowings }
+
+fun List<Entry>.splitIntoMonths(): List<List<Entry>> {
+    if (this.isEmpty()) {
+        return listOf()
+    }
+
+    val sorted = this.sortedBy { it.datetime }
+    val months = mutableListOf<MutableList<Entry>>(mutableListOf())
+
+    var currentYear = sorted.first().datetime.year
+    var currentMonth = sorted.first().datetime.month
+    sorted.forEach {
+        if (it.datetime.year != currentYear || it.datetime.month != currentMonth) {
+            currentYear = it.datetime.year
+            currentMonth = it.datetime.month
+            months.add(mutableListOf())
+        }
+        months.last().add(it)
+    }
+
+    return months
+}

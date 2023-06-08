@@ -104,4 +104,6 @@
     <string name="privacy_policy">Datenschutzerklärung</string>
     <string name="field_service_report_subject">Predigtdienstbericht für %1$s</string>
     <string name="report_share_file_name">Predigtdienstbericht_%1$s_%2$d</string>
+    <string name="of">von</string>
+    <string name="hours_value_short_unit">%1$d h</string>
 </resources>

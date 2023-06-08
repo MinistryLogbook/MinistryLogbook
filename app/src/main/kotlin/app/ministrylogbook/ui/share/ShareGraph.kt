@@ -44,12 +44,12 @@ sealed class ShareGraph(
         )
     ) {
         fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Share.route}/?year=$year&monthNumber=$monthNumber"
+            return "${AppGraph.Share}/?year=$year&monthNumber=$monthNumber"
         }
     }
 
     val route
-        get() = "${AppGraph.Share.route}/$rawRoute"
+        get() = "${AppGraph.Share}/$rawRoute"
 }
 
 @OptIn(ExperimentalAnimationApi::class)

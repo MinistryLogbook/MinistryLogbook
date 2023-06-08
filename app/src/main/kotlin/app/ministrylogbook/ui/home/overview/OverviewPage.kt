@@ -74,8 +74,8 @@ fun OverviewPage(onScroll: (position: Int) -> Unit = {}, viewModel: OverviewView
                 DetailsSection()
             }
 
+            YearlyProgress()
             TransferHint()
-
             RestHint()
 
             if (entries.isNotEmpty()) {

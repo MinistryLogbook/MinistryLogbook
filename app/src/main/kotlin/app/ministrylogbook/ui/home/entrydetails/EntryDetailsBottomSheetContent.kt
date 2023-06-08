@@ -71,7 +71,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             val firstDayOfNextMonth = LocalDate(today.year, today.month, 1).plus(
                 DatePeriod(months = 1)
             )
-            // if it's in next month, one can create entries in the current month or past
+            // if it's in next month, one can only create entries in the current month or past
             entry.datetime >= firstDayOfNextMonth
         }
     }

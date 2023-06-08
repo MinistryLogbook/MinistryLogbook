@@ -19,6 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
+import app.ministrylogbook.shared.transfers
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
@@ -78,7 +79,7 @@ fun HistorySection(viewModel: OverviewViewModel = koinViewModel()) {
         orderedEntries.filter { it.type != EntryType.Transfer }.forEach {
             HistoryItem(it, onClick = { handleClick(it) })
         }
-        orderedEntries.filter { it.type == EntryType.Transfer }.forEach {
+        orderedEntries.transfers().forEach {
             HistoryItem(it, onClick = { transferToUndo = it })
         }
     }

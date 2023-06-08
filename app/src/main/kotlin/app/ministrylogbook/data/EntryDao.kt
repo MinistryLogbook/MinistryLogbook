@@ -13,12 +13,15 @@ interface EntryDao {
     fun get(id: Int): Flow<Entry>
 
     @Query(
-        "SELECT * from entry WHERE strftime('%Y%m', datetime) = :year || substr('00' || :month, -2, 2)"
+        "SELECT * FROM entry WHERE strftime('%Y%m', datetime) = :year || substr('00' || :month, -2, 2)"
     )
     fun getAllOfMonth(year: Int, month: Int): Flow<List<Entry>>
 
+    @Query("SELECT * FROM entry WHERE strftime('%Y%m', datetime) >= :year || substr('00' || :month, -2, 2)")
+    fun getAllFrom(year: Int, month: Int): Flow<List<Entry>>
+
     @Query(
-        "SELECT * from entry WHERE strftime('%Y%m', transferred_from) = :year || substr('00' || :month, -2, 2)"
+        "SELECT * FROM entry WHERE strftime('%Y%m', transferred_from) = :year || substr('00' || :month, -2, 2)"
     )
     fun getTransferredFrom(year: Int, month: Int): Flow<List<Entry>>
 
