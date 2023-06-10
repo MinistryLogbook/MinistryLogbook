@@ -1,5 +1,5 @@
 <div align="center">
-  <img width="200" src="resources/logo.png" alt="MinistryLogbook Logo">
+  <img width="200" src="resources/logo.svg" alt="MinistryLogbook Logo">
   <h1>Ministry Logbook</h1>
   <p>An android app for Jehovah's Witnesses to track ministry metrics. It simplifies analysis and sharing of the field service report.</p>
 

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.MinistryLogbook" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -12,7 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@android:color/transparent</item>
 
-        <!-- Customize your theme here. -->
-<!--        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/mn</item>-->
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">
+            @drawable/splashscreen
+        </item>
     </style>
 </resources>

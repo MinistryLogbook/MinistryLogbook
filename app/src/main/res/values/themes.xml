@@ -16,7 +16,7 @@
         <item name="android:windowLightStatusBar">true</item>
 
         <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">
-            @mipmap/ic_launcher_foreground
+            @drawable/splashscreen
         </item>
     </style>
 
