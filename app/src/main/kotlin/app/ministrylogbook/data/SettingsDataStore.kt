@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -68,6 +69,7 @@ class SettingsDataStore(val context: Context) {
         private val PIONEER_SINCE_KEY = stringPreferencesKey("pioneer_since")
         private val NAME_KEY = stringPreferencesKey("name")
         private val DESIGN_KEY = stringPreferencesKey("design")
+        private val PRECISION_MODE_KEY = booleanPreferencesKey("precision_mode")
     }
 
     val role = context.dataStore.data.map {
@@ -91,6 +93,7 @@ class SettingsDataStore(val context: Context) {
             Design.System
         }
     }
+    val precisionMode = context.dataStore.data.map { it[PRECISION_MODE_KEY] ?: false }
 
     suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {
         if (date == null) {
@@ -110,6 +113,10 @@ class SettingsDataStore(val context: Context) {
 
     suspend fun setDesign(design: Design) = context.dataStore.edit {
         it[DESIGN_KEY] = design.name
+    }
+
+    suspend fun setPrecisionMode(precisionMode: Boolean) = context.dataStore.edit {
+        it[PRECISION_MODE_KEY] = precisionMode
     }
 }
 

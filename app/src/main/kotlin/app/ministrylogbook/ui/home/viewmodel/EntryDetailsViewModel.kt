@@ -40,6 +40,11 @@ class EntryDetailsViewModel(
         initialValue = _initialEntry,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+    val precisionMode = settingsDataStore.precisionMode.stateIn(
+        scope = viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
 
     fun update(
         datetime: LocalDate? = null,

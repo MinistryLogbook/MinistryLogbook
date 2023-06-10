@@ -59,9 +59,18 @@ class SettingsViewModel(
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+    val precisionMode = _settingsDataStore.precisionMode.stateIn(
+        scope = viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
 
     fun setPioneerSince(date: LocalDate) = viewModelScope.launch {
         _settingsDataStore.setPioneerSince(date)
+    }
+
+    fun setPrecisionMode(value: Boolean) = viewModelScope.launch {
+        _settingsDataStore.setPrecisionMode(value)
     }
 
     fun setGoal(value: Int?) = viewModelScope.launch {

@@ -136,7 +136,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 hours = entry.hours + 1,
                 minutes = it - 60
             )
-        } else if (it in 0..55) {
+        } else if (it in 0..59) {
             viewModel.update(minutes = it)
         }
     }
@@ -321,7 +321,10 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 }
             }
             UnitRow(stringResource(R.string.minutes)) {
-                NumberPicker(entry.minutes, step = 5) {
+                val precisionMode = viewModel.precisionMode.collectAsStateWithLifecycle()
+                val step = if (precisionMode.value) 1 else 5
+
+                NumberPicker(entry.minutes, step) {
                     handleChangeMinutes(it)
                 }
             }

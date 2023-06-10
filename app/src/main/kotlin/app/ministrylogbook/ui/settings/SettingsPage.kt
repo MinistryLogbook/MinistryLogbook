@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -35,14 +36,14 @@ import app.ministrylogbook.shared.MonthPickerDialog
 import app.ministrylogbook.shared.OptionList
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun SettingsPage() {
@@ -50,7 +51,9 @@ fun SettingsPage() {
 
     BaseSettingsPage(stringResource(R.string.settings), toolbarElevation = scrollState.canScrollBackward) {
         Column(
-            Modifier.padding(vertical = 10.dp).verticalScroll(scrollState),
+            Modifier
+                .padding(vertical = 10.dp)
+                .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Column {
@@ -64,6 +67,10 @@ fun SettingsPage() {
                 Title(stringResource(R.string.appearance))
                 LanguageSetting()
                 DesignSetting()
+            }
+            Column {
+                Title(stringResource(R.string.more_settings))
+                MinuteCounterSetting()
             }
             Column {
                 Title(stringResource(R.string.legal))
@@ -199,6 +206,20 @@ fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
             fontSize = MaterialTheme.typography.bodyMedium.fontSize,
             color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
         )
+    }
+}
+
+@Composable
+fun MinuteCounterSetting(viewModel: SettingsViewModel = koinViewModel()) {
+    val precisionMode by viewModel.precisionMode.collectAsStateWithLifecycle()
+
+    Setting(
+        title = stringResource(R.string.precision_mode),
+        description = stringResource(R.string.precision_mode_description)
+    ) {
+        Switch(checked = precisionMode, onCheckedChange = {
+            viewModel.setPrecisionMode(it)
+        })
     }
 }
 
