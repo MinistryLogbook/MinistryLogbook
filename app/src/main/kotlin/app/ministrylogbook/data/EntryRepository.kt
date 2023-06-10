@@ -10,7 +10,8 @@ class EntryRepository(private val entryDao: EntryDao) {
 
     fun getAllOfMonth(month: LocalDate) = entryDao.getAllOfMonth(month.year, month.monthNumber)
 
-    fun getAllFrom(month: LocalDate) = entryDao.getAllFrom(month.year, month.monthNumber)
+    fun getAllInRange(from: LocalDate, to: LocalDate) =
+        entryDao.getAllInRange(from.year, from.monthNumber, to.year, to.monthNumber)
 
     fun getTransferredFrom(localDate: LocalDate) = entryDao.getTransferredFrom(localDate.year, localDate.monthNumber)
 

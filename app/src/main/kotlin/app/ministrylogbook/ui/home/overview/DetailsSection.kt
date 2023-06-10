@@ -56,7 +56,7 @@ import org.koin.androidx.compose.koinViewModel
 fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
     val entries by homeViewModel.entries.collectAsStateWithLifecycle()
     val role by homeViewModel.role.collectAsStateWithLifecycle()
-    val goal by homeViewModel.goal.collectAsStateWithLifecycle()
+    val goal by homeViewModel.roleGoal.collectAsStateWithLifecycle()
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
     val maxHoursWithCredit by remember(goal) { derivedStateOf { Time(goal + 5, 0) } }

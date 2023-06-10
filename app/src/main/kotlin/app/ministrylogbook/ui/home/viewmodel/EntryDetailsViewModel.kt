@@ -7,9 +7,9 @@ import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.shared.mutableStateIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -22,16 +22,20 @@ class EntryDetailsViewModel(
     private val _entryRepository: EntryRepository
 ) : ViewModel() {
 
-    private val _initialEntry = Entry(datetime = month)
-    private val _internalEntry = MutableStateFlow(_initialEntry)
-    private val _entry = if (id != null) _entryRepository.get(id) else _internalEntry
+    private val _initialEntry = Entry(id = id ?: 0, datetime = month)
+    private val _entry =
+        if (id != null) {
+            _entryRepository.get(id).mutableStateIn(viewModelScope, _initialEntry)
+        } else {
+            MutableStateFlow(_initialEntry)
+        }
 
     val role = settingsDataStore.role.stateIn(
         scope = viewModelScope,
         initialValue = Role.Publisher,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val entry = (if (id != null) merge(_internalEntry, _entry) else _internalEntry).stateIn(
+    val entry = _entry.stateIn(
         scope = viewModelScope,
         initialValue = _initialEntry,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -46,7 +50,7 @@ class EntryDetailsViewModel(
         returnVisits: Int? = null,
         type: EntryType? = null
     ) {
-        _internalEntry.update { old ->
+        _entry.update { old ->
             old.copy(
                 datetime = datetime ?: old.datetime,
                 placements = placements ?: old.placements,

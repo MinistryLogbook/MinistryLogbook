@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.home.overview
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -48,24 +49,16 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
     if (show) {
         Spacer(Modifier.height(16.dp))
 
-        Tile(
-            title = {
-                Text("Progress of your yearly goal")
-            }
-        ) {
+        Tile(title = { Text(stringResource(R.string.progress_of_yearly_goal)) }) {
             val yearlyGoal by viewModel.yearlyGoal.collectAsStateWithLifecycle()
-            val goal by viewModel.goal.collectAsStateWithLifecycle()
+            val goal by viewModel.roleGoal.collectAsStateWithLifecycle()
             val maxHoursWithCredit by remember(goal) { derivedStateOf { Time(goal + 5, 0) } }
             val entriesInServiceYear by viewModel.entriesInServiceYear.collectAsStateWithLifecycle()
             val time by remember(entriesInServiceYear, maxHoursWithCredit) {
                 derivedStateOf {
                     entriesInServiceYear.splitIntoMonths().map {
                         val ministryTimeSum = it.ministryTimeSum()
-                        if (ministryTimeSum.hours >= maxHoursWithCredit.hours) {
-                            maxHoursWithCredit
-                        } else {
-                            minOf(maxHoursWithCredit, it.timeSum())
-                        }
+                        minOf(maxOf(ministryTimeSum, maxHoursWithCredit), it.timeSum())
                     }.sum()
                 }
             }
@@ -74,6 +67,7 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                     entriesInServiceYear.ministryTimeSum()
                 }
             }
+            val remaining by remember(time, yearlyGoal) { derivedStateOf { yearlyGoal - time.hours } }
 
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -99,6 +93,12 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                         .height(8.dp)
                         .fillMaxWidth(),
                     strokeCap = StrokeCap.Round
+                )
+            }
+            Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.End) {
+                Text(
+                    text = stringResource(R.string.hours_remaining, remaining),
+                    fontSize = 14.sp
                 )
             }
         }

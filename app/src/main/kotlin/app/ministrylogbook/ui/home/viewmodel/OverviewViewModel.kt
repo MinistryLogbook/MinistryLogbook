@@ -36,10 +36,16 @@ class OverviewViewModel(
 ) : AndroidViewModel(application) {
 
     private val _pioneerSince = settingsDataStore.pioneerSince
-    private val _serviceYearBegin = if (month.monthNumber >= 9) {
-        LocalDate(month.year, 9, 1)
+    private val _serviceYearBegin = when {
+        // special case after corona pandemic; pioneering began in march
+        month.year == 2023 && month.monthNumber <= 9 -> LocalDate(month.year, 3, 1)
+        month.monthNumber >= 9 -> LocalDate(month.year, 9, 1)
+        else -> LocalDate(month.year - 1, 9, 1)
+    }
+    private val _serviceYearEnd = if (_serviceYearBegin.monthNumber >= 9) {
+        LocalDate(_serviceYearBegin.year + 1, 8, 31)
     } else {
-        LocalDate(month.year - 1, 9, 1)
+        LocalDate(_serviceYearBegin.year, 8, 31)
     }
     private val _beginOfPioneeringInServiceYear = _pioneerSince.map { pioneerSince ->
         if (pioneerSince != null && pioneerSince >= _serviceYearBegin) {
@@ -54,7 +60,7 @@ class OverviewViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
-        _entryRepository.getAllFrom(it)
+        _entryRepository.getAllInRange(it, _serviceYearEnd)
     }
     private val _restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform<List<Entry>, Time> {
         val lastMonthTime = it.ministryTimeSum()
@@ -65,23 +71,25 @@ class OverviewViewModel(
         }
     }
     private val _transferred = _entryRepository.getTransferredFrom(month)
-    private val _manuallySetGoal = _monthlyInformation.map { it.goal }
     private val _roleGoal = settingsDataStore.roleGoal
-    private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
 
     val name = settingsDataStore.name.stateIn(
         scope = viewModelScope,
         initialValue = "",
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val goal = _goal.stateIn(
+    val roleGoal = _roleGoal.stateIn(
         scope = viewModelScope,
         initialValue = 1,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val yearlyGoal = _goal.combine(_beginOfPioneeringInServiceYear) { g, beginOfPioneeringInServiceYear ->
-        val lastMonthInServiceYear = _serviceYearBegin + DatePeriod(months = 12)
-        g * beginOfPioneeringInServiceYear.monthsUntil(lastMonthInServiceYear)
+    val yearlyGoal = _roleGoal.combine(_beginOfPioneeringInServiceYear) { rl, beginOfPioneeringInServiceYear ->
+        val lastMonthInServiceYear = when {
+            _serviceYearBegin.monthNumber == 9 -> _serviceYearBegin + DatePeriod(months = 12)
+            _serviceYearBegin.monthNumber >= 9 -> LocalDate(_serviceYearBegin.year + 1, 9, 1)
+            else -> LocalDate(_serviceYearBegin.year, 9, 1)
+        }
+        rl * beginOfPioneeringInServiceYear.monthsUntil(lastMonthInServiceYear)
     }.stateIn(
         scope = viewModelScope,
         initialValue = 1,
@@ -99,7 +107,7 @@ class OverviewViewModel(
     )
     val entriesInServiceYear = _entriesInServiceYear.stateIn(
         scope = viewModelScope,
-        initialValue = listOf<Entry>(),
+        initialValue = listOf(),
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
     val bibleStudies = _monthlyInformation.map { it.bibleStudies ?: 0 }.stateIn(
