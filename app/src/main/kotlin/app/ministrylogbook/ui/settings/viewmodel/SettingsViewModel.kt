@@ -39,7 +39,7 @@ class SettingsViewModel(
         initialValue = Role.Publisher,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val pioneerSince = _settingsDataStore.pioneerSince.stateIn(
+    val startOfPioneering = _settingsDataStore.startOfPioneering.stateIn(
         scope = viewModelScope,
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -64,6 +64,11 @@ class SettingsViewModel(
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+    val sendReportReminder = _settingsDataStore.sendReportReminder.stateIn(
+        scope = viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
 
     fun setPioneerSince(date: LocalDate) = viewModelScope.launch {
         _settingsDataStore.setPioneerSince(date)
@@ -71,6 +76,10 @@ class SettingsViewModel(
 
     fun setPrecisionMode(value: Boolean) = viewModelScope.launch {
         _settingsDataStore.setPrecisionMode(value)
+    }
+
+    fun setSendReportReminder(value: Boolean) = viewModelScope.launch {
+        _settingsDataStore.setSendReportReminder(value)
     }
 
     fun setGoal(value: Int?) = viewModelScope.launch {

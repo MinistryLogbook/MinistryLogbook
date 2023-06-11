@@ -103,7 +103,7 @@ fun MonthPickerDialog(
     onDismissRequest: () -> Unit = {},
     onSelect: (month: LocalDate) -> Unit = {}
 ) {
-    var selectedMonth by remember { mutableStateOf(initialMonth) }
+    var selectedMonth by remember(initialMonth) { mutableStateOf(initialMonth) }
 
     AlertDialog(
         modifier = Modifier.width(240.dp),

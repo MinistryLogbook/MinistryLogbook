@@ -79,7 +79,7 @@ fun ToolbarMonthSelect(
             modifier = Modifier
                 .height(32.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.secondary.copy(0.15f))
+                .background(MaterialTheme.colorScheme.secondary.copy(0.2f))
                 .clickable { expanded = true }
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically

@@ -30,7 +30,8 @@ import app.ministrylogbook.shared.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.progress.Progress
 import app.ministrylogbook.shared.splitIntoMonths
 import app.ministrylogbook.shared.sum
-import app.ministrylogbook.shared.timeSum
+import app.ministrylogbook.shared.theocraticAssignmentTimeSum
+import app.ministrylogbook.shared.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
 import app.ministrylogbook.ui.theme.ProgressPositive
 import org.koin.androidx.compose.koinViewModel
@@ -58,7 +59,10 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                 derivedStateOf {
                     entriesInServiceYear.splitIntoMonths().map {
                         val ministryTimeSum = it.ministryTimeSum()
-                        minOf(maxOf(ministryTimeSum, maxHoursWithCredit), it.timeSum())
+                        val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum()
+                        val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum()
+                        val max = maxOf(ministryTimeSum, maxHoursWithCredit)
+                        minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
                     }.sum()
                 }
             }

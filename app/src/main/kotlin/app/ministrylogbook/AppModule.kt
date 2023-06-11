@@ -6,6 +6,7 @@ import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.notifications.ReminderManager
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
@@ -25,6 +26,7 @@ val appModule = module {
     single { EntryRepository(get()) }
     single { MonthlyInformationRepository(get()) }
     single { SettingsDataStore(androidContext()) }
+    single { ReminderManager() }
     viewModel { params ->
         OverviewViewModel(params.get(), androidContext() as Application, get(), get(), get())
     }

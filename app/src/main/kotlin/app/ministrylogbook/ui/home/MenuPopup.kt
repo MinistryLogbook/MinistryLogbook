@@ -65,7 +65,7 @@ fun ProfileButton(viewModel: HomeViewModel = koinViewModel()) {
             Modifier
                 .fillMaxSize()
                 .clip(RoundedCornerShape(100f))
-                .background(MaterialTheme.colorScheme.onSurface.copy(0.2f)),
+                .background(MaterialTheme.colorScheme.secondary.copy(0.2f)),
             contentAlignment = Alignment.Center
         ) {
             val char = if (name.isNotEmpty()) name.substring(0..0) else "?"

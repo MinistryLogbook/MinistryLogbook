@@ -35,7 +35,7 @@ class OverviewViewModel(
     monthlyInformationRepository: MonthlyInformationRepository
 ) : AndroidViewModel(application) {
 
-    private val _pioneerSince = settingsDataStore.pioneerSince
+    private val _pioneerSince = settingsDataStore.startOfPioneering
     private val _serviceYearBegin = when {
         // special case after corona pandemic; pioneering began in march
         month.year == 2023 && month.monthNumber <= 9 -> LocalDate(month.year, 3, 1)

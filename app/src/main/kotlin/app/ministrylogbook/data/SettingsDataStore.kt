@@ -66,18 +66,19 @@ enum class Design {
 class SettingsDataStore(val context: Context) {
     companion object {
         private val ROLE_KEY = stringPreferencesKey("role")
-        private val PIONEER_SINCE_KEY = stringPreferencesKey("pioneer_since")
+        private val START_OF_PIONEERING_KEY = stringPreferencesKey("start_of_pioneering")
         private val NAME_KEY = stringPreferencesKey("name")
         private val DESIGN_KEY = stringPreferencesKey("design")
         private val PRECISION_MODE_KEY = booleanPreferencesKey("precision_mode")
+        private val SEND_REPORT_REMINDER_KEY = booleanPreferencesKey("send_report_reminder")
     }
 
     val role = context.dataStore.data.map {
         it[ROLE_KEY]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
-    val pioneerSince =
+    val startOfPioneering =
         context.dataStore.data.map {
-            it[PIONEER_SINCE_KEY]?.let { dateStr ->
+            it[START_OF_PIONEERING_KEY]?.let { dateStr ->
                 val date = LocalDate.parse(dateStr)
                 LocalDate(date.year, date.month, 1)
             }
@@ -94,13 +95,14 @@ class SettingsDataStore(val context: Context) {
         }
     }
     val precisionMode = context.dataStore.data.map { it[PRECISION_MODE_KEY] ?: false }
+    val sendReportReminder = context.dataStore.data.map { it[SEND_REPORT_REMINDER_KEY] ?: true }
 
     suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {
         if (date == null) {
-            it.remove(PIONEER_SINCE_KEY)
+            it.remove(START_OF_PIONEERING_KEY)
             return@edit
         }
-        it[PIONEER_SINCE_KEY] = date.toString()
+        it[START_OF_PIONEERING_KEY] = date.toString()
     }
 
     suspend fun setRole(role: Role) = context.dataStore.edit {
@@ -117,6 +119,10 @@ class SettingsDataStore(val context: Context) {
 
     suspend fun setPrecisionMode(precisionMode: Boolean) = context.dataStore.edit {
         it[PRECISION_MODE_KEY] = precisionMode
+    }
+
+    suspend fun setSendReportReminder(value: Boolean) = context.dataStore.edit {
+        it[SEND_REPORT_REMINDER_KEY] = value
     }
 }
 

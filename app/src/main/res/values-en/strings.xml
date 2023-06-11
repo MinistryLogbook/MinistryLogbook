@@ -99,8 +99,8 @@
     <string name="date_in_future">Date is in the future</string>
     <string name="legal">Legal</string>
     <string name="open_source_licenses">Open Source Licenses</string>
-    <string name="pioneer_since_month_pattern">MMMM yyyy</string>
-    <string name="pioneer_since">Pioneer since</string>
+    <string name="start_of_pioneering_month_pattern">MMMM yyyy</string>
+    <string name="start_of_pioneering">Start of Pioneering</string>
     <string name="privacy_policy">Privacy policy</string>
     <string name="field_service_report_subject">Field Service Report for %1$s</string>
     <string name="report_share_file_name">Field_Service_Report_%1$s_%2$d</string>
@@ -108,7 +108,12 @@
     <string name="hours_value_short_unit">%1$d h</string>
     <string name="progress_of_yearly_goal">Progress of your yearly goal</string>
     <string name="hours_remaining">%1$d hours remaininig</string>
-    <string name="more_settings">More</string>
+    <string name="behaviour">Behaviour</string>
     <string name="precision_mode">Precision Mode</string>
     <string name="precision_mode_description">Track time in single-minute increments</string>
+    <string name="reminders">Reminders</string>
+    <string name="send_report">Send report</string>
+    <string name="send_report_reminder_description">Don\'t forget to send your report!</string>
+    <string name="send_report_reminder_title">Report sending reminder</string>
+    <string name="send_report_reminder_setting_description">Notifies you at the end of the month</string>
 </resources>

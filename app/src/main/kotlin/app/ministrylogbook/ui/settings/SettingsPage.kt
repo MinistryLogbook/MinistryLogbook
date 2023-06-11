@@ -1,5 +1,13 @@
 package app.ministrylogbook.ui.settings
 
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,29 +29,35 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.BuildConfig
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.Role
+import app.ministrylogbook.notifications.ReminderManager
 import app.ministrylogbook.shared.AlertDialog
 import app.ministrylogbook.shared.MonthPickerDialog
 import app.ministrylogbook.shared.OptionList
+import app.ministrylogbook.shared.lastDayOfMonth
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import org.koin.compose.koinInject
 
 @Composable
 fun SettingsPage() {
@@ -52,8 +66,8 @@ fun SettingsPage() {
     BaseSettingsPage(stringResource(R.string.settings), toolbarElevation = scrollState.canScrollBackward) {
         Column(
             Modifier
-                .padding(vertical = 10.dp)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .padding(vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Column {
@@ -69,7 +83,8 @@ fun SettingsPage() {
                 DesignSetting()
             }
             Column {
-                Title(stringResource(R.string.more_settings))
+                Title(stringResource(R.string.behaviour))
+                SendReportReminderSetting()
                 MinuteCounterSetting()
             }
             Column {
@@ -224,17 +239,75 @@ fun MinuteCounterSetting(viewModel: SettingsViewModel = koinViewModel()) {
 }
 
 @Composable
+fun SendReportReminderSetting(viewModel: SettingsViewModel = koinViewModel()) {
+    val reminderManager = koinInject<ReminderManager>()
+    val sendReportReminder by viewModel.sendReportReminder.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val alarmManager = remember { context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager }
+    var hasPermission by remember {
+        val isGranted = if (Build.VERSION.SDK_INT >= 33) {
+            val permission = android.Manifest.permission.POST_NOTIFICATIONS
+            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+        mutableStateOf(isGranted)
+    }
+
+    val requestExactAlarmPermission = {
+        if (Build.VERSION.SDK_INT >= 31 && alarmManager?.canScheduleExactAlarms() == false) {
+            Intent().also { intent ->
+                intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                context.startActivity(intent)
+            }
+        }
+    }
+
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
+            hasPermission = isGranted
+            if (isGranted) {
+                viewModel.setSendReportReminder(true)
+            }
+
+            requestExactAlarmPermission()
+        })
+
+    Setting(
+        title = stringResource(R.string.send_report_reminder_title),
+        description = stringResource(R.string.send_report_reminder_setting_description)
+    ) {
+        Switch(checked = sendReportReminder && hasPermission, onCheckedChange = { checked ->
+            if (checked) {
+                if (Build.VERSION.SDK_INT >= 33 && !hasPermission) {
+                    val permission = android.Manifest.permission.POST_NOTIFICATIONS
+                    launcher.launch(permission)
+                } else {
+                    viewModel.setSendReportReminder(true)
+                    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                    reminderManager.scheduleReminder(today.lastDayOfMonth().atTime(20, 0))
+                    requestExactAlarmPermission()
+                }
+            } else {
+                viewModel.setSendReportReminder(false)
+                reminderManager.cancelReminder()
+            }
+        })
+    }
+}
+
+@Composable
 fun PioneerSinceSetting(viewModel: SettingsViewModel = koinViewModel()) {
     val role by viewModel.role.collectAsStateWithLifecycle()
 
     if (role == Role.RegularPioneer || role == Role.SpecialPioneer) {
         var isDialogOpen by remember { mutableStateOf(false) }
-        val pioneerSince by viewModel.pioneerSince.collectAsStateWithLifecycle()
+        val startOfPioneering by viewModel.startOfPioneering.collectAsStateWithLifecycle()
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         MonthPickerDialog(
             isOpen = isDialogOpen,
-            initialMonth = pioneerSince ?: today,
+            initialMonth = startOfPioneering ?: today,
             onDismissRequest = { isDialogOpen = false },
             onSelect = {
                 viewModel.setPioneerSince(it)
@@ -242,10 +315,10 @@ fun PioneerSinceSetting(viewModel: SettingsViewModel = koinViewModel()) {
             }
         )
 
-        Setting(title = stringResource(R.string.pioneer_since), onClick = { isDialogOpen = true }) {
-            val pattern = stringResource(R.string.pioneer_since_month_pattern)
+        Setting(title = stringResource(R.string.start_of_pioneering), onClick = { isDialogOpen = true }) {
+            val pattern = stringResource(R.string.start_of_pioneering_month_pattern)
             val formatter = DateTimeFormatter.ofPattern(pattern)
-            val monthText = formatter.format((pioneerSince ?: today).toJavaLocalDate())
+            val monthText = formatter.format((startOfPioneering ?: today).toJavaLocalDate())
 
             Text(
                 monthText,

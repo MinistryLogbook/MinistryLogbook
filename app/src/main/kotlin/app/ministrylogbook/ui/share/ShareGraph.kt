@@ -10,6 +10,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import app.ministrylogbook.ui.AppGraph
 import app.ministrylogbook.ui.FadeInTransitionMillis
 import app.ministrylogbook.ui.FadeOutTransitionMillis
@@ -72,7 +73,13 @@ fun NavGraphBuilder.shareGraph() {
             )
         }
     ) {
-        composable(ShareGraph.Root.route, ShareGraph.Root.arguments) {
+        composable(
+            ShareGraph.Root.route,
+            ShareGraph.Root.arguments,
+            deepLinks = listOf(
+                navDeepLink { uriPattern = "ministrylogbook://share" }
+            )
+        ) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
             val monthNumber =

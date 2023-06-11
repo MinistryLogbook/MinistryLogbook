@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.settings
 
+import android.R.attr.maxLines
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -105,17 +105,18 @@ fun Setting(
             Icon(icon, contentDescription = null) // TODO: contentDescription
             Spacer(Modifier.width(20.dp))
         }
-        Column {
+        Column(Modifier.weight(1f).padding(end = 8.dp)) {
             Text(title, fontSize = MaterialTheme.typography.titleMedium.fontSize)
             description?.let {
                 Text(
                     description,
                     fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-                    color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(0.8f),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
         }
-        Spacer(Modifier.weight(1f))
         value()
     }
 }
