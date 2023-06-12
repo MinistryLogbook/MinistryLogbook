@@ -36,6 +36,16 @@ fun NumberPicker(
     step: Int = 1,
     onChange: (newValue: Int) -> Unit = {}
 ) {
+    val handleIncrease = {
+        val toAdd = if (value % step == 0) step else step - (value % step)
+        onChange(value + toAdd)
+    }
+
+    val handleDecrease = {
+        val toSubtract = if (value % step == 0) step else value % step
+        onChange(value - toSubtract)
+    }
+
     Row(
         Modifier
             .clip(RoundedCornerShape(100))
@@ -47,8 +57,8 @@ fun NumberPicker(
             modifier = Modifier
                 .size(38.dp)
                 .clip(RoundedCornerShape(100))
-                .repeatingClickable { onChange(value - step) }
-                .clickable { onChange(value - step) }
+                .repeatingClickable(onClick = handleDecrease)
+                .clickable(onClick = handleDecrease)
                 .padding(4.dp),
             contentDescription = "Minus", // TODO: translation
             tint = MaterialTheme.colorScheme.onSurface
@@ -66,8 +76,8 @@ fun NumberPicker(
             modifier = Modifier
                 .size(38.dp)
                 .clip(RoundedCornerShape(100))
-                .repeatingClickable { onChange(value + step) }
-                .clickable { onChange(value + step) }
+                .repeatingClickable(onClick = handleIncrease)
+                .clickable(onClick = handleIncrease)
                 .padding(4.dp),
             contentDescription = "Plus", // TODO: translation
             tint = MaterialTheme.colorScheme.onSurface
@@ -77,7 +87,7 @@ fun NumberPicker(
 
 fun Modifier.repeatingClickable(
     initialDelay: Long = 700,
-    delay: Long = 120,
+    delay: Long = 110,
     onClick: () -> Unit
 ): Modifier = composed {
     val currentClickListener by rememberUpdatedState(onClick)

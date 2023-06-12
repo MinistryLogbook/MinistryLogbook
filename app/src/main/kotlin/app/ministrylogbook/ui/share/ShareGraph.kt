@@ -77,7 +77,7 @@ fun NavGraphBuilder.shareGraph() {
             ShareGraph.Root.route,
             ShareGraph.Root.arguments,
             deepLinks = listOf(
-                navDeepLink { uriPattern = "ministrylogbook://share" }
+                navDeepLink { uriPattern = "ministrylogbook://share/?year={year}&monthNumber={monthNumber}" }
             )
         ) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())

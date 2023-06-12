@@ -24,10 +24,7 @@ import app.ministrylogbook.shared.Time
 import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 
 @Composable
-fun Counter(
-    modifier: Modifier = Modifier,
-    time: Time
-) {
+fun Counter(modifier: Modifier = Modifier, time: Time) {
     val context = LocalContext.current
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground.toArgb()
     val onBackgroundColor80 = MaterialTheme.colorScheme.onBackground.copy(0.8f).toArgb()

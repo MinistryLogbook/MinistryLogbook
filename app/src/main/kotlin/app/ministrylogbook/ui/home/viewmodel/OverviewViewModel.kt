@@ -72,10 +72,17 @@ class OverviewViewModel(
     }
     private val _transferred = _entryRepository.getTransferredFrom(month)
     private val _roleGoal = settingsDataStore.roleGoal
+    private val _manuallySetGoal = _monthlyInformation.map { it.goal }
+    private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
 
     val name = settingsDataStore.name.stateIn(
         scope = viewModelScope,
         initialValue = "",
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val goal = _goal.stateIn(
+        scope = viewModelScope,
+        initialValue = 1,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
     val roleGoal = _roleGoal.stateIn(

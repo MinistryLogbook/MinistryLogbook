@@ -26,7 +26,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -56,54 +55,37 @@ import org.koin.androidx.compose.koinViewModel
 fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
     val entries by homeViewModel.entries.collectAsStateWithLifecycle()
     val role by homeViewModel.role.collectAsStateWithLifecycle()
-    val goal by homeViewModel.roleGoal.collectAsStateWithLifecycle()
+    val goal by homeViewModel.goal.collectAsStateWithLifecycle()
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit by remember(goal) { derivedStateOf { Time(goal + 5, 0) } }
+    val maxHoursWithCredit = remember(goal) { Time(goal + 5, 0) }
     val transferred by homeViewModel.transferred.collectAsStateWithLifecycle()
-    val transferredTime by remember(transferred) { derivedStateOf { transferred.timeSum() } }
-    val ministryTime by remember(entries, transferredTime) {
-        derivedStateOf { entries.ministryTimeSum() - transferredTime }
-    }
-    val theocraticAssignmentsTime by remember(entries) {
-        derivedStateOf {
-            entries.theocraticAssignmentTimeSum()
-        }
-    }
-    val theocraticSchoolTime by remember(entries) {
-        derivedStateOf { entries.theocraticSchoolTimeSum() }
-    }
-    val credit by remember(
+    val transferredTime = remember(transferred) { transferred.timeSum() }
+    val ministryTime = remember(entries, transferredTime) { entries.ministryTimeSum() - transferredTime }
+    val theocraticAssignmentsTime = remember(entries) { entries.theocraticAssignmentTimeSum() }
+    val theocraticSchoolTime = remember(entries) { entries.theocraticSchoolTimeSum() }
+    val credit = remember(
+        ministryTime,
+        theocraticAssignmentsTime,
+        maxHoursWithCredit,
+        theocraticSchoolTime
+    ) { minOf(theocraticAssignmentsTime, maxHoursWithCredit - ministryTime) + theocraticSchoolTime }
+    val accumulatedTime = remember(
         ministryTime,
         theocraticAssignmentsTime,
         maxHoursWithCredit,
         theocraticSchoolTime
     ) {
-        derivedStateOf {
-            minOf(
-                theocraticAssignmentsTime,
-                maxHoursWithCredit - ministryTime
-            ) + theocraticSchoolTime
-        }
-    }
-    val accumulatedTime by remember(
-        ministryTime,
-        theocraticAssignmentsTime,
-        maxHoursWithCredit,
-        theocraticSchoolTime
-    ) {
-        derivedStateOf {
-            ministryTime.let {
-                if (it.hours < maxHoursWithCredit.hours) {
-                    minOf(
-                        ministryTime + theocraticAssignmentsTime,
-                        maxHoursWithCredit
-                    )
-                } else {
-                    it
-                }
-            } + theocraticSchoolTime
-        }
+        ministryTime.let {
+            if (it.hours < maxHoursWithCredit.hours) {
+                minOf(
+                    ministryTime + theocraticAssignmentsTime,
+                    maxHoursWithCredit
+                )
+            } else {
+                it
+            }
+        } + theocraticSchoolTime
     }
 
     Column {
@@ -127,11 +109,11 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                             Progress(
                                 percent = (1f / goal * accumulatedTime.hours),
                                 color = ProgressPositive.copy(0.6f)
-                            ).takeIf { role.canHaveCredit && (credit > Time(0, 0)) },
+                            ).takeIf { role.canHaveCredit && credit.isNotEmpty },
                             Progress(
                                 percent = (1f / goal * ministryTime.hours),
                                 color = ProgressPositive
-                            )
+                            ).takeIf { ministryTime.isNotEmpty }
                         )
                     )
                     Column(

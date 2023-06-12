@@ -34,8 +34,14 @@ class ReminderReceiver : BroadcastReceiver() {
 }
 
 private fun NotificationManager.sendReminderNotification(context: Context, channelId: String) {
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val contentIntent =
-        Intent(Intent.ACTION_VIEW, "ministrylogbook://share".toUri(), context, MainActivity::class.java)
+        Intent(
+            Intent.ACTION_VIEW,
+            "ministrylogbook://share/?year=${today.year}&monthNumber=${today.monthNumber}".toUri(),
+            context,
+            MainActivity::class.java
+        )
     val pendingIntent = TaskStackBuilder.create(context).run {
         addNextIntentWithParentStack(contentIntent)
         getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
