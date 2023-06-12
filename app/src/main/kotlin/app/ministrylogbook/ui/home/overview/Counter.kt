@@ -56,7 +56,7 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
         }
         val hoursBounds = Rect()
         val animatedHoursWithSign =
-            if (time.isNegative) "-$animatedHours" else animatedHours.toString()
+            if (time.isNegative) "-$animatedHours" else "$animatedHours"
         bigTextPaint.getTextBounds(
             animatedHoursWithSign,
             0,
@@ -75,10 +75,11 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
         val minUnitBounds = Rect()
         unitTextPaint.getTextBounds(minText, 0, 3, minUnitBounds)
         val gap = 8.dp.toPx()
+        val halfGap = gap / 2
         val drawWidth = hoursBounds.width() + gap + minUnitBounds.width()
         val drawHeight = hoursBounds.height() + gap + minutesBounds.height()
-        val beginHoursY = (size.height - drawHeight) / 2 + hoursBounds.height()
-        val beginHoursX = (size.width - drawWidth) / 2
+        val beginHoursY = (size.height - drawHeight) / 2 + hoursBounds.height() - halfGap
+        val beginHoursX = (size.width - drawWidth) / 2 + halfGap
         val beginMinutesX = beginHoursX + hoursBounds.width() - minutesBounds.width()
         val beginMinutesY = beginHoursY + gap + minutesBounds.height()
         val beginUnitX = beginHoursX + hoursBounds.width().toFloat() + gap
@@ -87,13 +88,13 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
         drawIntoCanvas {
             it.nativeCanvas.drawText(
                 animatedHoursWithSign,
-                beginHoursX,
+                beginHoursX - hoursBounds.left,
                 beginHoursY,
                 bigTextPaint
             )
             it.nativeCanvas.drawText(
                 animatedMinutes.toString(),
-                beginMinutesX,
+                beginMinutesX + minutesBounds.left,
                 beginMinutesY,
                 smallTextPaint
             )
