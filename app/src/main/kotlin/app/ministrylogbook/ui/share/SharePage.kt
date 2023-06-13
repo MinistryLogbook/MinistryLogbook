@@ -147,7 +147,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                         fontSize = MaterialTheme.typography.titleLarge.fontSize
                     )
                 }
-                Column(Modifier.statusBarsPadding()) {
+                Column {
                     Spacer(Modifier.height(56.dp))
                     Column(Modifier.fillMaxSize()) {
                         Column(

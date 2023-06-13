@@ -57,7 +57,6 @@ fun Toolbar(
         Row(
             modifier = Modifier
                 .padding(padding)
-                .statusBarsPadding()
                 .height(56.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

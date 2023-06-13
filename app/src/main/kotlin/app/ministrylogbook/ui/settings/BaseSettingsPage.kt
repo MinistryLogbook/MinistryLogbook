@@ -67,7 +67,7 @@ fun BaseSettingsPage(
                     Spacer(Modifier.weight(1f))
                     actions?.invoke()
                 }
-                Column(Modifier.statusBarsPadding()) {
+                Column {
                     Spacer(Modifier.height(56.dp))
                     content()
                 }

@@ -64,11 +64,7 @@ fun OverviewPage(onScroll: (position: Int) -> Unit = {}, viewModel: OverviewView
         })
     }) {
         Column(modifier = Modifier.verticalScroll(scrollState).padding(bottom = 82.dp)) {
-            Box(modifier = Modifier.statusBarsPadding()) {
-                Spacer(modifier = Modifier.height(56.dp))
-            }
-
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(72.dp))
 
             Box(Modifier.padding(horizontal = 16.dp)) {
                 DetailsSection()

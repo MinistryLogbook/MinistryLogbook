@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,7 +43,7 @@ fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel
         }
     }
 
-    Column(modifier = Modifier.navigationBarsPadding()) {
+    Column(modifier = Modifier.navigationBarsPadding().verticalScroll(rememberScrollState())) {
         DragLine()
         Toolbar(
             onClose = handleClose,
