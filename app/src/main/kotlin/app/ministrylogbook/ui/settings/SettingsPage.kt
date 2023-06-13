@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.settings
 
+import android.app.Activity
 import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
@@ -48,8 +49,6 @@ import app.ministrylogbook.shared.OptionList
 import app.ministrylogbook.shared.lastDayOfMonth
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -58,6 +57,8 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun SettingsPage() {
@@ -138,7 +139,7 @@ fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
             Design.values().map { d ->
                 Option(text = d.translate(), selected = d == design, onClick = {
                     coroutineScope.launch {
-                        d.apply()
+//                        d.apply()
                         viewModel.setDesign(d)
                     }
                     handleClose()
