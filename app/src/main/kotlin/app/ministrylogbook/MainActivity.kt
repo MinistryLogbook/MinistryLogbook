@@ -9,16 +9,11 @@ import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.SettingsDataStore
 import app.ministrylogbook.ui.AppNavHost
 import app.ministrylogbook.ui.theme.MinistryLogbookTheme
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.skip
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import kotlin.coroutines.coroutineContext
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
