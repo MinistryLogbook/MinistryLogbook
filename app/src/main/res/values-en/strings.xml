@@ -116,4 +116,5 @@
     <string name="send_report_reminder_description">Don\'t forget to send your report!</string>
     <string name="send_report_reminder_title">Report sending reminder</string>
     <string name="send_report_reminder_setting_description">Notifies you at the end of the month</string>
+    <string name="backup">Backup</string>
 </resources>

@@ -34,15 +34,13 @@ sealed class SettingsGraph(private val rawRoute: String, val arguments: List<Nam
 
     object LicenseDetail : SettingsGraph(
         rawRoute = "licenses/{id}",
-        arguments = listOf(
-            navArgument("id") {}
-        )
+        arguments = listOf(navArgument("id") {})
     ) {
-        fun createDestination(id: String) = "${AppGraph.Settings.route}/licenses/$id"
+        fun createDestination(id: String) = "${AppGraph.Settings}/licenses/$id"
     }
 
     val route
-        get() = "${AppGraph.Settings.route}/$rawRoute"
+        get() = "${AppGraph.Settings}/$rawRoute"
 }
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -58,9 +56,7 @@ fun NavGraphBuilder.settingsGraph() {
                 return@navigation EnterTransition.None
             }
             slideInHorizontally(tween(SlideInTransitionMillis)) { it / 6 } + fadeIn(
-                tween(
-                    FadeInTransitionMillis
-                )
+                tween(FadeInTransitionMillis)
             )
         },
         exitTransition = {
@@ -71,9 +67,7 @@ fun NavGraphBuilder.settingsGraph() {
                 return@navigation stayOut(SlideOutTransitionMillis)
             }
             slideOutHorizontally(tween(SlideOutTransitionMillis)) { it / 6 } + fadeOut(
-                tween(
-                    FadeOutTransitionMillis
-                )
+                tween(FadeOutTransitionMillis)
             )
         }
     ) {

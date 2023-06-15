@@ -1,6 +1,5 @@
 package app.ministrylogbook.ui.settings
 
-import android.R.attr.maxLines
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,7 +26,6 @@ import app.ministrylogbook.shared.condition
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction
-import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 
 @Composable
 fun BaseSettingsPage(
@@ -42,34 +40,32 @@ fun BaseSettingsPage(
         navController.popBackStack()
     }
 
-    MinistryLogbookTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            Box {
-                Toolbar(
-                    padding = PaddingValues(horizontal = 12.dp),
-                    elevation = if (toolbarElevation) 4.dp else 0.dp
-                ) {
-                    ToolbarAction(onClick = handleBack) {
-                        Icon(
-                            painterResource(R.drawable.ic_arrow_back),
-                            contentDescription = null // TODO: contentDescription
-                        )
-                    }
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        title,
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Box {
+            Toolbar(
+                padding = PaddingValues(horizontal = 12.dp),
+                elevation = if (toolbarElevation) 4.dp else 0.dp
+            ) {
+                ToolbarAction(onClick = handleBack) {
+                    Icon(
+                        painterResource(R.drawable.ic_arrow_back),
+                        contentDescription = null // TODO: contentDescription
                     )
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    title,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
+                )
 
-                    Spacer(Modifier.weight(1f))
-                    actions?.invoke()
-                }
-                Column {
-                    Spacer(Modifier.height(56.dp))
-                    content()
-                }
+                Spacer(Modifier.weight(1f))
+                actions?.invoke()
+            }
+            Column {
+                Spacer(Modifier.height(56.dp))
+                content()
             }
         }
     }
@@ -97,14 +93,18 @@ fun Setting(
             .condition(onClick != null) {
                 clickable(onClick = onClick!!)
             }
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = 20.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         icon?.let {
             Icon(icon, contentDescription = null) // TODO: contentDescription
             Spacer(Modifier.width(20.dp))
         }
-        Column(Modifier.weight(1f).padding(end = 8.dp)) {
+        Column(
+            Modifier
+                .weight(1f)
+                .padding(end = 8.dp)
+        ) {
             Text(title, fontSize = MaterialTheme.typography.titleMedium.fontSize)
             description?.let {
                 Text(

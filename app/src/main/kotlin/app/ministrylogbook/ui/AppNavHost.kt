@@ -16,6 +16,7 @@ import app.ministrylogbook.shared.ModalBottomSheetLayout
 import app.ministrylogbook.shared.PopupLayout
 import app.ministrylogbook.shared.rememberBottomSheetNavigator
 import app.ministrylogbook.shared.rememberPopupNavigator
+import app.ministrylogbook.ui.home.backup.backupGraph
 import app.ministrylogbook.ui.home.homeGraph
 import app.ministrylogbook.ui.settings.settingsGraph
 import app.ministrylogbook.ui.share.shareGraph
@@ -51,9 +52,10 @@ fun AppNavHost(
                         navController = navController,
                         startDestination = startDestination
                     ) {
+                        shareGraph()
+                        backupGraph()
                         homeGraph()
                         settingsGraph()
-                        shareGraph()
                     }
                 }
             }

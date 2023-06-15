@@ -41,6 +41,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.ui.LocalAppNavController
+import app.ministrylogbook.ui.home.backup.navigateToBackup
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.settings.navigateToSettings
 import app.ministrylogbook.ui.shared.ToolbarAction
@@ -114,6 +115,20 @@ fun MenuPopup() {
         )
         Spacer(Modifier.width(16.dp))
         Text(stringResource(R.string.settings))
+    }
+
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .clickable { navController.navigateToBackup() }
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+    ) {
+        Icon(
+            painterResource(R.drawable.ic_settings_backup_restore),
+            contentDescription = null // TODO: contentDescription
+        )
+        Spacer(Modifier.width(16.dp))
+        Text(stringResource(R.string.backup))
     }
 
     Divider()

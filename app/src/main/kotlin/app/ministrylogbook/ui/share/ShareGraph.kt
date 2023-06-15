@@ -60,16 +60,12 @@ fun NavGraphBuilder.shareGraph() {
         startDestination = ShareGraph.Root.route,
         enterTransition = {
             slideInHorizontally(tween(SlideInTransitionMillis)) { it / 6 } + fadeIn(
-                tween(
-                    FadeInTransitionMillis
-                )
+                tween(FadeInTransitionMillis)
             )
         },
         exitTransition = {
             slideOutHorizontally(tween(SlideOutTransitionMillis)) { it / 6 } + fadeOut(
-                tween(
-                    FadeOutTransitionMillis
-                )
+                tween(FadeOutTransitionMillis)
             )
         }
     ) {
