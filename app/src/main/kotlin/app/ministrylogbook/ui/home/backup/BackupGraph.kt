@@ -14,8 +14,10 @@ import app.ministrylogbook.ui.FadeOutTransitionMillis
 import app.ministrylogbook.ui.SlideInTransitionMillis
 import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.home.HomeGraph
+import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
+import org.koin.androidx.compose.getViewModel
 
 sealed class BackupGraph(private val rawRoute: String) {
 
@@ -44,7 +46,8 @@ fun NavGraphBuilder.backupGraph() {
         }
     ) {
         composable(BackupGraph.Root.route) {
-            BackupPage()
+            val viewModel = getViewModel<BackupViewModel>()
+            BackupPage(viewModel)
         }
     }
 }

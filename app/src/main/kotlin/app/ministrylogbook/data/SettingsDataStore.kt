@@ -7,13 +7,19 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalContext
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.ministrylogbook.R
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 
-private val Context.dataStore by preferencesDataStore("settings")
+private val Context.dataStore by preferencesDataStore(SettingsDataStore.Name)
 
 enum class Role {
     Publisher, AuxiliaryPioneer, RegularPioneer, SpecialPioneer;
@@ -65,28 +71,31 @@ enum class Design {
 
 class SettingsDataStore(val context: Context) {
     companion object {
-        private val ROLE_KEY = stringPreferencesKey("role")
-        private val START_OF_PIONEERING_KEY = stringPreferencesKey("start_of_pioneering")
-        private val NAME_KEY = stringPreferencesKey("name")
-        private val DESIGN_KEY = stringPreferencesKey("design")
-        private val PRECISION_MODE_KEY = booleanPreferencesKey("precision_mode")
-        private val SEND_REPORT_REMINDER_KEY = booleanPreferencesKey("send_report_reminder")
+        const val Name = "settings"
+
+        private val RoleKey = stringPreferencesKey("role")
+        private val StartOfPioneeringKey = stringPreferencesKey("start_of_pioneering")
+        private val NameKey = stringPreferencesKey("name")
+        private val DesignKey = stringPreferencesKey("design")
+        private val PrecisionModeKey = booleanPreferencesKey("precision_mode")
+        private val SendReportReminderKey = booleanPreferencesKey("send_report_reminder")
+        private val LastBackupMillisKey = longPreferencesKey("last_backup_millis")
     }
 
     val role = context.dataStore.data.map {
-        it[ROLE_KEY]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
+        it[RoleKey]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
     val startOfPioneering =
         context.dataStore.data.map {
-            it[START_OF_PIONEERING_KEY]?.let { dateStr ->
+            it[StartOfPioneeringKey]?.let { dateStr ->
                 val date = LocalDate.parse(dateStr)
                 LocalDate(date.year, date.month, 1)
             }
         }
     val roleGoal = role.map { it.goal }
-    val name = context.dataStore.data.map { it[NAME_KEY] ?: "" }
+    val name = context.dataStore.data.map { it[NameKey] ?: "" }
     val design = context.dataStore.data.map {
-        val value = it[DESIGN_KEY]
+        val value = it[DesignKey]
 
         if (value != null) {
             Design.valueOf(value)
@@ -94,35 +103,43 @@ class SettingsDataStore(val context: Context) {
             Design.System
         }
     }
-    val precisionMode = context.dataStore.data.map { it[PRECISION_MODE_KEY] ?: false }
-    val sendReportReminder = context.dataStore.data.map { it[SEND_REPORT_REMINDER_KEY] ?: true }
+    val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }
+    val sendReportReminder = context.dataStore.data.map { it[SendReportReminderKey] ?: true }
+    var lastBackup = context.dataStore.data.map {
+        val lastBackupMillis = it[LastBackupMillisKey] ?: return@map null
+        Instant.fromEpochMilliseconds(lastBackupMillis).toLocalDateTime(TimeZone.currentSystemDefault())
+    }
 
     suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {
         if (date == null) {
-            it.remove(START_OF_PIONEERING_KEY)
+            it.remove(StartOfPioneeringKey)
             return@edit
         }
-        it[START_OF_PIONEERING_KEY] = date.toString()
+        it[StartOfPioneeringKey] = date.toString()
+    }
+
+    suspend fun setLastBackup(dateTime: LocalDateTime) = context.dataStore.edit {
+        it[LastBackupMillisKey] = dateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
     suspend fun setRole(role: Role) = context.dataStore.edit {
-        it[ROLE_KEY] = role.name
+        it[RoleKey] = role.name
     }
 
     suspend fun setName(name: String) = context.dataStore.edit {
-        it[NAME_KEY] = name
+        it[NameKey] = name
     }
 
     suspend fun setDesign(design: Design) = context.dataStore.edit {
-        it[DESIGN_KEY] = design.name
+        it[DesignKey] = design.name
     }
 
     suspend fun setPrecisionMode(precisionMode: Boolean) = context.dataStore.edit {
-        it[PRECISION_MODE_KEY] = precisionMode
+        it[PrecisionModeKey] = precisionMode
     }
 
     suspend fun setSendReportReminder(value: Boolean) = context.dataStore.edit {
-        it[SEND_REPORT_REMINDER_KEY] = value
+        it[SendReportReminderKey] = value
     }
 }
 
