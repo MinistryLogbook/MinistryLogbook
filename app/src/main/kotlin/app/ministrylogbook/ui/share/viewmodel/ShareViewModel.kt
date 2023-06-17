@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.ministryTimeSum
 import app.ministrylogbook.shared.placements
 import app.ministrylogbook.shared.returnVisits
@@ -32,7 +32,7 @@ class ShareViewModel(
     application: Application,
     entryRepository: EntryRepository,
     private val monthlyInfoRepository: MonthlyInformationRepository,
-    settingsDataStore: SettingsDataStore
+    settingsDataStore: SettingsService
 ) : AndroidViewModel(application) {
 
     private val _monthlyInformation = monthlyInfoRepository.getOfMonth(month)

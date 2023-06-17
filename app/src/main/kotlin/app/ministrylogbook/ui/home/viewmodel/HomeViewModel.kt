@@ -2,11 +2,11 @@ package app.ministrylogbook.ui.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 
-class HomeViewModel(settingsDataStore: SettingsDataStore) : ViewModel() {
+class HomeViewModel(settingsDataStore: SettingsService) : ViewModel() {
 
     val name = settingsDataStore.name.stateIn(
         scope = viewModelScope,

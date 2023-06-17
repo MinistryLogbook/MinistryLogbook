@@ -5,7 +5,7 @@ import androidx.room.Room
 import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.notifications.ReminderManager
 import app.ministrylogbook.shared.BackupService
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
@@ -27,7 +27,7 @@ val appModule = module {
     single { get<AppDatabase>().entryDao() }
     single { EntryRepository(get()) }
     single { MonthlyInformationRepository(get()) }
-    single { SettingsDataStore(androidContext()) }
+    single { SettingsService(androidContext()) }
     single { ReminderManager() }
     single { BackupService(androidContext(), get()) }
     viewModel { params ->

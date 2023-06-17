@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
@@ -18,7 +18,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 class SettingsViewModel(
-    private val _settingsDataStore: SettingsDataStore,
+    private val _settingsDataStore: SettingsService,
     private val _monthlyInformationRepository: MonthlyInformationRepository
 ) : ViewModel() {
     private val _currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())

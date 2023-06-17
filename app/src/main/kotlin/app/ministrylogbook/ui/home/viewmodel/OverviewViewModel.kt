@@ -10,7 +10,7 @@ import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.ministryTimeSum
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +30,7 @@ import kotlinx.datetime.plus
 class OverviewViewModel(
     val month: LocalDate,
     application: Application,
-    settingsDataStore: SettingsDataStore,
+    settingsDataStore: SettingsService,
     private val _entryRepository: EntryRepository,
     monthlyInformationRepository: MonthlyInformationRepository
 ) : AndroidViewModel(application) {

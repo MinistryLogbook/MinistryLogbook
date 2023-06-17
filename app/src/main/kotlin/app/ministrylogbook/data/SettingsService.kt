@@ -11,6 +11,8 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.ministrylogbook.R
+import com.charleskorn.kaml.Yaml
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -18,8 +20,11 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 
-private val Context.dataStore by preferencesDataStore(SettingsDataStore.Name)
+private val Context.dataStore by preferencesDataStore(SettingsService.Name)
 
 enum class Role {
     Publisher, AuxiliaryPioneer, RegularPioneer, SpecialPioneer;
@@ -69,7 +74,18 @@ enum class Design {
     }
 }
 
-class SettingsDataStore(val context: Context) {
+@Serializable
+data class Settings(
+    val role: Role,
+    val startOfPioneering: LocalDate?,
+    val name: String,
+    val design: Design,
+    val precisionMode: Boolean,
+    val sendReportReminder: Boolean,
+    val lastBackup: LocalDateTime?
+)
+
+class SettingsService(val context: Context) {
     companion object {
         const val Name = "settings"
 
@@ -118,7 +134,11 @@ class SettingsDataStore(val context: Context) {
         it[StartOfPioneeringKey] = date.toString()
     }
 
-    suspend fun setLastBackup(dateTime: LocalDateTime) = context.dataStore.edit {
+    suspend fun setLastBackup(dateTime: LocalDateTime?) = context.dataStore.edit {
+        if (dateTime == null) {
+            it.remove(LastBackupMillisKey)
+            return@edit
+        }
         it[LastBackupMillisKey] = dateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
@@ -140,6 +160,36 @@ class SettingsDataStore(val context: Context) {
 
     suspend fun setSendReportReminder(value: Boolean) = context.dataStore.edit {
         it[SendReportReminderKey] = value
+    }
+
+    suspend fun toYaml(): String {
+        val settings = Settings(
+            role = role.first(),
+            startOfPioneering = startOfPioneering.first(),
+            name = name.first(),
+            design = design.first(),
+            precisionMode = precisionMode.first(),
+            sendReportReminder = sendReportReminder.first(),
+            lastBackup = lastBackup.first()
+        )
+        return Yaml.default.encodeToString(settings)
+    }
+
+    suspend fun fromYaml(yaml: String) {
+        val data = Yaml.default.decodeFromString<HashMap<String, String>>(yaml)
+        data.forEach { (key, value) ->
+            when (key) {
+                RoleKey.name -> setRole(Role.valueOf(value))
+                StartOfPioneeringKey.name -> setPioneerSince(LocalDate.parse(value))
+                NameKey.name -> setName(value)
+                DesignKey.name -> setDesign(Design.valueOf(value))
+                PrecisionModeKey.name -> setPrecisionMode(value.toBoolean())
+                SendReportReminderKey.name -> setSendReportReminder(value.toBoolean())
+                LastBackupMillisKey.name -> setLastBackup(
+                    Instant.fromEpochMilliseconds(value.toLong()).toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            }
+        }
     }
 }
 

@@ -3,7 +3,7 @@ package app.ministrylogbook
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.notifications.ReminderChannelId
 import app.ministrylogbook.notifications.ReminderManager
 import app.ministrylogbook.shared.lastDayOfMonth
@@ -35,7 +35,7 @@ class AppApplication : Application() {
             modules(appModule)
         }
 
-        val settingsDataStore = koinApplication.koin.get<SettingsDataStore>()
+        val settingsDataStore = koinApplication.koin.get<SettingsService>()
         runBlocking {
             settingsDataStore.design.firstOrNull()?.apply()
         }

@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
     alias(libs.plugins.aboutlicenses)
@@ -112,6 +113,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.kaml)
     implementation(libs.aboutlicenses.core)
     implementation(libs.core.ktx)
     implementation(libs.material)

@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import app.ministrylogbook.data.Design
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.ui.AppNavHost
 import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val settingsDataStore = SettingsDataStore(this)
+        val settingsDataStore = SettingsService(this)
         val design = runBlocking {
             settingsDataStore.design.firstOrNull() ?: Design.System
         }

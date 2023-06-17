@@ -6,7 +6,7 @@ import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsDataStore
+import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.mutableStateIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +18,7 @@ import kotlinx.datetime.LocalDate
 class EntryDetailsViewModel(
     month: LocalDate,
     val id: Int?,
-    settingsDataStore: SettingsDataStore,
+    settingsDataStore: SettingsService,
     private val _entryRepository: EntryRepository
 ) : ViewModel() {
 

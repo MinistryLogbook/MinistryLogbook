@@ -13,7 +13,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -32,14 +34,20 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
     val lastBackup by viewModel.lastBackup.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    val launcher =
+    val createDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/mlbak")) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
             viewModel.createBackup(uri)
         }
+    val openDocumentLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            if (uri == null) return@rememberLauncherForActivityResult
+            viewModel.importBackup(uri)
+        }
 
-    BaseSettingsPage(title = "Backup") {
+    BaseSettingsPage(title = stringResource(R.string.backup)) {
         Column(
             Modifier
                 .fillMaxWidth()
@@ -52,7 +60,7 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                 contentDescription = null, // TODO: contentDescription
                 modifier = Modifier.size(128.dp)
             )
-            Text("Last backup", fontSize = 14.sp)
+            Text(stringResource(R.string.last_backup), fontSize = 14.sp)
             val formattedLastBackup = if (lastBackup != null) {
                 dateTimeFormatter.format(lastBackup?.toJavaLocalDateTime())
             } else {
@@ -61,14 +69,25 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
             Text(formattedLastBackup, color = MaterialTheme.colorScheme.onSurface.copy(0.7f), fontSize = 14.sp)
         }
 
-        Setting(icon = painterResource(R.drawable.ic_publish), title = "Create backup file", onClick = {
-            val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val fileName = "MinistryLogbookBackup_${currentDate.year}-${
-                currentDate.monthNumber.toString().padStart(2, '0')
-            }-${currentDate.dayOfMonth.toString().padStart(2, '0')}.mlbak"
-            launcher.launch(fileName)
-        })
+        Setting(
+            icon = painterResource(R.drawable.ic_publish),
+            title = stringResource(R.string.create_backup_file),
+            onClick = {
+                val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+                val year = currentDate.year.toString()
+                val month = currentDate.monthNumber.toString().padStart(2, '0')
+                val dayOfMonth = currentDate.dayOfMonth.toString().padStart(2, '0')
+                val fileName = context.getString(R.string.backup_file_name, year, month, dayOfMonth) + ".mlbak"
+                createDocumentLauncher.launch(fileName)
+            }
+        )
 
-        Setting(icon = painterResource(R.drawable.ic_place_item), title = "Import backup file", onClick = {})
+        Setting(
+            icon = painterResource(R.drawable.ic_place_item),
+            title = stringResource(R.string.import_backup_file),
+            onClick = {
+                openDocumentLauncher.launch(arrayOf("application/*"))
+            }
+        )
     }
 }

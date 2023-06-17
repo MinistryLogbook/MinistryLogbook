@@ -28,6 +28,7 @@ kotlinter = "3.15.0"
 aboutLicenses = "10.7.0"
 androidLifecycle = "2.6.1"
 browser = "1.5.0"
+kaml = "0.54.0"
 
 [libraries]
 accompanist-navigation-animation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
@@ -62,11 +63,13 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 aboutlicenses-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLicenses" }
+kaml = { module = "com.charleskorn.kaml:kaml", version.ref = "kaml" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinter = { id = "org.jmailen.kotlinter", version.ref = "kotlinter" }
 aboutlicenses = { id ="com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLicenses" }

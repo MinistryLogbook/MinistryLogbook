@@ -117,4 +117,8 @@
     <string name="send_report_reminder_title">Report sending reminder</string>
     <string name="send_report_reminder_setting_description">Notifies you at the end of the month</string>
     <string name="backup">Backup</string>
+    <string name="backup_file_name">MinistryLogbookBackup_%1$s-%2$s-%3$s</string>
+    <string name="last_backup">Last backup</string>
+    <string name="create_backup_file">Create backup file</string>
+    <string name="import_backup_file">Import backup file</string>
 </resources>
