@@ -116,5 +116,9 @@
     <string name="send_report_reminder_description">Vergiss nicht, deinen Bericht zu versenden!</string>
     <string name="send_report_reminder_setting_description">Benachrichtigt dich am Ende des Monats</string>
     <string name="send_report_reminder_title">Berichtsversand-Erinnerung</string>
+    <string name="backup">Sicherung</string>
     <string name="backup_file_name">MinistryLogbookBackup_%1$s-%2$s-%3$s</string>
+    <string name="last_backup">Letzte Sicherung</string>
+    <string name="create_backup_file">Sicherungsdatei erstellen</string>
+    <string name="import_backup_file">Sicherungsdatei laden</string>
 </resources>
