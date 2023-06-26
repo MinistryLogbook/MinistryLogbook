@@ -26,7 +26,7 @@ fun ToolbarLayout(
             Toolbar(
                 padding = PaddingValues(horizontal = 12.dp),
                 elevation = if (elevation) 4.dp else 0.dp,
-                content = toolbarContent,
+                content = toolbarContent
             )
             Column(Modifier.statusBarsPadding().fillMaxSize()) {
                 Spacer(Modifier.height(56.dp))

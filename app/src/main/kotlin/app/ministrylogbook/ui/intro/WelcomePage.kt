@@ -45,7 +45,7 @@ fun WelcomePage() {
                     .weight(1f)
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Center
             ) {
                 Image(
                     painterResource(R.drawable.logo),

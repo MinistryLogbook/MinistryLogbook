@@ -6,16 +6,11 @@ import android.app.NotificationManager
 import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.notifications.ReminderChannelId
 import app.ministrylogbook.notifications.ReminderManager
-import app.ministrylogbook.shared.lastDayOfMonth
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atTime
-import kotlinx.datetime.todayIn
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

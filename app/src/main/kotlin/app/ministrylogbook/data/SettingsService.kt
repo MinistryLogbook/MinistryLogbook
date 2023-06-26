@@ -81,7 +81,7 @@ data class Settings(
     val name: String,
     val design: Design,
     val precisionMode: Boolean,
-    val sendReportReminder: Boolean,
+    val sendReportReminder: Boolean
 )
 
 class SettingsService(val context: Context) {

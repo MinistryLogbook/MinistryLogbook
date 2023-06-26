@@ -35,7 +35,7 @@ fun NamePage(
             .verticalScroll(scrollState)
             .padding(32.dp)
             .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.whats_your_name),

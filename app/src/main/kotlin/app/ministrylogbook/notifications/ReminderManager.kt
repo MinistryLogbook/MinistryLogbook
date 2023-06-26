@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import app.ministrylogbook.shared.lastDayOfMonth
+import java.util.Calendar
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -15,7 +16,6 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.todayIn
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-import java.util.Calendar
 
 class ReminderManager : KoinComponent {
 

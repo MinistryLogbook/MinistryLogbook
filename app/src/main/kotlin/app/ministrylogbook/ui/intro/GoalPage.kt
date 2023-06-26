@@ -32,7 +32,7 @@ fun GoalPage(state: IntroState, onChange: (goal: Int?) -> Unit, scrollState: Scr
             .verticalScroll(scrollState)
             .padding(32.dp)
             .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             "Optionally, set a goal",

@@ -55,9 +55,7 @@ import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
-
 val LocalIntroNavController = compositionLocalOf<NavHostController> { error("LocalIntroNavController error") }
-
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
@@ -155,9 +153,11 @@ fun SetupPage() {
                     LinearProgressIndicator(
                         progresses = listOf(
                             Progress(progress, color = MaterialTheme.colorScheme.primary)
-                        ), modifier = Modifier
+                        ),
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .height(6.dp), strokeCap = StrokeCap.Round
+                            .height(6.dp),
+                        strokeCap = StrokeCap.Round
                     )
                 }
 
@@ -215,14 +215,13 @@ fun SetupPage() {
                             modifier = Modifier.size(64.dp),
                             enabled = isNextButtonEnabled,
                             contentPadding = PaddingValues(0.dp),
-                            shape = CircleShape,
+                            shape = CircleShape
                         ) {
                             Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
                         }
                     }
                 }
             }
-
         }
     }
 }

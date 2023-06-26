@@ -1,7 +1,6 @@
 package app.ministrylogbook.ui.intro
 
 import androidx.navigation.NavHostController
-import app.ministrylogbook.ui.home.navigateToHome
 
 sealed class InnerIntroGraph(val route: String) {
 

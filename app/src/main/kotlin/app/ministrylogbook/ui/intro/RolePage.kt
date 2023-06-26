@@ -29,9 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.shared.ExpandAnimationVisibility
 import app.ministrylogbook.ui.intro.viewmodel.IntroState
-import app.ministrylogbook.ui.settings.GoalTextField
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +42,7 @@ fun RolePage(state: IntroState, onChange: (role: Role) -> Unit, scrollState: Scr
             .verticalScroll(scrollState)
             .padding(32.dp)
             .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             stringResource(R.string.intro_role_title, state.name ?: ""),

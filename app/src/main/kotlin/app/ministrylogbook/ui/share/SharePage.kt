@@ -8,9 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -55,7 +53,6 @@ import app.ministrylogbook.shared.ToolbarLayout
 import app.ministrylogbook.shared.shareBitmap
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
-import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest

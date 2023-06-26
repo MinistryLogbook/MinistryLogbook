@@ -31,7 +31,7 @@ fun RemindersPage(
             .verticalScroll(scrollState)
             .padding(32.dp)
             .padding(bottom = 80.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
             "Lastly, do you want to get reminders?",

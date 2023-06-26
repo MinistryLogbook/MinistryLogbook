@@ -620,7 +620,7 @@ fun ModalBottomSheetLayout(
                         state = sheetState.anchoredDraggableState,
                         orientation = orientation,
                         enabled = sheetGesturesEnabled &&
-                                sheetState.anchoredDraggableState.currentValue != ModalBottomSheetValue.Hidden
+                            sheetState.anchoredDraggableState.currentValue != ModalBottomSheetValue.Hidden
                     )
                     .onSizeChanged { sheetSize ->
                         val anchors = buildMap {

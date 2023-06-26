@@ -41,22 +41,18 @@ import app.ministrylogbook.BuildConfig
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.notifications.ReminderManager
 import app.ministrylogbook.shared.AlertDialog
 import app.ministrylogbook.shared.MonthPickerDialog
 import app.ministrylogbook.shared.OptionList
-import app.ministrylogbook.shared.lastDayOfMonth
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atTime
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
-import org.koin.compose.koinInject
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {

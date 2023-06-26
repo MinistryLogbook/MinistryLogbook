@@ -19,7 +19,7 @@ data class IntroState(
     val name: String?,
     val role: Role,
     val reminders: Boolean,
-    val goal: Int?,
+    val goal: Int?
 )
 
 sealed class IntroIntent {
@@ -54,7 +54,7 @@ class IntroViewModel(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000L),
-        IntroState(null, Role.Publisher, false, null),
+        IntroState(null, Role.Publisher, false, null)
     )
 
     override fun dispatch(intent: IntroIntent) {
