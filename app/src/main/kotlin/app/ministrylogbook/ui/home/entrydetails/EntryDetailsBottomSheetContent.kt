@@ -253,7 +253,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
     }
 
-    Column(modifier = Modifier.navigationBarsPadding().verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.padding(bottom = 24.dp).verticalScroll(rememberScrollState())) {
         DragLine()
         Toolbar(
             onClose = handleClose,

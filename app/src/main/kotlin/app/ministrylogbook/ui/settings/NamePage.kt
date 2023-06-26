@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -30,6 +31,8 @@ import app.ministrylogbook.R
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import app.ministrylogbook.ui.shared.ToolbarAction
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -37,17 +40,16 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val scrollState = rememberScrollState()
     val name by viewModel.name.collectAsStateWithLifecycle()
-    var textFieldValueState by remember(name) {
-        mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
-    }
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
+    var tempName by remember(name) {
+        mutableStateOf(name)
     }
 
-    val handleSave = {
-        viewModel.setName(textFieldValueState.text)
+    val handleChange: (value: String) -> Unit = { value ->
+        tempName = value
+    }
+
+    val handleSave: () -> Unit = {
+        viewModel.setName(tempName)
         navController.popBackStack()
     }
 
@@ -63,20 +65,48 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
             }
         }
     ) {
-        Box(Modifier.verticalScroll(scrollState).padding(16.dp)) {
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                keyboardActions = KeyboardActions(onDone = { handleSave() }),
-                singleLine = true,
-                label = {
-                    Text(stringResource(R.string.set_name))
-                },
-                value = textFieldValueState,
-                onValueChange = { textFieldValueState = it }
-            )
+        Box(
+            Modifier
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+        ) {
+            NameTextField(name, onDone = handleSave, onChange = handleChange)
         }
     }
+}
+
+@Composable
+fun NameTextField(
+    name: String,
+    onDone: () -> Unit = {},
+    onChange: (value: String) -> Unit = {},
+    autoFocus: Boolean = true
+) {
+    var textFieldValue by remember(name) {
+        mutableStateOf(TextFieldValue(text = name, selection = TextRange(name.length)))
+    }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(autoFocus) {
+        if (autoFocus) {
+            focusRequester.requestFocus()
+        }
+    }
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+        keyboardActions = KeyboardActions(onDone = { onDone() }),
+        singleLine = true,
+        label = {
+            Text(stringResource(R.string.set_name))
+        },
+        value = textFieldValue,
+        onValueChange = {
+            textFieldValue = it
+            onChange(it.text)
+        }
+    )
 }

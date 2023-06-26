@@ -82,7 +82,6 @@ data class Settings(
     val design: Design,
     val precisionMode: Boolean,
     val sendReportReminder: Boolean,
-    val lastBackup: LocalDateTime?
 )
 
 class SettingsService(val context: Context) {
@@ -158,7 +157,7 @@ class SettingsService(val context: Context) {
         it[PrecisionModeKey] = precisionMode
     }
 
-    suspend fun setSendReportReminder(value: Boolean) = context.dataStore.edit {
+    suspend fun setSendReportReminders(value: Boolean) = context.dataStore.edit {
         it[SendReportReminderKey] = value
     }
 
@@ -169,8 +168,7 @@ class SettingsService(val context: Context) {
             name = name.first(),
             design = design.first(),
             precisionMode = precisionMode.first(),
-            sendReportReminder = sendReportReminder.first(),
-            lastBackup = lastBackup.first()
+            sendReportReminder = sendReportReminder.first()
         )
         return Yaml.default.encodeToString(settings)
     }
@@ -184,10 +182,7 @@ class SettingsService(val context: Context) {
                 NameKey.name -> setName(value)
                 DesignKey.name -> setDesign(Design.valueOf(value))
                 PrecisionModeKey.name -> setPrecisionMode(value.toBoolean())
-                SendReportReminderKey.name -> setSendReportReminder(value.toBoolean())
-                LastBackupMillisKey.name -> setLastBackup(
-                    Instant.fromEpochMilliseconds(value.toLong()).toLocalDateTime(TimeZone.currentSystemDefault())
-                )
+                SendReportReminderKey.name -> setSendReportReminders(value.toBoolean())
             }
         }
     }

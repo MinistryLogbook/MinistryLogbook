@@ -7,6 +7,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.SettingsService
+import app.ministrylogbook.ui.AppGraph
 import app.ministrylogbook.ui.AppNavHost
 import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -23,13 +24,15 @@ class MainActivity : AppCompatActivity() {
         val design = runBlocking {
             settingsDataStore.design.firstOrNull() ?: Design.System
         }
+        val showIntro = true
         lifecycleScope.launch {
             settingsDataStore.design.drop(1).collectLatest { it.apply() }
         }
 
         setContent {
             MinistryLogbookTheme(design) {
-                AppNavHost()
+                val startDestination = if (showIntro) AppGraph.Intro.route else AppGraph.Home.route
+                AppNavHost(startDestination)
             }
         }
     }

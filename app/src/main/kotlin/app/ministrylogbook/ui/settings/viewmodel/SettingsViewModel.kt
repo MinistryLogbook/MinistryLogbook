@@ -6,6 +6,7 @@ import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
+import app.ministrylogbook.notifications.ReminderManager
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
@@ -19,7 +20,8 @@ import kotlinx.datetime.todayIn
 
 class SettingsViewModel(
     private val _settingsDataStore: SettingsService,
-    private val _monthlyInformationRepository: MonthlyInformationRepository
+    private val _monthlyInformationRepository: MonthlyInformationRepository,
+    private val _reminderManager: ReminderManager,
 ) : ViewModel() {
     private val _currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
     private val _monthlyInfo = _monthlyInformationRepository.getOfMonth(_currentMonth)
@@ -78,8 +80,13 @@ class SettingsViewModel(
         _settingsDataStore.setPrecisionMode(value)
     }
 
-    fun setSendReportReminder(value: Boolean) = viewModelScope.launch {
-        _settingsDataStore.setSendReportReminder(value)
+    fun setSendReportReminders(value: Boolean) = viewModelScope.launch {
+        if (value) {
+            _reminderManager.scheduleReminder()
+        } else {
+            _reminderManager.cancelReminder()
+        }
+        _settingsDataStore.setSendReportReminders(value)
     }
 
     fun setGoal(value: Int?) = viewModelScope.launch {

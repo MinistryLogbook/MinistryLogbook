@@ -7,10 +7,15 @@ import android.content.Intent
 import android.os.Build
 import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
-import java.util.Calendar
+import app.ministrylogbook.shared.lastDayOfMonth
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.todayIn
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import java.util.Calendar
 
 class ReminderManager : KoinComponent {
 
@@ -20,7 +25,15 @@ class ReminderManager : KoinComponent {
         const val REMINDER_NOTIFICATION_REQUEST_CODE = 1
     }
 
-    fun scheduleReminder(dateTime: LocalDateTime, id: Int = REMINDER_NOTIFICATION_REQUEST_CODE) {
+    private fun defaultReminderTime(): LocalDateTime {
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        return today.lastDayOfMonth().atTime(20, 0)
+    }
+
+    fun scheduleReminder(
+        dateTime: LocalDateTime = defaultReminderTime(),
+        id: Int = REMINDER_NOTIFICATION_REQUEST_CODE
+    ) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
         if (Build.VERSION.SDK_INT >= 31 && !alarmManager.canScheduleExactAlarms()) {

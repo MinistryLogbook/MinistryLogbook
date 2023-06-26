@@ -1,7 +1,6 @@
 package app.ministrylogbook.ui.home
 
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -9,11 +8,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import app.ministrylogbook.ui.shared.Toolbar
+import app.ministrylogbook.shared.ToolbarLayout
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -32,24 +29,17 @@ fun HomePage() {
         return@remember mutableStateOf(LocalDate(year, monthNumber, 1))
     }
 
-    Surface {
-        Toolbar(
-            modifier = Modifier.zIndex(1f),
-            elevation = if (scrollPosition > 0) 4.dp else 0.dp
-        ) {
-            ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
-                selectedMonth = it
-                navController.navigateToMonth(it.year, it.monthNumber)
-            })
-            Spacer(Modifier.weight(1f))
-            ToolbarActions(selectedMonth)
-        }
-
+    ToolbarLayout(elevation = scrollPosition > 0, toolbarContent = {
+        ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
+            selectedMonth = it
+            navController.navigateToMonth(it.year, it.monthNumber)
+        })
+        Spacer(Modifier.weight(1f))
+        ToolbarActions(selectedMonth)
+    }) {
         HomeNavHost(
             navController = navController,
-            onScroll = {
-                scrollPosition = it
-            }
+            onScroll = { scrollPosition = it }
         )
     }
 }

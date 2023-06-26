@@ -15,6 +15,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,34 +48,29 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
     val goal by viewModel.goal.collectAsStateWithLifecycle()
     val manuallySetGoal by viewModel.manuallySetGoal.collectAsStateWithLifecycle()
     val role by viewModel.role.collectAsStateWithLifecycle()
-    val roleGoal by viewModel.roleGoal.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
-    var textFieldValueState by remember(goal, role, roleGoal, manuallySetGoal) {
-        // publishers don't have a goal but internally it's 1
-        // we don't want to show that to the user
-        // if it was set manually by the user we will show it
-        val goalToShow = if (role == Role.Publisher) {
-            manuallySetGoal?.toString() ?: ""
-        } else {
-            goal?.toString() ?: ""
+    val goalValue by remember(goal, manuallySetGoal, role) {
+        derivedStateOf {
+            // publishers don't have a goal but internally it's 1
+            // we don't want to show that to the user
+            // if it was set manually by the user we will show it
+            if (role == Role.Publisher) {
+                return@derivedStateOf manuallySetGoal
+            }
+            goal
         }
-        mutableStateOf(
-            TextFieldValue(
-                text = goalToShow,
-                selection = TextRange(goal.toString().length)
-            )
-        )
     }
-    val isSavable =
-        (textFieldValueState.text.toIntOrNull() ?: 0) > 0 || textFieldValueState.text.isEmpty()
-    val focusRequester = remember { FocusRequester() }
+    val coroutineScope = rememberCoroutineScope()
+    var tempGoal by remember(goalValue) {
+        mutableStateOf(goalValue)
+    }
+    val isSavable = (tempGoal ?: 0) > 0 || tempGoal == null
 
     val handleSave = handleSave@{
         if (!isSavable) {
             return@handleSave
         }
         coroutineScope.launch {
-            viewModel.setGoal(textFieldValueState.text.toIntOrNull())
+            viewModel.setGoal(tempGoal)
         }
         navController.popBackStack()
     }
@@ -83,21 +79,7 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
         coroutineScope.launch {
             viewModel.resetGoal()
         }
-        textFieldValueState = TextFieldValue(
-            text = "",
-            selection = TextRange(0)
-        )
         navController.popBackStack()
-    }
-
-    val handleValueChange: (value: TextFieldValue) -> Unit = {
-        if (it.text.toIntOrNull() != null || it.text.isEmpty()) {
-            textFieldValueState = it
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
     }
 
     BaseSettingsPage(
@@ -112,27 +94,12 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
             }
         }
     ) {
-        Column(Modifier.verticalScroll(scrollState).padding(16.dp)) {
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .focusRequester(focusRequester),
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
-                    keyboardType = KeyboardType.Number
-                ),
-                keyboardActions = KeyboardActions(onDone = { handleSave() }),
-                singleLine = true,
-                label = { Text(stringResource(R.string.set_goal)) },
-                supportingText = {
-                    if (!isSavable) {
-                        Text(stringResource(R.string.set_goal_error))
-                    }
-                },
-                value = textFieldValueState,
-                onValueChange = handleValueChange,
-                isError = !isSavable
-            )
+        Column(
+            Modifier
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+        ) {
+            GoalTextField(value = goalValue, onChange = { tempGoal = it })
 
             Spacer(Modifier.height(16.dp))
 
@@ -143,4 +110,58 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
             }
         }
     }
+}
+
+@Composable
+fun GoalTextField(
+    value: Int?,
+    onChange: (value: Int?) -> Unit = {},
+    onDone: () -> Unit = {},
+    requestFocus: Boolean = true
+) {
+    var textFieldValue by remember(value) {
+        val valueString = value?.toString() ?: ""
+        mutableStateOf(
+            TextFieldValue(
+                text = valueString,
+                selection = TextRange(valueString.length)
+            )
+        )
+    }
+    val isSavable = (textFieldValue.text.toIntOrNull() ?: 0) > 0 || textFieldValue.text.isEmpty()
+    val focusRequester = remember { FocusRequester() }
+
+    val handleValueChange: (value: TextFieldValue) -> Unit = {
+        if (it.text.toIntOrNull() != null || it.text.isEmpty()) {
+            textFieldValue = it
+            onChange(it.text.toIntOrNull())
+        }
+    }
+
+    LaunchedEffect(requestFocus) {
+        if (requestFocus) {
+            focusRequester.requestFocus()
+        }
+    }
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Words,
+            keyboardType = KeyboardType.Number
+        ),
+        keyboardActions = KeyboardActions(onDone = { onDone() }),
+        singleLine = true,
+        label = { Text(stringResource(R.string.set_goal)) },
+        supportingText = {
+            if (!isSavable) {
+                Text(stringResource(R.string.set_goal_error))
+            }
+        },
+        value = textFieldValue,
+        onValueChange = handleValueChange,
+        isError = !isSavable
+    )
 }

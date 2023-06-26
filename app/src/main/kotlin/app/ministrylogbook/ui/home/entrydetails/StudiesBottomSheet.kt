@@ -43,7 +43,7 @@ fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel
         }
     }
 
-    Column(modifier = Modifier.navigationBarsPadding().verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.padding(bottom = 24.dp).verticalScroll(rememberScrollState())) {
         DragLine()
         Toolbar(
             onClose = handleClose,
@@ -53,7 +53,7 @@ fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel
         Divider()
         Column(
             Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 24.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 12.dp)
                 .fillMaxWidth()
         ) {
             UnitRow(

@@ -13,6 +13,7 @@ import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
 import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
+import app.ministrylogbook.ui.intro.viewmodel.IntroViewModel
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import org.koin.android.ext.koin.androidContext
@@ -45,6 +46,7 @@ val appModule = module {
         )
     }
     viewModel { BackupViewModel(get(), get()) }
-    viewModel { SettingsViewModel(get(), get()) }
+    viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { IntroViewModel(get(), get(), get()) }
 }

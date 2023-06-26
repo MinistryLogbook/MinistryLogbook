@@ -121,4 +121,9 @@
     <string name="last_backup">Last backup</string>
     <string name="create_backup_file">Create backup file</string>
     <string name="import_backup_file">Import backup file</string>
+    <string name="whats_your_name">What\'s your name?</string>
+    <string name="intro_name_description">We don\'t collect any data. Your name will be printed on your digital Field Service Reports.</string>
+    <string name="intro_role_title">Hello %1$s,\nplease select your role</string>
+    <string name="intro_role_description">The selected role gives you some useful presets.</string>
+    <string name="select_role">Select role</string>
 </resources>

@@ -51,12 +51,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
+import app.ministrylogbook.shared.ToolbarLayout
 import app.ministrylogbook.shared.shareBitmap
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction
-import app.ministrylogbook.ui.theme.MinistryLogbookTheme
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -127,160 +127,149 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
         }
     }
 
-    MinistryLogbookTheme {
-        Surface(modifier = Modifier.fillMaxSize()) {
-            Box {
-                Toolbar(
-                    padding = PaddingValues(horizontal = 12.dp),
-                    elevation = if (scrollState.value > 0) 4.dp else 0.dp
-                ) {
-                    ToolbarAction(onClick = handleBack) {
-                        Icon(
-                            painterResource(R.drawable.ic_arrow_back),
-                            contentDescription = null // TODO: contentDescription
-                        )
-                    }
-                    Spacer(Modifier.width(8.dp))
-                    Text(
-                        stringResource(R.string.share),
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize
+    ToolbarLayout(elevation = scrollState.value > 0, toolbarContent = {
+        ToolbarAction(onClick = handleBack) {
+            Icon(
+                painterResource(R.drawable.ic_arrow_back),
+                contentDescription = null // TODO: contentDescription
+            )
+        }
+        Spacer(Modifier.width(8.dp))
+        Text(
+            stringResource(R.string.share),
+            fontSize = MaterialTheme.typography.titleLarge.fontSize
+        )
+    }) {
+        Column(Modifier.fillMaxSize()) {
+            Column(
+                Modifier
+                    .verticalScroll(scrollState)
+                    .weight(1f)
+            ) {
+                Column(Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
+                    Image(
+                        bitmap.asImageBitmap(),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .fillMaxSize(),
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null // TODO: contentDescription
                     )
-                }
-                Column {
-                    Spacer(Modifier.height(56.dp))
-                    Column(Modifier.fillMaxSize()) {
-                        Column(
-                            Modifier
-                                .verticalScroll(scrollState)
+
+                    Spacer(Modifier.height(20.dp))
+
+                    TextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = comments,
+                        onValueChange = { comments = it },
+                        placeholder = {
+                            Text(
+                                stringResource(
+                                    R.string.field_service_report_comments_placeholder
+                                )
+                            )
+                        },
+                        label = { Text(stringResource(R.string.comments)) }
+                    )
+
+                    Spacer(Modifier.height(32.dp))
+
+                    Text(stringResource(R.string.share_as))
+
+                    Spacer(Modifier.height(8.dp))
+
+                    Row(Modifier.fillMaxWidth()) {
+                        val outlinedColors = ButtonDefaults.outlinedButtonColors()
+                        val selectedColors =
+                            ButtonDefaults.outlinedButtonColors(
+                                contentColor = MaterialTheme.colorScheme.primary,
+                                containerColor = MaterialTheme.colorScheme.primary.copy(
+                                    0.2f
+                                )
+                            )
+                        val enterAnimation =
+                            expandHorizontally(tween(durationMillis = 100)) + fadeIn(
+                                tween(delayMillis = 120)
+                            )
+                        val exitAnimation =
+                            shrinkHorizontally(
+                                tween(durationMillis = 100, delayMillis = 120)
+                            ) + fadeOut(tween())
+
+                        OutlinedButton(
+                            modifier = Modifier
                                 .weight(1f)
+                                .offset(0.5.dp, 0.dp),
+                            onClick = { selectedShareAs = ShareAs.Text },
+                            shape = CircleShape.copy(
+                                topEnd = CornerSize(0.dp),
+                                bottomEnd = CornerSize(0.dp)
+                            ),
+                            colors = if (selectedShareAs == ShareAs.Text) {
+                                selectedColors
+                            } else {
+                                outlinedColors
+                            }
                         ) {
-                            Column(Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
-                                Image(
-                                    bitmap.asImageBitmap(),
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(8.dp))
-                                        .fillMaxSize(),
-                                    contentScale = ContentScale.FillWidth,
-                                    contentDescription = null // TODO: contentDescription
-                                )
-
-                                Spacer(Modifier.height(20.dp))
-
-                                TextField(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    value = comments,
-                                    onValueChange = { comments = it },
-                                    placeholder = {
-                                        Text(
-                                            stringResource(
-                                                R.string.field_service_report_comments_placeholder
-                                            )
-                                        )
-                                    },
-                                    label = { Text(stringResource(R.string.comments)) }
-                                )
-
-                                Spacer(Modifier.height(32.dp))
-
-                                Text(stringResource(R.string.share_as))
-
-                                Spacer(Modifier.height(8.dp))
-
-                                Row(Modifier.fillMaxWidth()) {
-                                    val outlinedColors = ButtonDefaults.outlinedButtonColors()
-                                    val selectedColors =
-                                        ButtonDefaults.outlinedButtonColors(
-                                            contentColor = MaterialTheme.colorScheme.primary,
-                                            containerColor = MaterialTheme.colorScheme.primary.copy(
-                                                0.2f
-                                            )
-                                        )
-                                    val enterAnimation =
-                                        expandHorizontally(tween(durationMillis = 100)) + fadeIn(
-                                            tween(delayMillis = 120)
-                                        )
-                                    val exitAnimation =
-                                        shrinkHorizontally(
-                                            tween(durationMillis = 100, delayMillis = 120)
-                                        ) + fadeOut(tween())
-
-                                    OutlinedButton(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .offset(0.5.dp, 0.dp),
-                                        onClick = { selectedShareAs = ShareAs.Text },
-                                        shape = CircleShape.copy(
-                                            topEnd = CornerSize(0.dp),
-                                            bottomEnd = CornerSize(0.dp)
-                                        ),
-                                        colors = if (selectedShareAs == ShareAs.Text) {
-                                            selectedColors
-                                        } else {
-                                            outlinedColors
-                                        }
-                                    ) {
-                                        AnimatedVisibility(
-                                            visible = selectedShareAs == ShareAs.Text,
-                                            enter = enterAnimation,
-                                            exit = exitAnimation
-                                        ) {
-                                            Icon(
-                                                painterResource(R.drawable.ic_check),
-                                                modifier = Modifier.size(20.dp),
-                                                contentDescription = null
-                                            )
-                                            Spacer(Modifier.width(4.dp))
-                                        }
-                                        Text(stringResource(R.string.text))
-                                    }
-                                    OutlinedButton(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .offset((-0.5).dp, 0.dp),
-                                        onClick = { selectedShareAs = ShareAs.Image },
-                                        shape = CircleShape.copy(
-                                            topStart = CornerSize(0.dp),
-                                            bottomStart = CornerSize(0.dp)
-                                        ),
-                                        colors = if (selectedShareAs == ShareAs.Image) {
-                                            selectedColors
-                                        } else {
-                                            outlinedColors
-                                        }
-                                    ) {
-                                        AnimatedVisibility(
-                                            visible = selectedShareAs == ShareAs.Image,
-                                            enter = enterAnimation,
-                                            exit = exitAnimation
-                                        ) {
-                                            Icon(
-                                                painterResource(R.drawable.ic_check),
-                                                modifier = Modifier.size(20.dp),
-                                                contentDescription = null
-                                            )
-                                            Spacer(Modifier.width(4.dp))
-                                        }
-                                        Text(stringResource(R.string.image))
-                                    }
-                                }
-                            }
-                        }
-
-                        Surface(tonalElevation = 4.dp, shadowElevation = 4.dp) {
-                            Row(
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                                horizontalArrangement = Arrangement.End
+                            AnimatedVisibility(
+                                visible = selectedShareAs == ShareAs.Text,
+                                enter = enterAnimation,
+                                exit = exitAnimation
                             ) {
-                                TextButton(
-                                    onClick = handleShare,
-                                    enabled = selectedShareAs != null
-                                ) {
-                                    Text(stringResource(R.string.share))
-                                }
+                                Icon(
+                                    painterResource(R.drawable.ic_check),
+                                    modifier = Modifier.size(20.dp),
+                                    contentDescription = null
+                                )
+                                Spacer(Modifier.width(4.dp))
                             }
+                            Text(stringResource(R.string.text))
                         }
+                        OutlinedButton(
+                            modifier = Modifier
+                                .weight(1f)
+                                .offset((-0.5).dp, 0.dp),
+                            onClick = { selectedShareAs = ShareAs.Image },
+                            shape = CircleShape.copy(
+                                topStart = CornerSize(0.dp),
+                                bottomStart = CornerSize(0.dp)
+                            ),
+                            colors = if (selectedShareAs == ShareAs.Image) {
+                                selectedColors
+                            } else {
+                                outlinedColors
+                            }
+                        ) {
+                            AnimatedVisibility(
+                                visible = selectedShareAs == ShareAs.Image,
+                                enter = enterAnimation,
+                                exit = exitAnimation
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.ic_check),
+                                    modifier = Modifier.size(20.dp),
+                                    contentDescription = null
+                                )
+                                Spacer(Modifier.width(4.dp))
+                            }
+                            Text(stringResource(R.string.image))
+                        }
+                    }
+                }
+            }
+
+            Surface(tonalElevation = 4.dp, shadowElevation = 4.dp) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = handleShare,
+                        enabled = selectedShareAs != null
+                    ) {
+                        Text(stringResource(R.string.share))
                     }
                 }
             }

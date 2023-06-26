@@ -14,10 +14,6 @@ val Jost = FontFamily(
     Font(R.font.jost_italic_variable, FontWeight.W400, FontStyle.Italic)
 )
 
-val Caveat = FontFamily(
-    Font(R.font.caveat_variable, FontWeight.W400)
-)
-
 val Typography = Typography(
     displayLarge = TextStyle(
         fontFamily = Jost,
@@ -71,8 +67,8 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = Jost,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
+        fontSize = 18.sp,
+        lineHeight = 26.sp,
         letterSpacing = 0.1.sp
     ),
     titleSmall = TextStyle(

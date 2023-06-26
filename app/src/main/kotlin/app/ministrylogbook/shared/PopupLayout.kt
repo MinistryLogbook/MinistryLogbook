@@ -100,7 +100,7 @@ fun PopupLayout(popupNavigator: PopupNavigator, popupState: PopupState, content:
         Box(
             Modifier
                 .widthIn(max = 640.dp)
-                .padding(top = 64.dp, start = 16.dp, end = 16.dp)
+                .padding(top = 96.dp, start = 16.dp, end = 16.dp)
         ) {
             AnimatedVisibility(
                 visibleState = animVisibleState,

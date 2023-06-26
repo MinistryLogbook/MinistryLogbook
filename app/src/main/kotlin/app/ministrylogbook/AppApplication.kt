@@ -46,8 +46,7 @@ class AppApplication : Application() {
 
             if (shouldSendReportReminder) {
                 val reminderManager = koinApplication.koin.get<ReminderManager>()
-                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-                reminderManager.scheduleReminder(today.lastDayOfMonth().atTime(20, 0))
+                reminderManager.scheduleReminder()
             }
         }
     }

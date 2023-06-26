@@ -588,105 +588,107 @@ fun ModalBottomSheetLayout(
                 visible = sheetState.anchoredDraggableState.targetValue != ModalBottomSheetValue.Hidden
             )
         }
-        Surface(
-            modifier = Modifier
-                .align(Alignment.TopCenter) // We offset from the top so we'll center from there
-                .widthIn(max = MaxModalBottomSheetWidth)
-                .fillMaxWidth()
-                .then(
-                    if (sheetGesturesEnabled) {
-                        Modifier.nestedScroll(
-                            remember(sheetState.anchoredDraggableState, orientation) {
-                                ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
-                                    state = sheetState.anchoredDraggableState,
-                                    orientation = orientation
+        Box(Modifier.fillMaxSize()) {
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.TopCenter) // We offset from the top so we'll center from there
+                    .widthIn(max = MaxModalBottomSheetWidth)
+                    .fillMaxWidth()
+                    .then(
+                        if (sheetGesturesEnabled) {
+                            Modifier.nestedScroll(
+                                remember(sheetState.anchoredDraggableState, orientation) {
+                                    ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
+                                        state = sheetState.anchoredDraggableState,
+                                        orientation = orientation
+                                    )
+                                }
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .offset {
+                        IntOffset(
+                            0,
+                            sheetState.anchoredDraggableState
+                                .requireOffset()
+                                .roundToInt()
+                        )
+                    }
+                    .anchoredDraggable(
+                        state = sheetState.anchoredDraggableState,
+                        orientation = orientation,
+                        enabled = sheetGesturesEnabled &&
+                                sheetState.anchoredDraggableState.currentValue != ModalBottomSheetValue.Hidden
+                    )
+                    .onSizeChanged { sheetSize ->
+                        val anchors = buildMap {
+                            put(ModalBottomSheetValue.Hidden, fullHeight)
+                            val halfHeight = fullHeight / 2f
+                            if (!sheetState.isSkipHalfExpanded && sheetSize.height > halfHeight) {
+                                put(ModalBottomSheetValue.HalfExpanded, halfHeight)
+                            }
+                            if (sheetSize.height != 0) {
+                                put(
+                                    ModalBottomSheetValue.Expanded,
+                                    max(0f, fullHeight - sheetSize.height)
                                 )
                             }
-                        )
-                    } else {
-                        Modifier
-                    }
-                )
-                .offset {
-                    IntOffset(
-                        0,
-                        sheetState.anchoredDraggableState
-                            .requireOffset()
-                            .roundToInt()
-                    )
-                }
-                .anchoredDraggable(
-                    state = sheetState.anchoredDraggableState,
-                    orientation = orientation,
-                    enabled = sheetGesturesEnabled &&
-                        sheetState.anchoredDraggableState.currentValue != ModalBottomSheetValue.Hidden
-                )
-                .onSizeChanged { sheetSize ->
-                    val anchors = buildMap {
-                        put(ModalBottomSheetValue.Hidden, fullHeight)
-                        val halfHeight = fullHeight / 2f
-                        if (!sheetState.isSkipHalfExpanded && sheetSize.height > halfHeight) {
-                            put(ModalBottomSheetValue.HalfExpanded, halfHeight)
                         }
-                        if (sheetSize.height != 0) {
-                            put(
-                                ModalBottomSheetValue.Expanded,
-                                max(0f, fullHeight - sheetSize.height)
-                            )
-                        }
+                        sheetState.anchoredDraggableState.updateAnchors(anchors, anchorChangeCallback)
                     }
-                    sheetState.anchoredDraggableState.updateAnchors(anchors, anchorChangeCallback)
-                }
-                .then(
-                    if (sheetGesturesEnabled) {
-                        Modifier.semantics {
-                            if (sheetState.isVisible) {
-                                dismiss {
-                                    if (
-                                        sheetState.anchoredDraggableState.confirmValueChange(
-                                            ModalBottomSheetValue.Hidden
-                                        )
+                    .then(
+                        if (sheetGesturesEnabled) {
+                            Modifier.semantics {
+                                if (sheetState.isVisible) {
+                                    dismiss {
+                                        if (
+                                            sheetState.anchoredDraggableState.confirmValueChange(
+                                                ModalBottomSheetValue.Hidden
+                                            )
+                                        ) {
+                                            scope.launch { sheetState.hide() }
+                                        }
+                                        true
+                                    }
+                                    if (sheetState.anchoredDraggableState.currentValue
+                                        == ModalBottomSheetValue.HalfExpanded
                                     ) {
-                                        scope.launch { sheetState.hide() }
-                                    }
-                                    true
-                                }
-                                if (sheetState.anchoredDraggableState.currentValue
-                                    == ModalBottomSheetValue.HalfExpanded
-                                ) {
-                                    expand {
-                                        if (sheetState.anchoredDraggableState.confirmValueChange(
-                                                ModalBottomSheetValue.Expanded
-                                            )
-                                        ) {
-                                            scope.launch { sheetState.expand() }
+                                        expand {
+                                            if (sheetState.anchoredDraggableState.confirmValueChange(
+                                                    ModalBottomSheetValue.Expanded
+                                                )
+                                            ) {
+                                                scope.launch { sheetState.expand() }
+                                            }
+                                            true
                                         }
-                                        true
-                                    }
-                                } else if (sheetState.hasHalfExpandedState) {
-                                    collapse {
-                                        if (sheetState.anchoredDraggableState.confirmValueChange(
-                                                ModalBottomSheetValue.HalfExpanded
-                                            )
-                                        ) {
-                                            scope.launch { sheetState.halfExpand() }
+                                    } else if (sheetState.hasHalfExpandedState) {
+                                        collapse {
+                                            if (sheetState.anchoredDraggableState.confirmValueChange(
+                                                    ModalBottomSheetValue.HalfExpanded
+                                                )
+                                            ) {
+                                                scope.launch { sheetState.halfExpand() }
+                                            }
+                                            true
                                         }
-                                        true
                                     }
                                 }
                             }
+                        } else {
+                            Modifier
                         }
-                    } else {
-                        Modifier
-                    }
-                ),
-            shape = sheetShape,
-            shadowElevation = sheetElevation,
-            tonalElevation = sheetElevation,
-            color = sheetBackgroundColor,
-            contentColor = sheetContentColor
-        ) {
-            Column(content = sheetContent)
+                    ),
+                shape = sheetShape,
+                shadowElevation = sheetElevation,
+                tonalElevation = sheetElevation,
+                color = sheetBackgroundColor,
+                contentColor = sheetContentColor
+            ) {
+                Column(content = sheetContent)
+            }
         }
     }
 }

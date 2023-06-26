@@ -2,7 +2,9 @@ package app.ministrylogbook.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
@@ -35,6 +37,14 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
     suspend fun save(info: MonthlyInformation): Long {
         return withContext(Dispatchers.IO) {
             monthlyInformationDao.upsert(info)
+        }
+    }
+
+    suspend fun update(month: LocalDate, modify: (monthlyInfo: MonthlyInformation) -> MonthlyInformation) {
+        withContext(Dispatchers.IO) {
+            val info = monthlyInformationDao.getOfMonth(month.year, month.monthNumber).firstOrNull() ?: return@withContext
+            val modifiedInfo = modify(info)
+            monthlyInformationDao.upsert(modifiedInfo)
         }
     }
 }

@@ -1,10 +1,12 @@
 package app.ministrylogbook.ui.home.overview
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -22,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -62,9 +65,7 @@ fun OverviewPage(onScroll: (position: Int) -> Unit = {}, viewModel: OverviewView
             Text(stringResource(R.string.create_entry))
         })
     }) {
-        Column(modifier = Modifier.verticalScroll(scrollState).padding(bottom = 82.dp)) {
-            Spacer(Modifier.height(72.dp))
-
+        Column(modifier = Modifier.verticalScroll(scrollState).padding(bottom = 82.dp, top = 24.dp)) {
             Box(Modifier.padding(horizontal = 16.dp)) {
                 DetailsSection()
             }

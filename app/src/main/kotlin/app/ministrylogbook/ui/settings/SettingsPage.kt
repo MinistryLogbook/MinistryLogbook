@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -25,7 +26,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,9 +48,6 @@ import app.ministrylogbook.shared.OptionList
 import app.ministrylogbook.shared.lastDayOfMonth
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -58,10 +55,14 @@ import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
-fun SettingsPage() {
+fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
     val scrollState = rememberScrollState()
+    val role by viewModel.role.collectAsStateWithLifecycle()
+    val sendReportReminder by viewModel.sendReportReminder.collectAsStateWithLifecycle()
 
     BaseSettingsPage(stringResource(R.string.settings), toolbarElevation = scrollState.canScrollBackward) {
         Column(
@@ -73,7 +74,9 @@ fun SettingsPage() {
             Column {
                 Title(stringResource(R.string.personal_information))
                 NameSetting()
-                RoleSetting()
+                RoleSetting(role, onChange = {
+                    viewModel.setRole(it)
+                })
                 PioneerSinceSetting()
                 GoalSetting()
             }
@@ -84,7 +87,9 @@ fun SettingsPage() {
             }
             Column {
                 Title(stringResource(R.string.behaviour))
-                SendReportReminderSetting()
+                SendReportReminderSetting(sendReportReminder, onChange = {
+                    viewModel.setSendReportReminders(it)
+                })
                 MinuteCounterSetting()
             }
             Column {
@@ -114,7 +119,6 @@ fun SettingsPage() {
 @Composable
 fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
     var isDialogOpen by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
     val design by viewModel.design.collectAsStateWithLifecycle()
 
     val handleClose = {
@@ -137,10 +141,7 @@ fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
         OptionList {
             Design.values().map { d ->
                 Option(text = d.translate(), selected = d == design, onClick = {
-                    coroutineScope.launch {
-//                        d.apply()
-                        viewModel.setDesign(d)
-                    }
+                    viewModel.setDesign(d)
                     handleClose()
                 })
             }
@@ -178,10 +179,8 @@ fun NameSetting(viewModel: SettingsViewModel = koinViewModel()) {
 }
 
 @Composable
-fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
+fun RoleSetting(role: Role, onChange: (Role) -> Unit) {
     var isRoleDialogOpen by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
-    val role by viewModel.role.collectAsStateWithLifecycle()
 
     val handleClose = {
         isRoleDialogOpen = false
@@ -203,9 +202,7 @@ fun RoleSetting(viewModel: SettingsViewModel = koinViewModel()) {
         OptionList {
             Role.values().map { r ->
                 Option(text = r.translate(), selected = r == role, onClick = {
-                    coroutineScope.launch {
-                        viewModel.setRole(r)
-                    }
+                    onChange(r)
                     handleClose()
                 })
             }
@@ -239,9 +236,11 @@ fun MinuteCounterSetting(viewModel: SettingsViewModel = koinViewModel()) {
 }
 
 @Composable
-fun SendReportReminderSetting(viewModel: SettingsViewModel = koinViewModel()) {
-    val reminderManager = koinInject<ReminderManager>()
-    val sendReportReminder by viewModel.sendReportReminder.collectAsStateWithLifecycle()
+fun SendReportReminderSetting(
+    sendReportReminder: Boolean,
+    onChange: (Boolean) -> Unit = {},
+    paddingValues: PaddingValues = PaddingValues(horizontal = 20.dp, vertical = 14.dp)
+) {
     val context = LocalContext.current
     val alarmManager = remember { context.getSystemService(Context.ALARM_SERVICE) as? AlarmManager }
     var hasPermission by remember {
@@ -267,7 +266,7 @@ fun SendReportReminderSetting(viewModel: SettingsViewModel = koinViewModel()) {
         rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission(), onResult = { isGranted ->
             hasPermission = isGranted
             if (isGranted) {
-                viewModel.setSendReportReminder(true)
+                onChange(true)
             }
 
             requestExactAlarmPermission()
@@ -275,7 +274,8 @@ fun SendReportReminderSetting(viewModel: SettingsViewModel = koinViewModel()) {
 
     Setting(
         title = stringResource(R.string.send_report_reminder_title),
-        description = stringResource(R.string.send_report_reminder_setting_description)
+        description = stringResource(R.string.send_report_reminder_setting_description),
+        paddingValues = paddingValues
     ) {
         Switch(checked = sendReportReminder && hasPermission, onCheckedChange = { checked ->
             if (checked) {
@@ -283,14 +283,11 @@ fun SendReportReminderSetting(viewModel: SettingsViewModel = koinViewModel()) {
                     val permission = android.Manifest.permission.POST_NOTIFICATIONS
                     launcher.launch(permission)
                 } else {
-                    viewModel.setSendReportReminder(true)
-                    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-                    reminderManager.scheduleReminder(today.lastDayOfMonth().atTime(20, 0))
+                    onChange(true)
                     requestExactAlarmPermission()
                 }
             } else {
-                viewModel.setSendReportReminder(false)
-                reminderManager.cancelReminder()
+                onChange(false)
             }
         })
     }

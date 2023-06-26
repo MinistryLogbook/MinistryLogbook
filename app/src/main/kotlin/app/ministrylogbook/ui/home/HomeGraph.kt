@@ -3,6 +3,7 @@ package app.ministrylogbook.ui.home
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.navigation.NamedNavArgument
+import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navArgument
 import app.ministrylogbook.shared.bottomSheet
@@ -107,6 +108,12 @@ fun NavGraphBuilder.homeGraph() {
             })
             StudiesBottomSheetContent(studiesDetailsViewModel)
         }
+    }
+}
+
+fun NavController.navigateToHome() = navigate(AppGraph.Home.route) {
+    popUpTo(AppGraph.Intro.route) {
+        inclusive = true
     }
 }
 

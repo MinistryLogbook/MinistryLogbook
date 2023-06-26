@@ -1,18 +1,15 @@
 package app.ministrylogbook.ui.settings
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,9 +19,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
+import app.ministrylogbook.shared.ToolbarLayout
 import app.ministrylogbook.shared.condition
 import app.ministrylogbook.ui.LocalAppNavController
-import app.ministrylogbook.ui.shared.Toolbar
 import app.ministrylogbook.ui.shared.ToolbarAction
 
 @Composable
@@ -32,7 +29,7 @@ fun BaseSettingsPage(
     title: String,
     toolbarElevation: Boolean = false,
     actions: (@Composable () -> Unit)? = null,
-    content: @Composable () -> Unit = {}
+    content: @Composable ColumnScope.() -> Unit = {}
 ) {
     val navController = LocalAppNavController.current
 
@@ -40,35 +37,24 @@ fun BaseSettingsPage(
         navController.popBackStack()
     }
 
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Box {
-            Toolbar(
-                padding = PaddingValues(horizontal = 12.dp),
-                elevation = if (toolbarElevation) 4.dp else 0.dp
-            ) {
-                ToolbarAction(onClick = handleBack) {
-                    Icon(
-                        painterResource(R.drawable.ic_arrow_back),
-                        contentDescription = null // TODO: contentDescription
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    title,
-                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1
-                )
-
-                Spacer(Modifier.weight(1f))
-                actions?.invoke()
-            }
-            Column {
-                Spacer(Modifier.height(56.dp))
-                content()
-            }
+    ToolbarLayout(elevation = toolbarElevation, toolbarContent = {
+        ToolbarAction(onClick = handleBack) {
+            Icon(
+                painterResource(R.drawable.ic_arrow_back),
+                contentDescription = null // TODO: contentDescription
+            )
         }
-    }
+        Spacer(Modifier.width(8.dp))
+        Text(
+            title,
+            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1
+        )
+
+        Spacer(Modifier.weight(1f))
+        actions?.invoke()
+    }, content = content)
 }
 
 @Composable
@@ -84,6 +70,7 @@ fun Title(text: String) {
 fun Setting(
     title: String,
     icon: Painter? = null,
+    paddingValues: PaddingValues = PaddingValues(20.dp, 14.dp),
     description: String? = null,
     onClick: (() -> Unit)? = null,
     value: @Composable () -> Unit = {}
@@ -93,7 +80,7 @@ fun Setting(
             .condition(onClick != null) {
                 clickable(onClick = onClick!!)
             }
-            .padding(horizontal = 20.dp, vertical = 14.dp),
+            .padding(paddingValues),
         verticalAlignment = Alignment.CenterVertically
     ) {
         icon?.let {
