@@ -94,7 +94,7 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
             )
             it.nativeCanvas.drawText(
                 animatedMinutes.toString(),
-                beginMinutesX + minutesBounds.left,
+                beginMinutesX - minutesBounds.left,
                 beginMinutesY,
                 smallTextPaint
             )
@@ -112,7 +112,7 @@ fun CounterPreview() {
             modifier = Modifier
                 .height(120.dp)
                 .width(120.dp),
-            time = Time(1, 30)
+            time = Time(30, 1)
         )
     }
 }

@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.transformLatest
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
@@ -62,14 +63,6 @@ class OverviewViewModel(
     private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
         _entryRepository.getAllInRange(it, _serviceYearEnd)
     }
-    private val _restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform<List<Entry>, Time> {
-        val lastMonthTime = it.ministryTimeSum()
-        if (!lastMonthTime.isNegative) {
-            Time(hours = 0, minutes = lastMonthTime.minutes)
-        } else {
-            Time.Empty
-        }
-    }
     private val _transferred = _entryRepository.getTransferredFrom(month)
     private val _roleGoal = settingsDataStore.roleGoal
     private val _manuallySetGoal = _monthlyInformation.map { it.goal }
@@ -80,16 +73,19 @@ class OverviewViewModel(
         initialValue = "",
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val goal = _goal.stateIn(
         scope = viewModelScope,
         initialValue = 1,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val roleGoal = _roleGoal.stateIn(
         scope = viewModelScope,
         initialValue = 1,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val yearlyGoal = _roleGoal.combine(_beginOfPioneeringInServiceYear) { rl, beginOfPioneeringInServiceYear ->
         val lastMonthInServiceYear = when {
             _serviceYearBegin.monthNumber == 9 -> _serviceYearBegin + DatePeriod(months = 12)
@@ -102,39 +98,53 @@ class OverviewViewModel(
         initialValue = 1,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val role = settingsDataStore.role.stateIn(
         scope = viewModelScope,
         initialValue = Role.Publisher,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val entries = _entries.stateIn(
         scope = viewModelScope,
         initialValue = listOf(),
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val entriesInServiceYear = _entriesInServiceYear.stateIn(
         scope = viewModelScope,
         initialValue = listOf(),
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val bibleStudies = _monthlyInformation.map { it.bibleStudies ?: 0 }.stateIn(
         scope = viewModelScope,
         initialValue = 0,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val restLastMonth = _restLastMonth.stateIn(
+
+    val restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform {
+        val lastMonthTime = it.ministryTimeSum()
+        if (!lastMonthTime.isNegative) {
+            emit(Time(hours = 0, minutes = lastMonthTime.minutes))
+        } else {
+            emit(Time.Empty)
+        }
+    }.stateIn(
         scope = viewModelScope,
         initialValue = Time.Empty,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val transferred = _transferred.stateIn(
         scope = viewModelScope,
         initialValue = listOf(),
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val rest = _entries.combine(_transferred) { entries, transferred ->
         val result = entries.ministryTimeSum() - transferred.ministryTimeSum()
-        if (!result.isNegative) {
+        return@combine if (!result.isNegative) {
             result
         } else {
             Time.Empty
@@ -144,6 +154,7 @@ class OverviewViewModel(
         initialValue = Time.Empty,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+
     val pioneerSince = _pioneerSince.stateIn(
         scope = viewModelScope,
         initialValue = null,

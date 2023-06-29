@@ -23,7 +23,11 @@ import org.koin.androidx.compose.koinViewModel
 fun TransferHint(viewModel: OverviewViewModel = koinViewModel()) {
     val restLastMonth by viewModel.restLastMonth.collectAsStateWithLifecycle()
     val entries by viewModel.entries.collectAsStateWithLifecycle()
-    val hasTransfer by remember { derivedStateOf { entries.any { it.type == EntryType.Transfer } } }
+    val hasTransfer by remember {
+        derivedStateOf {
+            entries.any { it.type == EntryType.Transfer }
+        }
+    }
     val show = restLastMonth.isNotEmpty && !hasTransfer
 
     ExpandAnimatedVisibility(show) {
