@@ -22,11 +22,11 @@
         tools:ignore="DataExtractionRules">
 
         <receiver
-            android:name="app.ministrylogbook.notifications.ReminderReceiver"
+            android:name="app.ministrylogbook.shared.services.ReminderReceiver"
             android:enabled="true" />
 
         <receiver
-            android:name="app.ministrylogbook.notifications.BootReceiver"
+            android:name="app.ministrylogbook.shared.services.BootReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

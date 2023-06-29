@@ -4,7 +4,7 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.shared.BackupService
+import app.ministrylogbook.shared.services.BackupService
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch

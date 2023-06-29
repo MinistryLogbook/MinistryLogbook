@@ -4,8 +4,8 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.notifications.ReminderChannelId
-import app.ministrylogbook.notifications.ReminderManager
+import app.ministrylogbook.shared.services.ReminderChannelId
+import app.ministrylogbook.shared.services.ReminderManager
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull

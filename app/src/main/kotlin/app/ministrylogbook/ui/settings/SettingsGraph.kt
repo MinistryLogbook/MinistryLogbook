@@ -11,7 +11,7 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.navArgument
-import app.ministrylogbook.shared.stayOut
+import app.ministrylogbook.shared.utilities.stayOut
 import app.ministrylogbook.ui.AppGraph
 import app.ministrylogbook.ui.FadeInTransitionMillis
 import app.ministrylogbook.ui.FadeOutTransitionMillis

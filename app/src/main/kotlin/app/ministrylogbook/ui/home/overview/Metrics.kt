@@ -30,11 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
-import app.ministrylogbook.shared.condition
-import app.ministrylogbook.shared.ministries
-import app.ministrylogbook.shared.placements
-import app.ministrylogbook.shared.returnVisits
-import app.ministrylogbook.shared.videoShowings
+import app.ministrylogbook.shared.utilities.condition
+import app.ministrylogbook.shared.utilities.ministries
+import app.ministrylogbook.shared.utilities.placements
+import app.ministrylogbook.shared.utilities.returnVisits
+import app.ministrylogbook.shared.utilities.videoShowings
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToStudies
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel

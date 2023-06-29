@@ -41,9 +41,9 @@ import app.ministrylogbook.BuildConfig
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.shared.AlertDialog
-import app.ministrylogbook.shared.MonthPickerDialog
-import app.ministrylogbook.shared.OptionList
+import app.ministrylogbook.shared.layouts.AlertDialog
+import app.ministrylogbook.shared.layouts.MonthPickerDialog
+import app.ministrylogbook.shared.layouts.OptionList
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import java.time.format.DateTimeFormatter

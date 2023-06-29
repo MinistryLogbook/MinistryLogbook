@@ -12,7 +12,7 @@ import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.Time
-import app.ministrylogbook.shared.ministryTimeSum
+import app.ministrylogbook.shared.utilities.ministryTimeSum
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine

@@ -49,8 +49,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
-import app.ministrylogbook.shared.ToolbarLayout
-import app.ministrylogbook.shared.shareBitmap
+import app.ministrylogbook.shared.layouts.ToolbarLayout
+import app.ministrylogbook.shared.utilities.shareBitmap
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import app.ministrylogbook.ui.shared.ToolbarAction

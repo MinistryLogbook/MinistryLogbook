@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.shared.condition
+import app.ministrylogbook.shared.utilities.condition
 import java.time.format.DateTimeFormatter
 import kotlinx.datetime.toJavaLocalDate
 

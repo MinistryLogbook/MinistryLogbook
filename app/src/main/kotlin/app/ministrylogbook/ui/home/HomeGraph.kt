@@ -6,9 +6,9 @@ import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navArgument
-import app.ministrylogbook.shared.bottomSheet
-import app.ministrylogbook.shared.popup
-import app.ministrylogbook.shared.stayOut
+import app.ministrylogbook.shared.layouts.bottomSheet
+import app.ministrylogbook.shared.layouts.popup
+import app.ministrylogbook.shared.utilities.stayOut
 import app.ministrylogbook.ui.AppGraph
 import app.ministrylogbook.ui.AppNavHostController
 import app.ministrylogbook.ui.SlideOutTransitionMillis

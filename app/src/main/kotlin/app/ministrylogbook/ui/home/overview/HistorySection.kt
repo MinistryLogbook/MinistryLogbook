@@ -19,7 +19,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.shared.transfers
+import app.ministrylogbook.shared.utilities.transfers
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel

@@ -11,10 +11,10 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import app.ministrylogbook.shared.ModalBottomSheetLayout
-import app.ministrylogbook.shared.PopupLayout
-import app.ministrylogbook.shared.rememberBottomSheetNavigator
-import app.ministrylogbook.shared.rememberPopupNavigator
+import app.ministrylogbook.shared.layouts.ModalBottomSheetLayout
+import app.ministrylogbook.shared.layouts.PopupLayout
+import app.ministrylogbook.shared.layouts.rememberBottomSheetNavigator
+import app.ministrylogbook.shared.layouts.rememberPopupNavigator
 import app.ministrylogbook.ui.home.backup.backupGraph
 import app.ministrylogbook.ui.home.homeGraph
 import app.ministrylogbook.ui.intro.introGraph

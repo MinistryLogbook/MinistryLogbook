@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.shared.ExpandAnimationVisibility
+import app.ministrylogbook.shared.utilities.ExpandAnimationVisibility
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
 import org.koin.androidx.compose.koinViewModel
 

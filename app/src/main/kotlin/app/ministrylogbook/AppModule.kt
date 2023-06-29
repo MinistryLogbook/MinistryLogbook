@@ -6,8 +6,8 @@ import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.notifications.ReminderManager
-import app.ministrylogbook.shared.BackupService
+import app.ministrylogbook.shared.services.ReminderManager
+import app.ministrylogbook.shared.services.BackupService
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel

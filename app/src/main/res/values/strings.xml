@@ -126,4 +126,7 @@
     <string name="intro_role_title">Hello %1$s,\nplease select your role</string>
     <string name="intro_role_description">The selected role gives you some useful presets.</string>
     <string name="select_role">Select role</string>
+    <string name="app_description">Ministry tracking for Jehovah\'s Witnesses</string>
+    <string name="app_welcome">Welcome to\nMinistry Logbook</string>
+    <string name="start_now">Start now</string>
 </resources>

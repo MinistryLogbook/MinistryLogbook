@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -54,7 +55,7 @@ fun WelcomePage() {
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    "Welcome to\nMinistry Logbook",
+                    stringResource(R.string.app_welcome),
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
@@ -62,7 +63,7 @@ fun WelcomePage() {
                 )
                 Spacer(modifier = Modifier.height(24.dp))
                 Text(
-                    "Ministry tracking for Jehovah's Witnesses",
+                    stringResource(R.string.app_description),
                     color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
                 )
             }
@@ -76,7 +77,7 @@ fun WelcomePage() {
                 Button(onClick = {
                     navController.navigateToSetup()
                 }) {
-                    Text("Start now")
+                    Text(stringResource(R.string.start_now))
                 }
             }
         }

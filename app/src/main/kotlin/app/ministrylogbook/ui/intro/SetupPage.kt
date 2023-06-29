@@ -41,9 +41,9 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.shared.ToolbarLayout
-import app.ministrylogbook.shared.progress.LinearProgressIndicator
-import app.ministrylogbook.shared.progress.Progress
+import app.ministrylogbook.shared.layouts.ToolbarLayout
+import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
+import app.ministrylogbook.shared.layouts.progress.Progress
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToHome
 import app.ministrylogbook.ui.intro.viewmodel.IntroIntent

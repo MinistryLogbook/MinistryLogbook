@@ -42,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.shared.ExpandAnimationVisibility
-import app.ministrylogbook.shared.OptionList
+import app.ministrylogbook.shared.utilities.ExpandAnimationVisibility
+import app.ministrylogbook.shared.layouts.OptionList
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import java.time.format.DateTimeFormatter
@@ -229,7 +229,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         )
     }
 
-    app.ministrylogbook.shared.AlertDialog(
+    app.ministrylogbook.shared.layouts.AlertDialog(
         modifier = Modifier.fillMaxWidth(),
         isOpen = isEntryKindDialogVisible,
         onDismissRequest = { isEntryKindDialogVisible = false },

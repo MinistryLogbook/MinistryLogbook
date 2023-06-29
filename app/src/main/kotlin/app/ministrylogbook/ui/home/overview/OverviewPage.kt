@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
-import app.ministrylogbook.shared.ExtendableFloatingActionButton
+import app.ministrylogbook.shared.layouts.ExtendableFloatingActionButton
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel

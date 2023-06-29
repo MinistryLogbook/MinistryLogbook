@@ -7,7 +7,7 @@ import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.shared.mutableStateIn
+import app.ministrylogbook.shared.utilities.mutableStateIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
