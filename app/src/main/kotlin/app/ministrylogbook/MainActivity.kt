@@ -20,13 +20,15 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
-        val settingsDataStore = SettingsService(this)
+        val settingsService = SettingsService(this)
         val design = runBlocking {
-            settingsDataStore.design.firstOrNull() ?: Design.System
+            settingsService.design.firstOrNull() ?: Design.System
         }
-        val showIntro = true
+        val showIntro = runBlocking {
+            !(settingsService.introShown.firstOrNull() ?: false)
+        }
         lifecycleScope.launch {
-            settingsDataStore.design.drop(1).collectLatest { it.apply() }
+            settingsService.design.drop(1).collectLatest { it.apply() }
         }
 
         setContent {

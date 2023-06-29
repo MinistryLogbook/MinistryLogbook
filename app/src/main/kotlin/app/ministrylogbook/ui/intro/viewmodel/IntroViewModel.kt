@@ -23,6 +23,7 @@ data class IntroState(
 )
 
 sealed class IntroIntent {
+    object Ready : IntroIntent()
     data class NameChange(val name: String) : IntroIntent()
     data class RoleChange(val role: Role) : IntroIntent()
     data class RemindersToggle(val enabled: Boolean) : IntroIntent()
@@ -80,6 +81,9 @@ class IntroViewModel(
                 _monthlyInfoRepository.update(_today) {
                     it.copy(goal = intent.goal)
                 }
+            }
+            is IntroIntent.Ready -> viewModelScope.launch {
+                _settingsService.setIntroShown()
             }
         }
     }

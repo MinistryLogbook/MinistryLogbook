@@ -129,4 +129,9 @@
     <string name="app_description">Ministry tracking for Jehovah\'s Witnesses</string>
     <string name="app_welcome">Welcome to\nMinistry Logbook</string>
     <string name="start_now">Start now</string>
+    <string name="ready">Ready</string>
+    <string name="reminders_description">Never forget to send your Field Service Report\nagain.</string>
+    <string name="setup_reminders_title">Lastly, do you want to get reminders?</string>
+    <string name="intro_goal_title">Optionally, set a goal</string>
+    <string name="intro_goal_description">The app will help you reaching your goals.</string>
 </resources>

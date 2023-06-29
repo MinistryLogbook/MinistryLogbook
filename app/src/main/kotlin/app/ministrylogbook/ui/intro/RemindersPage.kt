@@ -14,9 +14,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import app.ministrylogbook.R
 import app.ministrylogbook.ui.settings.SendReportReminderSetting
 
 @Composable
@@ -34,14 +36,14 @@ fun RemindersPage(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            "Lastly, do you want to get reminders?",
+            stringResource(R.string.setup_reminders_title),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
             lineHeight = 40.sp
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
-            "Never forget to send your Field Service Report\nagain.",
+            stringResource(R.string.reminders_description),
             color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
         )
         Spacer(modifier = Modifier.height(24.dp))

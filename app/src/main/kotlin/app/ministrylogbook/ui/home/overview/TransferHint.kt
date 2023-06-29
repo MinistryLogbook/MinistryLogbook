@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.shared.utilities.ExpandAnimationVisibility
+import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
 import org.koin.androidx.compose.koinViewModel
 
@@ -26,7 +26,7 @@ fun TransferHint(viewModel: OverviewViewModel = koinViewModel()) {
     val hasTransfer by remember { derivedStateOf { entries.any { it.type == EntryType.Transfer } } }
     val show = restLastMonth.isNotEmpty && !hasTransfer
 
-    ExpandAnimationVisibility(show) {
+    ExpandAnimatedVisibility(show) {
         Column {
             Spacer(Modifier.height(16.dp))
 

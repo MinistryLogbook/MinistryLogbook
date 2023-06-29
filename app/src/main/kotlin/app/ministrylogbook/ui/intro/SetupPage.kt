@@ -4,6 +4,9 @@ import android.app.Activity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,12 +38,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
+import app.ministrylogbook.shared.layouts.DeferredAnimatedVisibility
 import app.ministrylogbook.shared.layouts.ToolbarLayout
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
@@ -199,15 +204,22 @@ fun SetupPage() {
                     Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
-                        .padding(24.dp),
+                        .padding(32.dp)
+                        .height(80.dp),
                     verticalAlignment = Alignment.Bottom,
                     horizontalArrangement = if (isLastPage) Arrangement.Center else Arrangement.End
                 ) {
                     if (isLastPage) {
-                        Button(onClick = {
-                            navController.navigateToHome()
-                        }) {
-                            Text("Ready")
+                        DeferredAnimatedVisibility(
+                            1000,
+                            transition = slideInVertically(tween(800)) { it / 3 } + fadeIn(tween(800))
+                        ) {
+                            Button(onClick = {
+                                viewModel.dispatch(IntroIntent.Ready)
+                                navController.navigateToHome()
+                            }) {
+                                Text(stringResource(R.string.ready))
+                            }
                         }
                     } else {
                         Button(

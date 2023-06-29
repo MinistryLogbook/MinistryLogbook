@@ -371,19 +371,30 @@ fun LanguageSetting() {
         stringResource(R.string.system_default)
     }
 
-    val handleClose = {
+    LanguagePicker(open = isDialogOpen, onClose = {
         isDialogOpen = false
-    }
+    })
 
+    Setting(title = stringResource(R.string.language), onClick = { isDialogOpen = true }) {
+        Text(
+            localeDisplayName,
+            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
+            color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+        )
+    }
+}
+
+@Composable
+fun LanguagePicker(open: Boolean = false, onClose: () -> Unit = {}) {
     AlertDialog(
         modifier = Modifier.fillMaxWidth(),
-        isOpen = isDialogOpen,
-        onDismissRequest = handleClose,
+        isOpen = open,
+        onDismissRequest = onClose,
         title = {
             Text(stringResource(R.string.role))
         },
         dismissButton = {
-            TextButton(onClick = handleClose) {
+            TextButton(onClick = onClose) {
                 Text(stringResource(R.string.cancel))
             }
         }
@@ -406,18 +417,10 @@ fun LanguageSetting() {
                             LocaleListCompat.getEmptyLocaleList()
                         }
                     AppCompatDelegate.setApplicationLocales(localeList)
-                    handleClose()
+                    onClose()
                 })
             }
         }
-    }
-
-    Setting(title = stringResource(R.string.language), onClick = { isDialogOpen = true }) {
-        Text(
-            localeDisplayName,
-            fontSize = MaterialTheme.typography.bodyMedium.fontSize,
-            color = MaterialTheme.colorScheme.onSurface.copy(0.8f)
-        )
     }
 }
 

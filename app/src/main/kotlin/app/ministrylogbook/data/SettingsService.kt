@@ -95,6 +95,7 @@ class SettingsService(val context: Context) {
         private val PrecisionModeKey = booleanPreferencesKey("precision_mode")
         private val SendReportReminderKey = booleanPreferencesKey("send_report_reminder")
         private val LastBackupMillisKey = longPreferencesKey("last_backup_millis")
+        private val IntroShownKey = booleanPreferencesKey("intro_shown")
     }
 
     val role = context.dataStore.data.map {
@@ -120,9 +121,14 @@ class SettingsService(val context: Context) {
     }
     val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }
     val sendReportReminder = context.dataStore.data.map { it[SendReportReminderKey] ?: true }
-    var lastBackup = context.dataStore.data.map {
+    val lastBackup = context.dataStore.data.map {
         val lastBackupMillis = it[LastBackupMillisKey] ?: return@map null
         Instant.fromEpochMilliseconds(lastBackupMillis).toLocalDateTime(TimeZone.currentSystemDefault())
+    }
+    val introShown = context.dataStore.data.map { it[IntroShownKey] ?: false }
+
+    suspend fun setIntroShown() = context.dataStore.edit {
+        it[IntroShownKey] = true
     }
 
     suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {

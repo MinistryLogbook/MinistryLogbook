@@ -42,7 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
-import app.ministrylogbook.shared.utilities.ExpandAnimationVisibility
+import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.shared.layouts.OptionList
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
@@ -272,7 +272,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             )
             UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
 
-            ExpandAnimationVisibility(show = isInFuture) {
+            ExpandAnimatedVisibility(show = isInFuture) {
                 Row(
                     Modifier
                         .clip(RoundedCornerShape(8.dp))
