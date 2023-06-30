@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.shared.services.ReminderManager
 import app.ministrylogbook.shared.IntentViewModel
+import app.ministrylogbook.shared.services.ReminderManager
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn

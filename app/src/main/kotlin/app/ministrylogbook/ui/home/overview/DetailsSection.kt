@@ -41,9 +41,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.Time
-import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.layouts.progress.CircleProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
+import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.timeSum

@@ -35,7 +35,7 @@ fun ExpandAnimatedVisibility(show: Boolean, content: @Composable AnimatedVisibil
                 delayMillis = AnimationConstants.DefaultDurationMillis + 50
             )
         ) + fadeOut(tween()),
-        content = content,
+        content = content
     )
 }
 
@@ -57,7 +57,7 @@ fun DeferredAnimatedVisibility(
         AnimatedVisibility(
             visible = isVisible,
             enter = transition,
-            content = { content()},
+            content = { content() }
         )
     } else {
         content()

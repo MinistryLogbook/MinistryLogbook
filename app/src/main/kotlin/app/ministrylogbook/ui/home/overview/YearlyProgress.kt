@@ -25,11 +25,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.shared.Time
-import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
-import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.sum
+import app.ministrylogbook.shared.utilities.ministryTimeSum
+import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel

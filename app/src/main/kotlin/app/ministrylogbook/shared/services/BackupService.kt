@@ -7,16 +7,16 @@ import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.ui.home.backup.Metadata
 import com.charleskorn.kaml.Yaml
-import kotlinx.coroutines.flow.first
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import org.koin.core.component.KoinComponent
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlinx.coroutines.flow.first
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import org.koin.core.component.KoinComponent
 
 class BackupService(
     private val context: Context,
@@ -128,7 +128,8 @@ class BackupService(
         try {
             val db = SQLiteDatabase.openDatabase(
                 db.openHelper.readableDatabase.path!!,
-                null, SQLiteDatabase.OPEN_READONLY
+                null,
+                SQLiteDatabase.OPEN_READONLY
             )
             db.rawQuery("SELECT * from entry LIMIT 1", arrayOf()).close()
         } catch (e: Exception) {

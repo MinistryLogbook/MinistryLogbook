@@ -69,7 +69,8 @@ fun WelcomePage() {
                     DeferredAnimatedVisibility(
                         300,
                         animate = !animated,
-                        transition = slideInVertically(tween(500)) { it / 3 } + fadeIn(tween(500))) {
+                        transition = slideInVertically(tween(500)) { it / 3 } + fadeIn(tween(500))
+                    ) {
                         Image(
                             painterResource(R.drawable.logo),
                             modifier = Modifier.fillMaxSize(),

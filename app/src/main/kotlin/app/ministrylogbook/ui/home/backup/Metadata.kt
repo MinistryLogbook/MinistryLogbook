@@ -5,7 +5,6 @@ import app.ministrylogbook.data.Role
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class Metadata(
     val version: Int,
