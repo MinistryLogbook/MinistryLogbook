@@ -2,6 +2,8 @@ package app.ministrylogbook
 
 import android.app.Application
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
@@ -22,7 +24,11 @@ import org.koin.dsl.module
 
 val appModule = module {
     single {
-        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "db").build()
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "db").addCallback(object : RoomDatabase.Callback() {
+            override fun onOpen(db: SupportSQLiteDatabase) {
+                super.onOpen(db)
+            }
+        }).build()
     }
     single { get<AppDatabase>().bibleStudyEntryDao() }
     single { get<AppDatabase>().entryDao() }
@@ -30,7 +36,7 @@ val appModule = module {
     single { MonthlyInformationRepository(get()) }
     single { SettingsService(androidContext()) }
     single { ReminderManager() }
-    single { BackupService(androidContext(), get()) }
+    single { BackupService(androidContext(), get(), get()) }
     viewModel { params ->
         OverviewViewModel(params.get(), androidContext() as Application, get(), get(), get())
     }
@@ -45,7 +51,7 @@ val appModule = module {
             get()
         )
     }
-    viewModel { BackupViewModel(get(), get()) }
+    viewModel { BackupViewModel(androidContext() as Application, get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel { HomeViewModel(get()) }
     viewModel { IntroViewModel(get(), get(), get()) }

@@ -74,16 +74,6 @@ enum class Design {
     }
 }
 
-@Serializable
-data class Settings(
-    val role: Role,
-    val startOfPioneering: LocalDate?,
-    val name: String,
-    val design: Design,
-    val precisionMode: Boolean,
-    val sendReportReminder: Boolean
-)
-
 class SettingsService(val context: Context) {
     companion object {
         const val Name = "settings"
@@ -165,32 +155,6 @@ class SettingsService(val context: Context) {
 
     suspend fun setSendReportReminders(value: Boolean) = context.dataStore.edit {
         it[SendReportReminderKey] = value
-    }
-
-    suspend fun toYaml(): String {
-        val settings = Settings(
-            role = role.first(),
-            startOfPioneering = startOfPioneering.first(),
-            name = name.first(),
-            design = design.first(),
-            precisionMode = precisionMode.first(),
-            sendReportReminder = sendReportReminder.first()
-        )
-        return Yaml.default.encodeToString(settings)
-    }
-
-    suspend fun fromYaml(yaml: String) {
-        val data = Yaml.default.decodeFromString<HashMap<String, String>>(yaml)
-        data.forEach { (key, value) ->
-            when (key) {
-                RoleKey.name -> setRole(Role.valueOf(value))
-                StartOfPioneeringKey.name -> setPioneerSince(LocalDate.parse(value))
-                NameKey.name -> setName(value)
-                DesignKey.name -> setDesign(Design.valueOf(value))
-                PrecisionModeKey.name -> setPrecisionMode(value.toBoolean())
-                SendReportReminderKey.name -> setSendReportReminders(value.toBoolean())
-            }
-        }
     }
 }
 

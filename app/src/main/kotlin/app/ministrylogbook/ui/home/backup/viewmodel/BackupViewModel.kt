@@ -1,7 +1,9 @@
 package app.ministrylogbook.ui.home.backup.viewmodel
 
+import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.ViewModel
+import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.services.BackupService
@@ -13,9 +15,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class BackupViewModel(
+    private val application: Application,
     private val backupService: BackupService,
     private val settingsService: SettingsService
-) : ViewModel() {
+) : AndroidViewModel(application) {
 
     val lastBackup = settingsService.lastBackup.stateIn(
         scope = viewModelScope,
@@ -27,17 +30,17 @@ class BackupViewModel(
         viewModelScope.launch {
             val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             settingsService.setLastBackup(now)
-
-            val settings = settingsService.toYaml()
-            backupService.createBackup(uri, settings)
+            backupService.createBackup(uri)
         }
     }
 
+    fun isBackupValid(uri: Uri) = backupService.validateBackup(uri)
+
     fun importBackup(uri: Uri) {
-        val settings = backupService.importBackup(uri)
         viewModelScope.launch {
-            if (settings != null) {
-                settingsService.fromYaml(settings)
+            val imported = backupService.importBackup(uri)
+            if (!imported) {
+                Toast.makeText(application.applicationContext, "Backup is invalid", Toast.LENGTH_LONG).show()
             }
         }
     }

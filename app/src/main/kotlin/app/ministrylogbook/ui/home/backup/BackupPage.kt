@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.home.backup
 
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toFile
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
@@ -35,6 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
     val lastBackup by viewModel.lastBackup.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val fileExtension = "mlbak"
 
     val createDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/mlbak")) { uri ->
@@ -44,6 +47,10 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
     val openDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri == null) return@rememberLauncherForActivityResult
+            if (!viewModel.isBackupValid(uri)) {
+                Toast.makeText(context, context.getString(R.string.file_type_not_supported), Toast.LENGTH_LONG).show()
+                return@rememberLauncherForActivityResult
+            }
             viewModel.importBackup(uri)
         }
 
@@ -77,7 +84,7 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                 val year = currentDate.year.toString()
                 val month = currentDate.monthNumber.toString().padStart(2, '0')
                 val dayOfMonth = currentDate.dayOfMonth.toString().padStart(2, '0')
-                val fileName = context.getString(R.string.backup_file_name, year, month, dayOfMonth) + ".mlbak"
+                val fileName = context.getString(R.string.backup_file_name, year, month, dayOfMonth) + ".$fileExtension"
                 createDocumentLauncher.launch(fileName)
             }
         )

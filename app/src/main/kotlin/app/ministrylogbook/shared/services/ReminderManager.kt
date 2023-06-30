@@ -60,7 +60,7 @@ class ReminderManager : KoinComponent {
             set(Calendar.SECOND, dateTime.second)
         }
 
-        alarmManager.setAlarmClock(AlarmManager.AlarmClockInfo(calendar.timeInMillis, intent), intent)
+        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, intent)
     }
 
     fun cancelReminder(id: Int = REMINDER_NOTIFICATION_REQUEST_CODE) {
