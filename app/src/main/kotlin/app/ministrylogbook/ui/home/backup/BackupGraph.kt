@@ -58,7 +58,8 @@ fun NavGraphBuilder.backupGraph() {
         }
 
         composable(
-            BackupGraph.FromDeepLink.route, deepLinks = listOf(
+            BackupGraph.FromDeepLink.route,
+            deepLinks = listOf(
                 navDeepLink {
                     uriPattern = "content://.*"
                     action = Intent.ACTION_VIEW
@@ -66,7 +67,7 @@ fun NavGraphBuilder.backupGraph() {
                 navDeepLink {
                     uriPattern = "file://.*"
                     action = Intent.ACTION_VIEW
-                },
+                }
             )
         ) {
             val context = LocalContext.current
