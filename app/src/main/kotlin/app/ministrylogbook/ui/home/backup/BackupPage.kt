@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,34 +27,74 @@ import app.ministrylogbook.R
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.settings.BaseSettingsPage
 import app.ministrylogbook.ui.settings.Setting
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+
 
 @Composable
 fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
     val lastBackup by viewModel.lastBackup.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val fileExtension = "mlbak"
+    val isBackupValid by viewModel.isBackupValid.collectAsStateWithLifecycle(false)
+    val selectedBackupFile by viewModel.selectedBackupFile.collectAsStateWithLifecycle()
 
     val createDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/mlbak")) { uri ->
-            if (uri == null) return@rememberLauncherForActivityResult
+            if (uri == null) {
+                return@rememberLauncherForActivityResult
+            }
             viewModel.createBackup(uri)
         }
     val openDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-            if (uri == null) return@rememberLauncherForActivityResult
-            if (!viewModel.isBackupValid(uri)) {
-                Toast.makeText(context, context.getString(R.string.file_type_not_supported), Toast.LENGTH_LONG).show()
+            if (uri == null) {
                 return@rememberLauncherForActivityResult
             }
-            viewModel.importBackup(uri)
+            viewModel.selectBackupFile(uri)
         }
+
+    LaunchedEffect(selectedBackupFile, isBackupValid) {
+        if (selectedBackupFile != null && !isBackupValid) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.backup_is_invalid), Toast.LENGTH_LONG
+            ).show()
+            viewModel.unselectBackupFile()
+        }
+    }
+
+    if (selectedBackupFile != null && isBackupValid) {
+        val formattedDateTime = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+            .format(selectedBackupFile?.metadata?.dateTime?.toJavaLocalDateTime())
+
+        AlertDialog(
+            title = {
+                Text(stringResource(R.string.import_backup_file))
+            },
+            text = {
+                Text(stringResource(R.string.import_backup_dialog_description, formattedDateTime))
+            },
+            onDismissRequest = {
+                viewModel.unselectBackupFile()
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.importBackup() }) {
+                    Text(stringResource(R.string.yes))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.unselectBackupFile() }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+        )
+    }
 
     BaseSettingsPage(title = stringResource(R.string.backup)) {
         Column(
@@ -83,7 +126,8 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                 val year = currentDate.year.toString()
                 val month = currentDate.monthNumber.toString().padStart(2, '0')
                 val dayOfMonth = currentDate.dayOfMonth.toString().padStart(2, '0')
-                val fileName = context.getString(R.string.backup_file_name, year, month, dayOfMonth) + ".$fileExtension"
+                val fileName =
+                    context.getString(R.string.backup_file_name, year, month, dayOfMonth) + ".$fileExtension"
                 createDocumentLauncher.launch(fileName)
             }
         )

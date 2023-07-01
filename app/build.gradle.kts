@@ -113,7 +113,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
-    implementation(libs.kaml)
+    implementation(libs.ktoml)
     implementation(libs.aboutlicenses.core)
     implementation(libs.core.ktx)
     implementation(libs.material)

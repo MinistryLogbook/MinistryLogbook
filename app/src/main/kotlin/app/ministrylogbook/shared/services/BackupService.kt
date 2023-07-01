@@ -5,18 +5,17 @@ import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
 import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.ui.home.backup.Metadata
-import com.charleskorn.kaml.Yaml
+import kotlinx.coroutines.flow.first
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.koin.core.component.KoinComponent
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
-import kotlinx.coroutines.flow.first
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
-import org.koin.core.component.KoinComponent
 
 class BackupService(
     private val context: Context,
@@ -26,6 +25,7 @@ class BackupService(
 
     companion object {
         const val Version = 1
+        const val MetadataFileName = "metadata.toml"
     }
 
     private val files by lazy {
@@ -51,21 +51,23 @@ class BackupService(
             origin.close()
         }
 
-        val metadataFileName = "metadata.yaml"
-        val metadataEntry = ZipEntry(metadataFileName)
+        val metadataEntry = ZipEntry(MetadataFileName)
         out.putNextEntry(metadataEntry)
-        val metadataYaml = createMetadata()
-        out.write(metadataYaml.toByteArray())
+        val metadata = Metadata(
+            version = 1,
+            dateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+            role = settingsService.role.first(),
+            startOfPioneering = settingsService.startOfPioneering.first(),
+            name = settingsService.name.first(),
+            design = settingsService.design.first(),
+            precisionMode = settingsService.precisionMode.first(),
+            sendReportReminder = settingsService.sendReportReminder.first()
+        )
+        out.write(metadata.toToml().toByteArray())
         out.closeEntry()
         out.close()
     }
 
-    /**
-     * Import a backup file.
-     *
-     * @param uri The URI of the backup file.
-     * @return The settings YAML.
-     */
     suspend fun importBackup(uri: Uri): Boolean {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return false
         val origin = BufferedInputStream(inputStream)
@@ -85,8 +87,8 @@ class BackupService(
 
                 zip.copyTo(out)
                 out.close()
-            } else if (entry.name == "metadata.yaml") {
-                metadata = metadataFromYaml(zip.readBytes().decodeToString())
+            } else if (entry.name == MetadataFileName) {
+                metadata = Metadata.fromToml(zip.readBytes().decodeToString())
             }
             entry = zip.nextEntry
         }
@@ -103,6 +105,26 @@ class BackupService(
         }
 
         return true
+    }
+
+    fun getBackupMetadata(uri: Uri): Metadata? {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return null
+        val origin = BufferedInputStream(inputStream)
+        val zip = ZipInputStream(origin)
+
+        var entry = zip.nextEntry
+        var metadata: Metadata? = null
+        while (entry != null) {
+            if (entry.name == MetadataFileName) {
+                metadata = Metadata.fromToml(zip.readBytes().decodeToString())
+                break
+            }
+            entry = zip.nextEntry
+        }
+
+        zip.close()
+
+        return metadata
     }
 
     fun validateBackup(uri: Uri): Boolean {
@@ -144,21 +166,6 @@ class BackupService(
             backupFile.copyTo(file, true)
         }
     }
-
-    private suspend fun createMetadata(): String {
-        val metadata = Metadata(
-            version = 1,
-            role = settingsService.role.first(),
-            startOfPioneering = settingsService.startOfPioneering.first(),
-            name = settingsService.name.first(),
-            design = settingsService.design.first(),
-            precisionMode = settingsService.precisionMode.first(),
-            sendReportReminder = settingsService.sendReportReminder.first()
-        )
-        return Yaml.default.encodeToString(metadata)
-    }
-
-    private fun metadataFromYaml(yaml: String) = Yaml.default.decodeFromString<Metadata>(yaml)
 
     private suspend fun importSettings(metadata: Metadata) {
         settingsService.setRole(metadata.role)
