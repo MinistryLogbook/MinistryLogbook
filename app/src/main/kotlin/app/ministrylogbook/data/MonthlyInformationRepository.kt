@@ -41,7 +41,10 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
 
     suspend fun update(month: LocalDate, modify: (monthlyInfo: MonthlyInformation) -> MonthlyInformation) {
         withContext(Dispatchers.IO) {
-            val info = monthlyInformationDao.getOfMonth(month.year, month.monthNumber).firstOrNull() ?: return@withContext
+            val info = monthlyInformationDao
+                .getOfMonth(month.year, month.monthNumber)
+                .firstOrNull()
+                ?: return@withContext
             val modifiedInfo = modify(info)
             monthlyInformationDao.upsert(modifiedInfo)
         }
