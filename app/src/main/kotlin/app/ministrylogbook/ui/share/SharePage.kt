@@ -52,6 +52,7 @@ import app.ministrylogbook.R
 import app.ministrylogbook.shared.layouts.ToolbarLayout
 import app.ministrylogbook.shared.utilities.shareBitmap
 import app.ministrylogbook.ui.LocalAppNavController
+import app.ministrylogbook.ui.home.navigateToHome
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import app.ministrylogbook.ui.shared.ToolbarAction
 import kotlinx.coroutines.FlowPreview
@@ -99,7 +100,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     }
 
     val handleBack: () -> Unit = {
-        navController.popBackStack()
+        navController.navigateToHome()
     }
 
     val handleShare: () -> Unit = {

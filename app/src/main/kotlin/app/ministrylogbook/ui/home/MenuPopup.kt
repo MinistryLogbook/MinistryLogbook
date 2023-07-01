@@ -86,7 +86,7 @@ fun MenuPopup() {
             .padding(horizontal = 8.dp)
     ) {
         ToolbarAction(Modifier.align(Alignment.CenterStart), onClick = {
-            navController.popBackStack()
+            navController.navigateUp()
         }) {
             Icon(
                 painterResource(R.drawable.ic_close),

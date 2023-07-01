@@ -33,12 +33,10 @@ fun BaseSettingsPage(
 ) {
     val navController = LocalAppNavController.current
 
-    val handleBack: () -> Unit = {
-        navController.popBackStack()
-    }
-
     ToolbarLayout(elevation = toolbarElevation, toolbarContent = {
-        ToolbarAction(onClick = handleBack) {
+        ToolbarAction(onClick = {
+            navController.navigateUp()
+        }) {
             Icon(
                 painterResource(R.drawable.ic_arrow_back),
                 contentDescription = null // TODO: contentDescription

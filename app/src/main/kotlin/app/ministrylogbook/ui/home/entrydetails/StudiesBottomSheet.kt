@@ -28,7 +28,7 @@ fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel
     var tempStudies by remember(bibleStudies) { mutableIntStateOf(bibleStudies) }
 
     val handleClose: () -> Unit = {
-        navController.popBackStack()
+        navController.navigateUp()
     }
 
     val handleSave: () -> Unit = {

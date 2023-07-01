@@ -47,7 +47,7 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
 
     val handleSave: () -> Unit = {
         viewModel.setName(tempName)
-        navController.popBackStack()
+        navController.navigateUp()
     }
 
     BaseSettingsPage(

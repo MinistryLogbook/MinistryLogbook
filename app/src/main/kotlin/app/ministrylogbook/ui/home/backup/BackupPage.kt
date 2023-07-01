@@ -24,54 +24,53 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
+import app.ministrylogbook.ui.home.backup.viewmodel.BackupIntent
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.settings.BaseSettingsPage
 import app.ministrylogbook.ui.settings.Setting
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
-    val lastBackup by viewModel.lastBackup.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val fileExtension = "mlbak"
-    val isBackupValid by viewModel.isBackupValid.collectAsStateWithLifecycle(false)
-    val selectedBackupFile by viewModel.selectedBackupFile.collectAsStateWithLifecycle()
 
     val createDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/mlbak")) { uri ->
             if (uri == null) {
                 return@rememberLauncherForActivityResult
             }
-            viewModel.createBackup(uri)
+            viewModel.dispatch(BackupIntent.CreateBackup(uri))
         }
     val openDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri == null) {
                 return@rememberLauncherForActivityResult
             }
-            viewModel.selectBackupFile(uri)
+            viewModel.dispatch(BackupIntent.SelectBackupFile(uri))
         }
 
-    LaunchedEffect(selectedBackupFile, isBackupValid) {
-        if (selectedBackupFile != null && !isBackupValid) {
+    LaunchedEffect(state.selectedBackupFile, state.isBackupValid) {
+        if (state.selectedBackupFile != null && !state.isBackupValid) {
             Toast.makeText(
                 context,
                 context.getString(R.string.backup_is_invalid),
                 Toast.LENGTH_LONG
             ).show()
-            viewModel.unselectBackupFile()
+            viewModel.dispatch(BackupIntent.UnselectBackupFile)
         }
     }
 
-    if (selectedBackupFile != null && isBackupValid) {
+    if (state.selectedBackupFile != null && state.isBackupValid) {
         val formattedDateTime = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-            .format(selectedBackupFile?.metadata?.dateTime?.toJavaLocalDateTime())
+            .format(state.selectedBackupFile?.metadata?.dateTime?.toJavaLocalDateTime())
 
         AlertDialog(
             title = {
@@ -81,15 +80,15 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                 Text(stringResource(R.string.import_backup_dialog_description, formattedDateTime))
             },
             onDismissRequest = {
-                viewModel.unselectBackupFile()
+                viewModel.dispatch(BackupIntent.UnselectBackupFile)
             },
             confirmButton = {
-                TextButton(onClick = { viewModel.importBackup() }) {
+                TextButton(onClick = { viewModel.dispatch(BackupIntent.ImportBackup) }) {
                     Text(stringResource(R.string.yes))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.unselectBackupFile() }) {
+                TextButton(onClick = { viewModel.dispatch(BackupIntent.UnselectBackupFile) }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -110,8 +109,8 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                 modifier = Modifier.size(128.dp)
             )
             Text(stringResource(R.string.last_backup), fontSize = 14.sp)
-            val formattedLastBackup = if (lastBackup != null) {
-                dateTimeFormatter.format(lastBackup?.toJavaLocalDateTime())
+            val formattedLastBackup = if (state.lastBackup != null) {
+                dateTimeFormatter.format(state.lastBackup?.toJavaLocalDateTime())
             } else {
                 "-"
             }

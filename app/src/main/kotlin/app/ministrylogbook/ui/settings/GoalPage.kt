@@ -72,14 +72,14 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
         coroutineScope.launch {
             viewModel.setGoal(tempGoal)
         }
-        navController.popBackStack()
+        navController.navigateUp()
     }
 
     val handleReset = {
         coroutineScope.launch {
             viewModel.resetGoal()
         }
-        navController.popBackStack()
+        navController.navigateUp()
     }
 
     BaseSettingsPage(

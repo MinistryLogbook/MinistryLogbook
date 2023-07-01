@@ -3,6 +3,7 @@ package app.ministrylogbook.shared.services
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
+import android.util.Log
 import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.SettingsService
 import java.io.BufferedInputStream
@@ -37,7 +38,9 @@ class BackupService(
     }
 
     suspend fun createBackup(uri: Uri) {
+        Log.d("ministrylogbook", "a")
         val outputStream = context.contentResolver.openOutputStream(uri) ?: return
+        Log.d("ministrylogbook", "b")
         val out = ZipOutputStream(BufferedOutputStream(outputStream))
 
         files.filter { it.exists() }.forEach { file ->

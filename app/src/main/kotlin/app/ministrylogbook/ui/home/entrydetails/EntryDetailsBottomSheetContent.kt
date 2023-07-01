@@ -111,7 +111,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
 
     val handleClose: () -> Unit = {
         isDateDialogVisible = false
-        navController.popBackStack()
+        navController.navigateUp()
     }
     val handleSave = {
         viewModel.save()

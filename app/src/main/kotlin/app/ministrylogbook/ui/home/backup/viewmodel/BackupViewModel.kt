@@ -7,39 +7,72 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
 import app.ministrylogbook.data.SettingsService
+import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.services.BackupService
 import app.ministrylogbook.shared.services.Metadata
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+sealed class BackupIntent {
+    data class CreateBackup(val uri: Uri) : BackupIntent()
+    data class SelectBackupFile(val uri: Uri) : BackupIntent()
+    object UnselectBackupFile : BackupIntent()
+    object ImportBackup : BackupIntent()
+}
+
+data class BackupFile(val uri: Uri, val metadata: Metadata?)
+
+data class BackupState(
+    val selectedBackupFile: BackupFile? = null,
+    val lastBackup: LocalDateTime? = null,
+    val isBackupValid: Boolean = false
+)
+
 class BackupViewModel(
+    private val uri: Uri? = null,
     private val application: Application,
     private val backupService: BackupService,
     private val settingsService: SettingsService
-) : AndroidViewModel(application) {
-    private val _selectedBackupFile = MutableStateFlow<BackupFile?>(null)
+) : AndroidViewModel(application), IntentViewModel<BackupState, BackupIntent> {
 
-    val selectedBackupFile = _selectedBackupFile.asStateFlow()
+    private val _selectedBackupFile =
+        MutableStateFlow(uri?.run { BackupFile(this, backupService.getBackupMetadata(uri)) })
 
-    val lastBackup = settingsService.lastBackup.stateIn(
+    override val state = combine(
+        _selectedBackupFile,
+        settingsService.lastBackup
+    ) { selectedBackupFile, lastBackup ->
+        BackupState(
+            selectedBackupFile = selectedBackupFile,
+            lastBackup = lastBackup,
+            isBackupValid = selectedBackupFile?.run {
+                backupService.validateBackup(this.uri) && this.metadata != null
+            } ?: false
+        )
+    }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000L),
-        initialValue = null
+        initialValue = BackupState()
     )
 
-    val isBackupValid = selectedBackupFile.map {
-        it?.let { backupService.validateBackup(it.uri) && it.metadata != null } ?: false
+    override fun dispatch(intent: BackupIntent) {
+        when (intent) {
+            is BackupIntent.CreateBackup -> createBackup(intent.uri)
+            is BackupIntent.SelectBackupFile -> selectBackupFile(intent.uri)
+            is BackupIntent.UnselectBackupFile -> unselectBackupFile()
+            is BackupIntent.ImportBackup -> importBackup()
+        }
     }
 
-    fun createBackup(uri: Uri) {
+    private fun createBackup(uri: Uri) {
         viewModelScope.launch {
             val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             settingsService.setLastBackup(now)
@@ -47,9 +80,9 @@ class BackupViewModel(
         }
     }
 
-    fun importBackup() {
+    private fun importBackup() {
         viewModelScope.launch {
-            val backupFile = selectedBackupFile.value ?: return@launch
+            val backupFile = state.value.selectedBackupFile ?: return@launch
             val imported = backupService.importBackup(backupFile.uri)
             if (!imported) {
                 val context = application.applicationContext
@@ -63,16 +96,14 @@ class BackupViewModel(
         unselectBackupFile()
     }
 
-    fun selectBackupFile(uri: Uri) {
+    private fun selectBackupFile(uri: Uri) {
         val metadata = backupService.getBackupMetadata(uri)
         _selectedBackupFile.update {
             BackupFile(uri, metadata)
         }
     }
 
-    fun unselectBackupFile() {
+    private fun unselectBackupFile() {
         _selectedBackupFile.update { null }
     }
-
-    data class BackupFile(val uri: Uri, val metadata: Metadata?)
 }

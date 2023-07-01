@@ -134,10 +134,10 @@ fun SetupPage() {
         }
         hideKeyboard(context as Activity)
         when (introNavController.currentBackStackEntry?.destination?.route) {
-            InnerIntroGraph.Role.route -> introNavController.popBackStack()
-            InnerIntroGraph.Reminders.route -> introNavController.popBackStack()
-            InnerIntroGraph.Goal.route -> introNavController.popBackStack()
-            else -> navController.popBackStack()
+            InnerIntroGraph.Role.route -> introNavController.navigateUp()
+            InnerIntroGraph.Reminders.route -> introNavController.navigateUp()
+            InnerIntroGraph.Goal.route -> introNavController.navigateUp()
+            else -> navController.navigateUp()
         }
     }
 
