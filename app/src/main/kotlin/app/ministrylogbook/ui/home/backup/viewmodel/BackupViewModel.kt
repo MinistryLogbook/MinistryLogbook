@@ -55,7 +55,8 @@ class BackupViewModel(
                 val context = application.applicationContext
                 Toast.makeText(
                     context,
-                    context.getString(R.string.backup_is_invalid), Toast.LENGTH_LONG
+                    context.getString(R.string.backup_is_invalid),
+                    Toast.LENGTH_LONG
                 ).show()
             }
         }

@@ -27,14 +27,13 @@ import app.ministrylogbook.R
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.settings.BaseSettingsPage
 import app.ministrylogbook.ui.settings.Setting
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
-import java.time.format.DateTimeFormatter
-import java.time.format.FormatStyle
-
 
 @Composable
 fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
@@ -63,7 +62,8 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
         if (selectedBackupFile != null && !isBackupValid) {
             Toast.makeText(
                 context,
-                context.getString(R.string.backup_is_invalid), Toast.LENGTH_LONG
+                context.getString(R.string.backup_is_invalid),
+                Toast.LENGTH_LONG
             ).show()
             viewModel.unselectBackupFile()
         }
@@ -92,7 +92,7 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                 TextButton(onClick = { viewModel.unselectBackupFile() }) {
                     Text(stringResource(R.string.cancel))
                 }
-            },
+            }
         )
     }
 
