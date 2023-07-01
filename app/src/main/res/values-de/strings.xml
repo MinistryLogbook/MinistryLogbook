@@ -121,4 +121,20 @@
     <string name="last_backup">Letzte Sicherung</string>
     <string name="create_backup_file">Sicherungsdatei erstellen</string>
     <string name="import_backup_file">Sicherungsdatei laden</string>
+    <string name="whats_your_name">Wie ist dein Name?</string>
+    <string name="intro_name_description">Wir erfassen keinerlei Daten. Dein Name wird auf deinem digitalen Berichtszettel abgedruckt.</string>
+    <string name="intro_role_title">Hallo %1$s, bitte wähle deine Rolle aus</string>
+    <string name="intro_role_description">Durch die ausgewählte Rolle bekommst du ein paar nützliche Voreinstellungen.</string>
+    <string name="select_role">Rolle auswählen</string>
+    <string name="app_description">Predigtdienst-Aufzeichnung für Jehovas Zeugen</string>
+    <string name="app_welcome">Willkommen bei\nMinistry Logbook</string>
+    <string name="start_now">Jetzt loslegen</string>
+    <string name="ready">Fertig</string>
+    <string name="reminders_description">Vergiss niemals mehr deinen Predigtdienstbericht abzugeben.</string>
+    <string name="setup_reminders_title">Als letztes, möchtest du erinnert werden?</string>
+    <string name="intro_goal_title">Lege optional ein Ziel fest</string>
+    <string name="intro_goal_description">Die App wird dir dabei helfen, deine Ziele zu erreichen.</string>
+    <string name="file_type_not_supported">Dateityp wird nicht unterstützt</string>
+    <string name="backup_is_invalid">Sicherung ist ungültig</string>
+    <string name="import_backup_dialog_description">Die Sicherung vom %1$s überschreibt alle bisherigen Daten. Möchtest du fortfahren?</string>
 </resources>

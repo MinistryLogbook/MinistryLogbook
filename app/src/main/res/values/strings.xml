@@ -123,18 +123,18 @@
     <string name="import_backup_file">Import backup file</string>
     <string name="whats_your_name">What\'s your name?</string>
     <string name="intro_name_description">We don\'t collect any data. Your name will be printed on your digital Field Service Reports.</string>
-    <string name="intro_role_title">Hello %1$s,\nplease select your role</string>
     <string name="intro_role_description">The selected role gives you some useful presets.</string>
     <string name="select_role">Select role</string>
     <string name="app_description">Ministry tracking for Jehovah\'s Witnesses</string>
     <string name="app_welcome">Welcome to\nMinistry Logbook</string>
     <string name="start_now">Start now</string>
     <string name="ready">Ready</string>
-    <string name="reminders_description">Never forget to send your Field Service Report\nagain.</string>
+    <string name="reminders_description">Never forget to send your Field Service Report again.</string>
     <string name="setup_reminders_title">Lastly, do you want to get reminders?</string>
     <string name="intro_goal_title">Optionally, set a goal</string>
     <string name="intro_goal_description">The app will help you reaching your goals.</string>
     <string name="file_type_not_supported">File type not supported</string>
     <string name="backup_is_invalid">Backup is invalid</string>
     <string name="import_backup_dialog_description">Importing the backup from %1$s will override all existing data. Do you want to proceed?</string>
+    <string name="intro_role_title">Hello %1$s, please select your role</string>
 </resources>
