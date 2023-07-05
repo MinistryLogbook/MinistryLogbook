@@ -137,4 +137,5 @@
     <string name="file_type_not_supported">File type not supported</string>
     <string name="backup_is_invalid">Backup is invalid</string>
     <string name="import_backup_dialog_description">Importing the backup from %1$s will override all existing data. Do you want to proceed?</string>
+    <string name="backup_older">The backup is older than your data!</string>
 </resources>

@@ -52,13 +52,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atTime
 import kotlinx.datetime.plus
 import kotlinx.datetime.toInstant
-import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,12 +67,12 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     val entry by viewModel.entry.collectAsStateWithLifecycle()
     val isInFuture by remember(entry) {
         derivedStateOf {
-            val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
             val firstDayOfNextMonth = LocalDate(today.year, today.month, 1).plus(
                 DatePeriod(months = 1)
             )
             // if it's in next month, one can only create entries in the current month or past
-            entry.datetime >= firstDayOfNextMonth
+            entry.datetime.date >= firstDayOfNextMonth
         }
     }
     val isSavable by remember(entry, isInFuture) {
@@ -96,7 +95,6 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     val dateMillis by remember(entry) {
         derivedStateOf {
             entry.datetime
-                .atTime(0, 0)
                 .toInstant(TimeZone.UTC)
                 .toEpochMilliseconds()
         }
@@ -157,7 +155,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             viewModel.update(videoShowings = it)
         }
     }
-    val handleChangeDate: (newValue: LocalDate) -> Unit = {
+    val handleChangeDate: (newValue: LocalDateTime) -> Unit = {
         viewModel.update(datetime = it)
     }
     val handleKindDate: (newValue: EntryType) -> Unit = {
@@ -173,7 +171,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 val dateTime = Instant.fromEpochMilliseconds(it).toLocalDateTime(
                     TimeZone.currentSystemDefault()
                 )
-                handleChangeDate(dateTime.date)
+                handleChangeDate(dateTime)
             }
             isDateDialogVisible = false
         }
@@ -252,7 +250,11 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
     }
 
-    Column(modifier = Modifier.padding(bottom = 24.dp).verticalScroll(rememberScrollState())) {
+    Column(
+        modifier = Modifier
+            .padding(bottom = 24.dp)
+            .verticalScroll(rememberScrollState())
+    ) {
         DragLine()
         Toolbar(
             onClose = handleClose,
@@ -268,7 +270,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 .padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)
         ) {
             val dateStr = dateTimeFormatter.format(
-                entry.datetime.toJavaLocalDate()
+                entry.datetime.toJavaLocalDateTime()
             )
             UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
 

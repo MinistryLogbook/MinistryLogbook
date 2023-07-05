@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.monthsUntil
 import kotlinx.datetime.plus
@@ -62,7 +63,8 @@ class OverviewViewModel(
     private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
         _entryRepository.getAllInRange(it, _serviceYearEnd)
     }
-    private val _transferred = _entryRepository.getTransferredFrom(month)
+    private val _transferred =
+        _entryRepository.getTransferredFrom(month).map { transferred -> transferred.filter { it.time.isNotEmpty } }
     private val _roleGoal = settingsDataStore.roleGoal
     private val _manuallySetGoal = _monthlyInformation.map { it.goal }
     private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
@@ -165,10 +167,10 @@ class OverviewViewModel(
         val nextMonth = firstOfMonth + DatePeriod(months = 1)
         val lastOfMonth = nextMonth - DatePeriod(days = 1)
         val transfer = Entry(
-            datetime = nextMonth,
+            datetime = nextMonth.atTime(0, 0),
             minutes = minutes,
             type = EntryType.Transfer,
-            transferredFrom = lastOfMonth
+            transferredFrom = lastOfMonth.atTime(0, 0)
         )
         viewModelScope.launch {
             _entryRepository.save(transfer)
@@ -186,10 +188,10 @@ class OverviewViewModel(
         val firstOfMonth = LocalDate(month.year, month.month, 1)
         val lastMonth = firstOfMonth - DatePeriod(days = 1)
         val transfer = Entry(
-            datetime = firstOfMonth,
+            datetime = firstOfMonth.atTime(0, 0),
             minutes = minutes,
             type = EntryType.Transfer,
-            transferredFrom = lastMonth
+            transferredFrom = lastMonth.atTime(0, 0)
         )
         viewModelScope.launch {
             _entryRepository.save(transfer)

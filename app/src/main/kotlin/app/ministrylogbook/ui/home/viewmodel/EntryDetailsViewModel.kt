@@ -10,10 +10,16 @@ import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.utilities.mutableStateIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atTime
+import kotlinx.datetime.toLocalDateTime
 
 class EntryDetailsViewModel(
     month: LocalDate,
@@ -22,10 +28,10 @@ class EntryDetailsViewModel(
     private val _entryRepository: EntryRepository
 ) : ViewModel() {
 
-    private val _initialEntry = Entry(id = id ?: 0, datetime = month)
+    private val _initialEntry = Entry(id = id ?: 0, datetime = month.atTime(0, 0))
     private val _entry =
         if (id != null) {
-            _entryRepository.get(id).mutableStateIn(viewModelScope, _initialEntry)
+            _entryRepository.get(id).filterNotNull().mutableStateIn(viewModelScope, _initialEntry)
         } else {
             MutableStateFlow(_initialEntry)
         }
@@ -47,7 +53,7 @@ class EntryDetailsViewModel(
     )
 
     fun update(
-        datetime: LocalDate? = null,
+        datetime: LocalDateTime? = null,
         placements: Int? = null,
         videoShowings: Int? = null,
         hours: Int? = null,
@@ -56,8 +62,14 @@ class EntryDetailsViewModel(
         type: EntryType? = null
     ) {
         _entry.update { old ->
+            val currentDatetime = if (datetime == null) {
+                old.datetime
+            } else {
+                val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                datetime.date.atTime(now.hour, now.minute)
+            }
             old.copy(
-                datetime = datetime ?: old.datetime,
+                datetime = currentDatetime,
                 placements = placements ?: old.placements,
                 videoShowings = videoShowings ?: old.videoShowings,
                 hours = hours ?: old.hours,
@@ -69,7 +81,10 @@ class EntryDetailsViewModel(
     }
 
     fun save() = viewModelScope.launch {
-        _entryRepository.save(entry.value)
+        val currentEntry = entry.value
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val currentDatetime = currentEntry.datetime.date.atTime(now.hour, now.minute)
+        _entryRepository.save(entry.value.copy(datetime = currentDatetime))
     }
 
     fun delete() = viewModelScope.launch {

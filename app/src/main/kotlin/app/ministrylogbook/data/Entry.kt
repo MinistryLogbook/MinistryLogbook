@@ -8,11 +8,10 @@ import androidx.room.PrimaryKey
 import app.ministrylogbook.shared.Time
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
 import kotlinx.parcelize.Parceler
 import kotlinx.parcelize.Parcelize
 
@@ -20,16 +19,15 @@ import kotlinx.parcelize.Parcelize
 @Entity
 data class Entry(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "datetime") val datetime: LocalDate = Clock.System.todayIn(
-        TimeZone.currentSystemDefault()
-    ),
+    @ColumnInfo(name = "datetime") val datetime: LocalDateTime = Clock.System.now()
+        .toLocalDateTime(TimeZone.currentSystemDefault()),
     @ColumnInfo(name = "placements") val placements: Int = 0,
     @ColumnInfo(name = "video_showings") val videoShowings: Int = 0,
     @ColumnInfo(name = "hours") val hours: Int = 0,
     @ColumnInfo(name = "minutes") val minutes: Int = 0,
     @ColumnInfo(name = "return_visits") val returnVisits: Int = 0,
     @ColumnInfo(name = "type") val type: EntryType = EntryType.Ministry,
-    @ColumnInfo(name = "transferred_from") val transferredFrom: LocalDate? = null
+    @ColumnInfo(name = "transferred_from") val transferredFrom: LocalDateTime? = null
 ) : Parcelable {
 
     val isCredit: Boolean
@@ -42,7 +40,7 @@ data class Entry(
         override fun create(parcel: Parcel) = Entry(
             id = parcel.readInt(),
             datetime = Instant.fromEpochMilliseconds(parcel.readLong())
-                .toLocalDateTime(TimeZone.currentSystemDefault()).date,
+                .toLocalDateTime(TimeZone.currentSystemDefault()),
             placements = parcel.readInt(),
             videoShowings = parcel.readInt(),
             hours = parcel.readInt(),
@@ -54,7 +52,7 @@ data class Entry(
         override fun Entry.write(parcel: Parcel, flags: Int) {
             parcel.writeInt(id)
             parcel.writeLong(
-                datetime.atStartOfDayIn(TimeZone.currentSystemDefault()).toEpochMilliseconds()
+                datetime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
             )
             parcel.writeInt(placements)
             parcel.writeInt(videoShowings)

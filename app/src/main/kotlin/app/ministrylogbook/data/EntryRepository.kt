@@ -1,6 +1,7 @@
 package app.ministrylogbook.data
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
@@ -14,6 +15,9 @@ class EntryRepository(private val entryDao: EntryDao) {
         entryDao.getAllInRange(from.year, from.monthNumber, to.year, to.monthNumber)
 
     fun getTransferredFrom(localDate: LocalDate) = entryDao.getTransferredFrom(localDate.year, localDate.monthNumber)
+
+    val latest: Flow<Entry?>
+        get() = entryDao.getLatest()
 
     suspend fun save(entry: Entry): Int {
         return withContext(Dispatchers.IO) {

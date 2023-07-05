@@ -32,6 +32,12 @@ fun HistorySection(viewModel: OverviewViewModel = koinViewModel()) {
     val orderedEntries by remember(entries) {
         derivedStateOf { entries.sortedBy { it.datetime }.reversed() }
     }
+    val orderedEntriesWithoutTransfers by remember(entries) {
+        derivedStateOf { orderedEntries.filter { it.type != EntryType.Transfer } }
+    }
+    val transfers by remember(entries) {
+        derivedStateOf { entries.transfers().filter { it.time.isNotEmpty } }
+    }
     var transferToUndo by remember { mutableStateOf<Entry?>(null) }
     val transferred by viewModel.transferred.collectAsStateWithLifecycle()
 
@@ -73,13 +79,13 @@ fun HistorySection(viewModel: OverviewViewModel = koinViewModel()) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        transferred.filter { it.time.isNotEmpty }.forEach {
+        transferred.forEach {
             HistoryItem(it, subtract = true, onClick = { transferToUndo = it })
         }
-        orderedEntries.filter { it.type != EntryType.Transfer }.forEach {
+        orderedEntriesWithoutTransfers.forEach {
             HistoryItem(it, onClick = { handleClick(it) })
         }
-        orderedEntries.transfers().forEach {
+        transfers.forEach {
             HistoryItem(it, onClick = { transferToUndo = it })
         }
     }

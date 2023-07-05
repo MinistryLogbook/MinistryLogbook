@@ -37,19 +37,17 @@ import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.utilities.condition
 import java.time.format.DateTimeFormatter
-import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
 
 @Composable
 fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? = null) {
     val pattern = stringResource(R.string.history_entry_datetime_pattern)
     val formatter = DateTimeFormatter.ofPattern(pattern)
-    val dateText = formatter.format(entry.datetime.toJavaLocalDate())
+    val dateText = formatter.format(entry.datetime.toJavaLocalDateTime())
     val formattedTime by remember(entry) {
         derivedStateOf {
             "${entry.hours}" + if (entry.minutes > 0) {
-                ":${
-                    entry.minutes.toString().padStart(2, '0')
-                }"
+                ":${entry.minutes.toString().padStart(2, '0')}"
             } else {
                 ""
             }

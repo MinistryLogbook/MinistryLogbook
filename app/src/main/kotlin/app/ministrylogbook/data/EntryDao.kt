@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 interface EntryDao {
 
     @Query("SELECT * FROM entry WHERE id = :id")
-    fun get(id: Int): Flow<Entry>
+    fun get(id: Int): Flow<Entry?>
 
     @Query(
         "SELECT * FROM entry WHERE strftime('%Y%m', datetime) = :year || substr('00' || :month, -2, 2)"
@@ -27,6 +27,9 @@ interface EntryDao {
         "SELECT * FROM entry WHERE strftime('%Y%m', transferred_from) = :year || substr('00' || :month, -2, 2)"
     )
     fun getTransferredFrom(year: Int, month: Int): Flow<List<Entry>>
+
+    @Query("SELECT * FROM entry ORDER BY id DESC LIMIT 1")
+    fun getLatest(): Flow<Entry?>
 
     @Upsert
     suspend fun upsert(vararg entries: Entry): List<Long>

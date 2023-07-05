@@ -137,4 +137,5 @@
     <string name="file_type_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="backup_is_invalid">Sicherung ist ungültig</string>
     <string name="import_backup_dialog_description">Die Sicherung vom %1$s überschreibt alle bisherigen Daten. Möchtest du fortfahren?</string>
+    <string name="backup_older">Die Sicherung ist älter als deine Daten!</string>
 </resources>

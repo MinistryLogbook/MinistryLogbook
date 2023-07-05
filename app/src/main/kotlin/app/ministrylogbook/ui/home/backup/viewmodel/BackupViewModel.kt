@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
+import app.ministrylogbook.data.Entry
+import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.services.BackupService
@@ -33,29 +35,33 @@ data class BackupFile(val uri: Uri, val metadata: Metadata?)
 data class BackupState(
     val selectedBackupFile: BackupFile? = null,
     val lastBackup: LocalDateTime? = null,
-    val isBackupValid: Boolean = false
+    val isBackupValid: Boolean = false,
+    val latest: Entry? = null
 )
 
 class BackupViewModel(
-    private val uri: Uri? = null,
-    private val application: Application,
-    private val backupService: BackupService,
-    private val settingsService: SettingsService
-) : AndroidViewModel(application), IntentViewModel<BackupState, BackupIntent> {
+    private val _uri: Uri? = null,
+    private val _application: Application,
+    private val _backupService: BackupService,
+    private val _settingsService: SettingsService,
+    entryRepository: EntryRepository
+) : AndroidViewModel(_application), IntentViewModel<BackupState, BackupIntent> {
 
     private val _selectedBackupFile =
-        MutableStateFlow(uri?.run { BackupFile(this, backupService.getBackupMetadata(uri)) })
+        MutableStateFlow(_uri?.run { BackupFile(this, _backupService.getBackupMetadata(_uri)) })
 
     override val state = combine(
         _selectedBackupFile,
-        settingsService.lastBackup
-    ) { selectedBackupFile, lastBackup ->
+        _settingsService.lastBackup,
+        entryRepository.latest
+    ) { selectedBackupFile, lastBackup, latest ->
         BackupState(
             selectedBackupFile = selectedBackupFile,
             lastBackup = lastBackup,
             isBackupValid = selectedBackupFile?.run {
-                backupService.validateBackup(this.uri) && this.metadata != null
-            } ?: false
+                _backupService.validateBackup(this.uri) && this.metadata != null
+            } ?: false,
+            latest = latest
         )
     }.stateIn(
         scope = viewModelScope,
@@ -75,17 +81,17 @@ class BackupViewModel(
     private fun createBackup(uri: Uri) {
         viewModelScope.launch {
             val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-            settingsService.setLastBackup(now)
-            backupService.createBackup(uri)
+            _settingsService.setLastBackup(now)
+            _backupService.createBackup(uri)
         }
     }
 
     private fun importBackup() {
         viewModelScope.launch {
             val backupFile = state.value.selectedBackupFile ?: return@launch
-            val imported = backupService.importBackup(backupFile.uri)
+            val imported = _backupService.importBackup(backupFile.uri)
             if (!imported) {
-                val context = application.applicationContext
+                val context = _application.applicationContext
                 Toast.makeText(
                     context,
                     context.getString(R.string.backup_is_invalid),
@@ -97,7 +103,7 @@ class BackupViewModel(
     }
 
     private fun selectBackupFile(uri: Uri) {
-        val metadata = backupService.getBackupMetadata(uri)
+        val metadata = _backupService.getBackupMetadata(uri)
         _selectedBackupFile.update {
             BackupFile(uri, metadata)
         }

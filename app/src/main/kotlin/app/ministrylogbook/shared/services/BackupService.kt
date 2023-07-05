@@ -58,7 +58,7 @@ class BackupService(
         out.putNextEntry(metadataEntry)
         val metadata = Metadata(
             version = 1,
-            dateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+            datetime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
             role = settingsService.role.first(),
             startOfPioneering = settingsService.startOfPioneering.first(),
             name = settingsService.name.first(),
@@ -66,7 +66,8 @@ class BackupService(
             precisionMode = settingsService.precisionMode.first(),
             sendReportReminder = settingsService.sendReportReminder.first()
         )
-        out.write(metadata.toToml().toByteArray())
+        val content = metadata.toToml().toByteArray().decodeToString()
+        out.write(content.toByteArray())
         out.closeEntry()
         out.close()
     }
@@ -119,7 +120,8 @@ class BackupService(
         var metadata: Metadata? = null
         while (entry != null) {
             if (entry.name == MetadataFileName) {
-                metadata = Metadata.fromToml(zip.readBytes().decodeToString())
+                val content = zip.readBytes().decodeToString()
+                metadata = Metadata.fromToml(content)
                 break
             }
             entry = zip.nextEntry
