@@ -7,7 +7,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.structuralEqualityPolicy
+import androidx.compose.ui.graphics.Color
 import app.ministrylogbook.data.Design
+
+class ExtendedColorScheme(warning: Color, onWarning: Color) {
+    val warning by mutableStateOf(warning, structuralEqualityPolicy())
+    val onWarning by mutableStateOf(onWarning, structuralEqualityPolicy())
+}
+
+val LocalExtendedColorScheme =
+    compositionLocalOf { ExtendedColorScheme(warning = ThemeLightWarning, onWarning = ThemeLightOnWarning) }
+
+val MaterialTheme.extendedColorScheme: ExtendedColorScheme
+    @Composable
+    @ReadOnlyComposable
+    get() = LocalExtendedColorScheme.current
 
 fun lightColorPalette(useDynamicColors: Boolean = false): ColorScheme {
     return lightColorScheme(
@@ -95,9 +115,23 @@ fun MinistryLogbookTheme(
             )
         }
 
-    MaterialTheme(
-        colorScheme = colors,
-        typography = Typography,
-        content = content
-    )
+    val extendedColors = if (useDarkTheme) {
+        ExtendedColorScheme(
+            warning = ThemeDarkWarning,
+            onWarning = ThemeDarkOnWarning
+        )
+    } else {
+        ExtendedColorScheme(
+            warning = ThemeLightWarning,
+            onWarning = ThemeLightOnWarning
+        )
+    }
+
+    CompositionLocalProvider(LocalExtendedColorScheme provides extendedColors) {
+        MaterialTheme(
+            colorScheme = colors,
+            typography = Typography,
+            content = content
+        )
+    }
 }

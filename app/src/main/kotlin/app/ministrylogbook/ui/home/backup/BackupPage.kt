@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,6 +37,7 @@ import app.ministrylogbook.ui.home.backup.viewmodel.BackupIntent
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.settings.BaseSettingsPage
 import app.ministrylogbook.ui.settings.Setting
+import app.ministrylogbook.ui.theme.extendedColorScheme
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlinx.datetime.Clock
@@ -95,19 +97,20 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                             Modifier
                                 .fillMaxWidth()
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.colorScheme.error)
-                                .padding(vertical = 2.dp, horizontal = 4.dp),
+                                .background(MaterialTheme.extendedColorScheme.warning)
+                                .padding(horizontal = 8.dp)
+                                .defaultMinSize(minHeight = 40.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 painterResource(R.drawable.ic_warning),
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onError
+                                tint = MaterialTheme.extendedColorScheme.onWarning
                             )
-                            Spacer(Modifier.width(4.dp))
+                            Spacer(Modifier.width(8.dp))
                             Text(
                                 stringResource(R.string.backup_older),
-                                color = MaterialTheme.colorScheme.onError
+                                color = MaterialTheme.extendedColorScheme.onWarning
                             )
                         }
                     }
