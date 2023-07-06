@@ -210,7 +210,9 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
         }
 
         val remainingHoursAnimated by animateIntAsState(
-            targetValue = remainingHours, animationSpec = tween(400), label = "remainingHours"
+            targetValue = remainingHours,
+            animationSpec = tween(400),
+            label = "remainingHours"
         )
         ExpandAnimatedVisibility(show = remainingHours > 0) {
             Column {
@@ -219,7 +221,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                     Text(
                         stringResource(R.string.hours_remaining, remainingHoursAnimated),
                         color = ProgressPositive,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Bold
                     )
                 }
             }

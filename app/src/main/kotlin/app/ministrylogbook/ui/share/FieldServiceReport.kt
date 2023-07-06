@@ -1,7 +1,6 @@
 package app.ministrylogbook.ui.share
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -23,41 +22,31 @@ data class FieldServiceReport(
     val returnVisits: Int = 0,
     val bibleStudies: Int = 0,
     val comments: String = ""
-)
+) {
+    fun toText(context: Context): String {
+        val nameLine = if (name.isNotBlank()) "|${context.getString(R.string.name_colon)} ${name}\n" else ""
 
-fun Context.shareFieldServiceReport(report: FieldServiceReport) {
-    val nameLine = if (report.name.isNotBlank()) "|${getString(R.string.name_colon)} ${report.name}\n" else ""
-
-    val text = """${getString(R.string.field_service_report).uppercase()}
+        val text = """${context.getString(R.string.field_service_report).uppercase()}
         |
-        $nameLine|${getString(R.string.month_colon)} ${report.month}
+        $nameLine|${context.getString(R.string.month_colon)} $month
         |
-        |${getString(R.string.placements_long_colon)} ${report.placements}
-        |${getString(R.string.video_showings_colon)} ${report.videoShowings}
-        |${getString(R.string.hours_colon)} ${report.hours}
-        |${getString(R.string.return_visits_colon)} ${report.returnVisits}
-        |${getString(R.string.bible_studies_long_colon)} ${report.bibleStudies}"""
+        |${context.getString(R.string.placements_long_colon)} $placements
+        |${context.getString(R.string.video_showings_colon)} $videoShowings
+        |${context.getString(R.string.hours_colon)} $hours
+        |${context.getString(R.string.return_visits_colon)} $returnVisits
+        |${context.getString(R.string.bible_studies_long_colon)} $bibleStudies"""
 
-    val commentsSection = """
+        val commentsSection = """
         |
-        |${getString(R.string.comments_colon)}
-        |${report.comments}"""
+        |${context.getString(R.string.comments_colon)}
+        |$comments"""
 
-    val textWithComments = if (report.comments.isNotBlank()) {
-        text + commentsSection
-    } else {
-        text
-    }.trimMargin()
-
-    val sendIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        putExtra(Intent.EXTRA_TEXT, textWithComments)
-        putExtra(Intent.EXTRA_SUBJECT, getString(R.string.field_service_report_subject, report.month))
-        type = "text/plain"
+        return if (comments.isNotBlank()) {
+            text + commentsSection
+        } else {
+            text
+        }.trimMargin()
     }
-
-    val shareIntent = Intent.createChooser(sendIntent, null)
-    startActivity(shareIntent)
 }
 
 fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {

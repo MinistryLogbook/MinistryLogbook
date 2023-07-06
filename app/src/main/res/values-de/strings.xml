@@ -92,7 +92,6 @@
     <string name="min_transferred_to_next_month">%1$s min in den nächsten Monat übertragen</string>
     <string name="min_transferred_from_last_month">%1$s min vom letzten Monat übertragen</string>
     <string name="version">Version %1$s (%2$s)</string>
-    <string name="share_as">Teilen als</string>
     <string name="text">Text</string>
     <string name="image">Bild</string>
     <string name="share">Teilen</string>
@@ -139,4 +138,5 @@
     <string name="import_backup_dialog_description">Die Sicherung vom %1$s überschreibt alle bisherigen Daten. Möchtest du fortfahren?</string>
     <string name="backup_older">Die Sicherung ist älter als deine Daten!</string>
     <string name="no_date_set">Kein Datum festgelegt</string>
+    <string name="preview">Vorschau</string>
 </resources>
