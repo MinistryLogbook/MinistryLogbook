@@ -20,7 +20,7 @@ android {
         applicationId = "app.ministrylogbook"
         minSdk = 28
         targetSdk = 33
-        versionCode = 1
+        versionCode = getVersionCode()
         versionName = getTagName()
         resourceConfigurations += listOf("en", "de")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -162,6 +162,14 @@ fun getTagName() = ByteArrayOutputStream().use {
         return@use ""
     }
     it.toString().trim()
+}
+
+fun getVersionCode() = ByteArrayOutputStream().use {
+    project.exec {
+        commandLine("git", "tag")
+        standardOutput = it
+    }
+    it.toString().trim().split("\n").size
 }
 
 fun hasSigningConfig() = System.getenv("SIGNING_STORE_PASSWORD") != null
