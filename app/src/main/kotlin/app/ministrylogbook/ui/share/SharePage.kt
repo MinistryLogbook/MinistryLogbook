@@ -153,7 +153,8 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                         bottom = maxOf(
                             WindowInsets.ime
                                 .asPaddingValues()
-                                .calculateBottomPadding(), 64.dp
+                                .calculateBottomPadding(),
+                            64.dp
                         )
                     )
             ) {
