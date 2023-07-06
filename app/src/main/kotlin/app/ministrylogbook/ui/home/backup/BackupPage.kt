@@ -113,8 +113,8 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
                                 color = MaterialTheme.extendedColorScheme.onWarning
                             )
                         }
+                        Spacer(Modifier.height(16.dp))
                     }
-                    Spacer(Modifier.height(16.dp))
                     Text(stringResource(R.string.import_backup_dialog_description, formattedDateTime))
                 }
             },

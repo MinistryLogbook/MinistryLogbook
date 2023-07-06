@@ -39,11 +39,11 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
     val role by viewModel.role.collectAsStateWithLifecycle()
-    val pioneerSince by viewModel.pioneerSince.collectAsStateWithLifecycle()
-    val show by remember(role, pioneerSince) {
+    val beginOfPioneeringInServiceYear by viewModel.beginOfPioneeringInServiceYear.collectAsStateWithLifecycle()
+    val show by remember(role, beginOfPioneeringInServiceYear) {
         derivedStateOf {
             val isPioneer = role == Role.SpecialPioneer || role == Role.RegularPioneer
-            isPioneer && pioneerSince != null && pioneerSince!! <= viewModel.month
+            isPioneer && beginOfPioneeringInServiceYear != null && beginOfPioneeringInServiceYear!! <= viewModel.month
         }
     }
 

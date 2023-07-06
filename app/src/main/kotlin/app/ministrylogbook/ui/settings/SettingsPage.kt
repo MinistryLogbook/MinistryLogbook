@@ -295,12 +295,12 @@ fun PioneerSinceSetting(viewModel: SettingsViewModel = koinViewModel()) {
 
     if (role == Role.RegularPioneer || role == Role.SpecialPioneer) {
         var isDialogOpen by remember { mutableStateOf(false) }
-        val startOfPioneering by viewModel.startOfPioneering.collectAsStateWithLifecycle()
+        val pioneerSince by viewModel.pioneerSince.collectAsStateWithLifecycle()
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
 
         MonthPickerDialog(
             isOpen = isDialogOpen,
-            initialMonth = startOfPioneering ?: today,
+            initialMonth = pioneerSince ?: today,
             onDismissRequest = { isDialogOpen = false },
             onSelect = {
                 viewModel.setPioneerSince(it)
@@ -311,7 +311,11 @@ fun PioneerSinceSetting(viewModel: SettingsViewModel = koinViewModel()) {
         Setting(title = stringResource(R.string.start_of_pioneering), onClick = { isDialogOpen = true }) {
             val pattern = stringResource(R.string.start_of_pioneering_month_pattern)
             val formatter = DateTimeFormatter.ofPattern(pattern)
-            val monthText = formatter.format((startOfPioneering ?: today).toJavaLocalDate())
+            val monthText = if (pioneerSince != null) {
+                formatter.format(pioneerSince?.toJavaLocalDate())
+            } else {
+                stringResource(R.string.no_date_set)
+            }
 
             Text(
                 monthText,

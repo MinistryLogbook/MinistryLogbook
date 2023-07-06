@@ -2,6 +2,7 @@ package app.ministrylogbook.ui.home.overview
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.AnimationConstants
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -26,6 +27,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,12 +37,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.Time
+import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.shared.layouts.progress.CircleProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
 import app.ministrylogbook.shared.utilities.ministryTimeSum
@@ -58,7 +62,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
     val goal by homeViewModel.goal.collectAsStateWithLifecycle()
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit = remember(goal) { Time(goal + 5, 0) }
+    val maxHoursWithCredit = remember(goal) { Time((goal ?: 0) + 5, 0) }
     val transferred by homeViewModel.transferred.collectAsStateWithLifecycle()
     val transferredTime = remember(transferred) { transferred.timeSum() }
     val ministryTime = remember(entries, transferredTime) { entries.ministryTimeSum() - transferredTime }
@@ -70,22 +74,33 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
         maxHoursWithCredit,
         theocraticSchoolTime
     ) { minOf(theocraticAssignmentsTime, maxHoursWithCredit - ministryTime) + theocraticSchoolTime }
-    val accumulatedTime = remember(
+    val accumulatedTime by remember(
         ministryTime,
         theocraticAssignmentsTime,
         maxHoursWithCredit,
         theocraticSchoolTime
     ) {
-        ministryTime.let {
-            if (it.hours < maxHoursWithCredit.hours) {
-                minOf(
-                    ministryTime + theocraticAssignmentsTime,
-                    maxHoursWithCredit
-                )
+        derivedStateOf {
+            ministryTime.let {
+                if (it.hours < maxHoursWithCredit.hours) {
+                    minOf(
+                        ministryTime + theocraticAssignmentsTime,
+                        maxHoursWithCredit
+                    )
+                } else {
+                    it
+                }
+            } + theocraticSchoolTime
+        }
+    }
+    val remainingHours by remember(goal, accumulatedTime) {
+        derivedStateOf {
+            if (goal != null && goal!! > accumulatedTime.hours) {
+                goal!! - accumulatedTime.hours
             } else {
-                it
+                0
             }
-        } + theocraticSchoolTime
+        }
     }
 
     Column {
@@ -102,16 +117,26 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                         .height(widthDp / 2)
                         .width(widthDp / 2)
                 ) {
+                    val accPercent = if (goal != null) {
+                        (1f / goal!! * accumulatedTime.hours)
+                    } else {
+                        1f
+                    }
+                    val ministryPercent = if (goal != null) {
+                        (1f / goal!! * ministryTime.hours)
+                    } else {
+                        1f
+                    }
                     CircleProgressIndicator(
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
                         progresses = listOfNotNull(
                             Progress(
-                                percent = (1f / goal * accumulatedTime.hours),
+                                percent = accPercent,
                                 color = ProgressPositive.copy(0.6f)
                             ).takeIf { role.canHaveCredit && credit.isNotEmpty },
                             Progress(
-                                percent = (1f / goal * ministryTime.hours),
+                                percent = ministryPercent,
                                 color = ProgressPositive
                             ).takeIf { ministryTime.isNotEmpty }
                         )
@@ -184,8 +209,23 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        val remainingHoursAnimated by animateIntAsState(
+            targetValue = remainingHours, animationSpec = tween(400), label = "remainingHours"
+        )
+        ExpandAnimatedVisibility(show = remainingHours > 0) {
+            Column {
+                Spacer(Modifier.height(16.dp))
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    Text(
+                        stringResource(R.string.hours_remaining, remainingHoursAnimated),
+                        color = ProgressPositive,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+        }
 
+        Spacer(Modifier.height(32.dp))
         Metrics()
     }
 }

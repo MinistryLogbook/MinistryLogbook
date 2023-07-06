@@ -60,7 +60,7 @@ class BackupService(
             version = 1,
             datetime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
             role = settingsService.role.first(),
-            startOfPioneering = settingsService.startOfPioneering.first(),
+            startOfPioneering = settingsService.pioneerSince.first(),
             name = settingsService.name.first(),
             design = settingsService.design.first(),
             precisionMode = settingsService.precisionMode.first(),

@@ -86,7 +86,7 @@ class SettingsService(val context: Context) {
     val role = context.dataStore.data.map {
         it[RoleKey]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }
-    val startOfPioneering =
+    val pioneerSince =
         context.dataStore.data.map {
             it[StartOfPioneeringKey]?.let { dateStr ->
                 val date = LocalDate.parse(dateStr)

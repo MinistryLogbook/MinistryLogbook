@@ -19,34 +19,34 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 class SettingsViewModel(
-    private val _settingsDataStore: SettingsService,
+    private val _settingsService: SettingsService,
     private val _monthlyInformationRepository: MonthlyInformationRepository,
     private val _reminderManager: ReminderManager
 ) : ViewModel() {
     private val _currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
     private val _monthlyInfo = _monthlyInformationRepository.getOfMonth(_currentMonth)
 
-    val name = _settingsDataStore.name.stateIn(
+    val name = _settingsService.name.stateIn(
         scope = viewModelScope,
         initialValue = "",
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val design = _settingsDataStore.design.stateIn(
+    val design = _settingsService.design.stateIn(
         scope = viewModelScope,
         initialValue = Design.System,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val role = _settingsDataStore.role.stateIn(
+    val role = _settingsService.role.stateIn(
         scope = viewModelScope,
         initialValue = Role.Publisher,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val startOfPioneering = _settingsDataStore.startOfPioneering.stateIn(
+    val pioneerSince = _settingsService.pioneerSince.stateIn(
         scope = viewModelScope,
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val roleGoal = _settingsDataStore.roleGoal.stateIn(
+    val roleGoal = _settingsService.roleGoal.stateIn(
         scope = viewModelScope,
         initialValue = 0,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -61,23 +61,23 @@ class SettingsViewModel(
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val precisionMode = _settingsDataStore.precisionMode.stateIn(
+    val precisionMode = _settingsService.precisionMode.stateIn(
         scope = viewModelScope,
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val sendReportReminder = _settingsDataStore.sendReportReminder.stateIn(
+    val sendReportReminder = _settingsService.sendReportReminder.stateIn(
         scope = viewModelScope,
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 
     fun setPioneerSince(date: LocalDate) = viewModelScope.launch {
-        _settingsDataStore.setPioneerSince(date)
+        _settingsService.setPioneerSince(date)
     }
 
     fun setPrecisionMode(value: Boolean) = viewModelScope.launch {
-        _settingsDataStore.setPrecisionMode(value)
+        _settingsService.setPrecisionMode(value)
     }
 
     fun setSendReportReminders(value: Boolean) = viewModelScope.launch {
@@ -86,7 +86,7 @@ class SettingsViewModel(
         } else {
             _reminderManager.cancelReminder()
         }
-        _settingsDataStore.setSendReportReminders(value)
+        _settingsService.setSendReportReminders(value)
     }
 
     fun setGoal(value: Int?) = viewModelScope.launch {
@@ -109,7 +109,7 @@ class SettingsViewModel(
     }
 
     fun setDesign(d: Design) = viewModelScope.launch {
-        _settingsDataStore.setDesign(d)
+        _settingsService.setDesign(d)
     }
 
     fun setRole(r: Role) = viewModelScope.launch {
@@ -122,17 +122,17 @@ class SettingsViewModel(
         } else if (!isAnyPioneer(r)) {
             resetPioneerSince()
         }
-        _settingsDataStore.setRole(r)
+        _settingsService.setRole(r)
     }
 
     fun setName(text: String) = viewModelScope.launch {
-        _settingsDataStore.setName(text)
+        _settingsService.setName(text)
     }
 
     private fun isAnyPioneer(role: Role) = role == Role.RegularPioneer || role == Role.SpecialPioneer
 
     private fun resetPioneerSince() = viewModelScope.launch {
-        _settingsDataStore.setPioneerSince(null)
+        _settingsService.setPioneerSince(null)
     }
 }
 

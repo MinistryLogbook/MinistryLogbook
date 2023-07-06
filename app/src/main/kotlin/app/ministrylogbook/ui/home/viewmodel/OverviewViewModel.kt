@@ -31,12 +31,12 @@ import kotlinx.datetime.plus
 class OverviewViewModel(
     val month: LocalDate,
     application: Application,
-    settingsDataStore: SettingsService,
+    settingService: SettingsService,
     private val _entryRepository: EntryRepository,
     monthlyInformationRepository: MonthlyInformationRepository
 ) : AndroidViewModel(application) {
 
-    private val _pioneerSince = settingsDataStore.startOfPioneering
+    private val _pioneerSince = settingService.pioneerSince
     private val _serviceYearBegin = when {
         // special case after corona pandemic; pioneering began in march
         month.year == 2023 && month.monthNumber <= 9 -> LocalDate(month.year, 3, 1)
@@ -65,11 +65,11 @@ class OverviewViewModel(
     }
     private val _transferred =
         _entryRepository.getTransferredFrom(month).map { transferred -> transferred.filter { it.time.isNotEmpty } }
-    private val _roleGoal = settingsDataStore.roleGoal
+    private val _roleGoal = settingService.roleGoal
     private val _manuallySetGoal = _monthlyInformation.map { it.goal }
     private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
 
-    val name = settingsDataStore.name.stateIn(
+    val name = settingService.name.stateIn(
         scope = viewModelScope,
         initialValue = "",
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -77,7 +77,7 @@ class OverviewViewModel(
 
     val goal = _goal.stateIn(
         scope = viewModelScope,
-        initialValue = 1,
+        initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 
@@ -100,7 +100,7 @@ class OverviewViewModel(
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 
-    val role = settingsDataStore.role.stateIn(
+    val role = settingService.role.stateIn(
         scope = viewModelScope,
         initialValue = Role.Publisher,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -156,7 +156,7 @@ class OverviewViewModel(
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 
-    val pioneerSince = _pioneerSince.stateIn(
+    val beginOfPioneeringInServiceYear = _beginOfPioneeringInServiceYear.stateIn(
         scope = viewModelScope,
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
