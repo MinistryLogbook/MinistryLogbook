@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -67,7 +70,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     val scrollState = rememberScrollState()
     var selectedShareAs by remember { mutableStateOf(ShareAs.Image) }
     val fieldServiceReport by viewModel.fieldServiceReport.collectAsStateWithLifecycle()
-    val initialComments by viewModel.comments.collectAsStateWithLifecycle()
+    val initialComments by viewModel.initialComments.collectAsStateWithLifecycle()
     var comments by remember(initialComments) { mutableStateOf(initialComments) }
     val commentsFlow = snapshotFlow { comments }
     val fieldServiceReportWithComments by remember(fieldServiceReport, comments) {
@@ -141,13 +144,20 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
             fontSize = MaterialTheme.typography.titleLarge.fontSize
         )
     }) {
-        Column(Modifier.fillMaxSize()) {
-            Column(
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            Box(
                 Modifier
+                    .fillMaxSize()
                     .verticalScroll(scrollState)
-                    .weight(1f)
+                    .padding(
+                        bottom = maxOf(
+                            WindowInsets.ime
+                                .asPaddingValues()
+                                .calculateBottomPadding(), 64.dp
+                        )
+                    )
             ) {
-                Column(Modifier.padding(vertical = 10.dp, horizontal = 20.dp)) {
+                Column(Modifier.padding(vertical = 20.dp, horizontal = 20.dp)) {
                     SegmentedButtons {
                         it.SegmentedButton(onClick = { selectedShareAs = ShareAs.Image }) {
                             Text(stringResource(R.string.image))
@@ -234,7 +244,8 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                 Row(
                     Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                        .padding(horizontal = 16.dp)
+                        .height(64.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
                     TextButton(onClick = handleShare) {

@@ -14,18 +14,19 @@ import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.videoShowings
 import app.ministrylogbook.ui.share.FieldServiceReport
-import java.time.format.TextStyle
-import java.util.Locale
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import java.time.format.TextStyle
+import java.util.Locale
 
 class ShareViewModel(
     val month: LocalDate,
@@ -38,7 +39,7 @@ class ShareViewModel(
     private val _monthlyInformation = monthlyInfoRepository.getOfMonth(month)
     private val _entries = entryRepository.getAllOfMonth(month)
 
-    val comments = _monthlyInformation.map { it.reportComment }.stateIn(
+    val initialComments = _monthlyInformation.map { it.reportComment }.take(1).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
         initialValue = ""
