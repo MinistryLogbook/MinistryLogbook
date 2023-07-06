@@ -50,7 +50,7 @@ fun Metrics(homeViewModel: OverviewViewModel = koinViewModel()) {
     val returnVisits by remember(ministries) { derivedStateOf { ministries.returnVisits() } }
     val videoShowings by remember(ministries) { derivedStateOf { ministries.videoShowings() } }
 
-    Row(Modifier.padding(start = 10.dp, end = 10.dp)) {
+    Row(Modifier.padding(horizontal = 10.dp, vertical = 16.dp)) {
         Column(modifier = Modifier.weight(1f)) {
             Metric(stringResource(R.string.placements_short), placements, icon = {
                 Icon(
@@ -114,9 +114,9 @@ fun Metric(
                 .fillMaxWidth()
                 .clip(CircleShape)
                 .condition(onClick != null) {
-                    clickable(onClick = onClick!!)
+                    clickable(onClick = onClick!!).background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
                 }
-                .padding(4.dp)
+                .padding(4.dp, 4.dp, 16.dp, 4.dp)
 
             Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
                 if (icon != null) {
@@ -132,11 +132,23 @@ fun Metric(
                 }
 
                 Column {
-                    Text(
-                        count.toString(),
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            count.toString(),
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+
+                        if (onClick != null) {
+                            Spacer(Modifier.weight(1f))
+                            Icon(
+                                painterResource(R.drawable.ic_edit),
+                                contentDescription = null, // TODO: contentDescription
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurface.copy(0.8f)
+                            )
+                        }
+                    }
 
                     Text(
                         name,

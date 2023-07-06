@@ -225,7 +225,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(16.dp))
         Metrics()
     }
 }
