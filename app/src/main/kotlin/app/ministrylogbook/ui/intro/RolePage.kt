@@ -1,6 +1,8 @@
 package app.ministrylogbook.ui.intro
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,26 +16,98 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
+import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
+import app.ministrylogbook.shared.layouts.MonthPickerDialog
 import app.ministrylogbook.ui.intro.viewmodel.IntroState
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.todayIn
+import java.time.format.DateTimeFormatter
+
+@Composable
+fun PioneerSinceSection(state: IntroState, onPioneerSinceSet: (LocalDate) -> Unit) {
+    val source = remember { MutableInteractionSource() }
+    val isPressed by source.collectIsPressedAsState()
+    val pattern = stringResource(R.string.start_of_pioneering_month_pattern)
+    val formatter = DateTimeFormatter.ofPattern(pattern)
+    val monthText = if (state.pioneerSince != null) {
+        formatter.format(state.pioneerSince.toJavaLocalDate())
+    } else {
+        stringResource(R.string.no_date_set)
+    }
+    var isDialogOpen by remember { mutableStateOf(false) }
+    val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
+    val handlePioneerSinceClick = {
+        isDialogOpen = true
+    }
+
+    MonthPickerDialog(
+        isOpen = isDialogOpen,
+        initialMonth = state.pioneerSince ?: today,
+        onDismissRequest = { isDialogOpen = false },
+        onSelect = {
+            onPioneerSinceSet(it)
+            isDialogOpen = false
+        }
+    )
+
+    Column {
+        Spacer(modifier = Modifier.height(48.dp))
+        Text(
+            "Seit wann bist du ${state.role.translate()}?",
+            color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+
+        LaunchedEffect(isPressed) {
+            if (isPressed) {
+                handlePioneerSinceClick()
+            }
+        }
+
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            readOnly = true,
+            value = monthText,
+            onValueChange = { },
+            label = { Text(stringResource(R.string.select_date)) },
+            trailingIcon = {
+                Icon(painterResource(R.drawable.ic_today), contentDescription = null)
+            },
+            interactionSource = source,
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RolePage(state: IntroState, onChange: (role: Role) -> Unit, scrollState: ScrollState = rememberScrollState()) {
+fun RolePage(
+    state: IntroState,
+    onChange: (role: Role) -> Unit,
+    onPioneerSinceSet: (date: LocalDate) -> Unit,
+    scrollState: ScrollState = rememberScrollState()
+) {
     var expanded by remember { mutableStateOf(false) }
 
     Column(
@@ -90,6 +164,11 @@ fun RolePage(state: IntroState, onChange: (role: Role) -> Unit, scrollState: Scr
                     )
                 }
             }
+        }
+
+        val isPioneer = state.role == Role.RegularPioneer || state.role == Role.SpecialPioneer
+        ExpandAnimatedVisibility(show = isPioneer) {
+            PioneerSinceSection(state, onPioneerSinceSet)
         }
     }
 }

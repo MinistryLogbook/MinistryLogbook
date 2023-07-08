@@ -139,4 +139,5 @@
     <string name="backup_older">The backup is older than your data!</string>
     <string name="no_date_set">No date set</string>
     <string name="preview">Preview</string>
+    <string name="select_date">Select date</string>
 </resources>

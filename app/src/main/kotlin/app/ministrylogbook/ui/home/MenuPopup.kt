@@ -69,7 +69,7 @@ fun ProfileButton(viewModel: HomeViewModel = koinViewModel()) {
                 .background(MaterialTheme.colorScheme.secondary.copy(0.2f)),
             contentAlignment = Alignment.Center
         ) {
-            val char = if (name.isNotEmpty()) name.substring(0..0) else "?"
+            val char = if (name.isNotEmpty()) name.substring(0..0) else ""
             Text(char)
         }
     }

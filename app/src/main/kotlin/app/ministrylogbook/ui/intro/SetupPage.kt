@@ -97,6 +97,13 @@ fun SetupPage() {
         derivedStateOf {
             when (currentBackStackEntry?.destination?.route) {
                 InnerIntroGraph.Name.route -> tempName.isNotBlank()
+                InnerIntroGraph.Role.route -> {
+                    if (state.role == Role.RegularPioneer || state.role == Role.SpecialPioneer) {
+                        state.pioneerSince != null
+                    } else {
+                        true
+                    }
+                }
                 else -> true
             }
         }
@@ -183,9 +190,15 @@ fun SetupPage() {
                             }, scrollState = scrollState)
                         }
                         composable(InnerIntroGraph.Role.route) {
-                            RolePage(state, onChange = {
+                            RolePage(
+                                state,
+                                onChange = {
                                 viewModel.dispatch(IntroIntent.RoleChange(it))
-                            }, scrollState = scrollState)
+                            },
+                                onPioneerSinceSet = {
+                                    viewModel.dispatch(IntroIntent.PioneerSinceSet(it))
+                                },
+                                scrollState = scrollState)
                         }
                         composable(InnerIntroGraph.Goal.route) {
                             GoalPage(state, onChange = {

@@ -395,7 +395,7 @@ fun LanguagePicker(open: Boolean = false, onClose: () -> Unit = {}) {
         isOpen = open,
         onDismissRequest = onClose,
         title = {
-            Text(stringResource(R.string.role))
+            Text(stringResource(R.string.language))
         },
         dismissButton = {
             TextButton(onClick = onClose) {

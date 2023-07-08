@@ -12,12 +12,14 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 data class IntroState(
     val name: String?,
     val role: Role,
+    val pioneerSince: LocalDate?,
     val reminders: Boolean,
     val goal: Int?
 )
@@ -27,6 +29,7 @@ sealed class IntroIntent {
     data class NameChange(val name: String) : IntroIntent()
     data class RoleChange(val role: Role) : IntroIntent()
     data class RemindersToggle(val enabled: Boolean) : IntroIntent()
+    data class PioneerSinceSet(val date: LocalDate) : IntroIntent()
     data class GoalChange(val goal: Int?) : IntroIntent()
 }
 
@@ -43,19 +46,20 @@ class IntroViewModel(
     override val state = combine(
         _settingsService.name,
         _settingsService.role,
+        _settingsService.pioneerSince,
         _settingsService.sendReportReminder,
         _monthlyInfoRepository.getOfMonth(_today)
-    ) { name, role, reminders, monthlyInfo ->
+    ) { name, role, pioneerSince, reminders, monthlyInfo ->
         val goal = if (role == Role.Publisher) {
             monthlyInfo.goal
         } else {
             monthlyInfo.goal ?: role.goal
         }
-        IntroState(name, role, reminders, goal)
+        IntroState(name, role, pioneerSince, reminders, goal)
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(5000L),
-        IntroState(null, Role.Publisher, false, null)
+        IntroState(null, Role.Publisher, null, false, null)
     )
 
     override fun dispatch(intent: IntroIntent) {
@@ -82,8 +86,13 @@ class IntroViewModel(
                     it.copy(goal = intent.goal)
                 }
             }
+
             is IntroIntent.Ready -> viewModelScope.launch {
                 _settingsService.setIntroShown()
+            }
+
+            is IntroIntent.PioneerSinceSet -> viewModelScope.launch {
+                _settingsService.setPioneerSince(intent.date)
             }
         }
     }
