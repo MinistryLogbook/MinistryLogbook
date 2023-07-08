@@ -75,7 +75,7 @@ fun PioneerSinceSection(state: IntroState, onPioneerSinceSet: (LocalDate) -> Uni
     Column {
         Spacer(modifier = Modifier.height(48.dp))
         Text(
-            "Seit wann bist du ${state.role.translate()}?",
+            stringResource(R.string.intro_pioneer_since_question),
             color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
         )
         Spacer(modifier = Modifier.height(24.dp))
