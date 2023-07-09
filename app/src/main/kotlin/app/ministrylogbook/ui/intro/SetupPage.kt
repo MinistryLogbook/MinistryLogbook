@@ -193,12 +193,13 @@ fun SetupPage() {
                             RolePage(
                                 state,
                                 onChange = {
-                                viewModel.dispatch(IntroIntent.RoleChange(it))
-                            },
+                                    viewModel.dispatch(IntroIntent.RoleChange(it))
+                                },
                                 onPioneerSinceSet = {
                                     viewModel.dispatch(IntroIntent.PioneerSinceSet(it))
                                 },
-                                scrollState = scrollState)
+                                scrollState = scrollState
+                            )
                         }
                         composable(InnerIntroGraph.Goal.route) {
                             GoalPage(state, onChange = {

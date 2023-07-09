@@ -37,12 +37,12 @@ import app.ministrylogbook.data.Role
 import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.shared.layouts.MonthPickerDialog
 import app.ministrylogbook.ui.intro.viewmodel.IntroState
+import java.time.format.DateTimeFormatter
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun PioneerSinceSection(state: IntroState, onPioneerSinceSet: (LocalDate) -> Unit) {
@@ -95,7 +95,7 @@ fun PioneerSinceSection(state: IntroState, onPioneerSinceSet: (LocalDate) -> Uni
             trailingIcon = {
                 Icon(painterResource(R.drawable.ic_today), contentDescription = null)
             },
-            interactionSource = source,
+            interactionSource = source
         )
     }
 }
