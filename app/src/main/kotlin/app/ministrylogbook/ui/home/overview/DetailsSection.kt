@@ -98,12 +98,12 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             if (goal != null && goal!! > accumulatedTime.hours) {
                 goal!! - accumulatedTime.hours
             } else {
-                0
+                null
             }
         }
     }
 
-    Column {
+    Column(Modifier.padding(horizontal = 16.dp)) {
         BoxWithConstraints {
             val widthDp = LocalDensity.current.run {
                 min(constraints.maxWidth.toDp(), LocalConfiguration.current.screenHeightDp.dp)
@@ -209,20 +209,22 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        val remainingHoursAnimated by animateIntAsState(
-            targetValue = remainingHours,
-            animationSpec = tween(400),
-            label = "remainingHours"
-        )
-        ExpandAnimatedVisibility(show = remainingHours > 0) {
-            Column {
-                Spacer(Modifier.height(16.dp))
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    Text(
-                        stringResource(R.string.hours_remaining, remainingHoursAnimated),
-                        color = ProgressPositive,
-                        fontWeight = FontWeight.Bold
-                    )
+        if (remainingHours != null) {
+            val remainingHoursAnimated by animateIntAsState(
+                targetValue = remainingHours!!,
+                animationSpec = tween(400),
+                label = "remainingHours"
+            )
+            ExpandAnimatedVisibility(show = remainingHours!! > 0) {
+                Column {
+                    Spacer(Modifier.height(16.dp))
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(
+                            stringResource(R.string.hours_remaining, remainingHoursAnimated),
+                            color = ProgressPositive,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
             }
         }

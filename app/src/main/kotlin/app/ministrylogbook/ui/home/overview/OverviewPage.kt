@@ -1,7 +1,6 @@
 package app.ministrylogbook.ui.home.overview
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -63,9 +62,7 @@ fun OverviewPage(onScroll: (position: Int) -> Unit = {}, viewModel: OverviewView
         })
     }) {
         Column(modifier = Modifier.verticalScroll(scrollState).padding(bottom = 82.dp, top = 24.dp)) {
-            Box(Modifier.padding(horizontal = 16.dp)) {
-                DetailsSection()
-            }
+            DetailsSection()
 
             YearlyProgress()
             TransferHint()

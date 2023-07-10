@@ -50,7 +50,6 @@ import app.ministrylogbook.shared.layouts.ToolbarLayout
 import app.ministrylogbook.shared.utilities.shareBitmap
 import app.ministrylogbook.shared.utilities.shareText
 import app.ministrylogbook.ui.LocalAppNavController
-import app.ministrylogbook.ui.home.navigateToHome
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import app.ministrylogbook.ui.shared.ToolbarAction
 import kotlinx.coroutines.FlowPreview
@@ -97,7 +96,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     }
 
     val handleBack: () -> Unit = {
-        navController.navigateToHome()
+        navController.navigateUp()
     }
 
     val handleShare: () -> Unit = {
@@ -247,7 +246,8 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp)
                         .height(64.dp),
-                    horizontalArrangement = Arrangement.End
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = handleShare) {
                         Text(stringResource(R.string.share))

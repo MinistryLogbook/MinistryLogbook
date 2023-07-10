@@ -40,11 +40,13 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
+import app.ministrylogbook.shared.utilities.getLocale
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.backup.navigateToBackup
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.settings.navigateToSettings
 import app.ministrylogbook.ui.shared.ToolbarAction
+import java.util.Locale
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -142,6 +144,7 @@ fun MenuPopup() {
             AppCompatDelegate.MODE_NIGHT_NO -> CustomTabsIntent.COLOR_SCHEME_LIGHT
             else -> CustomTabsIntent.COLOR_SCHEME_SYSTEM
         }
+        val locale = getLocale()
 
         val handleOpenPrivacyPolicy = {
             val arrowBackDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
@@ -164,7 +167,7 @@ fun MenuPopup() {
                 .setShowTitle(true)
                 .build()
 
-            customTabsIntent.launchUrl(context, Uri.parse(PrivacyPolicyUrl))
+            customTabsIntent.launchUrl(context, Uri.parse(getPrivacyPolicyUrl(locale)))
         }
 
         TextButton(onClick = handleOpenPrivacyPolicy) {
@@ -177,4 +180,4 @@ fun MenuPopup() {
     }
 }
 
-private const val PrivacyPolicyUrl = "https://ministrylogbook.app/de/privacy-policy"
+fun getPrivacyPolicyUrl(locale: Locale) = "https://ministrylogbook.app/${locale.language}/privacy-policy"
