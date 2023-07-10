@@ -25,9 +25,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -588,7 +591,9 @@ fun ModalBottomSheetLayout(
                 visible = sheetState.anchoredDraggableState.targetValue != ModalBottomSheetValue.Hidden
             )
         }
-        Box(Modifier.fillMaxSize()) {
+
+        Box(Modifier.statusBarsPadding()) {
+            val statusBarHeight = WindowInsets.statusBars.getTop(LocalDensity.current)
             Surface(
                 modifier = Modifier
                     .align(Alignment.TopCenter) // We offset from the top so we'll center from there
@@ -632,7 +637,7 @@ fun ModalBottomSheetLayout(
                             if (sheetSize.height != 0) {
                                 put(
                                     ModalBottomSheetValue.Expanded,
-                                    max(0f, fullHeight - sheetSize.height)
+                                    max(0f, fullHeight - sheetSize.height - statusBarHeight)
                                 )
                             }
                         }

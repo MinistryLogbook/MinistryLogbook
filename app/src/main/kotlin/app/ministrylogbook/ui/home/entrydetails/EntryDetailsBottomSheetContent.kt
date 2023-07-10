@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -250,11 +251,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
     }
 
-    Column(
-        modifier = Modifier
-            .padding(bottom = 24.dp)
-            .verticalScroll(rememberScrollState())
-    ) {
+    Column() {
         DragLine()
         Toolbar(
             onClose = handleClose,
@@ -266,98 +263,105 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         Divider()
         Column(
             Modifier
-                .clickable { isDateDialogVisible = true }
-                .padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)
+                .verticalScroll(rememberScrollState())
+                .padding(bottom = 8.dp)
+                .navigationBarsPadding()
         ) {
-            val dateStr = dateTimeFormatter.format(
-                entry.datetime.toJavaLocalDateTime()
-            )
-            UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
-
-            ExpandAnimatedVisibility(show = isInFuture) {
-                Row(
-                    Modifier
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
-                        .padding(horizontal = 6.dp, vertical = 4.dp)
-                        .fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        painterResource(R.drawable.ic_error),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        stringResource(R.string.date_in_future),
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp
-                    )
-                }
-            }
-        }
-        if (isCreditEnabled) {
-            Divider()
-            Box(Modifier.clickable { isEntryKindDialogVisible = true }) {
-                Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
-                    UnitRow(
-                        entry.type.translate(),
-                        icon = entry.type.icon()
-                    )
-                }
-            }
-        }
-        Divider()
-        Column(
-            Modifier
-                .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
-                .fillMaxWidth()
-        ) {
-            UnitRow(
-                stringResource(R.string.hours),
-                icon = painterResource(R.drawable.ic_schedule)
+            Column(
+                Modifier
+                    .clickable { isDateDialogVisible = true }
+                    .padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)
             ) {
-                NumberPicker(entry.hours) {
-                    handleChangeHours(it)
+                val dateStr = dateTimeFormatter.format(
+                    entry.datetime.toJavaLocalDateTime()
+                )
+                UnitRow(dateStr, icon = painterResource(R.drawable.ic_today))
+
+                ExpandAnimatedVisibility(show = isInFuture) {
+                    Row(
+                        Modifier
+                            .clip(RoundedCornerShape(8.dp))
+                            .background(MaterialTheme.colorScheme.error.copy(alpha = 0.1f))
+                            .padding(horizontal = 6.dp, vertical = 4.dp)
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painterResource(R.drawable.ic_error),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            stringResource(R.string.date_in_future),
+                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 13.sp
+                        )
+                    }
                 }
             }
-            UnitRow(stringResource(R.string.minutes)) {
-                val precisionMode = viewModel.precisionMode.collectAsStateWithLifecycle()
-                val step = if (precisionMode.value) 1 else 5
-
-                NumberPicker(entry.minutes, step) {
-                    handleChangeMinutes(it)
+            if (isCreditEnabled) {
+                Divider()
+                Box(Modifier.clickable { isEntryKindDialogVisible = true }) {
+                    Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
+                        UnitRow(
+                            entry.type.translate(),
+                            icon = entry.type.icon()
+                        )
+                    }
                 }
             }
+            Divider()
+            Column(
+                Modifier
+                    .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)
+                    .fillMaxWidth()
+            ) {
+                UnitRow(
+                    stringResource(R.string.hours),
+                    icon = painterResource(R.drawable.ic_schedule)
+                ) {
+                    NumberPicker(entry.hours) {
+                        handleChangeHours(it)
+                    }
+                }
+                UnitRow(stringResource(R.string.minutes)) {
+                    val precisionMode = viewModel.precisionMode.collectAsStateWithLifecycle()
+                    val step = if (precisionMode.value) 1 else 5
 
-            if (hasLoaded) {
-                AnimatedVisibility(visible = entry.type == EntryType.Ministry) {
-                    Column {
-                        UnitRow(
-                            stringResource(R.string.placements_short),
-                            description = stringResource(R.string.printed_and_electronic),
-                            icon = painterResource(R.drawable.ic_article)
-                        ) {
-                            NumberPicker(entry.placements) {
-                                handleChangePlacements(it)
+                    NumberPicker(entry.minutes, step) {
+                        handleChangeMinutes(it)
+                    }
+                }
+
+                if (hasLoaded) {
+                    AnimatedVisibility(visible = entry.type == EntryType.Ministry) {
+                        Column {
+                            UnitRow(
+                                stringResource(R.string.placements_short),
+                                description = stringResource(R.string.printed_and_electronic),
+                                icon = painterResource(R.drawable.ic_article)
+                            ) {
+                                NumberPicker(entry.placements) {
+                                    handleChangePlacements(it)
+                                }
                             }
-                        }
-                        UnitRow(
-                            stringResource(R.string.video_showings),
-                            icon = painterResource(R.drawable.ic_play_circle)
-                        ) {
-                            NumberPicker(entry.videoShowings) {
-                                handleChangeVideos(it)
+                            UnitRow(
+                                stringResource(R.string.video_showings),
+                                icon = painterResource(R.drawable.ic_play_circle)
+                            ) {
+                                NumberPicker(entry.videoShowings) {
+                                    handleChangeVideos(it)
+                                }
                             }
-                        }
-                        UnitRow(
-                            stringResource(R.string.return_visits),
-                            icon = painterResource(R.drawable.ic_group)
-                        ) {
-                            NumberPicker(entry.returnVisits) {
-                                handleChangeReturnVisits(it)
+                            UnitRow(
+                                stringResource(R.string.return_visits),
+                                icon = painterResource(R.drawable.ic_group)
+                            ) {
+                                NumberPicker(entry.returnVisits) {
+                                    handleChangeReturnVisits(it)
+                                }
                             }
                         }
                     }
