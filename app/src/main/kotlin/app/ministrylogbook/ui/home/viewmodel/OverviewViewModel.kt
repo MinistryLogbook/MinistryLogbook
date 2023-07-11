@@ -81,6 +81,14 @@ class OverviewViewModel(
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 
+    val hasGoal = combine(settingService.role, _manuallySetGoal) { role, manuallySetGoal ->
+        manuallySetGoal != null || role != Role.Publisher
+    }.stateIn(
+        scope = viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+
     val roleGoal = _roleGoal.stateIn(
         scope = viewModelScope,
         initialValue = 1,

@@ -45,8 +45,8 @@ val appModule = module {
             get()
         )
     }
-    viewModel { params -> BackupViewModel(params.getOrNull(), androidContext() as Application, get(), get(), get()) }
+    viewModel { BackupViewModel(androidContext() as Application, get(), get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { params -> HomeViewModel(params.getOrNull(), androidContext() as Application, get(), get(), get()) }
     viewModel { IntroViewModel(get(), get(), get()) }
 }

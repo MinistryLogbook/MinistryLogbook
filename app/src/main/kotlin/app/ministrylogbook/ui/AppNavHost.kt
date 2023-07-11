@@ -59,7 +59,7 @@ fun AppNavHost(startDestination: String = AppGraph.Home.route) {
 typealias AppNavHostController = NavHostController
 
 val LocalAppNavController =
-    compositionLocalOf<AppNavHostController> { error("LocalNavHostController error") }
+    compositionLocalOf<AppNavHostController> { error("LocalAPpNavController error") }
 
 const val SlideInTransitionMillis = 250
 const val SlideOutTransitionMillis = 250

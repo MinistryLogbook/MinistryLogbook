@@ -38,21 +38,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.getLocale
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.backup.navigateToBackup
-import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.settings.navigateToSettings
 import app.ministrylogbook.ui.shared.ToolbarAction
 import java.util.Locale
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun ProfileButton(viewModel: HomeViewModel = koinViewModel()) {
+fun ProfileButton(name: String) {
     val navController = LocalAppNavController.current
-    val name by viewModel.name.collectAsStateWithLifecycle()
 
     Box(
         Modifier

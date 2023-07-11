@@ -42,7 +42,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 @Composable
-fun ToolbarActions(month: LocalDate) {
+fun ToolbarActions(name: String, month: LocalDate) {
     val navController = LocalAppNavController.current
 
     Row(
@@ -57,7 +57,7 @@ fun ToolbarActions(month: LocalDate) {
                 contentDescription = stringResource(R.string.share_field_service_report)
             )
         }
-        ProfileButton()
+        ProfileButton(name)
     }
 }
 

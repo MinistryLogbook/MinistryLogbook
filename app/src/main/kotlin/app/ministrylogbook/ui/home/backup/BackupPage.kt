@@ -1,43 +1,34 @@
 package app.ministrylogbook.ui.home.backup
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.ministrylogbook.MainActivity
 import app.ministrylogbook.R
+import app.ministrylogbook.shared.utilities.restartApp
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupIntent
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.settings.BaseSettingsPage
 import app.ministrylogbook.ui.settings.Setting
-import app.ministrylogbook.ui.theme.extendedColorScheme
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import kotlinx.datetime.Clock
@@ -78,58 +69,21 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
         }
     }
 
-    if (state.selectedBackupFile != null && state.isBackupValid) {
-        val formattedDateTime = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
-            .format(state.selectedBackupFile?.metadata?.datetime?.toJavaLocalDateTime())
-        val latest = state.latest
-        val metadataDatetime = state.selectedBackupFile?.metadata?.datetime
-        val isOlderThanLatestEntry =
-            if (latest != null && metadataDatetime != null) metadataDatetime < latest.datetime else false
+    LaunchedEffect(state.importFinished) {
+        if (state.importFinished) {
+            context.restartApp(Intent(context, MainActivity::class.java))
+        }
+    }
 
-        AlertDialog(
-            title = {
-                Text(stringResource(R.string.import_backup_file))
+    if (state.selectedBackupFile != null && state.isBackupValid) {
+        BackupImportDialog(
+            state.selectedBackupFile!!,
+            state.latestEntry,
+            onImport = {
+                viewModel.dispatch(BackupIntent.ImportBackup)
             },
-            text = {
-                Column {
-                    if (isOlderThanLatestEntry) {
-                        Row(
-                            Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(MaterialTheme.extendedColorScheme.warning)
-                                .padding(horizontal = 8.dp)
-                                .defaultMinSize(minHeight = 40.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.ic_warning),
-                                contentDescription = null,
-                                tint = MaterialTheme.extendedColorScheme.onWarning
-                            )
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                stringResource(R.string.backup_older),
-                                color = MaterialTheme.extendedColorScheme.onWarning
-                            )
-                        }
-                        Spacer(Modifier.height(16.dp))
-                    }
-                    Text(stringResource(R.string.import_backup_dialog_description, formattedDateTime))
-                }
-            },
-            onDismissRequest = {
+            onDismiss = {
                 viewModel.dispatch(BackupIntent.UnselectBackupFile)
-            },
-            confirmButton = {
-                TextButton(onClick = { viewModel.dispatch(BackupIntent.ImportBackup) }) {
-                    Text(stringResource(R.string.yes))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { viewModel.dispatch(BackupIntent.UnselectBackupFile) }) {
-                    Text(stringResource(R.string.cancel))
-                }
             }
         )
     }

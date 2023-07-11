@@ -36,32 +36,35 @@ data class BackupState(
     val selectedBackupFile: BackupFile? = null,
     val lastBackup: LocalDateTime? = null,
     val isBackupValid: Boolean = false,
-    val latest: Entry? = null
+    val latestEntry: Entry? = null,
+    val importFinished: Boolean = false
 )
 
 class BackupViewModel(
-    private val _uri: Uri? = null,
     private val _application: Application,
     private val _backupService: BackupService,
     private val _settingsService: SettingsService,
     entryRepository: EntryRepository
 ) : AndroidViewModel(_application), IntentViewModel<BackupState, BackupIntent> {
 
-    private val _selectedBackupFile =
-        MutableStateFlow(_uri?.run { BackupFile(this, _backupService.getBackupMetadata(_uri)) })
+    private val _selectedBackupFile = MutableStateFlow<BackupFile?>(null)
+
+    private val _importFinished = MutableStateFlow(false)
 
     override val state = combine(
         _selectedBackupFile,
         _settingsService.lastBackup,
-        entryRepository.latest
-    ) { selectedBackupFile, lastBackup, latest ->
+        entryRepository.latest,
+        _importFinished
+    ) { selectedBackupFile, lastBackup, latestEntry, importFinished ->
         BackupState(
             selectedBackupFile = selectedBackupFile,
             lastBackup = lastBackup,
             isBackupValid = selectedBackupFile?.run {
                 _backupService.validateBackup(this.uri) && this.metadata != null
             } ?: false,
-            latest = latest
+            latestEntry = latestEntry,
+            importFinished = importFinished
         )
     }.stateIn(
         scope = viewModelScope,
@@ -97,6 +100,8 @@ class BackupViewModel(
                     context.getString(R.string.backup_is_invalid),
                     Toast.LENGTH_LONG
                 ).show()
+            } else {
+                _importFinished.update { true }
             }
         }
         unselectBackupFile()

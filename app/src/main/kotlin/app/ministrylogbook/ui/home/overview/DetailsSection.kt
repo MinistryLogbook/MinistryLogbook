@@ -60,6 +60,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
     val entries by homeViewModel.entries.collectAsStateWithLifecycle()
     val role by homeViewModel.role.collectAsStateWithLifecycle()
     val goal by homeViewModel.goal.collectAsStateWithLifecycle()
+    val hasGoal by homeViewModel.hasGoal.collectAsStateWithLifecycle()
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
     val maxHoursWithCredit = remember(goal) { Time((goal ?: 0) + 5, 0) }
@@ -73,7 +74,9 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
         theocraticAssignmentsTime,
         maxHoursWithCredit,
         theocraticSchoolTime
-    ) { minOf(theocraticAssignmentsTime, maxHoursWithCredit - ministryTime) + theocraticSchoolTime }
+    ) {
+        minOf(theocraticAssignmentsTime, maxHoursWithCredit - ministryTime) + theocraticSchoolTime
+    }
     val accumulatedTime by remember(
         ministryTime,
         theocraticAssignmentsTime,
@@ -209,7 +212,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        if (remainingHours != null) {
+        if (remainingHours != null && hasGoal) {
             val remainingHoursAnimated by animateIntAsState(
                 targetValue = remainingHours!!,
                 animationSpec = tween(400),

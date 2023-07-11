@@ -1,20 +1,27 @@
 package app.ministrylogbook.ui.home
 
+import android.content.Intent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import app.ministrylogbook.shared.layouts.bottomSheet
 import app.ministrylogbook.shared.layouts.popup
 import app.ministrylogbook.shared.layouts.stayOut
+import app.ministrylogbook.shared.utilities.activity
 import app.ministrylogbook.ui.AppGraph
 import app.ministrylogbook.ui.AppNavHostController
 import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.home.entrydetails.EntryDetailsBottomSheetContent
 import app.ministrylogbook.ui.home.entrydetails.StudiesBottomSheetContent
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
+import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
@@ -30,6 +37,8 @@ import org.koin.core.parameter.parametersOf
 
 sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
     object Root : HomeGraph(rawRoute = "")
+
+    object FromDeepLink : HomeGraph("?fromDeepLink=true")
 
     object Menu : HomeGraph(rawRoute = "menu")
 
@@ -64,7 +73,32 @@ fun NavGraphBuilder.homeGraph() {
         exitTransition = { stayOut(SlideOutTransitionMillis) }
     ) {
         composable(HomeGraph.Root.route) {
-            HomePage()
+            val viewModel = getViewModel<HomeViewModel>()
+            val state by viewModel.state.collectAsStateWithLifecycle()
+
+            HomePage(state, viewModel::dispatch)
+        }
+
+        composable(
+            HomeGraph.FromDeepLink.route,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "content://.*"
+                    action = Intent.ACTION_VIEW
+                },
+                navDeepLink {
+                    uriPattern = "file://.*"
+                    action = Intent.ACTION_VIEW
+                }
+            )
+        ) {
+            val context = LocalContext.current
+            val viewModel = getViewModel<HomeViewModel>(parameters = {
+                parametersOf(context.activity?.intent?.data)
+            })
+            val state by viewModel.state.collectAsStateWithLifecycle()
+
+            HomePage(state, viewModel::dispatch)
         }
 
         popup(HomeGraph.Menu.route) {
@@ -113,6 +147,9 @@ fun NavGraphBuilder.homeGraph() {
 
 fun NavController.navigateToHome() = navigate(AppGraph.Home.route) {
     popUpTo(AppGraph.Intro.route) {
+        inclusive = true
+    }
+    popUpTo(HomeGraph.FromDeepLink.route) {
         inclusive = true
     }
 }
