@@ -106,7 +106,6 @@
     <string name="of">of</string>
     <string name="hours_value_short_unit">%1$d h</string>
     <string name="progress_of_yearly_goal">Progress of your yearly goal</string>
-    <string name="hours_remaining">%1$d hours remaininig</string>
     <string name="behaviour">Behaviour</string>
     <string name="precision_mode">Precision Mode</string>
     <string name="precision_mode_description">Track time in single-minute increments</string>

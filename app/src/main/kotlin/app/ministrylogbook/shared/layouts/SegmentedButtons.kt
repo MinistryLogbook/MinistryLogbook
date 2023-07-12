@@ -18,7 +18,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class SegmentedButtonsScope(initialSelectedIndex: Int) {
+    private constructor(selectedIndex: Int, buttonCount: Int, segmentedButtonCount: Int) : this(selectedIndex) {
+        _selectedIndex.value = selectedIndex
+        _buttonCount.value = buttonCount
+        _segmentedButtonCount = segmentedButtonCount
+    }
+
     private var _selectedIndex = MutableStateFlow(initialSelectedIndex)
     private var _buttonCount = MutableStateFlow(0)
     private var _segmentedButtonCount = 0
@@ -60,10 +67,32 @@ class SegmentedButtonsScope(initialSelectedIndex: Int) {
             text()
         }
     }
+
+    companion object {
+        fun Saver() = mapSaver(
+            save = {
+                mapOf(
+                    "selectedIndex" to it._selectedIndex.value,
+                    "buttonCount" to it._buttonCount.value,
+                    "segmentedButtonCount" to it._segmentedButtonCount
+                )
+            },
+            restore = {
+                SegmentedButtonsScope(
+                    it["selectedIndex"] as Int,
+                    it["buttonCount"] as Int,
+                    it["segmentedButtonCount"] as Int
+                )
+            }
+        )
+    }
 }
 
 @Composable
-fun rememberSegmentedButtonsScope(initialSelectedIndex: Int) = remember { SegmentedButtonsScope(initialSelectedIndex) }
+fun rememberSegmentedButtonsScope(initialSelectedIndex: Int) =
+    rememberSaveable(saver = SegmentedButtonsScope.Saver()) {
+        SegmentedButtonsScope(initialSelectedIndex)
+    }
 
 @Composable
 fun SegmentedButtons(

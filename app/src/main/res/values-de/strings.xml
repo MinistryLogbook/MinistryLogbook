@@ -106,7 +106,6 @@
     <string name="of">von</string>
     <string name="hours_value_short_unit">%1$d h</string>
     <string name="progress_of_yearly_goal">Fortschritt deines Jahresziels</string>
-    <string name="hours_remaining">%1$d Stunden verbleibend</string>
     <string name="precision_mode">Präzisionsmodus</string>
     <string name="precision_mode_description">Zeit in einzelnen Minuten erfassen</string>
     <string name="behaviour">Verhalten</string>

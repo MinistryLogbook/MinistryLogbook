@@ -12,4 +12,8 @@
         <item quantity="one">%1$d Hour</item>
         <item quantity="other">%1$d Hours</item>
     </plurals>
+    <plurals name="hours_remaining">
+        <item quantity="one">%1$d hour remaining</item>
+        <item quantity="other">%1$d hours remaining</item>
+    </plurals>
 </resources>

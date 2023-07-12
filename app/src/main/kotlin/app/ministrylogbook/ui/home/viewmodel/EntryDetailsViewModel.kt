@@ -83,8 +83,24 @@ class EntryDetailsViewModel(
     fun save() = viewModelScope.launch {
         val currentEntry = entry.value
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
-        val currentDatetime = currentEntry.datetime.date.atTime(now.hour, now.minute)
-        _entryRepository.save(entry.value.copy(datetime = currentDatetime))
+        val currentDatetime = if (currentEntry.id == 0) {
+            currentEntry.datetime.date.atTime(now.hour, now.minute)
+        } else {
+            currentEntry.datetime
+        }
+
+        if (currentEntry.type == EntryType.Ministry) {
+            _entryRepository.save(currentEntry.copy(datetime = currentDatetime))
+        } else {
+            _entryRepository.save(
+                currentEntry.copy(
+                    datetime = currentDatetime,
+                    placements = 0,
+                    videoShowings = 0,
+                    returnVisits = 0
+                )
+            )
+        }
     }
 
     fun delete() = viewModelScope.launch {

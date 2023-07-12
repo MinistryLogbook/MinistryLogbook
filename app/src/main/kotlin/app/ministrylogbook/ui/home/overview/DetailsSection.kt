@@ -36,6 +36,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -60,10 +61,11 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
     val entries by homeViewModel.entries.collectAsStateWithLifecycle()
     val role by homeViewModel.role.collectAsStateWithLifecycle()
     val goal by homeViewModel.goal.collectAsStateWithLifecycle()
+    val roleGoal by homeViewModel.roleGoal.collectAsStateWithLifecycle()
     val hasGoal by homeViewModel.hasGoal.collectAsStateWithLifecycle()
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit = remember(goal) { Time((goal ?: 0) + 5, 0) }
+    val maxHoursWithCredit = remember(roleGoal) { Time(roleGoal + 5, 0) }
     val transferred by homeViewModel.transferred.collectAsStateWithLifecycle()
     val transferredTime = remember(transferred) { transferred.timeSum() }
     val ministryTime = remember(entries, transferredTime) { entries.ministryTimeSum() - transferredTime }
@@ -121,12 +123,12 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                         .width(widthDp / 2)
                 ) {
                     val accPercent = if (goal != null) {
-                        (1f / goal!! * accumulatedTime.hours)
+                        minOf(1f, 1f / goal!! * (accumulatedTime.hours + accumulatedTime.minutes.toFloat() / 60))
                     } else {
                         1f
                     }
                     val ministryPercent = if (goal != null) {
-                        (1f / goal!! * ministryTime.hours)
+                        minOf(1f, 1f / goal!! * (ministryTime.hours + ministryTime.minutes.toFloat() / 60))
                     } else {
                         1f
                     }
@@ -223,7 +225,11 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                     Spacer(Modifier.height(16.dp))
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Text(
-                            stringResource(R.string.hours_remaining, remainingHoursAnimated),
+                            pluralStringResource(
+                                R.plurals.hours_remaining,
+                                remainingHoursAnimated,
+                                remainingHoursAnimated
+                            ),
                             color = ProgressPositive,
                             fontWeight = FontWeight.Bold
                         )

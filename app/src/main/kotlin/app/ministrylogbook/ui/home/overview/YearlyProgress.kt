@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -99,9 +100,14 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                     strokeCap = StrokeCap.Round
                 )
             }
-            Row(modifier = Modifier.fillMaxWidth().padding(top = 4.dp), horizontalArrangement = Arrangement.End) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
                 Text(
-                    text = stringResource(R.string.hours_remaining, remaining),
+                    text = pluralStringResource(R.plurals.hours_remaining, remaining, remaining),
                     fontSize = 14.sp
                 )
             }
