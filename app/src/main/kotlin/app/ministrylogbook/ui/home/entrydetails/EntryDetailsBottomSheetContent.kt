@@ -236,8 +236,8 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     ) {
         val entryTypes = listOfNotNull(
             EntryType.Ministry,
-            if (isCreditEnabled) EntryType.TheocraticAssignment else null,
-            if (isCreditEnabled) EntryType.TheocraticSchool else null,
+            if (role.canHaveCredit) EntryType.TheocraticAssignment else null,
+            if (role.canHaveCredit) EntryType.TheocraticSchool else null,
             if (!role.canHaveCredit) entry.type else null
         )
 
