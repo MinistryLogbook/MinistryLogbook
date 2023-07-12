@@ -98,10 +98,15 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             } + theocraticSchoolTime
         }
     }
-    val remainingHours by remember(goal, accumulatedTime) {
+    val remainingHours by remember(role, goal, accumulatedTime, ministryTime) {
         derivedStateOf {
-            if (goal != null && goal!! > accumulatedTime.hours) {
-                goal!! - accumulatedTime.hours
+            val hours = if (role.canHaveCredit) {
+                accumulatedTime.hours
+            } else {
+                ministryTime.hours
+            }
+            if (goal != null && goal!! > hours) {
+                goal!! - hours
             } else {
                 null
             }
