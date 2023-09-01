@@ -101,7 +101,6 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                 )
             }
 
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
