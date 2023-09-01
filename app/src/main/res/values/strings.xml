@@ -140,4 +140,5 @@
     <string name="preview">Preview</string>
     <string name="select_date">Select date</string>
     <string name="intro_pioneer_since_question">When did you start pioneering?</string>
+    <string name="goal_reached">Goal reached!</string>
 </resources>

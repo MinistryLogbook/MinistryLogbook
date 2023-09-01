@@ -100,14 +100,21 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                     strokeCap = StrokeCap.Round
                 )
             }
+
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 4.dp),
                 horizontalArrangement = Arrangement.End
             ) {
+                val text = if (remaining > 0) {
+                    pluralStringResource(R.plurals.hours_remaining, remaining, remaining)
+                } else {
+                    stringResource(R.string.goal_reached)
+                }
                 Text(
-                    text = pluralStringResource(R.plurals.hours_remaining, remaining, remaining),
+                    text = text,
                     fontSize = 14.sp
                 )
             }
