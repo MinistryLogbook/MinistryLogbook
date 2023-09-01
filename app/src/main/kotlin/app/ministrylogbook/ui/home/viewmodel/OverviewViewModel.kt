@@ -39,7 +39,7 @@ class OverviewViewModel(
     private val _pioneerSince = settingService.pioneerSince
     private val _serviceYearBegin = when {
         // special case after corona pandemic; pioneering began in march
-        month.year == 2023 && month.monthNumber <= 9 -> LocalDate(month.year, 3, 1)
+        month.year == 2023 && month.monthNumber < 9 -> LocalDate(month.year, 3, 1)
         month.monthNumber >= 9 -> LocalDate(month.year, 9, 1)
         else -> LocalDate(month.year - 1, 9, 1)
     }
