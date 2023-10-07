@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
@@ -80,7 +81,10 @@ fun WelcomePage() {
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 DeferredAnimatedVisibility(1200, animate = !animated, transition = expandVerticallyWithFade(500)) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 24.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
                         Text(
                             stringResource(R.string.app_welcome),
                             fontSize = 32.sp,
@@ -91,7 +95,8 @@ fun WelcomePage() {
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
                             stringResource(R.string.app_description),
-                            color = MaterialTheme.colorScheme.onSurface.copy(0.7f)
+                            color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
+                            textAlign = TextAlign.Center,
                         )
                     }
                 }
