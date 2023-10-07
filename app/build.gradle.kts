@@ -1,5 +1,3 @@
-@file:Suppress("UnstableApiUsage", "DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
-
 import java.io.ByteArrayOutputStream
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -14,12 +12,12 @@ plugins {
 }
 
 android {
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "app.ministrylogbook"
         minSdk = 28
-        targetSdk = 33
+        targetSdk = 34
         versionCode = getVersionCode()
         versionName = getTagName()
         resourceConfigurations += listOf("en", "de")
