@@ -1,6 +1,5 @@
 package app.ministrylogbook.ui
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.MaterialTheme
@@ -11,6 +10,8 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import app.ministrylogbook.shared.layouts.ModalBottomSheetLayout
 import app.ministrylogbook.shared.layouts.PopupLayout
 import app.ministrylogbook.shared.layouts.rememberBottomSheetNavigator
@@ -20,15 +21,12 @@ import app.ministrylogbook.ui.home.homeGraph
 import app.ministrylogbook.ui.intro.introGraph
 import app.ministrylogbook.ui.settings.settingsGraph
 import app.ministrylogbook.ui.share.shareGraph
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun AppNavHost(startDestination: String = AppGraph.Home.route) {
     val bottomSheetNavigator = rememberBottomSheetNavigator()
     val popupNavigator = rememberPopupNavigator()
-    val navController = rememberAnimatedNavController(popupNavigator, bottomSheetNavigator)
+    val navController = rememberNavController(popupNavigator, bottomSheetNavigator)
 
     CompositionLocalProvider(LocalAppNavController provides navController) {
         Surface(Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -43,7 +41,7 @@ fun AppNavHost(startDestination: String = AppGraph.Home.route) {
                 scrimColor = MaterialTheme.colorScheme.surface.copy(0.5f)
             ) {
                 PopupLayout(popupNavigator = popupNavigator, popupState = popupNavigator.popupState) {
-                    AnimatedNavHost(navController = navController, startDestination = startDestination) {
+                    NavHost(navController = navController, startDestination = startDestination) {
                         shareGraph()
                         backupGraph()
                         homeGraph()

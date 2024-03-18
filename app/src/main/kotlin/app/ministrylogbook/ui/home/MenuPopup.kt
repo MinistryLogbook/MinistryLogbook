@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -99,7 +100,7 @@ fun MenuPopup() {
         )
     }
 
-    Divider()
+    HorizontalDivider()
 
     Row(
         Modifier
@@ -129,7 +130,7 @@ fun MenuPopup() {
         Text(stringResource(R.string.backup))
     }
 
-    Divider()
+    HorizontalDivider()
 
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
         val context = LocalContext.current

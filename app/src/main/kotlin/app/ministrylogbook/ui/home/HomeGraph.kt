@@ -9,6 +9,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import app.ministrylogbook.shared.layouts.bottomSheet
@@ -23,8 +25,6 @@ import app.ministrylogbook.ui.home.entrydetails.StudiesBottomSheetContent
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate

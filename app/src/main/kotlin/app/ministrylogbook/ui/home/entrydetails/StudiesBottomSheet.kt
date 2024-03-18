@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,7 +51,7 @@ fun StudiesBottomSheetContent(viewModel: StudiesDetailsViewModel = koinViewModel
             onSave = handleSave,
             isSavable = true
         )
-        Divider()
+        HorizontalDivider()
         Column(
             Modifier
                 .verticalScroll(rememberScrollState())

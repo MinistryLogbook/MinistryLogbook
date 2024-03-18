@@ -3,10 +3,10 @@ package app.ministrylogbook.ui.intro
 import android.app.Activity
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -35,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -42,7 +43,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.shared.layouts.DeferredAnimatedVisibility
@@ -54,22 +58,18 @@ import app.ministrylogbook.ui.home.navigateToHome
 import app.ministrylogbook.ui.intro.viewmodel.IntroIntent
 import app.ministrylogbook.ui.intro.viewmodel.IntroViewModel
 import app.ministrylogbook.ui.shared.ToolbarAction
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 
 val LocalIntroNavController = compositionLocalOf<NavHostController> { error("LocalIntroNavController error") }
 
-@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun SetupPage() {
     val viewModel = koinViewModel<IntroViewModel>()
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val navController = LocalAppNavController.current
-    val introNavController = rememberAnimatedNavController()
+    val introNavController = rememberNavController()
     val currentBackStackEntry by introNavController.currentBackStackEntryAsState()
     val isLastPage by remember {
         derivedStateOf { currentBackStackEntry?.destination?.route == InnerIntroGraph.Reminders.route }
@@ -104,6 +104,7 @@ fun SetupPage() {
                         true
                     }
                 }
+
                 else -> true
             }
         }
@@ -132,6 +133,8 @@ fun SetupPage() {
                 viewModel.dispatch(IntroIntent.GoalChange(tempGoal))
                 introNavController.navigate(InnerIntroGraph.Reminders.route)
             }
+
+            else -> {}
         }
     }
 
@@ -178,7 +181,7 @@ fun SetupPage() {
         ) {
             Box(Modifier.fillMaxSize()) {
                 CompositionLocalProvider(LocalIntroNavController provides introNavController) {
-                    AnimatedNavHost(
+                    NavHost(
                         navController = introNavController,
                         startDestination = InnerIntroGraph.Name.route
                     ) {
@@ -236,14 +239,20 @@ fun SetupPage() {
                             }
                         }
                     } else {
-                        Button(
-                            onClick = { navigateToNext() },
-                            modifier = Modifier.size(64.dp),
-                            enabled = isNextButtonEnabled,
-                            contentPadding = PaddingValues(0.dp),
-                            shape = CircleShape
+                        Box(
+                            Modifier
+                                .clip(CircleShape)
+                                .background(MaterialTheme.colorScheme.surface)
+                                .size(64.dp)
                         ) {
-                            Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
+                            Button(
+                                onClick = { navigateToNext() },
+                                modifier = Modifier.fillMaxSize(),
+                                enabled = isNextButtonEnabled,
+                                contentPadding = PaddingValues(0.dp),
+                            ) {
+                                Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
+                            }
                         }
                     }
                 }

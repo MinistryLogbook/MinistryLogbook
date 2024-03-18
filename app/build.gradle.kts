@@ -82,10 +82,11 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.10"
     }
 
     packaging {
@@ -133,7 +134,6 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.accompanist.navigation.material)
-    implementation(libs.accompanist.navigation.animation)
 
     debugImplementation(libs.ui.tooling)
     testImplementation(libs.junit)

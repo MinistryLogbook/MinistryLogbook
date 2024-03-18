@@ -9,6 +9,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import app.ministrylogbook.ui.AppGraph
@@ -17,8 +19,6 @@ import app.ministrylogbook.ui.FadeOutTransitionMillis
 import app.ministrylogbook.ui.SlideInTransitionMillis
 import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
@@ -53,7 +53,6 @@ sealed class ShareGraph(
         get() = "${AppGraph.Share}/$rawRoute"
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.shareGraph() {
     navigation(
         route = AppGraph.Share.route,

@@ -8,6 +8,8 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import app.ministrylogbook.ui.AppGraph
 import app.ministrylogbook.ui.FadeInTransitionMillis
 import app.ministrylogbook.ui.FadeOutTransitionMillis
@@ -15,8 +17,6 @@ import app.ministrylogbook.ui.SlideInTransitionMillis
 import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.home.HomeGraph
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 import org.koin.androidx.compose.getViewModel
 
 sealed class BackupGraph(private val rawRoute: String) {
@@ -29,7 +29,6 @@ sealed class BackupGraph(private val rawRoute: String) {
         get() = "${AppGraph.Backup}/$rawRoute"
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.backupGraph() {
     navigation(
         route = AppGraph.Backup.route,

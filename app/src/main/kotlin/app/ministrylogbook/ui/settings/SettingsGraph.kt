@@ -10,6 +10,8 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import app.ministrylogbook.shared.layouts.stayOut
 import app.ministrylogbook.ui.AppGraph
@@ -20,8 +22,6 @@ import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.home.HomeGraph
 import app.ministrylogbook.ui.settings.license.LicenseDetailPage
 import app.ministrylogbook.ui.settings.license.LicensesPage
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.navigation
 
 sealed class SettingsGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
     object Root : SettingsGraph("")
@@ -43,7 +43,6 @@ sealed class SettingsGraph(private val rawRoute: String, val arguments: List<Nam
         get() = "${AppGraph.Settings}/$rawRoute"
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.settingsGraph() {
     navigation(
         route = AppGraph.Settings.route,

@@ -21,6 +21,7 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -260,7 +261,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             onDelete = { isDeleteDialogVisible = true },
             isDeletable = entry.id != 0
         )
-        Divider()
+        HorizontalDivider()
         Column(
             Modifier
                 .verticalScroll(rememberScrollState())
@@ -302,7 +303,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                 }
             }
             if (isCreditEnabled) {
-                Divider()
+                HorizontalDivider()
                 Box(Modifier.clickable { isEntryKindDialogVisible = true }) {
                     Box(Modifier.padding(bottom = 12.dp, start = 20.dp, top = 12.dp, end = 20.dp)) {
                         UnitRow(
@@ -312,7 +313,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
                     }
                 }
             }
-            Divider()
+            HorizontalDivider()
             Column(
                 Modifier
                     .padding(start = 20.dp, end = 20.dp, top = 12.dp, bottom = 12.dp)

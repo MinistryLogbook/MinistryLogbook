@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
@@ -32,7 +33,7 @@ fun AlertDialog(
     content: @Composable () -> Unit = {}
 ) {
     if (isOpen) {
-        androidx.compose.material3.AlertDialog(onDismissRequest = onDismissRequest) {
+        BasicAlertDialog(onDismissRequest = onDismissRequest) {
             Surface(
                 modifier = Modifier
                     .wrapContentHeight()
