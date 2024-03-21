@@ -83,14 +83,17 @@ fun TimePage(
                 onClick = {
                     navController.navigateToEntryDetails(state.month)
                 },
-                extended = fabExtended, icon = {
+                extended = fabExtended,
+                icon = {
                     Icon(
-                        painterResource(R.drawable.ic_add), contentDescription = null // TODO: contentDescription
+                        painterResource(R.drawable.ic_add),
+                        contentDescription = null // TODO: contentDescription
                     )
                 },
                 text = {
                     Text(stringResource(R.string.create_entry))
-                })
+                }
+            )
         }
     }
 }

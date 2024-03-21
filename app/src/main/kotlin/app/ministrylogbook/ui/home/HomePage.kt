@@ -105,7 +105,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
         topBar = {
             Toolbar(
                 padding = PaddingValues(horizontal = 12.dp),
-                elevation = if (scrollPosition > 0) 4.dp else 0.dp,
+                elevation = if (scrollPosition > 0) 4.dp else 0.dp
             ) {
                 ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
                     selectedMonth = it
@@ -139,7 +139,8 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                             painterResource(R.drawable.ic_schedule),
                             contentDescription = null // TODO: contentDescription
                         )
-                    })
+                    }
+                )
 
                 val isStudiesSelected = pagerState.currentPage == 1
                 NavigationBarItem(
@@ -150,7 +151,6 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                                 pagerState.scrollToPage(1)
                             }
                         } else {
-
                         }
                     },
                     label = {
@@ -161,7 +161,8 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                             painterResource(R.drawable.ic_group),
                             contentDescription = null // TODO: contentDescription
                         )
-                    })
+                    }
+                )
             }
         }
     ) { paddingValues ->

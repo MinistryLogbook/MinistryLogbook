@@ -96,7 +96,7 @@ fun WelcomePage() {
                         Text(
                             stringResource(R.string.app_description),
                             color = MaterialTheme.colorScheme.onSurface.copy(0.7f),
-                            textAlign = TextAlign.Center,
+                            textAlign = TextAlign.Center
                         )
                     }
                 }

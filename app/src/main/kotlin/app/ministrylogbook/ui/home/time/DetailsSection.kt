@@ -239,7 +239,7 @@ fun DetailsSection(state: HomeState) {
                             modifier = Modifier.placeholder(
                                 visible = remainingHours == null,
                                 highlight = PlaceholderHighlight.fade()
-                            ),
+                            )
                         )
                     }
                 }

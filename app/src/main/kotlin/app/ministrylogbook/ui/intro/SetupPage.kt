@@ -249,7 +249,7 @@ fun SetupPage() {
                                 onClick = { navigateToNext() },
                                 modifier = Modifier.fillMaxSize(),
                                 enabled = isNextButtonEnabled,
-                                contentPadding = PaddingValues(0.dp),
+                                contentPadding = PaddingValues(0.dp)
                             ) {
                                 Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
                             }

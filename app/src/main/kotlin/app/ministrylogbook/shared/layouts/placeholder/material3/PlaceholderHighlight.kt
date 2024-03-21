@@ -17,10 +17,10 @@ import app.ministrylogbook.shared.layouts.placeholder.shimmer
  */
 @Composable
 fun PlaceholderHighlight.Companion.fade(
-    animationSpec: InfiniteRepeatableSpec<Float> = PlaceholderDefaults.fadeAnimationSpec,
+    animationSpec: InfiniteRepeatableSpec<Float> = PlaceholderDefaults.fadeAnimationSpec
 ): PlaceholderHighlight = PlaceholderHighlight.fade(
     highlightColor = PlaceholderDefaults.fadeHighlightColor(),
-    animationSpec = animationSpec,
+    animationSpec = animationSpec
 )
 
 /**
@@ -37,9 +37,9 @@ fun PlaceholderHighlight.Companion.fade(
 @Composable
 fun PlaceholderHighlight.Companion.shimmer(
     animationSpec: InfiniteRepeatableSpec<Float> = PlaceholderDefaults.shimmerAnimationSpec,
-    @FloatRange(from = 0.0, to = 1.0) progressForMaxAlpha: Float = 0.6f,
+    @FloatRange(from = 0.0, to = 1.0) progressForMaxAlpha: Float = 0.6f
 ): PlaceholderHighlight = PlaceholderHighlight.shimmer(
     highlightColor = PlaceholderDefaults.shimmerHighlightColor(),
     animationSpec = animationSpec,
-    progressForMaxAlpha = progressForMaxAlpha,
+    progressForMaxAlpha = progressForMaxAlpha
 )

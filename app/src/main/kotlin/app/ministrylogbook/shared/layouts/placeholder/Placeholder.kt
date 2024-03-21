@@ -15,7 +15,6 @@
  */
 package app.ministrylogbook.shared.layouts.placeholder
 
-import android.annotation.SuppressLint
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.MutableTransitionState
@@ -27,8 +26,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -44,11 +41,9 @@ import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
-import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.node.Ref
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.LayoutDirection
@@ -63,7 +58,7 @@ object PlaceholderDefaults {
     val fadeAnimationSpec: InfiniteRepeatableSpec<Float> by lazy {
         infiniteRepeatable(
             animation = tween(delayMillis = 200, durationMillis = 600),
-            repeatMode = RepeatMode.Reverse,
+            repeatMode = RepeatMode.Reverse
         )
     }
 
@@ -110,7 +105,7 @@ fun Modifier.placeholder(
     shape: Shape = RectangleShape,
     highlight: PlaceholderHighlight? = null,
     placeholderFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
-    contentFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
+    contentFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() }
 ): Modifier = composed(
     inspectorInfo = debugInspectorInfo {
         name = "placeholder"
@@ -153,7 +148,8 @@ fun Modifier.placeholder(
         highlightProgress = infiniteTransition.animateFloat(
             initialValue = 0f,
             targetValue = 1f,
-            animationSpec = animationSpec, label = "",
+            animationSpec = animationSpec,
+            label = ""
         ).value
     }
 
@@ -187,7 +183,7 @@ fun Modifier.placeholder(
                         progress = highlightProgress,
                         lastOutline = lastOutline.value,
                         lastLayoutDirection = lastLayoutDirection.value,
-                        lastSize = lastSize.value,
+                        lastSize = lastSize.value
                     )
                 }
             } else if (placeholderAlpha >= 0.99f) {
@@ -199,7 +195,7 @@ fun Modifier.placeholder(
                     progress = highlightProgress,
                     lastOutline = lastOutline.value,
                     lastLayoutDirection = lastLayoutDirection.value,
-                    lastSize = lastSize.value,
+                    lastSize = lastSize.value
                 )
             }
 
@@ -217,7 +213,7 @@ private fun DrawScope.drawPlaceholder(
     progress: Float,
     lastOutline: Outline?,
     lastLayoutDirection: LayoutDirection?,
-    lastSize: Size?,
+    lastSize: Size?
 ): Outline? {
     // shortcut to avoid Outline calculation and allocation
     if (shape === RectangleShape) {
@@ -227,7 +223,7 @@ private fun DrawScope.drawPlaceholder(
         if (highlight != null) {
             drawRect(
                 brush = highlight.brush(progress, size),
-                alpha = highlight.alpha(progress),
+                alpha = highlight.alpha(progress)
             )
         }
         // We didn't create an outline so return null
@@ -246,7 +242,7 @@ private fun DrawScope.drawPlaceholder(
         drawOutline(
             outline = outline,
             brush = highlight.brush(progress, size),
-            alpha = highlight.alpha(progress),
+            alpha = highlight.alpha(progress)
         )
     }
 
@@ -256,7 +252,7 @@ private fun DrawScope.drawPlaceholder(
 
 private inline fun DrawScope.withLayer(
     paint: Paint,
-    drawBlock: DrawScope.() -> Unit,
+    drawBlock: DrawScope.() -> Unit
 ) = drawIntoCanvas { canvas ->
     canvas.saveLayer(size.toRect(), paint)
     drawBlock()

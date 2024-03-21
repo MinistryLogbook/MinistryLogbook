@@ -32,7 +32,8 @@ import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
 sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
-    object Root : HomeGraph(rawRoute = "?year={year}&monthNumber={monthNumber}",
+    object Root : HomeGraph(
+        rawRoute = "?year={year}&monthNumber={monthNumber}",
         arguments = listOf(
             navArgument("year") {
                 nullable = true

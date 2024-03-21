@@ -1,6 +1,5 @@
 package app.ministrylogbook.ui.share
 
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut

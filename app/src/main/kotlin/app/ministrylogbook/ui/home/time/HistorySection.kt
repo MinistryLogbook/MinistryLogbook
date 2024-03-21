@@ -133,7 +133,7 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
                             .height(2.dp)
                             .fillMaxWidth()
                             .clip(CircleShape),
-                        strokeCap = StrokeCap.Round,
+                        strokeCap = StrokeCap.Round
                     )
                 }
             }
@@ -169,7 +169,7 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
                                 .height(2.dp)
                                 .fillMaxWidth()
                                 .clip(CircleShape),
-                            strokeCap = StrokeCap.Round,
+                            strokeCap = StrokeCap.Round
                         )
                     }
                 }

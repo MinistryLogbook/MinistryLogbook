@@ -59,7 +59,7 @@ data class HomeState(
     val selectedBackupFile: BackupFile? = null,
     val isBackupValid: Boolean = false,
     val latestEntry: Entry? = null,
-    val importFinished: Boolean = false,
+    val importFinished: Boolean = false
 )
 
 class HomeViewModel(
@@ -150,7 +150,7 @@ class HomeViewModel(
         _restLastMonth,
         _transferred,
         _rest,
-        _beginOfPioneeringInServiceYear,
+        _beginOfPioneeringInServiceYear
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -167,7 +167,7 @@ class HomeViewModel(
             restLastMonth = values[9] as Time,
             transferred = values[10] as List<Entry>,
             rest = values[11] as Time,
-            beginOfPioneeringInServiceYear = values[12] as LocalDate?,
+            beginOfPioneeringInServiceYear = values[12] as LocalDate?
         )
     }.stateIn(
         scope = viewModelScope,
@@ -176,7 +176,7 @@ class HomeViewModel(
     )
 
     override fun dispatch(intent: HomeIntent) {
-        when(intent) {
+        when (intent) {
             is HomeIntent.TransferToTextMonth -> transferToNextMonth(intent.minutes)
             is HomeIntent.UndoTransfer -> undoTransfer(intent.transfer)
             is HomeIntent.TransferFromLastMonth -> transferFromLastMonth(intent.minutes)
