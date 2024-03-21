@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import android.graphics.Rect
 import androidx.compose.animation.core.animateIntAsState

@@ -15,8 +15,11 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.core.annotation.KoinExperimentalAPI
 
 class MainActivity : AppCompatActivity() {
+    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -32,9 +35,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            MinistryLogbookTheme(design) {
-                val startDestination = if (showIntro) AppGraph.Intro.route else AppGraph.Home.route
-                AppNavHost(startDestination)
+            KoinAndroidContext {
+                MinistryLogbookTheme(design) {
+                    val startDestination = if (showIntro) AppGraph.Intro.route else AppGraph.Home.route
+                    AppNavHost(startDestination)
+                }
             }
         }
     }

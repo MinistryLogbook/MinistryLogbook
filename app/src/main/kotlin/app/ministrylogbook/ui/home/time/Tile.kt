@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

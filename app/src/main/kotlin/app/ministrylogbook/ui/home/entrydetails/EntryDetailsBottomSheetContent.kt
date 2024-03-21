@@ -1,6 +1,5 @@
 package app.ministrylogbook.ui.home.entrydetails
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -85,7 +83,6 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             } && !isInFuture
         }
     }
-    val hasLoaded = (viewModel.id ?: 0) == entry.id
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isEntryKindDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -139,22 +136,6 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
             )
         } else if (it in 0..59) {
             viewModel.update(minutes = it)
-        }
-    }
-    val handleChangePlacements: (newValue: Int) -> Unit = {
-        if (it in 0..999) {
-            viewModel.update(placements = it)
-        }
-    }
-
-    val handleChangeReturnVisits: (newValue: Int) -> Unit = {
-        if (it in 0..99) {
-            viewModel.update(returnVisits = it)
-        }
-    }
-    val handleChangeVideos: (newValue: Int) -> Unit = {
-        if (it in 0..99) {
-            viewModel.update(videoShowings = it)
         }
     }
     val handleChangeDate: (newValue: LocalDateTime) -> Unit = {
@@ -252,7 +233,7 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
     }
 
-    Column() {
+    Column {
         DragLine()
         Toolbar(
             onClose = handleClose,
@@ -333,38 +314,6 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
 
                     NumberPicker(entry.minutes, step) {
                         handleChangeMinutes(it)
-                    }
-                }
-
-                if (hasLoaded) {
-                    AnimatedVisibility(visible = entry.type == EntryType.Ministry) {
-                        Column {
-                            UnitRow(
-                                stringResource(R.string.placements_short),
-                                description = stringResource(R.string.printed_and_electronic),
-                                icon = painterResource(R.drawable.ic_article)
-                            ) {
-                                NumberPicker(entry.placements) {
-                                    handleChangePlacements(it)
-                                }
-                            }
-                            UnitRow(
-                                stringResource(R.string.video_showings),
-                                icon = painterResource(R.drawable.ic_play_circle)
-                            ) {
-                                NumberPicker(entry.videoShowings) {
-                                    handleChangeVideos(it)
-                                }
-                            }
-                            UnitRow(
-                                stringResource(R.string.return_visits),
-                                icon = painterResource(R.drawable.ic_group)
-                            ) {
-                                NumberPicker(entry.returnVisits) {
-                                    handleChangeReturnVisits(it)
-                                }
-                            }
-                        }
                     }
                 }
             }

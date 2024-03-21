@@ -3,7 +3,6 @@
     <string name="app_name">Ministry Logbook</string>
     <string name="settings">Settings</string>
     <string name="news">News</string>
-    <string name="placements_short">Placements</string>
     <string name="bible_studies_short">Studies</string>
     <string name="return_visits">Return Visits</string>
     <string name="video_showings">Video Showings</string>
@@ -83,7 +82,6 @@
     <string name="placements_long_colon">Placements (Printed and Electronic):</string>
     <string name="minutes">Minutes</string>
     <string name="share_with">Share with</string>
-    <string name="video_showings_short">Videos</string>
     <string name="to_transfer">Transfer</string>
     <string name="set_goal_error">Value must be a number greater than zero</string>
     <string name="undo_transfer_title">Undo transfer</string>
@@ -141,4 +139,5 @@
     <string name="select_date">Select date</string>
     <string name="intro_pioneer_since_question">When did you start pioneering?</string>
     <string name="goal_reached">Goal reached!</string>
+    <string name="time">Time</string>
 </resources>

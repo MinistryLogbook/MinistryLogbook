@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.AnimationConstants
@@ -42,35 +42,30 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
+import app.ministrylogbook.shared.layouts.placeholder.PlaceholderHighlight
+import app.ministrylogbook.shared.layouts.placeholder.material3.fade
+import app.ministrylogbook.shared.layouts.placeholder.material3.placeholder
 import app.ministrylogbook.shared.layouts.progress.CircleProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
-import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
+import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
-    val entries by homeViewModel.entries.collectAsStateWithLifecycle()
-    val role by homeViewModel.role.collectAsStateWithLifecycle()
-    val goal by homeViewModel.goal.collectAsStateWithLifecycle()
-    val roleGoal by homeViewModel.roleGoal.collectAsStateWithLifecycle()
-    val hasGoal by homeViewModel.hasGoal.collectAsStateWithLifecycle()
+fun DetailsSection(state: HomeState) {
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit = remember(roleGoal) { Time(roleGoal + 5, 0) }
-    val transferred by homeViewModel.transferred.collectAsStateWithLifecycle()
-    val transferredTime = remember(transferred) { transferred.timeSum() }
-    val ministryTime = remember(entries, transferredTime) { entries.ministryTimeSum() - transferredTime }
-    val theocraticAssignmentsTime = remember(entries) { entries.theocraticAssignmentTimeSum() }
-    val theocraticSchoolTime = remember(entries) { entries.theocraticSchoolTimeSum() }
+    val maxHoursWithCredit = remember(state.roleGoal) { Time(state.roleGoal + 5, 0) }
+    val transferredTime = remember(state.transferred) { state.transferred.timeSum() }
+    val ministryTime = remember(state.entries, transferredTime) { state.entries.ministryTimeSum() - transferredTime }
+    val theocraticAssignmentsTime = remember(state.entries) { state.entries.theocraticAssignmentTimeSum() }
+    val theocraticSchoolTime = remember(state.entries) { state.entries.theocraticSchoolTimeSum() }
     val credit = remember(
         ministryTime,
         theocraticAssignmentsTime,
@@ -98,15 +93,15 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             } + theocraticSchoolTime
         }
     }
-    val remainingHours by remember(role, goal, accumulatedTime, ministryTime) {
+    val remainingHours by remember(state.role, state.goal, accumulatedTime, ministryTime) {
         derivedStateOf {
-            val hours = if (role.canHaveCredit) {
+            val hours = if (state.role.canHaveCredit) {
                 accumulatedTime.hours
             } else {
                 ministryTime.hours
             }
-            if (goal != null && goal!! > hours) {
-                goal!! - hours
+            if (state.goal != null && state.goal > hours) {
+                state.goal - hours
             } else {
                 null
             }
@@ -127,13 +122,13 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                         .height(widthDp / 2)
                         .width(widthDp / 2)
                 ) {
-                    val accPercent = if (goal != null) {
-                        minOf(1f, 1f / goal!! * (accumulatedTime.hours + accumulatedTime.minutes.toFloat() / 60))
+                    val accPercent = if (state.goal != null) {
+                        minOf(1f, 1f / state.goal * (accumulatedTime.hours + accumulatedTime.minutes.toFloat() / 60))
                     } else {
                         1f
                     }
-                    val ministryPercent = if (goal != null) {
-                        minOf(1f, 1f / goal!! * (ministryTime.hours + ministryTime.minutes.toFloat() / 60))
+                    val ministryPercent = if (state.goal != null) {
+                        minOf(1f, 1f / state.goal * (ministryTime.hours + ministryTime.minutes.toFloat() / 60))
                     } else {
                         1f
                     }
@@ -144,7 +139,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                             Progress(
                                 percent = accPercent,
                                 color = ProgressPositive.copy(0.6f)
-                            ).takeIf { role.canHaveCredit && credit.isNotEmpty },
+                            ).takeIf { state.role.canHaveCredit && credit.isNotEmpty },
                             Progress(
                                 percent = ministryPercent,
                                 color = ProgressPositive
@@ -165,7 +160,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                         )
 
                         AnimatedVisibility(
-                            visible = role.canHaveCredit && credit > Time(0, 0),
+                            visible = state.role.canHaveCredit && credit > Time(0, 0),
                             enter = expandVertically(
                                 tween(
                                     durationMillis = 200,
@@ -190,9 +185,7 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
                             ) {
                                 val creditMinutes =
                                     if (credit.minutes > 0) {
-                                        ":${
-                                            credit.minutes.toString().padStart(2, '0')
-                                        }"
+                                        ":${credit.minutes.toString().padStart(2, '0')}"
                                     } else {
                                         ""
                                     }
@@ -219,31 +212,38 @@ fun DetailsSection(homeViewModel: OverviewViewModel = koinViewModel()) {
             }
         }
 
-        if (remainingHours != null && hasGoal) {
-            val remainingHoursAnimated by animateIntAsState(
-                targetValue = remainingHours!!,
-                animationSpec = tween(400),
-                label = "remainingHours"
-            )
-            ExpandAnimatedVisibility(show = remainingHours!! > 0) {
+        if (state.hasGoal) {
+            ExpandAnimatedVisibility(show = remainingHours == null || remainingHours!! > 0) {
                 Column {
                     Spacer(Modifier.height(16.dp))
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Text(
+                        val text = if (remainingHours != null) {
+                            val remainingHoursAnimated by animateIntAsState(
+                                targetValue = remainingHours ?: 0,
+                                animationSpec = tween(400),
+                                label = "remainingHours"
+                            )
                             pluralStringResource(
                                 R.plurals.hours_remaining,
                                 remainingHoursAnimated,
                                 remainingHoursAnimated
-                            ),
+                            )
+                        } else {
+                            pluralStringResource(R.plurals.hours_remaining, 99, 99)
+                        }
+
+                        Text(
+                            text,
                             color = ProgressPositive,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.placeholder(
+                                visible = remainingHours == null,
+                                highlight = PlaceholderHighlight.fade()
+                            ),
                         )
                     }
                 }
             }
         }
-
-        Spacer(Modifier.height(16.dp))
-        Metrics()
     }
 }

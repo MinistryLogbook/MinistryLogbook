@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -22,7 +22,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.shared.Time
@@ -33,18 +32,16 @@ import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
-import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
+import app.ministrylogbook.ui.home.viewmodel.HomeIntent
+import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
-    val role by viewModel.role.collectAsStateWithLifecycle()
-    val beginOfPioneeringInServiceYear by viewModel.beginOfPioneeringInServiceYear.collectAsStateWithLifecycle()
-    val show by remember(role, beginOfPioneeringInServiceYear) {
+fun YearlyProgress(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
+    val show by remember(state.role, state.beginOfPioneeringInServiceYear, state.month) {
         derivedStateOf {
-            val isPioneer = role == Role.SpecialPioneer || role == Role.RegularPioneer
-            isPioneer && beginOfPioneeringInServiceYear != null && beginOfPioneeringInServiceYear!! <= viewModel.month
+            val isPioneer = state.role == Role.SpecialPioneer || state.role == Role.RegularPioneer
+            isPioneer && state.beginOfPioneeringInServiceYear != null && state.beginOfPioneeringInServiceYear <= state.month
         }
     }
 
@@ -52,13 +49,12 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
         Spacer(Modifier.height(16.dp))
 
         Tile(title = { Text(stringResource(R.string.progress_of_yearly_goal)) }) {
-            val yearlyGoal by viewModel.yearlyGoal.collectAsStateWithLifecycle()
-            val goal by viewModel.roleGoal.collectAsStateWithLifecycle()
-            val maxHoursWithCredit by remember(goal) { derivedStateOf { Time(goal + 5, 0) } }
-            val entriesInServiceYear by viewModel.entriesInServiceYear.collectAsStateWithLifecycle()
-            val time by remember(entriesInServiceYear, maxHoursWithCredit) {
+            val maxHoursWithCredit by remember(state.goal) {
+                derivedStateOf { Time(state.goal?.plus(5) ?: 0, 0) }
+            }
+            val time by remember(state.entriesInServiceYear, maxHoursWithCredit) {
                 derivedStateOf {
-                    entriesInServiceYear.splitIntoMonths().map {
+                    state.entriesInServiceYear.splitIntoMonths().map {
                         val ministryTimeSum = it.ministryTimeSum()
                         val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum()
                         val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum()
@@ -67,12 +63,12 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                     }.sum()
                 }
             }
-            val ministryTime by remember(entriesInServiceYear) {
+            val ministryTime by remember(state.entriesInServiceYear) {
                 derivedStateOf {
-                    entriesInServiceYear.ministryTimeSum()
+                    state.entriesInServiceYear.ministryTimeSum()
                 }
             }
-            val remaining by remember(time, yearlyGoal) { derivedStateOf { yearlyGoal - time.hours } }
+            val remaining by remember(time, state.yearlyGoal) { derivedStateOf { state.yearlyGoal - time.hours } }
 
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
@@ -80,7 +76,7 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
                         time.hours.toString(),
                         spanStyle = SpanStyle(fontSize = 20.sp)
                     ) + AnnotatedString(" ${stringResource(R.string.of)} ") + AnnotatedString(
-                        text = stringResource(R.string.hours_value_short_unit, yearlyGoal),
+                        text = stringResource(R.string.hours_value_short_unit, state.yearlyGoal),
                         spanStyle = SpanStyle(fontSize = 20.sp)
                     ),
                     color = ProgressPositive,
@@ -91,8 +87,11 @@ fun YearlyProgress(viewModel: OverviewViewModel = koinViewModel()) {
 
                 LinearProgressIndicator(
                     progresses = listOf(
-                        Progress(percent = (1f / yearlyGoal * time.hours), color = ProgressPositive.copy(alpha = .6f)),
-                        Progress(percent = (1f / yearlyGoal * ministryTime.hours), color = ProgressPositive)
+                        Progress(
+                            percent = (1f / state.yearlyGoal * time.hours),
+                            color = ProgressPositive.copy(alpha = .6f)
+                        ),
+                        Progress(percent = (1f / state.yearlyGoal * ministryTime.hours), color = ProgressPositive)
                     ),
                     modifier = Modifier
                         .height(8.dp)

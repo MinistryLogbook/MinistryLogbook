@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,39 +15,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.utilities.transfers
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToEntryDetails
-import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
-import org.koin.androidx.compose.koinViewModel
+import app.ministrylogbook.ui.home.viewmodel.HomeIntent
+import app.ministrylogbook.ui.home.viewmodel.HomeState
 
 @Composable
-fun HistorySection(viewModel: OverviewViewModel = koinViewModel()) {
+fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
     val navController = LocalAppNavController.current
-    val entries by viewModel.entries.collectAsStateWithLifecycle()
-    val orderedEntries by remember(entries) {
-        derivedStateOf { entries.sortedBy { it.datetime }.reversed() }
+    val orderedEntries by remember(state) {
+        derivedStateOf { state.entries.sortedBy { it.datetime }.reversed() }
     }
-    val orderedEntriesWithoutTransfers by remember(entries) {
+    val orderedEntriesWithoutTransfers by remember(orderedEntries) {
         derivedStateOf { orderedEntries.filter { it.type != EntryType.Transfer } }
     }
-    val transfers by remember(entries) {
-        derivedStateOf { entries.transfers().filter { it.time.isNotEmpty } }
+    val transfers by remember(state) {
+        derivedStateOf { state.entries.transfers().filter { it.time.isNotEmpty } }
     }
     var transferToUndo by remember { mutableStateOf<Entry?>(null) }
-    val transferred by viewModel.transferred.collectAsStateWithLifecycle()
 
     val handleClick: (entry: Entry) -> Unit = {
-        navController.navigateToEntryDetails(viewModel.month, it.id)
+        navController.navigateToEntryDetails(state.month, it.id)
     }
 
     val handleUndoTransfer: () -> Unit = {
         transferToUndo?.let { entry ->
-            viewModel.undoTransfer(entry)
+            val intent = HomeIntent.UndoTransfer(entry)
+            dispatch(intent)
             transferToUndo = null
         }
     }
@@ -79,7 +77,7 @@ fun HistorySection(viewModel: OverviewViewModel = koinViewModel()) {
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        transferred.forEach {
+        state.transferred.forEach {
             HistoryItem(it, subtract = true, onClick = { transferToUndo = it })
         }
         orderedEntriesWithoutTransfers.forEach {

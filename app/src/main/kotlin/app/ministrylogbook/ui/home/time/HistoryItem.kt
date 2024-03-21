@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +59,7 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
         Modifier
             .fillMaxWidth()
             .height(64.dp)
+            .clip(RoundedCornerShape(16.dp))
             .condition(onClick != null) {
                 clickable(onClick = onClick!!)
             }

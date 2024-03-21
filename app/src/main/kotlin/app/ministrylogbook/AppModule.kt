@@ -11,7 +11,6 @@ import app.ministrylogbook.shared.services.ReminderManager
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
-import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
 import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
 import app.ministrylogbook.ui.intro.viewmodel.IntroViewModel
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
@@ -31,9 +30,6 @@ val appModule = module {
     single { SettingsService(androidContext()) }
     single { ReminderManager() }
     single { BackupService(androidContext(), get(), get()) }
-    viewModel { params ->
-        OverviewViewModel(params.get(), androidContext() as Application, get(), get(), get())
-    }
     viewModel { params -> StudiesDetailsViewModel(params.get(), get()) }
     viewModel { params -> EntryDetailsViewModel(params.get(), params.getOrNull(), get(), get()) }
     viewModel { params ->
@@ -47,6 +43,16 @@ val appModule = module {
     }
     viewModel { BackupViewModel(androidContext() as Application, get(), get(), get()) }
     viewModel { SettingsViewModel(get(), get(), get()) }
-    viewModel { params -> HomeViewModel(params.getOrNull(), androidContext() as Application, get(), get(), get()) }
+    viewModel { params ->
+        HomeViewModel(
+            params.get(),
+            params.getOrNull(),
+            androidContext() as Application,
+            get(),
+            get(),
+            get(),
+            get()
+        )
+    }
     viewModel { IntroViewModel(get(), get(), get()) }
 }

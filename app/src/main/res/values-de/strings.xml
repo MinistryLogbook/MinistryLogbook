@@ -141,4 +141,5 @@
     <string name="select_date">Datum auswählen</string>
     <string name="intro_pioneer_since_question">Wann hast du mit dem Pionierdienst begonnen?</string>
     <string name="goal_reached">Ziel erreicht!</string>
+    <string name="time">Zeit</string>
 </resources>

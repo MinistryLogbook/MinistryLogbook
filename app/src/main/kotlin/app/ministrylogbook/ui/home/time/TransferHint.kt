@@ -1,4 +1,4 @@
-package app.ministrylogbook.ui.home.overview
+package app.ministrylogbook.ui.home.time
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,23 +12,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
-import app.ministrylogbook.ui.home.viewmodel.OverviewViewModel
-import org.koin.androidx.compose.koinViewModel
+import app.ministrylogbook.ui.home.viewmodel.HomeIntent
+import app.ministrylogbook.ui.home.viewmodel.HomeState
 
 @Composable
-fun TransferHint(viewModel: OverviewViewModel = koinViewModel()) {
-    val restLastMonth by viewModel.restLastMonth.collectAsStateWithLifecycle()
-    val entries by viewModel.entries.collectAsStateWithLifecycle()
-    val hasTransfer by remember {
+fun TransferHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
+    val hasTransfer by remember(state) {
         derivedStateOf {
-            entries.any { it.type == EntryType.Transfer }
+            state.entries.any { it.type == EntryType.Transfer }
         }
     }
-    val show = restLastMonth.isNotEmpty && !hasTransfer
+    val show = state.restLastMonth.isNotEmpty && !hasTransfer
 
     ExpandAnimatedVisibility(show) {
         Column {
@@ -40,18 +37,24 @@ fun TransferHint(viewModel: OverviewViewModel = koinViewModel()) {
                 },
                 actions = {
                     TextButton(
-                        onClick = { viewModel.transferFromLastMonth(restLastMonth.minutes) },
+                        onClick = {
+                            val intent = HomeIntent.TransferFromLastMonth(state.restLastMonth.minutes)
+                            dispatch(intent)
+                        },
                         enabled = show
                     ) {
                         Text(stringResource(R.string.to_transfer))
                     }
                 },
-                onDismiss = { viewModel.transferFromLastMonth(0) }
+                onDismiss = {
+                    val intent = HomeIntent.TransferFromLastMonth(0)
+                    dispatch(intent)
+                }
             ) {
                 Text(
                     stringResource(
                         R.string.last_month_time_remaining_description,
-                        restLastMonth.minutes
+                        state.restLastMonth.minutes
                     )
                 )
             }

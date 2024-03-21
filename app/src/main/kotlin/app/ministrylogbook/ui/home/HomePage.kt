@@ -1,33 +1,68 @@
 package app.ministrylogbook.ui.home
 
 import android.content.Intent
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
 import app.ministrylogbook.MainActivity
-import app.ministrylogbook.shared.layouts.ToolbarLayout
+import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.restartApp
+import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.backup.BackupImportDialog
+import app.ministrylogbook.ui.home.studies.StudiesPage
+import app.ministrylogbook.ui.home.time.TimePage
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import app.ministrylogbook.ui.shared.Toolbar
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
+enum class PagerPage {
+    Time,
+    Studies
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
-    val navController = rememberNavController()
-    var scrollPosition by remember { mutableIntStateOf(0) }
+    val navController = LocalAppNavController.current
+    val pagerState = rememberPagerState(pageCount = { PagerPage.entries.size })
+    val currentPage by remember(pagerState.currentPage) {
+        derivedStateOf {
+            PagerPage.entries.first { it.ordinal == pagerState.currentPage }
+        }
+    }
+    val timeScrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var selectedMonth by remember(navBackStackEntry) {
         val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -37,6 +72,14 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
         return@remember mutableStateOf(LocalDate(year, monthNumber, 1))
     }
     val context = LocalContext.current
+    val scrollPosition by remember(currentPage) {
+        derivedStateOf {
+            when (currentPage) {
+                PagerPage.Time -> timeScrollState.value
+                else -> 0
+            }
+        }
+    }
 
     LaunchedEffect(state.importFinished) {
         if (state.importFinished) {
@@ -57,17 +100,83 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
         )
     }
 
-    ToolbarLayout(elevation = scrollPosition > 0, toolbarContent = {
-        ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
-            selectedMonth = it
-            navController.navigateToMonth(it.year, it.monthNumber)
-        })
-        Spacer(Modifier.weight(1f))
-        ToolbarActions(state.name, selectedMonth)
-    }) {
-        HomeNavHost(
-            navController = navController,
-            onScroll = { scrollPosition = it }
-        )
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
+        topBar = {
+            Toolbar(
+                padding = PaddingValues(horizontal = 12.dp),
+                elevation = if (scrollPosition > 0) 4.dp else 0.dp,
+            ) {
+                ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
+                    selectedMonth = it
+                    navController.navigateToMonth(it.year, it.monthNumber)
+                })
+                Spacer(Modifier.weight(1f))
+                ToolbarActions(state.name, selectedMonth)
+            }
+        },
+        bottomBar = {
+            NavigationBar {
+                val isTimeSelected = pagerState.currentPage == 0
+                NavigationBarItem(
+                    selected = isTimeSelected,
+                    onClick = {
+                        if (!isTimeSelected) {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(0)
+                            }
+                        } else {
+                            coroutineScope.launch {
+                                timeScrollState.animateScrollTo(0)
+                            }
+                        }
+                    },
+                    label = {
+                        Text(stringResource(R.string.time))
+                    },
+                    icon = {
+                        Icon(
+                            painterResource(R.drawable.ic_schedule),
+                            contentDescription = null // TODO: contentDescription
+                        )
+                    })
+
+                val isStudiesSelected = pagerState.currentPage == 1
+                NavigationBarItem(
+                    selected = isStudiesSelected,
+                    onClick = {
+                        if (!isStudiesSelected) {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(1)
+                            }
+                        } else {
+
+                        }
+                    },
+                    label = {
+                        Text(stringResource(R.string.bible_studies_short))
+                    },
+                    icon = {
+                        Icon(
+                            painterResource(R.drawable.ic_group),
+                            contentDescription = null // TODO: contentDescription
+                        )
+                    })
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            HorizontalPager(state = pagerState) { pageIndex ->
+                val page = PagerPage.entries.first { it.ordinal == pageIndex }
+                when (page) {
+                    PagerPage.Time -> TimePage(state, dispatch, timeScrollState)
+                    PagerPage.Studies -> StudiesPage()
+                }
+            }
+        }
     }
 }

@@ -2,7 +2,6 @@ package app.ministrylogbook.ui.home
 
 import android.content.Intent
 import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,13 +17,10 @@ import app.ministrylogbook.shared.layouts.popup
 import app.ministrylogbook.shared.layouts.stayOut
 import app.ministrylogbook.shared.utilities.activity
 import app.ministrylogbook.ui.AppGraph
-import app.ministrylogbook.ui.AppNavHostController
 import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.home.entrydetails.EntryDetailsBottomSheetContent
-import app.ministrylogbook.ui.home.entrydetails.StudiesBottomSheetContent
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
-import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
@@ -36,15 +32,22 @@ import org.koin.androidx.compose.getViewModel
 import org.koin.core.parameter.parametersOf
 
 sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
-    object Root : HomeGraph(rawRoute = "")
+    object Root : HomeGraph(rawRoute = "?year={year}&monthNumber={monthNumber}",
+        arguments = listOf(
+            navArgument("year") {
+                nullable = true
+            },
+            navArgument("monthNumber") {
+                nullable = true
+            }
+        )
+    ) {
+        fun createDestination(year: Int, monthNumber: Int) = "${AppGraph.Home}/?year=$year&monthNumber=$monthNumber"
+    }
 
     object FromDeepLink : HomeGraph("?fromDeepLink=true")
 
     object Menu : HomeGraph(rawRoute = "menu")
-
-    object Studies : HomeGraph(rawRoute = "{year}/{monthNumber}/studies") {
-        fun createDestination(year: Int, monthNumber: Int) = "${AppGraph.Home}/$year/$monthNumber/studies"
-    }
 
     object EntryDetails : HomeGraph(
         rawRoute = "{year}/{monthNumber}/entry-details/{id}",
@@ -64,7 +67,6 @@ sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNa
         get() = "${AppGraph.Home}/$rawRoute"
 }
 
-@OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.homeGraph() {
     navigation(
         route = AppGraph.Home.route,
@@ -73,7 +75,14 @@ fun NavGraphBuilder.homeGraph() {
         exitTransition = { stayOut(SlideOutTransitionMillis) }
     ) {
         composable(HomeGraph.Root.route) {
-            val viewModel = getViewModel<HomeViewModel>()
+            val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val yearArgument = it.arguments?.getString("year")
+            val year = yearArgument?.toInt() ?: currentDate.year
+            val monthNumberArgument = it.arguments?.getString("monthNumber")
+            val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
+            val month = LocalDate(year, monthNumber, 1)
+
+            val viewModel = getViewModel<HomeViewModel>(parameters = { parametersOf(month) })
             val state by viewModel.state.collectAsStateWithLifecycle()
 
             HomePage(state, viewModel::dispatch)
@@ -92,8 +101,15 @@ fun NavGraphBuilder.homeGraph() {
                 }
             )
         ) {
+            val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+            val yearArgument = it.arguments?.getString("year")
+            val year = yearArgument?.toInt() ?: currentDate.year
+            val monthNumberArgument = it.arguments?.getString("monthNumber")
+            val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
+            val month = LocalDate(year, monthNumber, 1)
             val context = LocalContext.current
             val viewModel = getViewModel<HomeViewModel>(parameters = {
+                parametersOf(month)
                 parametersOf(context.activity?.intent?.data)
             })
             val state by viewModel.state.collectAsStateWithLifecycle()
@@ -129,19 +145,6 @@ fun NavGraphBuilder.homeGraph() {
             })
             EntryDetailsBottomSheetContent(entryDetailsViewModel)
         }
-
-        bottomSheet(HomeGraph.Studies.route, arguments = HomeGraph.Studies.arguments) {
-            val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
-            val monthNumber =
-                it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
-            val month = LocalDate(year, monthNumber, 1)
-
-            val studiesDetailsViewModel = getViewModel<StudiesDetailsViewModel>(parameters = {
-                parametersOf(month)
-            })
-            StudiesBottomSheetContent(studiesDetailsViewModel)
-        }
     }
 }
 
@@ -154,14 +157,14 @@ fun NavController.navigateToHome() = navigate(AppGraph.Home.route) {
     }
 }
 
-fun AppNavHostController.navigateToHomeMenu() = navigate(HomeGraph.Menu.route)
+fun NavController.navigateToHomeMenu() = navigate(HomeGraph.Menu.route)
 
-fun HomeNavHostController.navigateToStudies(year: Int, monthNumber: Int) =
-    navigate(HomeGraph.Studies.createDestination(year, monthNumber)) {
+fun NavController.navigateToEntryDetails(month: LocalDate, id: Int? = null) =
+    navigate(HomeGraph.EntryDetails.createDestination(month, id)) {
         popUpTo(HomeGraph.Root.route)
     }
 
-fun HomeNavHostController.navigateToEntryDetails(month: LocalDate, id: Int? = null) =
-    navigate(HomeGraph.EntryDetails.createDestination(month, id)) {
-        popUpTo(HomeGraph.Root.route)
+fun NavController.navigateToMonth(year: Int, monthNumber: Int) =
+    navigate(HomeGraph.Root.createDestination(year, monthNumber)) {
+        popBackStack()
     }
