@@ -1,9 +1,13 @@
 package app.ministrylogbook.ui.home.time
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -13,16 +17,38 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
+import app.ministrylogbook.shared.Time
+import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
+import app.ministrylogbook.shared.layouts.progress.Progress
+import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.transfers
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import app.ministrylogbook.ui.theme.ProgressPositive
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+
+fun LocalDate.getWeekNumber(): Int {
+    val firstDayOfYear = LocalDate(year, 1, 1)
+    val daysFromFirstDay = dayOfYear - firstDayOfYear.dayOfYear
+    val firstDayOfYearDayOfWeek = firstDayOfYear.dayOfWeek.value
+    val adjustment = when {
+        firstDayOfYearDayOfWeek <= 4 -> firstDayOfYearDayOfWeek - 1
+        else -> 8 - firstDayOfYearDayOfWeek
+    }
+    return (daysFromFirstDay + adjustment) / 7 + 1
+}
 
 @Composable
 fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
@@ -77,11 +103,84 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
+        val currentWeek = Clock.System.todayIn(TimeZone.currentSystemDefault()).getWeekNumber()
+        val groupedEntries = orderedEntriesWithoutTransfers
+            .groupBy { it.datetime.date.getWeekNumber() }
+
+        val currentWeekSum = if (groupedEntries.containsKey(currentWeek)) {
+            groupedEntries[currentWeek]!!.ministryTimeSum()
+        } else {
+            Time.Empty
+        } + state.transferred.ministryTimeSum()
+        val formattedWeekTime =
+            if (currentWeekSum.minutes == 0) currentWeekSum.hours.toString() else currentWeek.toString()
+        val currentWeekFormattedSum = stringResource(R.string.hours_short_unit, formattedWeekTime)
+        val weekGoal = (state.goal ?: 0) * 12 / 52
+
+        if (state.transferred.isNotEmpty() || transfers.isNotEmpty() || orderedEntriesWithoutTransfers.isNotEmpty()) {
+            Column(Modifier.padding(horizontal = 16.dp, vertical = 2.dp)) {
+                Text(
+                    stringResource(R.string.current_week) + " ($currentWeekFormattedSum)",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
+                )
+                if (weekGoal > 0) {
+                    Spacer(Modifier.height(3.dp))
+                    val progress = Progress(1f / weekGoal * currentWeekSum.toFloat(), color = ProgressPositive)
+                    LinearProgressIndicator(
+                        progresses = listOf(progress),
+                        modifier = Modifier
+                            .height(2.dp)
+                            .fillMaxWidth()
+                            .clip(CircleShape),
+                        strokeCap = StrokeCap.Round,
+                    )
+                }
+            }
+        }
+
         state.transferred.forEach {
             HistoryItem(it, subtract = true, onClick = { transferToUndo = it })
         }
-        orderedEntriesWithoutTransfers.forEach {
-            HistoryItem(it, onClick = { handleClick(it) })
+
+        groupedEntries.forEach { (week, entries) ->
+            if (week != currentWeek) {
+                Column(Modifier.padding(horizontal = 16.dp, vertical = 2.dp)) {
+                    val timeSum = entries.ministryTimeSum()
+                    val formattedTime = if (timeSum.minutes == 0) timeSum.hours.toString() else timeSum.toString()
+                    val formattedTimeSum = stringResource(R.string.hours_short_unit, formattedTime)
+                    val text = if (week == currentWeek - 1) {
+                        stringResource(R.string.last_week)
+                    } else {
+                        stringResource(R.string.calendar_week_shorthand, week)
+                    } + if (entries.size > 1) " ($formattedTimeSum)" else ""
+
+                    Text(
+                        text,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
+                    )
+                    if (weekGoal > 0) {
+                        Spacer(Modifier.height(3.dp))
+                        val progress = Progress(1f / weekGoal * timeSum.toFloat(), color = ProgressPositive)
+                        LinearProgressIndicator(
+                            progresses = listOf(progress),
+                            modifier = Modifier
+                                .height(2.dp)
+                                .fillMaxWidth()
+                                .clip(CircleShape),
+                            strokeCap = StrokeCap.Round,
+                        )
+                    }
+                }
+            }
+            entries.forEach { entry ->
+                HistoryItem(entry, onClick = { handleClick(entry) })
+            }
+            val isLast = week == groupedEntries.keys.last()
+            if (!isLast) {
+                Spacer(Modifier.height(8.dp))
+            }
         }
         transfers.forEach {
             HistoryItem(it, onClick = { transferToUndo = it })

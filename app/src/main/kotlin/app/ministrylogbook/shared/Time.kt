@@ -57,6 +57,15 @@ class Time : Comparable<Time> {
     companion object {
         val Empty = Time(0)
     }
+
+    override fun toString(): String {
+        val sign = if (isNegative) "-" else ""
+        return "$sign$hours:${minutes.toString().padStart(2, '0')}"
+    }
+
+    fun toFloat(): Float {
+        return this.hours + 1 / 60f * this.minutes
+    }
 }
 
 fun Iterable<Time>.sum(): Time {

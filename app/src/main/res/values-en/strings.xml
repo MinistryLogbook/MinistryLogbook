@@ -140,4 +140,7 @@
     <string name="intro_pioneer_since_question">When did you start pioneering?</string>
     <string name="goal_reached">Goal reached!</string>
     <string name="time">Time</string>
+    <string name="last_week">Last week</string>
+    <string name="calendar_week_shorthand">CW %1$s</string>
+    <string name="current_week">Current week</string>
 </resources>
