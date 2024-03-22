@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.layouts.ExtendableFloatingActionButton
 import app.ministrylogbook.ui.LocalAppNavController
-import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 
@@ -53,7 +52,6 @@ fun StudiesPage(
                 .padding(bottom = 82.dp, top = 16.dp)
         ) {
             StudyItem("Cornelius", onClick = {
-
             })
         }
 

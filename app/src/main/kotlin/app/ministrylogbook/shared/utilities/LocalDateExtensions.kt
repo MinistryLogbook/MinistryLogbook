@@ -8,7 +8,6 @@ import kotlinx.datetime.plus
 val LocalDate.lastDayOfMonth: LocalDate
     get() = LocalDate(this.year, this.monthNumber, 1) + DatePeriod(months = 1) - DatePeriod(days = 1)
 
-
 val LocalDate.weekNumber: Int
     get() {
         val firstDayOfYear = LocalDate(year, 1, 1)

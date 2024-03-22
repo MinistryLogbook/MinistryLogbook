@@ -41,7 +41,7 @@ fun YearlyProgress(state: HomeState) {
         derivedStateOf {
             val isPioneer = state.role == Role.SpecialPioneer || state.role == Role.RegularPioneer
             isPioneer && state.beginOfPioneeringInServiceYear != null &&
-                    state.beginOfPioneeringInServiceYear <= state.month
+                state.beginOfPioneeringInServiceYear <= state.month
         }
     }
 
