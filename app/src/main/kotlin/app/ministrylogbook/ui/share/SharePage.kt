@@ -215,7 +215,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
                                 Modifier
                                     .clip(CircleShape)
                                     .background(containerColor)
-                                    .padding(horizontal = 6.dp, vertical = 2.dp)
+                                    .padding(horizontal = 6.dp)
                             ) {
                                 Text(stringResource(R.string.preview), fontSize = 11.sp, color = textColor)
                             }

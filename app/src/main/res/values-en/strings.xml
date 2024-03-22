@@ -8,7 +8,7 @@
     <string name="video_showings">Video Showings</string>
     <string name="placements_long">Placements (Printed and Electronic)</string>
     <string name="hours">Hours</string>
-    <string name="bible_studies_long">Number of Different Bible Studies Conducted</string>
+    <string name="bible_studies_long">Number of different Bible studies conducted</string>
     <string name="comments">Comments</string>
     <string name="name">Name</string>
     <string name="month">Month</string>
@@ -144,4 +144,8 @@
     <string name="calendar_week_shorthand">CW %1$s</string>
     <string name="current_week">Current week</string>
     <string name="create_person">Create person</string>
+    <string name="check_box_form_of_ministry">Check the box if you shared in any form of the ministry during the month</string>
+    <string name="check_box_form_of_ministry_colon">Check the box if you shared in any form of the ministry during the month:</string>
+    <string name="hours_long">Hours (if auxiliary, regular, or special pioneer or field missionary)</string>
+    <string name="hours_with_description_colon">Hours (if auxiliary, regular, or special pioneer or field missionary):</string>
 </resources>

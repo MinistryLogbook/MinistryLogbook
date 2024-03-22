@@ -146,4 +146,8 @@
     <string name="calendar_week_shorthand">KW %1$s</string>
     <string name="current_week">Aktuelle Woche</string>
     <string name="create_person">Person erstellen</string>
+    <string name="check_box_form_of_ministry">Check the box if you shared in any form of the ministry during the month</string>
+    <string name="check_box_form_of_ministry_colon">Check the box if you shared in any form of the ministry during the month:</string>
+    <string name="hours_long">Hours (if auxiliary, regular, or special pioneer or field missionary)</string>
+    <string name="hours_with_description_colon">Hours (if auxiliary, regular, or special pioneer or field missionary):</string>
 </resources>

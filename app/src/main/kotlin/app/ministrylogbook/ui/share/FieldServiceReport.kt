@@ -16,25 +16,25 @@ import app.ministrylogbook.R
 data class FieldServiceReport(
     val name: String = "",
     val month: String = "",
-    val placements: Int = 0,
-    val videoShowings: Int = 0,
     val hours: Int = 0,
-    val returnVisits: Int = 0,
     val bibleStudies: Int = 0,
     val comments: String = ""
 ) {
     fun toText(context: Context): String {
         val nameLine = if (name.isNotBlank()) "|${context.getString(R.string.name_colon)} ${name}\n" else ""
+        val checkbox = if (hours > 0) {
+            "☑"
+        } else {
+            "☐"
+        }
 
         val text = """${context.getString(R.string.field_service_report).uppercase()}
         |
         $nameLine|${context.getString(R.string.month_colon)} $month
         |
-        |${context.getString(R.string.placements_long_colon)} $placements
-        |${context.getString(R.string.video_showings_colon)} $videoShowings
-        |${context.getString(R.string.hours_colon)} $hours
-        |${context.getString(R.string.return_visits_colon)} $returnVisits
-        |${context.getString(R.string.bible_studies_long_colon)} $bibleStudies"""
+        |${context.getString(R.string.check_box_form_of_ministry_colon)} $checkbox
+        |${context.getString(R.string.bible_studies_long_colon)} $bibleStudies
+        |${context.getString(R.string.hours_with_description_colon)} $hours"""
 
         val commentsSection = """
         |
@@ -53,9 +53,9 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     val width = 1000
     val padding = 40f
     // label row starting point
-    val textLabelX = 70f
-    val tableDividerX = 860f
-    val textValueX = 880f
+    val textLabelX = 55f
+    val tableDividerX = 840f
+    val textValueX = tableDividerX + 20
 
     val dottedLinePaint = Paint().apply {
         color = Color.GRAY
@@ -63,14 +63,19 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
         strokeWidth = 2f
         pathEffect = DashPathEffect(floatArrayOf(5f, 3f), 0f)
     }
-    val labelPaint = Paint().apply {
+    val labelPaint = TextPaint().apply {
         color = Color.BLACK
         textSize = 35f
     }
     val valueTypeface = resources.getFont(R.font.caveat_variable)
-    val valuePaint = TextPaint().apply {
+    val bigValuePaint = TextPaint().apply {
         color = Color.BLACK
-        textSize = 38f
+        textSize = 55f
+        typeface = Typeface.create(valueTypeface, Typeface.NORMAL)
+    }
+    val smallValuePaint = TextPaint().apply {
+        color = Color.BLACK
+        textSize = 45f
         typeface = Typeface.create(valueTypeface, Typeface.NORMAL)
     }
 
@@ -98,46 +103,77 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     nameMonthPaint.getTextBounds(monthLabel, 0, monthLabel.length, monthLabelMetrics)
 
     // table
-    val rowHeight = 50f
     val tablePaint = Paint().apply {
         color = Color.BLACK
         style = Paint.Style.STROKE
         strokeWidth = 2f
     }
     val tableTop = 260f
-    val tableBottom = tableTop + 5 * rowHeight
 
-    // placements
-    val placementsLabel = getString(R.string.placements_long_colon)
-    val placementsLineY = tableTop + rowHeight
-
-    // video showings
-    val videoShowingsLabel = getString(R.string.video_showings)
-    val videoShowingsLineY = placementsLineY + rowHeight
-
-    // hours
-    val hoursLabel = getString(R.string.hours)
-    val hoursLineY = videoShowingsLineY + rowHeight
-
-    // return visits
-    val returnVisitsLabel = getString(R.string.return_visits)
-    val returnVisitsLineY = hoursLineY + rowHeight
+    // checkbox
+    val checkboxLabel = getString(R.string.check_box_form_of_ministry)
+    val checkboxLabelStaticLayout =
+        StaticLayout.Builder
+            .obtain(
+                checkboxLabel,
+                0,
+                checkboxLabel.length,
+                labelPaint,
+                tableDividerX.toInt() - textLabelX.toInt() - 150,
+            )
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(true)
+            .build()
+    val checkboxLineY = tableTop + checkboxLabelStaticLayout.height + 10
 
     // bible studies
     val bibleStudiesLabel = getString(R.string.bible_studies_long)
+    val bibleStudiesLabelStaticLayout =
+        StaticLayout.Builder
+            .obtain(
+                bibleStudiesLabel,
+                0,
+                bibleStudiesLabel.length,
+                labelPaint,
+                tableDividerX.toInt() - textLabelX.toInt() - 80,
+            )
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(true)
+            .build()
+    val bibleStudiesLineY = checkboxLineY + bibleStudiesLabelStaticLayout.height + 10
+
+    // hours
+    val hoursLabel = getString(R.string.hours_long)
+    val hoursLabelStaticLayout =
+        StaticLayout.Builder
+            .obtain(
+                hoursLabel,
+                0,
+                hoursLabel.length,
+                labelPaint,
+                tableDividerX.toInt() - textLabelX.toInt() - 80,
+            )
+            .setAlignment(Layout.Alignment.ALIGN_NORMAL)
+            .setLineSpacing(0f, 1f)
+            .setIncludePad(true)
+            .build()
+
+    val tableBottom = bibleStudiesLineY + hoursLabelStaticLayout.height + 15
 
     // comments
     val commentsTop = tableBottom + padding
     val commentsMinHeight = 120f
     val commentsLabel = getString(R.string.comments_colon)
     val commentsLabelLineHeight = 36f
-    val commentStaticLayout =
+    val commentsStaticLayout =
         StaticLayout.Builder
             .obtain(
                 report.comments,
                 0,
                 report.comments.length,
-                valuePaint,
+                smallValuePaint,
                 width - 2 * textLabelX.toInt()
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
@@ -147,7 +183,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     val commentsBottom =
         commentsTop + maxOf(
             commentsMinHeight,
-            commentsLabelLineHeight + 10 + commentStaticLayout.height
+            commentsLabelLineHeight + 10 + commentsStaticLayout.height
         )
 
     val height = commentsBottom + padding
@@ -176,107 +212,73 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
 
         // name and month
         drawText(nameLabel, textLabelX, 160f, nameMonthPaint)
-        drawText(report.name, textLabelX + nameLabelMetrics.width() + 40, 160f, valuePaint)
+        drawText(report.name, textLabelX + nameLabelMetrics.width() + 40, 160f, smallValuePaint)
         drawLine(
             textLabelX + nameLabelMetrics.width() + 20,
             165f,
-            width - textLabelX,
+            width - padding,
             160f,
             dottedLinePaint
         )
         drawText(monthLabel, textLabelX, 210f, nameMonthPaint)
-        drawText(report.month, textLabelX + monthLabelMetrics.width() + 40, 210f, valuePaint)
+        drawText(report.month, textLabelX + monthLabelMetrics.width() + 40, 210f, smallValuePaint)
         drawLine(
             textLabelX + monthLabelMetrics.width() + 20,
             215f,
-            width - textLabelX,
+            width - padding,
             210f,
             dottedLinePaint
         )
 
         // table
         drawRect(padding, tableTop, width - padding, tableBottom, tablePaint)
-        drawLine(tableDividerX, tableTop, tableDividerX, tableBottom, tablePaint)
+        drawLine(tableDividerX, checkboxLineY, tableDividerX, tableBottom, tablePaint)
 
-        // placements
-        drawText(
-            placementsLabel,
-            textLabelX,
-            tableTop + 36f,
-            labelPaint
-        )
-        drawText(
-            report.placements.toString(),
-            textValueX,
-            tableTop + 36f,
-            valuePaint
-        )
+        // checkbox
+        canvas.save()
+        canvas.translate(textLabelX, tableTop + 5)
+        checkboxLabelStaticLayout.draw(this)
+        canvas.restore()
+        val checkboxSize = 45f
+        val top = tableTop + (checkboxLineY - tableTop - checkboxSize) / 2
+        val left = width - padding * 2 - checkboxSize
+        val right = width - padding * 2
+        val bottom = top + checkboxSize
+        drawRect(left, top, right, bottom, tablePaint)
+        if (report.hours > 0) {
+            drawText("✓", left + 5, bottom - 7, smallValuePaint)
+        }
         drawLine(
             padding,
-            placementsLineY,
+            checkboxLineY,
             width - padding,
-            placementsLineY,
+            checkboxLineY,
             tablePaint
         )
 
-        // Video showings
-        drawText(
-            videoShowingsLabel,
-            textLabelX,
-            placementsLineY + 34f,
-            labelPaint
-        )
-        drawText(
-            report.videoShowings.toString(),
-            textValueX,
-            placementsLineY + 36f,
-            valuePaint
-        )
-        drawLine(padding, videoShowingsLineY, width - padding, videoShowingsLineY, tablePaint)
-
-        // hours
-        drawText(
-            hoursLabel,
-            textLabelX,
-            videoShowingsLineY + 36f,
-            labelPaint
-        )
-        val hours = report.hours.toString()
-        drawText(
-            hours,
-            textValueX,
-            videoShowingsLineY + 36f,
-            valuePaint
-        )
-        drawLine(padding, hoursLineY, width - padding, hoursLineY, tablePaint)
-
-        // Return visits
-        drawText(
-            returnVisitsLabel,
-            textLabelX,
-            hoursLineY + 36f,
-            labelPaint
-        )
-        drawText(
-            report.returnVisits.toString(),
-            textValueX,
-            hoursLineY + 36f,
-            valuePaint
-        )
-        drawLine(padding, returnVisitsLineY, width - padding, returnVisitsLineY, tablePaint)
-
         // Bible studies
-        drawText(
-            bibleStudiesLabel,
-            textLabelX,
-            returnVisitsLineY + 36f,
-            labelPaint
-        )
+        canvas.save()
+        canvas.translate(textLabelX, checkboxLineY + 5)
+        bibleStudiesLabelStaticLayout.draw(this)
+        canvas.restore()
         drawText(
             report.bibleStudies.toString(),
             textValueX,
-            returnVisitsLineY + 36f,
-            valuePaint
+            checkboxLineY + 45,
+            bigValuePaint
+        )
+        drawLine(padding, bibleStudiesLineY, width - padding, bibleStudiesLineY, tablePaint)
+
+        // hours
+        canvas.save()
+        canvas.translate(textLabelX, bibleStudiesLineY + 5)
+        hoursLabelStaticLayout.draw(this)
+        canvas.restore()
+        drawText(
+            report.hours.toString(),
+            textValueX,
+            bibleStudiesLineY + 60,
+            bigValuePaint
         )
 
         // Comments
@@ -287,8 +289,10 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
             commentsTop + commentsLabelLineHeight,
             labelPaint
         )
+        canvas.save()
         canvas.translate(textLabelX, commentsTop + 5 + commentsLabelLineHeight)
-        commentStaticLayout.draw(this)
+        commentsStaticLayout.draw(this)
+        canvas.restore()
     }
 
     return bitmap
