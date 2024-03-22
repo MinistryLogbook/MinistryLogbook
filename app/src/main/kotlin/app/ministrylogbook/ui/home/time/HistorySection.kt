@@ -27,6 +27,7 @@ import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
+import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.shared.utilities.transfers
 import app.ministrylogbook.shared.utilities.weekNumber
@@ -40,7 +41,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 @Composable
-fun WeekNumberSeparator(text: String, weekGoal: Int, timeSum: Time) {
+fun WeekNumberSeparator(text: String, weekGoal: Int, ministryTimeSum: Time, allTimeSum: Time) {
     Column(Modifier.padding(horizontal = 16.dp, vertical = 2.dp)) {
         Text(
             text,
@@ -49,11 +50,13 @@ fun WeekNumberSeparator(text: String, weekGoal: Int, timeSum: Time) {
         )
         if (weekGoal > 0) {
             Spacer(Modifier.height(3.dp))
-            val progress = Progress(1f / weekGoal * timeSum.toFloat(), color = ProgressPositive)
             LinearProgressIndicator(
-                progresses = listOf(progress),
+                progresses = listOf(
+                    Progress(1f / weekGoal * ministryTimeSum.toFloat(), color = ProgressPositive),
+                    Progress(1f / weekGoal * allTimeSum.toFloat(), color = ProgressPositive.copy(0.6f))
+                ),
                 modifier = Modifier
-                    .height(2.dp)
+                    .height(3.dp)
                     .fillMaxWidth()
                     .clip(CircleShape),
                 strokeCap = StrokeCap.Round
@@ -136,7 +139,8 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
             WeekNumberSeparator(
                 text = text,
                 weekGoal = weekGoal,
-                timeSum = timeSum
+                ministryTimeSum = entries.ministryTimeSum(),
+                allTimeSum = timeSum
             )
             entries.forEach { entry ->
                 HistoryItem(entry, onClick = { handleClick(entry) })
