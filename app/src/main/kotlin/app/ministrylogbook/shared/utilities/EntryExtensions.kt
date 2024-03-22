@@ -29,12 +29,6 @@ fun List<Entry>.ministries() =
 
 fun List<Entry>.transfers() = this.filter { it.type == EntryType.Transfer }
 
-fun List<Entry>.placements() = this.ministries().sumOf { it.placements }
-
-fun List<Entry>.returnVisits() = this.ministries().sumOf { it.returnVisits }
-
-fun List<Entry>.videoShowings() = this.ministries().sumOf { it.videoShowings }
-
 fun List<Entry>.splitIntoMonths(): List<List<Entry>> {
     if (this.isEmpty()) {
         return listOf()

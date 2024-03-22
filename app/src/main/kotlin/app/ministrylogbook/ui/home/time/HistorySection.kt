@@ -27,7 +27,7 @@ import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.Progress
-import app.ministrylogbook.shared.utilities.ministryTimeSum
+import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.shared.utilities.transfers
 import app.ministrylogbook.shared.utilities.weekNumber
 import app.ministrylogbook.ui.LocalAppNavController
@@ -116,47 +116,28 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
             .padding(vertical = 8.dp)
     ) {
         val currentWeek = Clock.System.todayIn(TimeZone.currentSystemDefault()).weekNumber
-        val groupedEntries = orderedEntriesWithoutTransfers
-            .groupBy { it.datetime.date.weekNumber }
+        val groupedEntries = orderedEntriesWithoutTransfers.groupBy { it.datetime.date.weekNumber }
         val weekGoal = (state.goal ?: 0) * 12 / 52
-
-        if (state.transferred.isNotEmpty() || transfers.isNotEmpty() || orderedEntriesWithoutTransfers.isNotEmpty()) {
-            val currentWeekSum = if (groupedEntries.containsKey(currentWeek)) {
-                groupedEntries[currentWeek]!!.ministryTimeSum()
-            } else {
-                Time.Empty
-            } + state.transferred.ministryTimeSum()
-            val formattedWeekTime =
-                if (currentWeekSum.minutes == 0) currentWeekSum.hours.toString() else currentWeek.toString()
-            val currentWeekFormattedSum = stringResource(R.string.hours_short_unit, formattedWeekTime)
-            WeekNumberSeparator(
-                text = stringResource(R.string.current_week) + " ($currentWeekFormattedSum)",
-                weekGoal = weekGoal,
-                timeSum = currentWeekSum
-            )
-        }
 
         state.transferred.forEach {
             HistoryItem(it, subtract = true, onClick = { transferToUndo = it })
         }
 
         groupedEntries.forEach { (week, entries) ->
-            if (week != currentWeek) {
-                val timeSum = entries.ministryTimeSum()
-                val formattedTime = if (timeSum.minutes == 0) timeSum.hours.toString() else timeSum.toString()
-                val formattedTimeSum = stringResource(R.string.hours_short_unit, formattedTime)
-                val text = if (week == currentWeek - 1) {
-                    stringResource(R.string.last_week)
-                } else {
-                    stringResource(R.string.calendar_week_shorthand, week)
-                } + if (entries.size > 1) " ($formattedTimeSum)" else ""
+            val timeSum = entries.timeSum()
+            val formattedTime = if (timeSum.minutes == 0) timeSum.hours.toString() else timeSum.toString()
+            val formattedTimeSum = stringResource(R.string.hours_short_unit, formattedTime)
+            val text = when (week) {
+                currentWeek -> stringResource(R.string.current_week)
+                currentWeek - 1 -> stringResource(R.string.last_week)
+                else -> stringResource(R.string.calendar_week_shorthand, week)
+            } + if (entries.size > 1) " ($formattedTimeSum)" else ""
 
-                WeekNumberSeparator(
-                    text = text,
-                    weekGoal = weekGoal,
-                    timeSum = timeSum
-                )
-            }
+            WeekNumberSeparator(
+                text = text,
+                weekGoal = weekGoal,
+                timeSum = timeSum
+            )
             entries.forEach { entry ->
                 HistoryItem(entry, onClick = { handleClick(entry) })
             }
