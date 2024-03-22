@@ -119,7 +119,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
                 0,
                 checkboxLabel.length,
                 labelPaint,
-                tableDividerX.toInt() - textLabelX.toInt() - 150,
+                tableDividerX.toInt() - textLabelX.toInt() - 150
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
@@ -136,7 +136,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
                 0,
                 bibleStudiesLabel.length,
                 labelPaint,
-                tableDividerX.toInt() - textLabelX.toInt() - 80,
+                tableDividerX.toInt() - textLabelX.toInt() - 80
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
@@ -153,7 +153,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
                 0,
                 hoursLabel.length,
                 labelPaint,
-                tableDividerX.toInt() - textLabelX.toInt() - 80,
+                tableDividerX.toInt() - textLabelX.toInt() - 80
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
