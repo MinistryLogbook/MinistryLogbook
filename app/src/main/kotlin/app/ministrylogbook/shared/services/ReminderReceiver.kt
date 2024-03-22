@@ -29,7 +29,7 @@ class ReminderReceiver : BroadcastReceiver() {
         // schedule next reminder
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val nextMonth = today + DatePeriod(months = 1)
-        reminderManager.scheduleReminder(nextMonth.lastDayOfMonth().atTime(20, 0))
+        reminderManager.scheduleReminder(nextMonth.lastDayOfMonth.atTime(20, 0))
     }
 }
 

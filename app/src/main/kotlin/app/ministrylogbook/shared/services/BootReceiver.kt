@@ -16,7 +16,7 @@ class BootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == "android.intent.action.BOOT_COMPLETED") {
             val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-            reminderManager.scheduleReminder(today.lastDayOfMonth().atTime(20, 0))
+            reminderManager.scheduleReminder(today.lastDayOfMonth.atTime(20, 0))
         }
     }
 }

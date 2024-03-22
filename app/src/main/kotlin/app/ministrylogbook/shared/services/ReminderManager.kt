@@ -27,7 +27,7 @@ class ReminderManager : KoinComponent {
 
     private fun defaultReminderTime(): LocalDateTime {
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        return today.lastDayOfMonth().atTime(20, 0)
+        return today.lastDayOfMonth.atTime(20, 0)
     }
 
     fun scheduleReminder(

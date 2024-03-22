@@ -1,6 +1,5 @@
 package app.ministrylogbook.ui.home.time
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,7 +32,6 @@ import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun TimePage(
     state: HomeState,
@@ -62,7 +60,7 @@ fun TimePage(
 
             Spacer(Modifier.height(16.dp))
 
-            YearlyProgress(state, dispatch)
+            YearlyProgress(state)
             TransferHint(state, dispatch)
             RestHint(state, dispatch)
 

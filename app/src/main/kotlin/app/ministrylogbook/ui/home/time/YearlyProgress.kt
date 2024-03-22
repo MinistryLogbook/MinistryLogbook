@@ -32,17 +32,16 @@ import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
-import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
 
 @Composable
-fun YearlyProgress(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
+fun YearlyProgress(state: HomeState) {
     val show by remember(state.role, state.beginOfPioneeringInServiceYear, state.month) {
         derivedStateOf {
             val isPioneer = state.role == Role.SpecialPioneer || state.role == Role.RegularPioneer
             isPioneer && state.beginOfPioneeringInServiceYear != null &&
-                state.beginOfPioneeringInServiceYear <= state.month
+                    state.beginOfPioneeringInServiceYear <= state.month
         }
     }
 

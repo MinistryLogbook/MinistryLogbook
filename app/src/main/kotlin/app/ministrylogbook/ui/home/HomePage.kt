@@ -62,6 +62,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
         }
     }
     val timeScrollState = rememberScrollState()
+    val studiesScrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     var selectedMonth by remember(navBackStackEntry) {
@@ -175,7 +176,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                 val page = PagerPage.entries.first { it.ordinal == pageIndex }
                 when (page) {
                     PagerPage.Time -> TimePage(state, dispatch, timeScrollState)
-                    PagerPage.Studies -> StudiesPage()
+                    PagerPage.Studies -> StudiesPage(state, dispatch, studiesScrollState)
                 }
             }
         }

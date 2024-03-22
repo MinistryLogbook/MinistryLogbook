@@ -143,4 +143,5 @@
     <string name="last_week">Last week</string>
     <string name="calendar_week_shorthand">CW %1$s</string>
     <string name="current_week">Current week</string>
+    <string name="create_person">Create person</string>
 </resources>
