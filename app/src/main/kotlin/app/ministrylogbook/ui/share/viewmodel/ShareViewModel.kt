@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
+import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
@@ -46,8 +47,9 @@ class ShareViewModel(
         combine(
             _entries,
             settingsDataStore.name,
-            _monthlyInformation
-        ) { entries, name, studyEntry ->
+            _monthlyInformation,
+            settingsDataStore.role
+        ) { entries, name, studyEntry, role ->
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
             val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
             val commentTheocraticAssignment =
@@ -75,7 +77,9 @@ class ShareViewModel(
                 month = getMonthTitle(locale),
                 hours = ministryTimeSum.hours,
                 bibleStudies = studyEntry.bibleStudies ?: 0,
-                comments = comments
+                comments = comments,
+                reportsHours = role == Role.AuxiliaryPioneer ||
+                    role == Role.RegularPioneer || role == Role.SpecialPioneer
             )
         }.stateIn(
             scope = viewModelScope,

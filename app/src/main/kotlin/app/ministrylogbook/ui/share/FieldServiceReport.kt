@@ -18,7 +18,8 @@ data class FieldServiceReport(
     val month: String = "",
     val hours: Int = 0,
     val bibleStudies: Int = 0,
-    val comments: String = ""
+    val comments: String = "",
+    val reportsHours: Boolean = false
 ) {
     fun toText(context: Context): String {
         val nameLine = if (name.isNotBlank()) "|${context.getString(R.string.name_colon)} ${name}\n" else ""
@@ -34,7 +35,7 @@ data class FieldServiceReport(
         |
         |${context.getString(R.string.check_box_form_of_ministry_colon)} $checkbox
         |${context.getString(R.string.bible_studies_long_colon)} $bibleStudies
-        |${context.getString(R.string.hours_with_description_colon)} $hours"""
+        |${context.getString(R.string.hours_long_colon)} $hours"""
 
         val commentsSection = """
         |
@@ -65,7 +66,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
     }
     val labelPaint = TextPaint().apply {
         color = Color.BLACK
-        textSize = 35f
+        textSize = 33f
     }
     val valueTypeface = resources.getFont(R.font.caveat_variable)
     val bigValuePaint = TextPaint().apply {
@@ -119,7 +120,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
                 0,
                 checkboxLabel.length,
                 labelPaint,
-                tableDividerX.toInt() - textLabelX.toInt() - 150
+                (tableDividerX - textLabelX).toInt()
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
@@ -136,7 +137,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
                 0,
                 bibleStudiesLabel.length,
                 labelPaint,
-                tableDividerX.toInt() - textLabelX.toInt() - 80
+                (tableDividerX - textLabelX).toInt()
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
@@ -153,7 +154,7 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
                 0,
                 hoursLabel.length,
                 labelPaint,
-                tableDividerX.toInt() - textLabelX.toInt() - 80
+                (tableDividerX - textLabelX).toInt()
             )
             .setAlignment(Layout.Alignment.ALIGN_NORMAL)
             .setLineSpacing(0f, 1f)
@@ -261,12 +262,14 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
         canvas.translate(textLabelX, checkboxLineY + 5)
         bibleStudiesLabelStaticLayout.draw(this)
         canvas.restore()
-        drawText(
-            report.bibleStudies.toString(),
-            textValueX,
-            checkboxLineY + 45,
-            bigValuePaint
-        )
+        if (report.bibleStudies > 0) {
+            drawText(
+                report.bibleStudies.toString(),
+                textValueX,
+                checkboxLineY + 45,
+                bigValuePaint
+            )
+        }
         drawLine(padding, bibleStudiesLineY, width - padding, bibleStudiesLineY, tablePaint)
 
         // hours
@@ -274,12 +277,14 @@ fun Context.createFieldServiceReportImage(report: FieldServiceReport): Bitmap {
         canvas.translate(textLabelX, bibleStudiesLineY + 5)
         hoursLabelStaticLayout.draw(this)
         canvas.restore()
-        drawText(
-            report.hours.toString(),
-            textValueX,
-            bibleStudiesLineY + 60,
-            bigValuePaint
-        )
+        if (report.reportsHours) {
+            drawText(
+                report.hours.toString(),
+                textValueX,
+                bibleStudiesLineY + 60,
+                bigValuePaint
+            )
+        }
 
         // Comments
         drawRect(padding, commentsTop, width - padding, commentsBottom, tablePaint)
