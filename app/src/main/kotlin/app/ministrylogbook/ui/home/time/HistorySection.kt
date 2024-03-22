@@ -39,15 +39,39 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
-fun LocalDate.getWeekNumber(): Int {
-    val firstDayOfYear = LocalDate(year, 1, 1)
-    val daysFromFirstDay = dayOfYear - firstDayOfYear.dayOfYear
-    val firstDayOfYearDayOfWeek = firstDayOfYear.dayOfWeek.value
-    val adjustment = when {
-        firstDayOfYearDayOfWeek <= 4 -> firstDayOfYearDayOfWeek - 1
-        else -> 8 - firstDayOfYearDayOfWeek
+val LocalDate.weekNumber: Int
+    get() {
+        val firstDayOfYear = LocalDate(year, 1, 1)
+        val daysFromFirstDay = dayOfYear - firstDayOfYear.dayOfYear
+        val firstDayOfYearDayOfWeek = firstDayOfYear.dayOfWeek.value
+        val adjustment = when {
+            firstDayOfYearDayOfWeek <= 4 -> firstDayOfYearDayOfWeek - 1
+            else -> 8 - firstDayOfYearDayOfWeek
+        }
+        return (daysFromFirstDay + adjustment) / 7 + 1
     }
-    return (daysFromFirstDay + adjustment) / 7 + 1
+
+@Composable
+fun WeekNumberSeparator(text: String, weekGoal: Int, timeSum: Time) {
+    Column(Modifier.padding(horizontal = 16.dp, vertical = 2.dp)) {
+        Text(
+            text,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
+        )
+        if (weekGoal > 0) {
+            Spacer(Modifier.height(3.dp))
+            val progress = Progress(1f / weekGoal * timeSum.toFloat(), color = ProgressPositive)
+            LinearProgressIndicator(
+                progresses = listOf(progress),
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .clip(CircleShape),
+                strokeCap = StrokeCap.Round
+            )
+        }
+    }
 }
 
 @Composable
@@ -103,9 +127,9 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        val currentWeek = Clock.System.todayIn(TimeZone.currentSystemDefault()).getWeekNumber()
+        val currentWeek = Clock.System.todayIn(TimeZone.currentSystemDefault()).weekNumber
         val groupedEntries = orderedEntriesWithoutTransfers
-            .groupBy { it.datetime.date.getWeekNumber() }
+            .groupBy { it.datetime.date.weekNumber }
 
         val currentWeekSum = if (groupedEntries.containsKey(currentWeek)) {
             groupedEntries[currentWeek]!!.ministryTimeSum()
@@ -119,23 +143,11 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
 
         if (state.transferred.isNotEmpty() || transfers.isNotEmpty() || orderedEntriesWithoutTransfers.isNotEmpty()) {
             Column(Modifier.padding(horizontal = 16.dp, vertical = 2.dp)) {
-                Text(
-                    stringResource(R.string.current_week) + " ($currentWeekFormattedSum)",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
+                WeekNumberSeparator(
+                    text = stringResource(R.string.current_week) + " ($currentWeekFormattedSum)",
+                    weekGoal = weekGoal,
+                    timeSum = currentWeekSum
                 )
-                if (weekGoal > 0) {
-                    Spacer(Modifier.height(3.dp))
-                    val progress = Progress(1f / weekGoal * currentWeekSum.toFloat(), color = ProgressPositive)
-                    LinearProgressIndicator(
-                        progresses = listOf(progress),
-                        modifier = Modifier
-                            .height(2.dp)
-                            .fillMaxWidth()
-                            .clip(CircleShape),
-                        strokeCap = StrokeCap.Round
-                    )
-                }
             }
         }
 
@@ -155,23 +167,11 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
                         stringResource(R.string.calendar_week_shorthand, week)
                     } + if (entries.size > 1) " ($formattedTimeSum)" else ""
 
-                    Text(
-                        text,
-                        style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
+                    WeekNumberSeparator(
+                        text = text,
+                        weekGoal = weekGoal,
+                        timeSum = timeSum
                     )
-                    if (weekGoal > 0) {
-                        Spacer(Modifier.height(3.dp))
-                        val progress = Progress(1f / weekGoal * timeSum.toFloat(), color = ProgressPositive)
-                        LinearProgressIndicator(
-                            progresses = listOf(progress),
-                            modifier = Modifier
-                                .height(2.dp)
-                                .fillMaxWidth()
-                                .clip(CircleShape),
-                            strokeCap = StrokeCap.Round
-                        )
-                    }
                 }
             }
             entries.forEach { entry ->

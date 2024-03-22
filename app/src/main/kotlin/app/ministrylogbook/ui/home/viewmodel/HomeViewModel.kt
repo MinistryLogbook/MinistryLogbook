@@ -112,13 +112,13 @@ class HomeViewModel(
     private val _hasGoal = combine(settingsService.role, _manuallySetGoal) { role, manuallySetGoal ->
         manuallySetGoal != null || role != Role.Publisher
     }
-    private val _yearlyGoal = _roleGoal.combine(_beginOfPioneeringInServiceYear) { rl, beginOfPioneeringInServiceYear ->
+    private val _yearlyGoal = _roleGoal.combine(_beginOfPioneeringInServiceYear) { rl, beginOfPioneering ->
         val lastMonthInServiceYear = when {
             _serviceYearBegin.monthNumber == 9 -> _serviceYearBegin + DatePeriod(months = 12)
             _serviceYearBegin.monthNumber >= 9 -> LocalDate(_serviceYearBegin.year + 1, 9, 1)
             else -> LocalDate(_serviceYearBegin.year, 9, 1)
         }
-        rl * beginOfPioneeringInServiceYear.monthsUntil(lastMonthInServiceYear)
+        rl * beginOfPioneering.monthsUntil(lastMonthInServiceYear)
     }
     private val _restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform {
         val lastMonthTime = it.ministryTimeSum()

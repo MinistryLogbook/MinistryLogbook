@@ -41,7 +41,8 @@ fun YearlyProgress(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
     val show by remember(state.role, state.beginOfPioneeringInServiceYear, state.month) {
         derivedStateOf {
             val isPioneer = state.role == Role.SpecialPioneer || state.role == Role.RegularPioneer
-            isPioneer && state.beginOfPioneeringInServiceYear != null && state.beginOfPioneeringInServiceYear <= state.month
+            isPioneer && state.beginOfPioneeringInServiceYear != null &&
+                state.beginOfPioneeringInServiceYear <= state.month
         }
     }
 
