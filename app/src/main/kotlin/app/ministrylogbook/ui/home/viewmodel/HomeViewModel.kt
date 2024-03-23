@@ -9,9 +9,13 @@ import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
+import app.ministrylogbook.data.MonthlyInformation
 import app.ministrylogbook.data.MonthlyInformationRepository
+import app.ministrylogbook.data.MonthlyInformationWithStudies
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
+import app.ministrylogbook.data.Study
+import app.ministrylogbook.data.StudyRepository
 import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.services.BackupService
@@ -38,9 +42,15 @@ sealed class HomeIntent {
     data class TransferToTextMonth(val minutes: Int) : HomeIntent()
     data class UndoTransfer(val transfer: Entry) : HomeIntent()
     data class TransferFromLastMonth(val minutes: Int) : HomeIntent()
+    data class CreateBibleStudy(val name: String) : HomeIntent()
+    data class DeleteBibleStudy(val study: Study) : HomeIntent()
+    data class CheckBibleStudy(val id: Int) : HomeIntent()
+    data class UncheckBibleStudy(val id: Int) : HomeIntent()
     data object ImportBackup : HomeIntent()
     data object DismissImportBackup : HomeIntent()
+    data object DismissBibleStudyHint : HomeIntent()
 }
+
 data class HomeState(
     val month: LocalDate,
     val name: String = "",
@@ -49,17 +59,21 @@ data class HomeState(
     val roleGoal: Int = 1,
     val yearlyGoal: Int = 1,
     val role: Role = Role.Publisher,
-    val entries: List<Entry> = listOf(),
-    val entriesInServiceYear: List<Entry> = listOf(),
-    val bibleStudies: Int = 0,
+    val entries: List<Entry> = emptyList(),
+    val entriesInServiceYear: List<Entry> = emptyList(),
+    val bibleStudies: List<Study> = emptyList(),
     val restLastMonth: Time = Time.Empty,
-    val transferred: List<Entry> = listOf(),
+    val transferred: List<Entry> = emptyList(),
     val rest: Time = Time.Empty,
     val beginOfPioneeringInServiceYear: LocalDate? = null,
     val selectedBackupFile: BackupFile? = null,
     val isBackupValid: Boolean = false,
     val latestEntry: Entry? = null,
-    val importFinished: Boolean = false
+    val importFinished: Boolean = false,
+    val monthlyInformation: MonthlyInformationWithStudies = MonthlyInformationWithStudies(
+        MonthlyInformation(),
+        emptyList()
+    )
 )
 
 class HomeViewModel(
@@ -68,8 +82,9 @@ class HomeViewModel(
     private val _application: Application,
     private val _entryRepository: EntryRepository,
     private val _backupService: BackupService,
-    settingsService: SettingsService,
-    monthlyInformationRepository: MonthlyInformationRepository
+    private val _studyRepository: StudyRepository,
+    private val _monthlyInformationRepository: MonthlyInformationRepository,
+    settingsService: SettingsService
 ) : AndroidViewModel(_application), IntentViewModel<HomeState, HomeIntent> {
 
     private val _selectedBackupFile =
@@ -97,7 +112,7 @@ class HomeViewModel(
         }
     }
     private val _lastMonth = month.minus(DatePeriod(months = 1))
-    private val _monthlyInformation = monthlyInformationRepository.getOfMonth(month)
+    private val _monthlyInformationWithStudies = _monthlyInformationRepository.getOfMonth(month)
     private val _entries = _entryRepository.getAllOfMonth(month)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -107,7 +122,7 @@ class HomeViewModel(
     private val _transferred =
         _entryRepository.getTransferredFrom(month).map { transferred -> transferred.filter { it.time.isNotEmpty } }
     private val _roleGoal = settingsService.roleGoal
-    private val _manuallySetGoal = _monthlyInformation.map { it.goal }
+    private val _manuallySetGoal = _monthlyInformationWithStudies.map { it.info.goal }
     private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
     private val _hasGoal = combine(settingsService.role, _manuallySetGoal) { role, manuallySetGoal ->
         manuallySetGoal != null || role != Role.Publisher
@@ -136,52 +151,41 @@ class HomeViewModel(
             Time.Empty
         }
     }
+    private val _bibleStudies = _studyRepository.getAll()
 
-    override val state = combine(
-        settingsService.name,
-        _goal,
-        _hasGoal,
-        _roleGoal,
-        _yearlyGoal,
-        settingsService.role,
-        _entries,
-        _entriesInServiceYear,
-        _monthlyInformation.map { it.bibleStudies ?: 0 },
-        _restLastMonth,
-        _transferred,
-        _rest,
-        _beginOfPioneeringInServiceYear
-    ) { values ->
-        @Suppress("UNCHECKED_CAST")
-        HomeState(
-            month = month,
-            name = values[0] as String,
-            goal = values[1] as Int,
-            hasGoal = values[2] as Boolean,
-            roleGoal = values[3] as Int,
-            yearlyGoal = values[4] as Int,
-            role = values[5] as Role,
-            entries = values[6] as List<Entry>,
-            entriesInServiceYear = values[7] as List<Entry>,
-            bibleStudies = values[8] as Int,
-            restLastMonth = values[9] as Time,
-            transferred = values[10] as List<Entry>,
-            rest = values[11] as Time,
-            beginOfPioneeringInServiceYear = values[12] as LocalDate?
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
-        initialValue = HomeState(month)
-    )
+    private fun dismissBibleStudyHint() {
+        viewModelScope.launch {
+            val monthlyInfo = state.value.monthlyInformation.info
+            val newMonthlyInfo = monthlyInfo.copy(dismissedBibleStudiesHint = true)
+            _monthlyInformationRepository.save(newMonthlyInfo)
+        }
+    }
 
-    override fun dispatch(intent: HomeIntent) {
-        when (intent) {
-            is HomeIntent.TransferToTextMonth -> transferToNextMonth(intent.minutes)
-            is HomeIntent.UndoTransfer -> undoTransfer(intent.transfer)
-            is HomeIntent.TransferFromLastMonth -> transferFromLastMonth(intent.minutes)
-            is HomeIntent.ImportBackup -> importBackup()
-            is HomeIntent.DismissImportBackup -> _selectedBackupFile.update { null }
+    private fun deleteBibleStudy(study: Study) {
+        viewModelScope.launch {
+            _studyRepository.delete(study)
+        }
+    }
+
+    private fun uncheckBibleStudy(id: Int) {
+        viewModelScope.launch {
+            val monthlyInfo = state.value.monthlyInformation.info
+            _monthlyInformationRepository.removeCheckedStudy(id, monthlyInfo.id)
+        }
+    }
+
+    private fun checkBibleStudy(id: Int) {
+        viewModelScope.launch {
+            val monthlyInfo = state.value.monthlyInformation.info
+            _monthlyInformationRepository.addCheckedStudy(id, monthlyInfo.id)
+        }
+    }
+
+    private fun createBibleStudy(name: String) {
+        viewModelScope.launch {
+            val id = _studyRepository.save(Study(name = name))
+            val monthlyInfo = state.value.monthlyInformation.info
+            _monthlyInformationRepository.addCheckedStudy(id, monthlyInfo.id)
         }
     }
 
@@ -235,6 +239,61 @@ class HomeViewModel(
             } else {
                 _importFinished.update { true }
             }
+        }
+    }
+
+    override val state = combine(
+        settingsService.name,
+        _goal,
+        _hasGoal,
+        _roleGoal,
+        _yearlyGoal,
+        settingsService.role,
+        _entries,
+        _entriesInServiceYear,
+        _bibleStudies,
+        _restLastMonth,
+        _transferred,
+        _rest,
+        _beginOfPioneeringInServiceYear,
+        _monthlyInformationWithStudies
+    ) { values ->
+        @Suppress("UNCHECKED_CAST")
+        HomeState(
+            month = month,
+            name = values[0] as String,
+            goal = values[1] as Int,
+            hasGoal = values[2] as Boolean,
+            roleGoal = values[3] as Int,
+            yearlyGoal = values[4] as Int,
+            role = values[5] as Role,
+            entries = values[6] as List<Entry>,
+            entriesInServiceYear = values[7] as List<Entry>,
+            bibleStudies = values[8] as List<Study>,
+            restLastMonth = values[9] as Time,
+            transferred = values[10] as List<Entry>,
+            rest = values[11] as Time,
+            beginOfPioneeringInServiceYear = values[12] as LocalDate?,
+            monthlyInformation = values[13] as MonthlyInformationWithStudies
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
+        initialValue = HomeState(month)
+    )
+
+    override fun dispatch(intent: HomeIntent) {
+        when (intent) {
+            is HomeIntent.TransferToTextMonth -> transferToNextMonth(intent.minutes)
+            is HomeIntent.UndoTransfer -> undoTransfer(intent.transfer)
+            is HomeIntent.TransferFromLastMonth -> transferFromLastMonth(intent.minutes)
+            is HomeIntent.ImportBackup -> importBackup()
+            is HomeIntent.DismissImportBackup -> _selectedBackupFile.update { null }
+            is HomeIntent.CreateBibleStudy -> createBibleStudy(intent.name)
+            is HomeIntent.CheckBibleStudy -> checkBibleStudy(intent.id)
+            is HomeIntent.UncheckBibleStudy -> uncheckBibleStudy(intent.id)
+            is HomeIntent.DeleteBibleStudy -> deleteBibleStudy(intent.study)
+            is HomeIntent.DismissBibleStudyHint -> dismissBibleStudyHint()
         }
     }
 }

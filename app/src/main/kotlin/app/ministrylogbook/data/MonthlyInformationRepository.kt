@@ -11,7 +11,7 @@ import kotlinx.datetime.minus
 
 class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInformationDao) {
 
-    fun getOfMonth(month: LocalDate): Flow<MonthlyInformation> {
+    fun getOfMonth(month: LocalDate): Flow<MonthlyInformationWithStudies> {
         val lastMonth = month.minus(DatePeriod(months = 1))
 
         return combine(
@@ -21,12 +21,14 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
             if (current == null) {
                 val monthlyInformation = MonthlyInformation(
                     month = month,
-                    bibleStudies = last?.bibleStudies ?: 0,
-                    goal = last?.goal
+                    goal = last?.info?.goal
                 )
                 val id = save(monthlyInformation)
 
-                return@combine monthlyInformation.copy(id = id.toInt())
+                return@combine MonthlyInformationWithStudies(
+                    info = monthlyInformation.copy(id = id.toInt()),
+                    checkedStudies = emptyList()
+                )
             }
 
             current
@@ -45,8 +47,22 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
                 .getOfMonth(month.year, month.monthNumber)
                 .firstOrNull()
                 ?: return@withContext
-            val modifiedInfo = modify(info)
+            val modifiedInfo = modify(info.info)
             monthlyInformationDao.upsert(modifiedInfo)
+        }
+    }
+
+    suspend fun addCheckedStudy(studyId: Int, monthlyInfoId: Int) {
+        withContext(Dispatchers.IO) {
+            val ref = MonthlyInformationStudyCrossRef(monthlyInformationId = monthlyInfoId, studyId = studyId)
+            monthlyInformationDao.insertMonthlyInformationStudyCrossRef(ref)
+        }
+    }
+
+    suspend fun removeCheckedStudy(studyId: Int, monthlyInfoId: Int) {
+        withContext(Dispatchers.IO) {
+            val ref = MonthlyInformationStudyCrossRef(monthlyInformationId = monthlyInfoId, studyId = studyId)
+            monthlyInformationDao.deleteMonthlyInformationStudyCrossRef(ref)
         }
     }
 }

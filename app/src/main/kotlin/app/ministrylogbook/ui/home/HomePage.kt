@@ -1,6 +1,8 @@
 package app.ministrylogbook.ui.home
 
 import android.content.Intent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -35,7 +39,7 @@ import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.restartApp
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.backup.BackupImportDialog
-import app.ministrylogbook.ui.home.studies.StudiesPage
+import app.ministrylogbook.ui.home.biblestudies.BibleStudiesPage
 import app.ministrylogbook.ui.home.time.TimePage
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
@@ -48,7 +52,7 @@ import kotlinx.datetime.todayIn
 
 enum class PagerPage {
     Time,
-    Studies
+    BibleStudies
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -152,16 +156,31 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                                 pagerState.scrollToPage(1)
                             }
                         } else {
+                            coroutineScope.launch {
+                                studiesScrollState.animateScrollTo(0)
+                            }
                         }
                     },
                     label = {
                         Text(stringResource(R.string.bible_studies_short))
                     },
                     icon = {
-                        Icon(
-                            painterResource(R.drawable.ic_group),
-                            contentDescription = null // TODO: contentDescription
-                        )
+                        BadgedBox(badge = {
+                            androidx.compose.animation.AnimatedVisibility(
+                                visible = !state.monthlyInformation.info.dismissedBibleStudiesHint &&
+                                    state.bibleStudies.isNotEmpty() &&
+                                    state.monthlyInformation.checkedStudies.isEmpty(),
+                                enter = fadeIn(),
+                                exit = fadeOut()
+                            ) {
+                                Badge { Text("!") }
+                            }
+                        }) {
+                            Icon(
+                                painterResource(R.drawable.ic_group),
+                                contentDescription = null // TODO: contentDescription
+                            )
+                        }
                     }
                 )
             }
@@ -176,7 +195,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                 val page = PagerPage.entries.first { it.ordinal == pageIndex }
                 when (page) {
                     PagerPage.Time -> TimePage(state, dispatch, timeScrollState)
-                    PagerPage.Studies -> StudiesPage(state, dispatch, studiesScrollState)
+                    PagerPage.BibleStudies -> BibleStudiesPage(state, dispatch, studiesScrollState)
                 }
             }
         }

@@ -15,6 +15,7 @@
  */
 package app.ministrylogbook.shared.layouts
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.animate
@@ -68,6 +69,7 @@ import kotlinx.coroutines.launch
  * @param interactionSource Optional [MutableInteractionSource] that will passed on to
  * the internal [Modifier.draggable].
  */
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 internal fun <T> Modifier.swipeableV2(
     state: SwipeableV2State<T>,
     orientation: Orientation,

@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.home.entrydetails
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
@@ -85,6 +86,7 @@ fun NumberPicker(
     }
 }
 
+@SuppressLint("ModifierFactoryUnreferencedReceiver")
 fun Modifier.repeatingClickable(
     initialDelay: Long = 700,
     delay: Long = 110,

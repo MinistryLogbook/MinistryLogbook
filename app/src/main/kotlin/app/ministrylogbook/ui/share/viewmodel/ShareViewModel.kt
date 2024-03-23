@@ -37,7 +37,7 @@ class ShareViewModel(
     private val _monthlyInformation = monthlyInfoRepository.getOfMonth(month)
     private val _entries = entryRepository.getAllOfMonth(month)
 
-    val initialComments = _monthlyInformation.map { it.reportComment }.take(1).stateIn(
+    val initialComments = _monthlyInformation.map { it.info.reportComment }.take(1).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
         initialValue = ""
@@ -49,7 +49,7 @@ class ShareViewModel(
             settingsDataStore.name,
             _monthlyInformation,
             settingsDataStore.role
-        ) { entries, name, studyEntry, role ->
+        ) { entries, name, monthlyInfo, role ->
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
             val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
             val commentTheocraticAssignment =
@@ -76,7 +76,7 @@ class ShareViewModel(
                 name = name,
                 month = getMonthTitle(locale),
                 hours = ministryTimeSum.hours,
-                bibleStudies = studyEntry.bibleStudies ?: 0,
+                bibleStudies = monthlyInfo.checkedStudies.size,
                 comments = comments,
                 reportsHours = role == Role.AuxiliaryPioneer ||
                     role == Role.RegularPioneer || role == Role.SpecialPioneer
@@ -89,7 +89,7 @@ class ShareViewModel(
 
     fun updateComments(text: String) = viewModelScope.launch {
         _monthlyInformation.firstOrNull()?.let {
-            monthlyInfoRepository.save(it.copy(reportComment = text))
+            monthlyInfoRepository.save(it.info.copy(reportComment = text))
         }
     }
 

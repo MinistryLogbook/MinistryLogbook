@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import app.ministrylogbook.ui.shared.Tile
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn

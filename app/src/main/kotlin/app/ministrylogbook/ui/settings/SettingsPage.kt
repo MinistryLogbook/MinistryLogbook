@@ -135,7 +135,7 @@ fun DesignSetting(viewModel: SettingsViewModel = koinViewModel()) {
         }
     ) {
         OptionList {
-            Design.values().map { d ->
+            Design.entries.map { d ->
                 Option(text = d.translate(), selected = d == design, onClick = {
                     viewModel.setDesign(d)
                     handleClose()
@@ -196,7 +196,7 @@ fun RoleSetting(role: Role, onChange: (Role) -> Unit) {
         }
     ) {
         OptionList {
-            Role.values().map { r ->
+            Role.entries.map { r ->
                 Option(text = r.translate(), selected = r == role, onClick = {
                     onChange(r)
                     handleClose()

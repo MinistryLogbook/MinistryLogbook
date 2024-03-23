@@ -23,15 +23,15 @@ import app.ministrylogbook.ui.settings.license.LicenseDetailPage
 import app.ministrylogbook.ui.settings.license.LicensesPage
 
 sealed class SettingsGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
-    object Root : SettingsGraph("")
+    data object Root : SettingsGraph("")
 
-    object Name : SettingsGraph("name")
+    data object Name : SettingsGraph("name")
 
-    object Goal : SettingsGraph("goal")
+    data object Goal : SettingsGraph("goal")
 
-    object Licenses : SettingsGraph("licenses")
+    data object Licenses : SettingsGraph("licenses")
 
-    object LicenseDetail : SettingsGraph(
+    data object LicenseDetail : SettingsGraph(
         rawRoute = "licenses/{id}",
         arguments = listOf(navArgument("id") {})
     ) {

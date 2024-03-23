@@ -26,8 +26,8 @@ import kotlinx.datetime.toLocalDateTime
 sealed class BackupIntent {
     data class CreateBackup(val uri: Uri) : BackupIntent()
     data class SelectBackupFile(val uri: Uri) : BackupIntent()
-    object UnselectBackupFile : BackupIntent()
-    object ImportBackup : BackupIntent()
+    data object UnselectBackupFile : BackupIntent()
+    data object ImportBackup : BackupIntent()
 }
 
 data class BackupFile(val uri: Uri, val metadata: Metadata?)

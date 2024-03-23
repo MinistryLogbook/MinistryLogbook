@@ -153,7 +153,7 @@ fun RolePage(
                     expanded = false
                 }
             ) {
-                Role.values().map { r ->
+                Role.entries.map { r ->
                     DropdownMenuItem(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {

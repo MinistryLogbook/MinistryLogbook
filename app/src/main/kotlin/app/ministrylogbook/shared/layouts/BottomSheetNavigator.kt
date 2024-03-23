@@ -133,7 +133,7 @@ class BottomSheetNavigator(
                 if (transitionsInProgressEntries.contains(retainedEntry)) {
                     state.markTransitionComplete(backStackEntry)
                 }
-                // If there is no transition in progress, the sheet has been dimissed by the
+                // If there is no transition in progress, the sheet has been dismissed by the
                 // user (for example by tapping on the scrim or through an accessibility action)
                 // In this case, we will immediately pop without a transition as the sheet has
                 // already been hidden

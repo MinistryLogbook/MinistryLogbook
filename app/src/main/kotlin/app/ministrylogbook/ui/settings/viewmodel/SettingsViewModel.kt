@@ -51,7 +51,7 @@ class SettingsViewModel(
         initialValue = 0,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val manuallySetGoal = _monthlyInfo.map { it.goal }.stateIn(
+    val manuallySetGoal = _monthlyInfo.map { it.info.goal }.stateIn(
         scope = viewModelScope,
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -98,13 +98,13 @@ class SettingsViewModel(
             return@launch
         }
         _monthlyInfo.firstOrNull()?.let {
-            _monthlyInformationRepository.save(it.copy(goal = value))
+            _monthlyInformationRepository.save(it.info.copy(goal = value))
         }
     }
 
     fun resetGoal() = viewModelScope.launch {
         _monthlyInfo.firstOrNull()?.let {
-            _monthlyInformationRepository.save(it.copy(goal = null))
+            _monthlyInformationRepository.save(it.info.copy(goal = null))
         }
     }
 

@@ -3,7 +3,7 @@
     <string name="app_name">Ministry Logbook</string>
     <string name="settings">Einstellungen</string>
     <string name="news">Neuigkeiten</string>
-    <string name="bible_studies_short">Studien</string>
+    <string name="bible_studies_short">Bibelstudien</string>
     <string name="return_visits">Rückbesuche</string>
     <string name="video_showings">Videovorführungen</string>
     <string name="placements_long">Abgabe (gedruckt und elektronisch)</string>
@@ -143,7 +143,7 @@
     <string name="last_week">Letzte Woche</string>
     <string name="calendar_week_shorthand">KW %1$s</string>
     <string name="current_week">Aktuelle Woche</string>
-    <string name="create_person">Person erstellen</string>
+    <string name="add_bible_study">Bibelstudium hinzufügen</string>
     <string name="check_box_form_of_ministry">Kreuze an, wenn du dich während des Monats an irgendeiner Form des Predigtdienstes beteiligt hast</string>
     <string name="check_box_form_of_ministry_colon">Kreuze an, wenn du dich während des Monats an irgendeiner Form des Predigtdienstes beteiligt hast:</string>
     <string name="hours_long">Stunden (falls Hilfspionier, allgemeiner Pionier, Sonderpionier oder Missionar)</string>

@@ -25,7 +25,7 @@ data class IntroState(
 )
 
 sealed class IntroIntent {
-    object Ready : IntroIntent()
+    data object Ready : IntroIntent()
     data class NameChange(val name: String) : IntroIntent()
     data class RoleChange(val role: Role) : IntroIntent()
     data class RemindersToggle(val enabled: Boolean) : IntroIntent()
@@ -51,9 +51,9 @@ class IntroViewModel(
         _monthlyInfoRepository.getOfMonth(_today)
     ) { name, role, pioneerSince, reminders, monthlyInfo ->
         val goal = if (role == Role.Publisher) {
-            monthlyInfo.goal
+            monthlyInfo.info.goal
         } else {
-            monthlyInfo.goal ?: role.goal
+            monthlyInfo.info.goal ?: role.goal
         }
         IntroState(name, role, pioneerSince, reminders, goal)
     }.stateIn(

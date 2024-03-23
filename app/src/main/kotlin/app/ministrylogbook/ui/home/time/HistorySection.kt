@@ -41,14 +41,20 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 @Composable
-fun WeekNumberSeparator(text: String, weekGoal: Int, ministryTimeSum: Time, allTimeSum: Time) {
+fun WeekNumberSeparator(
+    text: String,
+    weekGoal: Int,
+    ministryTimeSum: Time,
+    allTimeSum: Time,
+    showProgress: Boolean = false
+) {
     Column(Modifier.padding(horizontal = 16.dp, vertical = 2.dp)) {
         Text(
             text,
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
         )
-        if (weekGoal > 0) {
+        if (showProgress && weekGoal > 0) {
             Spacer(Modifier.height(3.dp))
             LinearProgressIndicator(
                 progresses = listOf(
@@ -140,7 +146,8 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
                 text = text,
                 weekGoal = weekGoal,
                 ministryTimeSum = entries.ministryTimeSum(),
-                allTimeSum = timeSum
+                allTimeSum = timeSum,
+                showProgress = week == currentWeek
             )
             entries.forEach { entry ->
                 HistoryItem(entry, onClick = { handleClick(entry) })

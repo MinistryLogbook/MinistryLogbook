@@ -17,6 +17,7 @@ import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import app.ministrylogbook.ui.shared.Tile
 
 @Composable
 fun TransferHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {

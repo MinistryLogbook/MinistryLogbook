@@ -6,12 +6,12 @@ import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsService
+import app.ministrylogbook.data.StudyRepository
 import app.ministrylogbook.shared.services.BackupService
 import app.ministrylogbook.shared.services.ReminderManager
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
-import app.ministrylogbook.ui.home.viewmodel.StudiesDetailsViewModel
 import app.ministrylogbook.ui.intro.viewmodel.IntroViewModel
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
@@ -25,12 +25,13 @@ val appModule = module {
     }
     single { get<AppDatabase>().bibleStudyEntryDao() }
     single { get<AppDatabase>().entryDao() }
+    single { get<AppDatabase>().studyDao() }
     single { EntryRepository(get()) }
+    single { StudyRepository(get()) }
     single { MonthlyInformationRepository(get()) }
     single { SettingsService(androidContext()) }
     single { ReminderManager() }
     single { BackupService(androidContext(), get(), get()) }
-    viewModel { params -> StudiesDetailsViewModel(params.get(), get()) }
     viewModel { params -> EntryDetailsViewModel(params.get(), params.getOrNull(), get(), get()) }
     viewModel { params ->
         ShareViewModel(
@@ -48,6 +49,7 @@ val appModule = module {
             params.get(),
             params.getOrNull(),
             androidContext() as Application,
+            get(),
             get(),
             get(),
             get(),

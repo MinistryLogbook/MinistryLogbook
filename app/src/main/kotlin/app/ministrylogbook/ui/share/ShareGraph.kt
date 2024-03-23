@@ -32,7 +32,7 @@ sealed class ShareGraph(
     private val rawRoute: String,
     val arguments: List<NamedNavArgument> = listOf()
 ) {
-    object Root : ShareGraph(
+    data object Root : ShareGraph(
         "?year={year}&monthNumber={monthNumber}",
         arguments = listOf(
             navArgument("year") {

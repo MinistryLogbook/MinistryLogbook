@@ -33,6 +33,7 @@ import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import app.ministrylogbook.ui.shared.Tile
 import app.ministrylogbook.ui.theme.ProgressPositive
 
 @Composable

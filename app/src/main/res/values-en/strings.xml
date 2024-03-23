@@ -3,7 +3,7 @@
     <string name="app_name">Ministry Logbook</string>
     <string name="settings">Settings</string>
     <string name="news">News</string>
-    <string name="bible_studies_short">Studies</string>
+    <string name="bible_studies_short">Bible Studies</string>
     <string name="return_visits">Return Visits</string>
     <string name="video_showings">Video Showings</string>
     <string name="placements_long">Placements (Printed and Electronic)</string>
@@ -143,9 +143,15 @@
     <string name="last_week">Last week</string>
     <string name="calendar_week_shorthand">CW %1$s</string>
     <string name="current_week">Current week</string>
-    <string name="create_person">Create person</string>
+    <string name="add_bible_study">Add bible study</string>
     <string name="check_box_form_of_ministry">Check the box if you shared in any form of the ministry during the month</string>
     <string name="check_box_form_of_ministry_colon">Check the box if you shared in any form of the ministry during the month:</string>
     <string name="hours_long">Hours (if auxiliary, regular, or special pioneer or field missionary)</string>
     <string name="hours_long_colon">Hours (if auxiliary, regular, or special pioneer or field missionary):</string>
+    <string name="check_conducted_bible_studies">Check conducted bible studies</string>
+    <string name="check_conducted_bible_studies_description">Make sure to check all the bible studies that have been conducted this month.</string>
+    <string name="add_new_bible_study">Add new bible study</string>
+    <string name="add">Add</string>
+    <string name="delete_bible_study">Delete bible study</string>
+    <string name="delete_bible_study_description">Are you sure you want to delete %1$s?</string>
 </resources>

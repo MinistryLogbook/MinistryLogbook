@@ -129,27 +129,6 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
                         )
                         Spacer(Modifier.width(8.dp))
                     }
-                    if (entry.placements > 0) {
-                        HistoryItemChip(
-                            icon = painterResource(R.drawable.ic_article),
-                            text = entry.placements.toString()
-                        )
-                        Spacer(Modifier.width(8.dp))
-                    }
-                    if (entry.returnVisits > 0) {
-                        HistoryItemChip(
-                            icon = painterResource(R.drawable.ic_group),
-                            text = entry.returnVisits.toString()
-                        )
-                        Spacer(Modifier.width(8.dp))
-                    }
-                    if (entry.videoShowings > 0) {
-                        HistoryItemChip(
-                            icon = painterResource(R.drawable.ic_play_circle),
-                            text = entry.videoShowings.toString()
-                        )
-                        Spacer(Modifier.width(8.dp))
-                    }
                 }
             }
         }
