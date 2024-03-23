@@ -350,7 +350,7 @@ fun GoalSetting(viewModel: SettingsViewModel = koinViewModel()) {
         }
     }
 
-    Setting(title = stringResource(R.string.goal), onClick = {
+    Setting(title = stringResource(R.string.monthly_goal), onClick = {
         navController.navigateToSettingsGoal()
     }) {
         Text(

@@ -83,7 +83,7 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
     }
 
     BaseSettingsPage(
-        title = stringResource(R.string.goal),
+        title = stringResource(R.string.monthly_goal),
         toolbarElevation = scrollState.canScrollBackward,
         actions = {
             ToolbarAction(onClick = { handleSave() }, disabled = !isSavable) {

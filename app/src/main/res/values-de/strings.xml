@@ -35,7 +35,7 @@
     <string name="december_short">Dez</string>
     <string name="current_month">Aktueller Monat</string>
     <string name="role">Rolle</string>
-    <string name="goal">Ziel</string>
+    <string name="monthly_goal">Monatliches Ziel</string>
     <string name="no_name_set">Kein Name gesetzt</string>
     <string name="no_goal_set">Kein Ziel gesetzt</string>
     <string name="personal_information">Persönliche Informationen</string>
@@ -128,7 +128,7 @@
     <string name="ready">Fertig</string>
     <string name="reminders_description">Vergiss niemals mehr deinen Predigtdienstbericht abzugeben.</string>
     <string name="setup_reminders_title">Als letztes, möchtest du erinnert werden?</string>
-    <string name="intro_goal_title">Lege optional ein Ziel fest</string>
+    <string name="intro_goal_title">Lege optional ein Monatsziel fest</string>
     <string name="intro_goal_description">Die App wird dir dabei helfen, deine Ziele zu erreichen.</string>
     <string name="file_type_not_supported">Dateityp wird nicht unterstützt</string>
     <string name="backup_is_invalid">Sicherung ist ungültig</string>

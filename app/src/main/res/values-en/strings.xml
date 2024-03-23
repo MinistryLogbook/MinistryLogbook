@@ -35,7 +35,7 @@
     <string name="december_short">Dec</string>
     <string name="current_month">Current month</string>
     <string name="role">Role</string>
-    <string name="goal">Goal</string>
+    <string name="monthly_goal">Monthly goal</string>
     <string name="no_name_set">No name set</string>
     <string name="no_goal_set">No goal set</string>
     <string name="personal_information">Personal Information</string>
@@ -128,7 +128,7 @@
     <string name="ready">Ready</string>
     <string name="reminders_description">Never forget to send your Field Service Report again.</string>
     <string name="setup_reminders_title">Lastly, do you want to get reminders?</string>
-    <string name="intro_goal_title">Optionally, set a goal</string>
+    <string name="intro_goal_title">Optionally, set a monthly goal</string>
     <string name="intro_goal_description">The app will help you reaching your goals.</string>
     <string name="file_type_not_supported">File type not supported</string>
     <string name="backup_is_invalid">Backup is invalid</string>
