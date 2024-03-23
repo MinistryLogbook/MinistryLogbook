@@ -150,12 +150,7 @@ fun NavGraphBuilder.homeGraph() {
 }
 
 fun NavController.navigateToHome() = navigate(AppGraph.Home.route) {
-    popUpTo(AppGraph.Intro.route) {
-        inclusive = true
-    }
-    popUpTo(HomeGraph.FromDeepLink.route) {
-        inclusive = true
-    }
+    popUpTo(0)
 }
 
 fun NavController.navigateToHomeMenu() = navigate(HomeGraph.Menu.route)

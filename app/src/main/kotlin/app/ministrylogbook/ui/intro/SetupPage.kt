@@ -42,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -120,7 +121,6 @@ fun SetupPage() {
                 viewModel.dispatch(IntroIntent.NameChange(tempName))
                 introNavController.navigate(InnerIntroGraph.Role.route)
             }
-
             InnerIntroGraph.Role.route -> {
                 if (state.role == Role.Publisher) {
                     introNavController.navigate(InnerIntroGraph.Goal.route)
@@ -128,12 +128,10 @@ fun SetupPage() {
                     introNavController.navigate(InnerIntroGraph.Reminders.route)
                 }
             }
-
             InnerIntroGraph.Goal.route -> {
                 viewModel.dispatch(IntroIntent.GoalChange(tempGoal))
                 introNavController.navigate(InnerIntroGraph.Reminders.route)
             }
-
             else -> {}
         }
     }
@@ -233,6 +231,7 @@ fun SetupPage() {
                         ) {
                             Button(onClick = {
                                 viewModel.dispatch(IntroIntent.Ready)
+                                introNavController.clearBackStack(introNavController.graph.findStartDestination().id)
                                 navController.navigateToHome()
                             }) {
                                 Text(stringResource(R.string.ready))
