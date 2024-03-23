@@ -148,4 +148,10 @@
     <string name="check_box_form_of_ministry_colon">Kreuze an, wenn du dich während des Monats an irgendeiner Form des Predigtdienstes beteiligt hast:</string>
     <string name="hours_long">Stunden (falls Hilfspionier, allgemeiner Pionier, Sonderpionier oder Missionar)</string>
     <string name="hours_long_colon">Stunden (falls Hilfspionier, allgemeiner Pionier, Sonderpionier oder Missionar):</string>
+    <string name="check_conducted_bible_studies">Durchgeführte Bibelstudien abhaken</string>
+    <string name="check_conducted_bible_studies_description">Stell sicher, dass alle druchgeführten Bibelstudien abgehakt sind.</string>
+    <string name="add_new_bible_study">Neues Bibelstudium hinzufügen</string>
+    <string name="add">Hinzufügen</string>
+    <string name="delete_bible_study">Bibelstudium löschen</string>
+    <string name="delete_bible_study_description">Bist du sicher, dass du %1$s löschen möchtest?</string>
 </resources>
