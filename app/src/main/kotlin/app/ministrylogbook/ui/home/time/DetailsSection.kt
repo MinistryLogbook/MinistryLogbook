@@ -56,6 +56,7 @@ import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
+import kotlin.math.min
 
 @Composable
 fun DetailsSection(state: HomeState) {
@@ -100,8 +101,8 @@ fun DetailsSection(state: HomeState) {
             } else {
                 ministryTime.hours
             }
-            if (state.goal != null && state.goal > hours) {
-                state.goal - hours
+            if (state.goal != null) {
+                state.goal - min(hours, state.goal)
             } else {
                 null
             }
@@ -212,36 +213,36 @@ fun DetailsSection(state: HomeState) {
             }
         }
 
-        if (state.hasGoal) {
-            ExpandAnimatedVisibility(show = remainingHours == null || remainingHours!! > 0) {
-                Column {
-                    Spacer(Modifier.height(16.dp))
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        val text = if (remainingHours != null) {
-                            val remainingHoursAnimated by animateIntAsState(
-                                targetValue = remainingHours ?: 0,
-                                animationSpec = tween(400),
-                                label = "remainingHours"
-                            )
-                            pluralStringResource(
-                                R.plurals.hours_remaining,
-                                remainingHoursAnimated,
-                                remainingHoursAnimated
-                            )
-                        } else {
-                            pluralStringResource(R.plurals.hours_remaining, 99, 99)
-                        }
-
-                        Text(
-                            text,
-                            color = ProgressPositive,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.placeholder(
-                                visible = remainingHours == null,
-                                highlight = PlaceholderHighlight.fade()
-                            )
+        ExpandAnimatedVisibility(
+            show = (state.hasGoal == null || state.hasGoal) && (remainingHours == null || (remainingHours ?: 0) > 0)
+        ) {
+            Column {
+                Spacer(Modifier.height(16.dp))
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    val text = if ((remainingHours ?: 0) > 0) {
+                        val remainingHoursAnimated by animateIntAsState(
+                            targetValue = remainingHours ?: 0,
+                            animationSpec = tween(400),
+                            label = "remainingHours"
                         )
+                        pluralStringResource(
+                            R.plurals.hours_remaining,
+                            remainingHoursAnimated,
+                            remainingHoursAnimated
+                        )
+                    } else {
+                        pluralStringResource(R.plurals.hours_remaining, 99, 99)
                     }
+
+                    Text(
+                        text,
+                        color = ProgressPositive,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.placeholder(
+                            visible = (remainingHours ?: 0) == 0,
+                            highlight = PlaceholderHighlight.fade()
+                        )
+                    )
                 }
             }
         }

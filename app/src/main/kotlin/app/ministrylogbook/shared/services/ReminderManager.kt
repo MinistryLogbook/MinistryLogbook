@@ -25,11 +25,6 @@ class ReminderManager : KoinComponent {
         const val REMINDER_NOTIFICATION_REQUEST_CODE = 1
     }
 
-    private fun defaultReminderTime(): LocalDateTime {
-        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        return today.lastDayOfMonth.atTime(20, 0)
-    }
-
     fun scheduleReminder(
         dateTime: LocalDateTime = defaultReminderTime(),
         id: Int = REMINDER_NOTIFICATION_REQUEST_CODE
@@ -69,6 +64,11 @@ class ReminderManager : KoinComponent {
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
         }
         alarmManager.cancel(intent)
+    }
+
+    private fun defaultReminderTime(): LocalDateTime {
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        return today.lastDayOfMonth.atTime(20, 0)
     }
 }
 

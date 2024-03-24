@@ -55,7 +55,7 @@ data class HomeState(
     val month: LocalDate,
     val name: String = "",
     val goal: Int? = null,
-    val hasGoal: Boolean = false,
+    val hasGoal: Boolean? = null,
     val roleGoal: Int = 1,
     val yearlyGoal: Int = 1,
     val role: Role = Role.Publisher,
