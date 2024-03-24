@@ -2,8 +2,8 @@ package app.ministrylogbook
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.SettingsService
@@ -22,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     @OptIn(KoinExperimentalAPI::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
+        enableEdgeToEdge()
         val settingsService = SettingsService(this)
         val design = runBlocking {
             settingsService.design.firstOrNull() ?: Design.System

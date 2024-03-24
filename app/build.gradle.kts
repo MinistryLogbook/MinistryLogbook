@@ -89,11 +89,13 @@ android {
         kotlinCompilerExtensionVersion = "1.5.10"
     }
 
-    packaging {
-        resources.excludes += "META-INF/*"
-    }
-
     namespace = "app.ministrylogbook"
+}
+
+androidComponents {
+    onVariants(selector().withBuildType("release")) {
+        it.packaging.resources.excludes.add("META-INF/*.version")
+    }
 }
 
 tasks.withType<KotlinCompile>().all {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -49,7 +50,7 @@ fun WelcomePage() {
 
     LanguagePicker(isDialogOpen, onClose = { isDialogOpen = false })
 
-    Surface(Modifier.fillMaxSize()) {
+    Surface(Modifier.fillMaxSize().navigationBarsPadding()) {
         Column {
             Toolbar {
                 Spacer(modifier = Modifier.weight(1f))
