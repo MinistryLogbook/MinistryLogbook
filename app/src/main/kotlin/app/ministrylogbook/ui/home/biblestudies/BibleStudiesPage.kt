@@ -31,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -51,6 +53,7 @@ fun BibleStudiesPage(
     var fabExtended by remember { mutableStateOf(true) }
     var newBibleStudyName by rememberSaveable { mutableStateOf("") }
     var isDialogOpen by rememberSaveable { mutableStateOf(false) }
+    val focusRequester = remember { FocusRequester() }
 
     LaunchedEffect(scrollState) {
         var prev = 0
@@ -61,6 +64,10 @@ fun BibleStudiesPage(
     }
 
     if (isDialogOpen) {
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
+
         AlertDialog(
             onDismissRequest = { isDialogOpen = false },
             dismissButton = {
@@ -82,6 +89,7 @@ fun BibleStudiesPage(
             },
             text = {
                 OutlinedTextField(
+                    modifier = Modifier.focusRequester(focusRequester),
                     value = newBibleStudyName,
                     onValueChange = { newBibleStudyName = it },
                     placeholder = {
