@@ -10,6 +10,7 @@ import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.utilities.mutableStateIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -29,9 +30,15 @@ class EntryDetailsViewModel(
 ) : ViewModel() {
 
     private val _initialEntry = Entry(id = id ?: 0, datetime = month.atTime(0, 0))
+    private val _originalEntry = if (id != null) {
+        _entryRepository.get(id)
+    } else {
+        MutableStateFlow(_initialEntry)
+    }
+
     private val _entry =
         if (id != null) {
-            _entryRepository.get(id).filterNotNull().mutableStateIn(viewModelScope, _initialEntry)
+            _originalEntry.filterNotNull().mutableStateIn(viewModelScope, _initialEntry)
         } else {
             MutableStateFlow(_initialEntry)
         }
@@ -47,6 +54,11 @@ class EntryDetailsViewModel(
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
     val precisionMode = settingsDataStore.precisionMode.stateIn(
+        scope = viewModelScope,
+        initialValue = false,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
+    val hasChanges = combine(_entry, _originalEntry) { entry, original -> entry != original }.stateIn(
         scope = viewModelScope,
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)

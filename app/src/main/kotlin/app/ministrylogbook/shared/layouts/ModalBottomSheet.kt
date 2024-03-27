@@ -574,6 +574,8 @@ fun ModalBottomSheetLayout(
     val anchorChangeCallback = remember(sheetState, scope) {
         ModalBottomSheetAnchorChangeCallback(sheetState, scope)
     }
+    val bottomSheetStateLock = LocalBottomSheetStateLock.current
+
     BoxWithConstraints(modifier) {
         val fullHeight = constraints.maxHeight.toFloat()
         Box(Modifier.fillMaxSize()) {
@@ -581,9 +583,8 @@ fun ModalBottomSheetLayout(
             Scrim(
                 color = scrimColor,
                 onDismiss = {
-                    if (sheetState.anchoredDraggableState.confirmValueChange(
-                            ModalBottomSheetValue.Hidden
-                        )
+                    if (sheetState.anchoredDraggableState.confirmValueChange(ModalBottomSheetValue.Hidden) &&
+                        !bottomSheetStateLock.isLocked
                     ) {
                         scope.launch { sheetState.hide() }
                     }
@@ -592,7 +593,11 @@ fun ModalBottomSheetLayout(
             )
         }
 
-        Box(Modifier.fillMaxWidth().statusBarsPadding()) {
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+        ) {
             val statusBarHeight = WindowInsets.statusBars.getTop(LocalDensity.current)
             Surface(
                 modifier = Modifier
@@ -602,7 +607,10 @@ fun ModalBottomSheetLayout(
                     .then(
                         if (sheetGesturesEnabled) {
                             Modifier.nestedScroll(
-                                remember(sheetState.anchoredDraggableState, orientation) {
+                                remember(
+                                    sheetState.anchoredDraggableState,
+                                    orientation
+                                ) {
                                     ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
                                         state = sheetState.anchoredDraggableState,
                                         orientation = orientation
@@ -648,10 +656,10 @@ fun ModalBottomSheetLayout(
                             Modifier.semantics {
                                 if (sheetState.isVisible) {
                                     dismiss {
-                                        if (
-                                            sheetState.anchoredDraggableState.confirmValueChange(
+                                        if (sheetState.anchoredDraggableState.confirmValueChange(
                                                 ModalBottomSheetValue.Hidden
-                                            )
+                                            ) &&
+                                            !bottomSheetStateLock.requestUnlocked()
                                         ) {
                                             scope.launch { sheetState.hide() }
                                         }
@@ -663,7 +671,8 @@ fun ModalBottomSheetLayout(
                                         expand {
                                             if (sheetState.anchoredDraggableState.confirmValueChange(
                                                     ModalBottomSheetValue.Expanded
-                                                )
+                                                ) &&
+                                                !bottomSheetStateLock.requestUnlocked()
                                             ) {
                                                 scope.launch { sheetState.expand() }
                                             }
@@ -673,7 +682,8 @@ fun ModalBottomSheetLayout(
                                         collapse {
                                             if (sheetState.anchoredDraggableState.confirmValueChange(
                                                     ModalBottomSheetValue.HalfExpanded
-                                                )
+                                                ) &&
+                                                !bottomSheetStateLock.requestUnlocked()
                                             ) {
                                                 scope.launch { sheetState.halfExpand() }
                                             }
@@ -748,8 +758,8 @@ object ModalBottomSheetDefaults {
         get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.32f)
 }
 
-private fun ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
-    state: AnchoredDraggableState<*>,
+private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
+    state: AnchoredDraggableState<T>,
     orientation: Orientation
 ): NestedScrollConnection = object : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {

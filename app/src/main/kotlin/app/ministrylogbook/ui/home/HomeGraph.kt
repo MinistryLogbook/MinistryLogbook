@@ -122,7 +122,10 @@ fun NavGraphBuilder.homeGraph() {
             MenuPopup()
         }
 
-        bottomSheet(HomeGraph.EntryDetails.route, arguments = HomeGraph.EntryDetails.arguments) {
+        bottomSheet(
+            HomeGraph.EntryDetails.route,
+            arguments = HomeGraph.EntryDetails.arguments
+        ) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
             val monthNumber =
@@ -141,10 +144,8 @@ fun NavGraphBuilder.homeGraph() {
                 }
             }
 
-            val entryDetailsViewModel = getViewModel<EntryDetailsViewModel>(parameters = {
-                parametersOf(month, id)
-            })
-            EntryDetailsBottomSheetContent(entryDetailsViewModel)
+            val viewModel = getViewModel<EntryDetailsViewModel>(parameters = { parametersOf(month, id) })
+            EntryDetailsBottomSheetContent(viewModel)
         }
     }
 }

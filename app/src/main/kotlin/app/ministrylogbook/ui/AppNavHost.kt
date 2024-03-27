@@ -12,9 +12,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import app.ministrylogbook.shared.layouts.LocalBottomSheetStateLock
 import app.ministrylogbook.shared.layouts.ModalBottomSheetLayout
 import app.ministrylogbook.shared.layouts.PopupLayout
 import app.ministrylogbook.shared.layouts.rememberBottomSheetNavigator
+import app.ministrylogbook.shared.layouts.rememberBottomSheetStateLock
 import app.ministrylogbook.shared.layouts.rememberPopupNavigator
 import app.ministrylogbook.ui.home.backup.backupGraph
 import app.ministrylogbook.ui.home.homeGraph
@@ -24,11 +26,15 @@ import app.ministrylogbook.ui.share.shareGraph
 
 @Composable
 fun AppNavHost(startDestination: String = AppGraph.Home.route) {
-    val bottomSheetNavigator = rememberBottomSheetNavigator()
+    val bottomSheetStateLock = rememberBottomSheetStateLock()
+    val bottomSheetNavigator = rememberBottomSheetNavigator(bottomSheetStateLock)
     val popupNavigator = rememberPopupNavigator()
     val navController = rememberNavController(popupNavigator, bottomSheetNavigator)
 
-    CompositionLocalProvider(LocalAppNavController provides navController) {
+    CompositionLocalProvider(
+        LocalAppNavController provides navController,
+        LocalBottomSheetStateLock provides bottomSheetStateLock
+    ) {
         Surface(Modifier.background(MaterialTheme.colorScheme.surface)) {
             ModalBottomSheetLayout(
                 sheetContent = bottomSheetNavigator.sheetContent,
@@ -57,7 +63,7 @@ fun AppNavHost(startDestination: String = AppGraph.Home.route) {
 typealias AppNavHostController = NavHostController
 
 val LocalAppNavController =
-    compositionLocalOf<AppNavHostController> { error("LocalAPpNavController error") }
+    compositionLocalOf<AppNavHostController> { error("LocalAppNavController error") }
 
 const val SlideInTransitionMillis = 250
 const val SlideOutTransitionMillis = 250

@@ -154,4 +154,8 @@
     <string name="add">Add</string>
     <string name="delete_bible_study">Delete bible study</string>
     <string name="delete_bible_study_description">Are you sure you want to delete %1$s?</string>
+    <string name="dismiss_changes_description">Are you sure you want to dismiss the changes you made?</string>
+    <string name="dismiss_changes">Dismiss changes</string>
+    <string name="dismiss_entry">Dismiss entry</string>
+    <string name="dismiss_entry_description">Are you sure you want to dismiss the entry you started creating?</string>
 </resources>

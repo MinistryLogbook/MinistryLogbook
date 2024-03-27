@@ -154,4 +154,8 @@
     <string name="add">Hinzufügen</string>
     <string name="delete_bible_study">Bibelstudium löschen</string>
     <string name="delete_bible_study_description">Bist du sicher, dass du %1$s löschen möchtest?</string>
+    <string name="dismiss_changes_description">Bist du sicher, dass du die Änderungen verwerfen möchtest?</string>
+    <string name="dismiss_changes">Änderungen verwerfen</string>
+    <string name="dismiss_entry">Eintrag verwerfen</string>
+    <string name="dismiss_entry_description">Bist du sicher, dass du den Eintrag, den du am erstellen bist, verwerfen möchtest?</string>
 </resources>

@@ -28,12 +28,16 @@ import kotlinx.coroutines.flow.transform
  */
 @Composable
 fun rememberBottomSheetNavigator(
+    bottomSheetStateLock: BottomSheetStateLock,
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec
 ): BottomSheetNavigator {
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden,
         animationSpec = animationSpec,
-        skipHalfExpanded = true
+        skipHalfExpanded = true,
+        confirmValueChange = {
+            bottomSheetStateLock.requestUnlocked()
+        }
     )
     return remember { BottomSheetNavigator(sheetState) }
 }
@@ -64,18 +68,6 @@ class BottomSheetNavigator(
     private var attached by mutableStateOf(false)
 
     /**
-     * Get the back stack from the [state]. In some cases, the [sheetContent] might be composed
-     * before the Navigator is attached, so we specifically return an empty flow if we aren't
-     * attached yet.
-     */
-    private val backStack: StateFlow<List<NavBackStackEntry>>
-        get() = if (attached) {
-            state.backStack
-        } else {
-            MutableStateFlow(emptyList())
-        }
-
-    /**
      * Get the transitionsInProgress from the [state]. In some cases, the [sheetContent] might be
      * composed before the Navigator is attached, so we specifically return an empty flow if we
      * aren't attached yet.
@@ -85,6 +77,18 @@ class BottomSheetNavigator(
             state.transitionsInProgress
         } else {
             MutableStateFlow(emptySet())
+        }
+
+    /**
+     * Get the back stack from the [state]. In some cases, the [sheetContent] might be composed
+     * before the Navigator is attached, so we specifically return an empty flow if we aren't
+     * attached yet.
+     */
+    val backStack: StateFlow<List<NavBackStackEntry>>
+        get() = if (attached) {
+            state.backStack
+        } else {
+            MutableStateFlow(emptyList())
         }
 
     /**

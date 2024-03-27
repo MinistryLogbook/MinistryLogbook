@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,11 +44,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.R
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
+import app.ministrylogbook.shared.layouts.LocalBottomSheetStateLock
 import app.ministrylogbook.shared.layouts.OptionList
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import kotlinx.coroutines.flow.drop
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
@@ -64,6 +67,10 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
+    val modalBottomSheetStateLock = LocalBottomSheetStateLock.current
+    val isUnlockRequested by remember(modalBottomSheetStateLock.unlockRequest) {
+        modalBottomSheetStateLock.unlockRequest.drop(1)
+    }.collectAsStateWithLifecycle(null)
     val entry by viewModel.entry.collectAsStateWithLifecycle()
     val isInFuture by remember(entry) {
         derivedStateOf {
@@ -77,12 +84,10 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     }
     val isSavable by remember(entry, isInFuture) {
         derivedStateOf {
-            entry.let {
-                it.hours > 0 || it.minutes > 0 || it.returnVisits > 0 || it.placements > 0 ||
-                    it.videoShowings > 0
-            } && !isInFuture
+            entry.let { it.hours > 0 || it.minutes > 0 } && !isInFuture
         }
     }
+    val hasChanges by viewModel.hasChanges.collectAsStateWithLifecycle()
     var isDateDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isEntryKindDialogVisible by rememberSaveable { mutableStateOf(false) }
@@ -182,6 +187,57 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
     }
 
+    if (isUnlockRequested == true) {
+        AlertDialog(
+            onDismissRequest = { modalBottomSheetStateLock.declineRequest() },
+            confirmButton = {
+                TextButton(onClick = {
+                    modalBottomSheetStateLock.unlock()
+                }) {
+                    Text(stringResource(R.string.yes))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    modalBottomSheetStateLock.declineRequest()
+                }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            title = {
+                val text = if (viewModel.id == null) {
+                    stringResource(R.string.dismiss_entry)
+                } else {
+                    stringResource(R.string.dismiss_changes)
+                }
+                Text(text)
+            },
+            text = {
+                val text = if (viewModel.id == null) {
+                    stringResource(R.string.dismiss_entry_description)
+                } else {
+                    stringResource(R.string.dismiss_changes_description)
+                }
+                Text(text)
+            }
+        )
+    }
+
+    LaunchedEffect(isUnlockRequested, modalBottomSheetStateLock.isLocked) {
+        // if it is set to false = means it was unlocked and sheet needs to close
+        if (isUnlockRequested == false && !modalBottomSheetStateLock.isLocked) {
+            handleClose()
+        }
+    }
+
+    LaunchedEffect(hasChanges) {
+        if (hasChanges) {
+            modalBottomSheetStateLock.lock()
+        } else {
+            modalBottomSheetStateLock.unlock()
+        }
+    }
+
     if (isDeleteDialogVisible) {
         val onDismissRequest = {
             isDeleteDialogVisible = false
@@ -236,7 +292,11 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
     Column {
         DragLine()
         Toolbar(
-            onClose = handleClose,
+            onClose = {
+                if (modalBottomSheetStateLock.requestUnlocked()) {
+                    handleClose()
+                }
+            },
             onSave = handleSave,
             isSavable = isSavable,
             onDelete = { isDeleteDialogVisible = true },
