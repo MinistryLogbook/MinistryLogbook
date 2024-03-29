@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "0043543bd5a866a9fc02595c79777427",
+    "identityHash": "e1579728e371e30284f910c4ea80d606",
     "entities": [
       {
         "tableName": "MonthlyInformation",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `month` TEXT NOT NULL, `bible_studies` INTEGER, `goal` INTEGER, `report_comment` TEXT NOT NULL DEFAULT '', `dismissed_bible_studies_hint` INTEGER NOT NULL DEFAULT 0)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `month` TEXT NOT NULL, `bible_studies` INTEGER, `goal` INTEGER, `report_comment` TEXT NOT NULL DEFAULT '', `dismissed_bible_studies_hint` INTEGER NOT NULL DEFAULT 0, `bible_studies_transferred` INTEGER NOT NULL DEFAULT 0)",
         "fields": [
           {
             "fieldPath": "id",
@@ -42,6 +42,13 @@
           {
             "fieldPath": "dismissedBibleStudiesHint",
             "columnName": "dismissed_bible_studies_hint",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "bibleStudiesTransferred",
+            "columnName": "bible_studies_transferred",
             "affinity": "INTEGER",
             "notNull": true,
             "defaultValue": "0"
@@ -125,8 +132,8 @@
         "foreignKeys": []
       },
       {
-        "tableName": "Study",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `created_at` TEXT NOT NULL)",
+        "tableName": "BibleStudy",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `month` TEXT NOT NULL, `checked` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -141,9 +148,15 @@
             "notNull": true
           },
           {
-            "fieldPath": "createdAt",
-            "columnName": "created_at",
+            "fieldPath": "month",
+            "columnName": "month",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "checked",
+            "columnName": "checked",
+            "affinity": "INTEGER",
             "notNull": true
           }
         ],
@@ -155,49 +168,12 @@
         },
         "indices": [],
         "foreignKeys": []
-      },
-      {
-        "tableName": "MonthlyInformationStudyCrossRef",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`monthlyInformationId` INTEGER NOT NULL, `studyId` INTEGER NOT NULL, PRIMARY KEY(`monthlyInformationId`, `studyId`))",
-        "fields": [
-          {
-            "fieldPath": "monthlyInformationId",
-            "columnName": "monthlyInformationId",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "studyId",
-            "columnName": "studyId",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "monthlyInformationId",
-            "studyId"
-          ]
-        },
-        "indices": [
-          {
-            "name": "index_MonthlyInformationStudyCrossRef_studyId",
-            "unique": false,
-            "columnNames": [
-              "studyId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_MonthlyInformationStudyCrossRef_studyId` ON `${TABLE_NAME}` (`studyId`)"
-          }
-        ],
-        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0043543bd5a866a9fc02595c79777427')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1579728e371e30284f910c4ea80d606')"
     ]
   }
 }

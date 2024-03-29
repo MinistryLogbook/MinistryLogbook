@@ -11,7 +11,7 @@ import kotlinx.datetime.minus
 
 class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInformationDao) {
 
-    fun getOfMonth(month: LocalDate): Flow<MonthlyInformationWithStudies> {
+    fun getOfMonth(month: LocalDate): Flow<MonthlyInformation> {
         val lastMonth = month.minus(DatePeriod(months = 1))
 
         return combine(
@@ -21,14 +21,11 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
             if (current == null) {
                 val monthlyInformation = MonthlyInformation(
                     month = month,
-                    goal = last?.info?.goal
+                    goal = last?.goal
                 )
                 val id = save(monthlyInformation)
 
-                return@combine MonthlyInformationWithStudies(
-                    info = monthlyInformation.copy(id = id.toInt()),
-                    checkedStudies = emptyList()
-                )
+                return@combine monthlyInformation.copy(id = id.toInt())
             }
 
             current
@@ -47,22 +44,8 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
                 .getOfMonth(month.year, month.monthNumber)
                 .firstOrNull()
                 ?: return@withContext
-            val modifiedInfo = modify(info.info)
+            val modifiedInfo = modify(info)
             monthlyInformationDao.upsert(modifiedInfo)
-        }
-    }
-
-    suspend fun addCheckedStudy(studyId: Int, monthlyInfoId: Int) {
-        withContext(Dispatchers.IO) {
-            val ref = MonthlyInformationStudyCrossRef(monthlyInformationId = monthlyInfoId, studyId = studyId)
-            monthlyInformationDao.insertMonthlyInformationStudyCrossRef(ref)
-        }
-    }
-
-    suspend fun removeCheckedStudy(studyId: Int, monthlyInfoId: Int) {
-        withContext(Dispatchers.IO) {
-            val ref = MonthlyInformationStudyCrossRef(monthlyInformationId = monthlyInfoId, studyId = studyId)
-            monthlyInformationDao.deleteMonthlyInformationStudyCrossRef(ref)
         }
     }
 }

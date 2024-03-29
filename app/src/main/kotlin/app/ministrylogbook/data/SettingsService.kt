@@ -19,7 +19,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 
-private val Context.dataStore by preferencesDataStore(SettingsService.Name)
+private val Context.dataStore by preferencesDataStore(SettingsService.NAME)
 
 enum class Role {
     Publisher, AuxiliaryPioneer, RegularPioneer, SpecialPioneer;
@@ -27,12 +27,12 @@ enum class Role {
     val canHaveCredit: Boolean
         get() = this == RegularPioneer || this == SpecialPioneer
 
-    val goal: Int
+    val goal: Int?
         get() = when (this) {
-            Publisher -> PublisherGoal
             AuxiliaryPioneer -> AuxiliaryPioneerGoal
             RegularPioneer -> RegularPioneerGoal
             SpecialPioneer -> SpecialPioneerGoal
+            else -> null
         }
 
     @Composable
@@ -71,7 +71,7 @@ enum class Design {
 
 class SettingsService(val context: Context) {
     companion object {
-        const val Name = "settings"
+        const val NAME = "settings"
 
         private val RoleKey = stringPreferencesKey("role")
         private val StartOfPioneeringKey = stringPreferencesKey("start_of_pioneering")
@@ -153,7 +153,6 @@ class SettingsService(val context: Context) {
     }
 }
 
-const val PublisherGoal = 1
 const val AuxiliaryPioneerGoal = 30
 const val RegularPioneerGoal = 50
 const val SpecialPioneerGoal = 100

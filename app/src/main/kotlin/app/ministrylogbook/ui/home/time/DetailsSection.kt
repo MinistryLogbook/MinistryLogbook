@@ -62,7 +62,7 @@ import kotlin.math.min
 fun DetailsSection(state: HomeState) {
     // credit will be added until goal + 5 hours are reached
     // example: goal = 50, credit = 55
-    val maxHoursWithCredit = remember(state.roleGoal) { Time(state.roleGoal + 5, 0) }
+    val maxHoursWithCredit = remember(state.roleGoal) { Time((state.roleGoal ?: 0) + 5, 0) }
     val transferredTime = remember(state.transferred) { state.transferred.timeSum() }
     val ministryTime = remember(state.entries, transferredTime) { state.entries.ministryTimeSum() - transferredTime }
     val theocraticAssignmentsTime = remember(state.entries) { state.entries.theocraticAssignmentTimeSum() }

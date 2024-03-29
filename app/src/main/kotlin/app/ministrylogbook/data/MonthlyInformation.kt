@@ -3,12 +3,8 @@ package app.ministrylogbook.data
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.Junction
 import androidx.room.PrimaryKey
-import androidx.room.Relation
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -27,14 +23,17 @@ data class MonthlyInformation(
         TimeZone.currentSystemDefault()
     ),
     @ColumnInfo(name = "bible_studies")
-    @Deprecated("Is replaced by the study table.")
+    @Deprecated("Is replaced by the bibleStudy table.")
     val bibleStudies: Int? = null,
     @ColumnInfo(name = "goal") val goal: Int? = null,
     @ColumnInfo(name = "report_comment", defaultValue = "") val reportComment: String = "",
     @ColumnInfo(
         name = "dismissed_bible_studies_hint",
         defaultValue = "0"
-    ) val dismissedBibleStudiesHint: Boolean = false
+    )
+    val dismissedBibleStudiesHint: Boolean = false,
+    @ColumnInfo(name = "bible_studies_transferred", defaultValue = "0")
+    val bibleStudiesTransferred: Boolean = false
 ) : Parcelable {
     private companion object : Parceler<MonthlyInformation> {
         override fun create(parcel: Parcel) = MonthlyInformation(
@@ -55,26 +54,3 @@ data class MonthlyInformation(
         }
     }
 }
-
-@Entity(
-    primaryKeys = ["monthlyInformationId", "studyId"],
-    indices = [Index("studyId", unique = false)]
-)
-data class MonthlyInformationStudyCrossRef(
-    val monthlyInformationId: Int,
-    val studyId: Int
-)
-
-data class MonthlyInformationWithStudies(
-    @Embedded val info: MonthlyInformation,
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "id",
-        associateBy = Junction(
-            MonthlyInformationStudyCrossRef::class,
-            parentColumn = "monthlyInformationId",
-            entityColumn = "studyId"
-        )
-    )
-    val checkedStudies: List<Study>
-)

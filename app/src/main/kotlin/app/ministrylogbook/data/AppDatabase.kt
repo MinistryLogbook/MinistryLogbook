@@ -6,7 +6,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [MonthlyInformation::class, Entry::class, Study::class, MonthlyInformationStudyCrossRef::class],
+    entities = [MonthlyInformation::class, Entry::class, BibleStudy::class],
     version = 3,
     exportSchema = true,
     autoMigrations = [
@@ -17,6 +17,6 @@ import androidx.room.TypeConverters
 @TypeConverters(LocalDateConverters::class, LocalDateTimeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun entryDao(): EntryDao
-    abstract fun bibleStudyEntryDao(): MonthlyInformationDao
-    abstract fun studyDao(): StudyDao
+    abstract fun monthlyInformationDao(): MonthlyInformationDao
+    abstract fun studyDao(): BibleStudyDao
 }

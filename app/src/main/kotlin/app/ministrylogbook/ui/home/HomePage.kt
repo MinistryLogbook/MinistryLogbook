@@ -1,6 +1,7 @@
 package app.ministrylogbook.ui.home
 
 import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -86,6 +87,12 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
         }
     }
 
+    BackHandler(currentPage == PagerPage.BibleStudies) {
+        coroutineScope.launch {
+            pagerState.scrollToPage(0)
+        }
+    }
+
     LaunchedEffect(state.importFinished) {
         if (state.importFinished) {
             context.restartApp(Intent(context, MainActivity::class.java))
@@ -167,9 +174,9 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                     icon = {
                         BadgedBox(badge = {
                             androidx.compose.animation.AnimatedVisibility(
-                                visible = !state.monthlyInformation.info.dismissedBibleStudiesHint &&
+                                visible = !state.monthlyInformation.dismissedBibleStudiesHint &&
                                     state.bibleStudies.isNotEmpty() &&
-                                    state.monthlyInformation.checkedStudies.isEmpty(),
+                                    state.bibleStudies.all { !it.checked },
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {

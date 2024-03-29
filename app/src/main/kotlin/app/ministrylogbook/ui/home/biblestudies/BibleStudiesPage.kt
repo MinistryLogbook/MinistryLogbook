@@ -124,9 +124,9 @@ fun BibleStudiesPage(
                 .padding(bottom = 82.dp, top = 16.dp)
         ) {
             ExpandAnimatedVisibility(
-                show = !state.monthlyInformation.info.dismissedBibleStudiesHint &&
+                show = !state.monthlyInformation.dismissedBibleStudiesHint &&
                     state.bibleStudies.isNotEmpty() &&
-                    state.monthlyInformation.checkedStudies.isEmpty()
+                    !state.bibleStudies.any { it.checked }
             ) {
                 Tile(title = { Text(stringResource(R.string.check_conducted_bible_studies)) }, onDismiss = {
                     dispatch(HomeIntent.DismissBibleStudyHint)
@@ -137,18 +137,17 @@ fun BibleStudiesPage(
             }
 
             state.bibleStudies.forEach {
-                val checked = state.monthlyInformation.checkedStudies.contains(it)
                 BibleStudyItem(
                     it.name,
-                    checked = checked,
+                    checked = it.checked,
                     onDelete = {
                         dispatch(HomeIntent.DeleteBibleStudy(it))
                     },
                     onCheckedChange = { newChecked ->
                         if (newChecked) {
-                            dispatch(HomeIntent.CheckBibleStudy(it.id))
+                            dispatch(HomeIntent.CheckBibleStudy(it))
                         } else {
-                            dispatch(HomeIntent.UncheckBibleStudy(it.id))
+                            dispatch(HomeIntent.UncheckBibleStudy(it))
                         }
                     }
                 )

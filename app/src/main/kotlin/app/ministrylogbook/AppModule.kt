@@ -3,10 +3,10 @@ package app.ministrylogbook
 import android.app.Application
 import androidx.room.Room
 import app.ministrylogbook.data.AppDatabase
+import app.ministrylogbook.data.BibleStudyRepository
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.data.StudyRepository
 import app.ministrylogbook.shared.services.BackupService
 import app.ministrylogbook.shared.services.ReminderManager
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
@@ -23,11 +23,11 @@ val appModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "db").build()
     }
-    single { get<AppDatabase>().bibleStudyEntryDao() }
+    single { get<AppDatabase>().monthlyInformationDao() }
     single { get<AppDatabase>().entryDao() }
     single { get<AppDatabase>().studyDao() }
     single { EntryRepository(get()) }
-    single { StudyRepository(get()) }
+    single { BibleStudyRepository(get()) }
     single { MonthlyInformationRepository(get()) }
     single { SettingsService(androidContext()) }
     single { ReminderManager() }
@@ -37,6 +37,7 @@ val appModule = module {
         ShareViewModel(
             params.get(),
             androidContext() as Application,
+            get(),
             get(),
             get(),
             get()

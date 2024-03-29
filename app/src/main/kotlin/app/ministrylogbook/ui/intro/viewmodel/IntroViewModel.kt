@@ -51,9 +51,9 @@ class IntroViewModel(
         _monthlyInfoRepository.getOfMonth(_today)
     ) { name, role, pioneerSince, reminders, monthlyInfo ->
         val goal = if (role == Role.Publisher) {
-            monthlyInfo.info.goal
+            monthlyInfo.goal
         } else {
-            monthlyInfo.info.goal ?: role.goal
+            monthlyInfo.goal ?: role.goal
         }
         IntroState(name, role, pioneerSince, reminders, goal)
     }.stateIn(

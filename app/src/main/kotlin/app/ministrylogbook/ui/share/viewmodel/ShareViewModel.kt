@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
+import app.ministrylogbook.data.BibleStudyRepository
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
@@ -30,14 +31,16 @@ class ShareViewModel(
     val month: LocalDate,
     application: Application,
     entryRepository: EntryRepository,
-    private val monthlyInfoRepository: MonthlyInformationRepository,
+    bibleStudiesRepository: BibleStudyRepository,
+    private val _monthlyInfoRepository: MonthlyInformationRepository,
     settingsDataStore: SettingsService
 ) : AndroidViewModel(application) {
 
-    private val _monthlyInformation = monthlyInfoRepository.getOfMonth(month)
+    private val _monthlyInformation = _monthlyInfoRepository.getOfMonth(month)
+    private val _bibleStudies = bibleStudiesRepository.getAllOfMonth(month)
     private val _entries = entryRepository.getAllOfMonth(month)
 
-    val initialComments = _monthlyInformation.map { it.info.reportComment }.take(1).stateIn(
+    val initialComments = _monthlyInformation.map { it.reportComment }.take(1).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
         initialValue = ""
@@ -47,9 +50,9 @@ class ShareViewModel(
         combine(
             _entries,
             settingsDataStore.name,
-            _monthlyInformation,
+            _bibleStudies,
             settingsDataStore.role
-        ) { entries, name, monthlyInfo, role ->
+        ) { entries, name, bibleStudies, role ->
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
             val theocraticSchoolTime = entries.theocraticSchoolTimeSum()
             val commentTheocraticAssignment =
@@ -76,7 +79,7 @@ class ShareViewModel(
                 name = name,
                 month = getMonthTitle(locale),
                 hours = ministryTimeSum.hours,
-                bibleStudies = monthlyInfo.checkedStudies.size,
+                bibleStudies = bibleStudies.filter { it.checked }.size,
                 comments = comments,
                 reportsHours = role == Role.AuxiliaryPioneer ||
                     role == Role.RegularPioneer || role == Role.SpecialPioneer
@@ -89,7 +92,7 @@ class ShareViewModel(
 
     fun updateComments(text: String) = viewModelScope.launch {
         _monthlyInformation.firstOrNull()?.let {
-            monthlyInfoRepository.save(it.info.copy(reportComment = text))
+            _monthlyInfoRepository.save(it.copy(reportComment = text))
         }
     }
 
