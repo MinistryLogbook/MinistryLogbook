@@ -71,16 +71,22 @@ fun BibleStudiesPage(
         AlertDialog(
             onDismissRequest = { isDialogOpen = false },
             dismissButton = {
-                TextButton(onClick = { isDialogOpen = false }) {
+                TextButton(onClick = {
+                    isDialogOpen = false
+                    newBibleStudyName = ""
+                }) {
                     Text(stringResource(R.string.cancel))
                 }
             },
             confirmButton = {
-                TextButton(onClick = {
-                    dispatch(HomeIntent.CreateBibleStudy(newBibleStudyName.trim()))
-                    newBibleStudyName = ""
-                    isDialogOpen = false
-                }, enabled = newBibleStudyName.isNotBlank()) {
+                TextButton(
+                    onClick = {
+                        dispatch(HomeIntent.CreateBibleStudy(newBibleStudyName.trim()))
+                        isDialogOpen = false
+                        newBibleStudyName = ""
+                    },
+                    enabled = newBibleStudyName.isNotBlank()
+                ) {
                     Text(stringResource(R.string.add))
                 }
             },
