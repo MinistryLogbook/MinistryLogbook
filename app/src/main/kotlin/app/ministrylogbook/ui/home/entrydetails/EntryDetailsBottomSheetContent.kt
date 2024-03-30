@@ -46,11 +46,11 @@ import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.shared.layouts.LocalBottomSheetStateLock
 import app.ministrylogbook.shared.layouts.OptionList
+import app.ministrylogbook.shared.layouts.UnlockRequestState
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlinx.coroutines.flow.drop
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.Instant
@@ -68,9 +68,7 @@ import org.koin.androidx.compose.koinViewModel
 fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewModel()) {
     val navController = LocalAppNavController.current
     val modalBottomSheetStateLock = LocalBottomSheetStateLock.current
-    val isUnlockRequested by remember(modalBottomSheetStateLock.unlockRequest) {
-        modalBottomSheetStateLock.unlockRequest.drop(1)
-    }.collectAsStateWithLifecycle(null)
+    val unlockRequest by modalBottomSheetStateLock.unlockRequest.collectAsStateWithLifecycle(null)
     val entry by viewModel.entry.collectAsStateWithLifecycle()
     val isInFuture by remember(entry) {
         derivedStateOf {
@@ -187,12 +185,14 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         }
     }
 
-    if (isUnlockRequested == true) {
+    if (unlockRequest == UnlockRequestState.Requested) {
         AlertDialog(
-            onDismissRequest = { modalBottomSheetStateLock.declineRequest() },
+            onDismissRequest = {
+                modalBottomSheetStateLock.declineRequest()
+            },
             confirmButton = {
                 TextButton(onClick = {
-                    modalBottomSheetStateLock.unlock()
+                    modalBottomSheetStateLock.approveRequest()
                 }) {
                     Text(stringResource(R.string.yes))
                 }
@@ -223,10 +223,13 @@ fun EntryDetailsBottomSheetContent(viewModel: EntryDetailsViewModel = koinViewMo
         )
     }
 
-    LaunchedEffect(isUnlockRequested, modalBottomSheetStateLock.isLocked) {
+    LaunchedEffect(unlockRequest) {
         // if it is set to false = means it was unlocked and sheet needs to close
-        if (isUnlockRequested == false && !modalBottomSheetStateLock.isLocked) {
+        if (unlockRequest == UnlockRequestState.Approved) {
+            modalBottomSheetStateLock.unlock()
             handleClose()
+        } else if (unlockRequest == UnlockRequestState.Declined) {
+            modalBottomSheetStateLock.lock()
         }
     }
 
