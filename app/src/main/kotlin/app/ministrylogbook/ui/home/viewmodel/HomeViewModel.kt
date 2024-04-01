@@ -189,12 +189,14 @@ class HomeViewModel(
     }
 
     private suspend fun transferBibleStudies() {
-        val isTransferred = _monthlyInformation.first().bibleStudiesTransferred
+        val monthlyInfo = _monthlyInformation.first()
+        val isTransferred = monthlyInfo.bibleStudiesTransferred
         if (isTransferred) {
             return
         }
         val lastMonth = month.minus(DatePeriod(months = 1))
         _bibleStudyRepository.transfer(lastMonth, month)
+        _monthlyInformationRepository.save(monthlyInfo.copy(bibleStudiesTransferred = true))
     }
 
     private fun transferTimeToNextMonth(minutes: Int) {

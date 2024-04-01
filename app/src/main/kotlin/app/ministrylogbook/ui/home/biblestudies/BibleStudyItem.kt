@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
 
@@ -66,8 +67,7 @@ fun BibleStudyItem(
     ) {
         Checkbox(checked = checked, onCheckedChange = onCheckedChange)
         Spacer(Modifier.width(16.dp))
-        Text(name)
-        Spacer(Modifier.weight(1f))
+        Text(name, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
         IconButton(onClick = { isDialogOpen = true }) {
             Icon(painterResource(R.drawable.ic_delete_forever), contentDescription = null)
         }
