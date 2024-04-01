@@ -47,11 +47,8 @@ data class Entry(
             id = parcel.readInt(),
             datetime = Instant.fromEpochMilliseconds(parcel.readLong())
                 .toLocalDateTime(TimeZone.currentSystemDefault()),
-            placements = parcel.readInt(),
-            videoShowings = parcel.readInt(),
             hours = parcel.readInt(),
             minutes = parcel.readInt(),
-            returnVisits = parcel.readInt(),
             type = parcel.readString().let { EntryType.valueOf(it!!) }
         )
 
@@ -60,11 +57,8 @@ data class Entry(
             parcel.writeLong(
                 datetime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
             )
-            parcel.writeInt(placements)
-            parcel.writeInt(videoShowings)
             parcel.writeInt(hours)
             parcel.writeInt(minutes)
-            parcel.writeInt(returnVisits)
             parcel.writeString(type.name)
         }
     }

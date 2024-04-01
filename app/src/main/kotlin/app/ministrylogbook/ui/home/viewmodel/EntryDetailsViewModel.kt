@@ -66,11 +66,8 @@ class EntryDetailsViewModel(
 
     fun update(
         datetime: LocalDateTime? = null,
-        placements: Int? = null,
-        videoShowings: Int? = null,
         hours: Int? = null,
         minutes: Int? = null,
-        returnVisits: Int? = null,
         type: EntryType? = null
     ) {
         _entry.update { old ->
@@ -82,11 +79,8 @@ class EntryDetailsViewModel(
             }
             old.copy(
                 datetime = currentDatetime,
-                placements = placements ?: old.placements,
-                videoShowings = videoShowings ?: old.videoShowings,
                 hours = hours ?: old.hours,
                 minutes = minutes ?: old.minutes,
-                returnVisits = returnVisits ?: old.returnVisits,
                 type = type ?: old.type
             )
         }
