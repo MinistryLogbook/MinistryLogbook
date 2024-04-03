@@ -17,9 +17,9 @@ import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.share.navigateToShare
 import app.ministrylogbook.ui.shared.Tile
+import java.time.format.TextStyle
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.minus
-import java.time.format.TextStyle
 
 @Composable
 fun SendReportHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
