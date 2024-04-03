@@ -158,4 +158,6 @@
     <string name="dismiss_changes">Dismiss changes</string>
     <string name="dismiss_entry">Dismiss entry</string>
     <string name="dismiss_entry_description">Are you sure you want to dismiss the entry you started creating?</string>
+    <string name="send_last_report_description">Don\'t forget to send your report of the last month.</string>
+    <string name="send_lastr_report">Send your %1$s report!</string>
 </resources>

@@ -33,7 +33,9 @@ data class MonthlyInformation(
     )
     val dismissedBibleStudiesHint: Boolean = false,
     @ColumnInfo(name = "bible_studies_transferred", defaultValue = "0")
-    val bibleStudiesTransferred: Boolean = false
+    val bibleStudiesTransferred: Boolean = false,
+    @ColumnInfo(name = "report_sent", defaultValue = "0")
+    val reportSent: Boolean = false
 ) : Parcelable {
     private companion object : Parceler<MonthlyInformation> {
         override fun create(parcel: Parcel) = MonthlyInformation(
@@ -41,7 +43,8 @@ data class MonthlyInformation(
             month = Instant.fromEpochMilliseconds(parcel.readLong())
                 .toLocalDateTime(TimeZone.currentSystemDefault()).date,
             goal = parcel.readValue(Int::class.java.classLoader) as Int?,
-            dismissedBibleStudiesHint = parcel.readByte() != 0.toByte()
+            dismissedBibleStudiesHint = parcel.readByte() != 0.toByte(),
+            reportSent = parcel.readByte() != 0.toByte()
         )
 
         override fun MonthlyInformation.write(parcel: Parcel, flags: Int) {
@@ -51,6 +54,7 @@ data class MonthlyInformation(
             )
             parcel.writeValue(goal)
             parcel.writeByte((if (dismissedBibleStudiesHint) 1 else 0).toByte())
+            parcel.writeByte((if (reportSent) 1 else 0).toByte())
         }
     }
 }

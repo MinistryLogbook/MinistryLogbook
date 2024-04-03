@@ -101,6 +101,8 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     }
 
     val handleShare: () -> Unit = {
+        viewModel.markMonthlyReportSent()
+
         if (selectedShareAs == ShareAs.Text) {
             context.shareText(
                 fieldServiceReportText,

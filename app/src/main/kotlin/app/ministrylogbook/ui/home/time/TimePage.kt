@@ -63,6 +63,7 @@ fun TimePage(
             YearlyProgress(state)
             TransferHint(state, dispatch)
             RestHint(state, dispatch)
+            SendReportHint(state, dispatch)
 
             if (state.entries.isNotEmpty()) {
                 Spacer(Modifier.height(16.dp))

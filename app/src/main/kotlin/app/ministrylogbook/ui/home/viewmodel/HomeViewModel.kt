@@ -49,6 +49,7 @@ sealed class HomeIntent {
     data object ImportBackup : HomeIntent()
     data object DismissImportBackup : HomeIntent()
     data object DismissBibleStudyHint : HomeIntent()
+    data object DismissSendReportHint : HomeIntent()
 }
 
 data class HomeState(
@@ -70,7 +71,8 @@ data class HomeState(
     val isBackupValid: Boolean = false,
     val latestEntry: Entry? = null,
     val importFinished: Boolean = false,
-    val monthlyInformation: MonthlyInformation = MonthlyInformation()
+    val monthlyInformation: MonthlyInformation = MonthlyInformation(),
+    val lastMonthReportSent: Boolean? = null
 )
 
 class HomeViewModel(
@@ -110,6 +112,7 @@ class HomeViewModel(
     }
     private val _lastMonth = month.minus(DatePeriod(months = 1))
     private val _monthlyInformation = _monthlyInformationRepository.getOfMonth(month)
+    private val _lastMonthMonthlyInformation = _monthlyInformationRepository.getOfMonth(_lastMonth)
     private val _entries = _entryRepository.getAllOfMonth(month)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -132,7 +135,8 @@ class HomeViewModel(
         }
         (rl ?: 0) * beginOfPioneering.monthsUntil(lastMonthInServiceYear)
     }
-    private val _restLastMonth = _entryRepository.getAllOfMonth(_lastMonth).transform {
+    private val _lastMonthEntries = _entryRepository.getAllOfMonth(_lastMonth)
+    private val _restLastMonth = _lastMonthEntries.transform {
         val lastMonthTime = it.ministryTimeSum()
         if (!lastMonthTime.isNegative) {
             emit(Time(hours = 0, minutes = lastMonthTime.minutes))
@@ -252,6 +256,14 @@ class HomeViewModel(
         }
     }
 
+    private fun dismissSendReportHint() {
+        viewModelScope.launch {
+            val monthlyInfo = _lastMonthMonthlyInformation.first()
+            val newMonthlyInfo = monthlyInfo.copy(reportSent = true)
+            _monthlyInformationRepository.save(newMonthlyInfo)
+        }
+    }
+
     override val state = combine(
         settingsService.name,
         _goal,
@@ -266,7 +278,9 @@ class HomeViewModel(
         _transferred,
         _rest,
         _beginOfPioneeringInServiceYear,
-        _monthlyInformation
+        _monthlyInformation,
+        _lastMonthEntries,
+        _lastMonthMonthlyInformation
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -284,7 +298,8 @@ class HomeViewModel(
             transferred = values[10] as List<Entry>,
             rest = values[11] as Time,
             beginOfPioneeringInServiceYear = values[12] as LocalDate?,
-            monthlyInformation = values[13] as MonthlyInformation
+            monthlyInformation = values[13] as MonthlyInformation,
+            lastMonthReportSent = (values[14] as List<Entry>).isEmpty() || (values[15] as MonthlyInformation).reportSent
         )
     }.stateIn(
         scope = viewModelScope,
@@ -304,6 +319,7 @@ class HomeViewModel(
             is HomeIntent.UncheckBibleStudy -> uncheckBibleStudy(intent.bibleStudy)
             is HomeIntent.DeleteBibleStudy -> deleteBibleStudy(intent.bibleStudy)
             is HomeIntent.DismissBibleStudyHint -> dismissBibleStudyHint()
+            is HomeIntent.DismissSendReportHint -> dismissSendReportHint()
         }
     }
 }

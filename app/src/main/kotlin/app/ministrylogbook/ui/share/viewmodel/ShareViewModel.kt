@@ -96,6 +96,12 @@ class ShareViewModel(
         }
     }
 
+    fun markMonthlyReportSent() = viewModelScope.launch {
+        _monthlyInformation.firstOrNull()?.let {
+            _monthlyInfoRepository.save(it.copy(reportSent = true))
+        }
+    }
+
     private fun getMonthTitle(locale: Locale): String = month.run {
         val monthName = this.month.getDisplayName(TextStyle.FULL, locale)
         val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
