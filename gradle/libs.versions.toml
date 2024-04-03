@@ -8,7 +8,7 @@ coreSplashscreen = "1.0.1"
 datastorePreferences = "1.0.0"
 espressoCore = "3.5.1"
 androidXJUnit = "1.1.5"
-foundation = "1.6.4"
+foundation = "1.6.5"
 koin = "3.5.0"
 koinCompose = "3.5.0"
 androidGradlePlugin = "8.3.1"
@@ -21,13 +21,14 @@ material3 = "1.2.1"
 navigationCompose = "2.7.7"
 room = "2.6.1"
 junit = "4.13.2"
-ui = "1.6.4"
-uiTooling = "1.6.4"
+ui = "1.6.5"
+uiTooling = "1.6.5"
 kotlinter = "3.15.0"
 aboutLicenses = "10.9.1"
 androidLifecycle = "2.7.0"
 browser = "1.8.0"
 ktoml = "0.5.0"
+konfetti = "2.0.4"
 
 [libraries]
 accompanist-navigation-material = { module = "com.google.accompanist:accompanist-navigation-material", version.ref = "accompanist" }
@@ -62,6 +63,7 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 ui-tooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "uiTooling" }
 aboutlicenses-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLicenses" }
 ktoml = { module = "com.akuleshov7:ktoml-core", version.ref = "ktoml" }
+konfetti = { module = "nl.dionsegijn:konfetti-compose", version.ref = "konfetti" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

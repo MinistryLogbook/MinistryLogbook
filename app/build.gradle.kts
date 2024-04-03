@@ -114,6 +114,7 @@ dependencies {
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
 
+    implementation(libs.konfetti)
     implementation(libs.ktoml)
     implementation(libs.aboutlicenses.core)
     implementation(libs.core.ktx)

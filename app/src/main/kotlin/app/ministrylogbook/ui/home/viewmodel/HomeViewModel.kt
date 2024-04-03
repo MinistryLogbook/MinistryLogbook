@@ -19,7 +19,9 @@ import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.services.BackupService
 import app.ministrylogbook.shared.utilities.ministryTimeSum
+import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupFile
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.flow.update
@@ -37,6 +40,11 @@ import kotlinx.datetime.atTime
 import kotlinx.datetime.minus
 import kotlinx.datetime.monthsUntil
 import kotlinx.datetime.plus
+import nl.dionsegijn.konfetti.core.Angle
+import nl.dionsegijn.konfetti.core.Party
+import nl.dionsegijn.konfetti.core.Position
+import nl.dionsegijn.konfetti.core.Spread
+import nl.dionsegijn.konfetti.core.emitter.Emitter
 
 sealed class HomeIntent {
     data class TransferToTextMonth(val minutes: Int) : HomeIntent()
@@ -50,6 +58,7 @@ sealed class HomeIntent {
     data object DismissImportBackup : HomeIntent()
     data object DismissBibleStudyHint : HomeIntent()
     data object DismissSendReportHint : HomeIntent()
+    data object PartyFinished : HomeIntent()
 }
 
 data class HomeState(
@@ -72,8 +81,11 @@ data class HomeState(
     val latestEntry: Entry? = null,
     val importFinished: Boolean = false,
     val monthlyInformation: MonthlyInformation = MonthlyInformation(),
-    val lastMonthReportSent: Boolean? = null
+    val lastMonthReportSent: Boolean? = null,
+    val parties: List<Party> = emptyList()
 )
+
+data class History<T>(val previous: T?, val current: T)
 
 class HomeViewModel(
     val month: LocalDate,
@@ -114,6 +126,10 @@ class HomeViewModel(
     private val _monthlyInformation = _monthlyInformationRepository.getOfMonth(month)
     private val _lastMonthMonthlyInformation = _monthlyInformationRepository.getOfMonth(_lastMonth)
     private val _entries = _entryRepository.getAllOfMonth(month)
+    private val _entriesHistory = _entries.runningFold(
+        initial = null as (History<List<Entry>>?),
+        operation = { previous, new -> History(previous?.current, new) }
+    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
@@ -153,6 +169,30 @@ class HomeViewModel(
         }
     }
     private val _bibleStudies = _bibleStudyRepository.getAllOfMonth(month)
+
+    private val _parties = combine(_goal, _entriesHistory, _transferred) { goal, entries, transferred ->
+        if (entries?.previous == null) {
+            return@combine false
+        }
+        val time = entries.current.timeSum() - transferred.timeSum()
+        goal != null && time.hours >= goal
+    }.transform { isGoalReached ->
+        val result = if (isGoalReached) {
+            val party = Party(
+                speed = 10f,
+                maxSpeed = 30f,
+                damping = 0.9f,
+                angle = Angle.RIGHT - 45,
+                spread = Spread.SMALL * 2,
+                emitter = Emitter(duration = 2, TimeUnit.SECONDS).perSecond(30),
+                position = Position.Relative(0.0, 0.3)
+            )
+            listOf(party, party.copy(angle = party.angle - 90, position = Position.Relative(1.0, 0.3)))
+        } else {
+            emptyList()
+        }
+        emit(result)
+    }
 
     init {
         viewModelScope.launch {
@@ -280,7 +320,8 @@ class HomeViewModel(
         _beginOfPioneeringInServiceYear,
         _monthlyInformation,
         _lastMonthEntries,
-        _lastMonthMonthlyInformation
+        _lastMonthMonthlyInformation,
+        _parties
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -299,7 +340,8 @@ class HomeViewModel(
             rest = values[11] as Time,
             beginOfPioneeringInServiceYear = values[12] as LocalDate?,
             monthlyInformation = values[13] as MonthlyInformation,
-            lastMonthReportSent = (values[14] as List<Entry>).isEmpty() || (values[15] as MonthlyInformation).reportSent
+            lastMonthReportSent = (values[14] as List<Entry>).isEmpty() || (values[15] as MonthlyInformation).reportSent,
+            parties = values[16] as List<Party>
         )
     }.stateIn(
         scope = viewModelScope,
@@ -320,6 +362,7 @@ class HomeViewModel(
             is HomeIntent.DeleteBibleStudy -> deleteBibleStudy(intent.bibleStudy)
             is HomeIntent.DismissBibleStudyHint -> dismissBibleStudyHint()
             is HomeIntent.DismissSendReportHint -> dismissSendReportHint()
+            is HomeIntent.PartyFinished -> {}
         }
     }
 }

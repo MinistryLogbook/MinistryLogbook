@@ -5,7 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -50,6 +50,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import nl.dionsegijn.konfetti.compose.KonfettiView
 
 enum class PagerPage {
     Time,
@@ -193,7 +194,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
             }
         }
     ) { paddingValues ->
-        Column(
+        Box(
             Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
@@ -204,6 +205,13 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                     PagerPage.Time -> TimePage(state, dispatch, timeScrollState)
                     PagerPage.BibleStudies -> BibleStudiesPage(state, dispatch, studiesScrollState)
                 }
+            }
+
+            if (state.parties.isNotEmpty()) {
+                KonfettiView(
+                    modifier = Modifier.fillMaxSize(),
+                    parties = state.parties
+                )
             }
         }
     }
