@@ -184,7 +184,7 @@ class HomeViewModel(
 
     private fun createBibleStudy(name: String) {
         viewModelScope.launch {
-            _bibleStudyRepository.save(BibleStudy(name = name))
+            _bibleStudyRepository.save(BibleStudy(name = name, month = month))
         }
     }
 
