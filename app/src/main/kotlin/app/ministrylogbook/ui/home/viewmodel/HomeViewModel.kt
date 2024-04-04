@@ -170,14 +170,14 @@ class HomeViewModel(
     }
     private val _bibleStudies = _bibleStudyRepository.getAllOfMonth(month)
 
-    private val _parties = combine(_goal, _entriesHistory, _transferred) { goal, entries, transferred ->
-        if (entries?.previous == null) {
+    private val _parties = combine(_goal, _entriesHistory) { goal, entries ->
+        if (entries?.previous == null || (goal != null && entries.previous.timeSum().hours >= goal)) {
             return@combine false
         }
-        val time = entries.current.timeSum() - transferred.timeSum()
+        val time = entries.current.timeSum()
         goal != null && time.hours >= goal
-    }.transform { isGoalReached ->
-        val result = if (isGoalReached) {
+    }.transform { isGoalReachedJustNow ->
+        val result = if (isGoalReachedJustNow) {
             val party = Party(
                 speed = 10f,
                 maxSpeed = 30f,
