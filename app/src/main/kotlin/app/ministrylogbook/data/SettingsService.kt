@@ -77,6 +77,7 @@ class SettingsService(val context: Context) {
         private val StartOfPioneeringKey = stringPreferencesKey("start_of_pioneering")
         private val NameKey = stringPreferencesKey("name")
         private val DesignKey = stringPreferencesKey("design")
+        private val UseSystemColors = booleanPreferencesKey("use_system_colors")
         private val PrecisionModeKey = booleanPreferencesKey("precision_mode")
         private val SendReportReminderKey = booleanPreferencesKey("send_report_reminder")
         private val LastBackupMillisKey = longPreferencesKey("last_backup_millis")
@@ -104,6 +105,7 @@ class SettingsService(val context: Context) {
             Design.System
         }
     }
+    val useSystemColors = context.dataStore.data.map { it[UseSystemColors] ?: false }
     val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }
     val sendReportReminder = context.dataStore.data.map { it[SendReportReminderKey] ?: true }
     val lastBackup = context.dataStore.data.map {
@@ -112,9 +114,7 @@ class SettingsService(val context: Context) {
     }
     val introShown = context.dataStore.data.map { it[IntroShownKey] ?: false }
 
-    suspend fun setIntroShown() = context.dataStore.edit {
-        it[IntroShownKey] = true
-    }
+    suspend fun setIntroShown() = context.dataStore.edit { it[IntroShownKey] = true }
 
     suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {
         if (date == null) {
@@ -142,6 +142,10 @@ class SettingsService(val context: Context) {
 
     suspend fun setDesign(design: Design) = context.dataStore.edit {
         it[DesignKey] = design.name
+    }
+
+    suspend fun setUseSystemColors(value: Boolean) = context.dataStore.edit {
+        it[UseSystemColors] = value
     }
 
     suspend fun setPrecisionMode(precisionMode: Boolean) = context.dataStore.edit {

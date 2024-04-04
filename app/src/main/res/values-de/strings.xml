@@ -160,4 +160,5 @@
     <string name="dismiss_entry_description">Bist du sicher, dass du den Eintrag, den du am erstellen bist, verwerfen möchtest?</string>
     <string name="send_last_report_description">Vergiss nicht, den Bericht des letzten Monats zu versenden.</string>
     <string name="send_lastr_report">Versende den %1$s Bericht!</string>
+    <string name="use_system_colors">Systemfarben verwenden</string>
 </resources>

@@ -82,13 +82,14 @@ fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
                 Title(stringResource(R.string.appearance))
                 LanguageSetting()
                 DesignSetting()
+                SystemColorsSetting()
             }
             Column {
                 Title(stringResource(R.string.behaviour))
                 SendReportReminderSetting(sendReportReminder, onChange = {
                     viewModel.setSendReportReminders(it)
                 })
-                MinuteCounterSetting()
+                PrecisionModeSetting()
             }
             Column {
                 Title(stringResource(R.string.legal))
@@ -110,6 +111,19 @@ fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
                     fontSize = 13.sp
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SystemColorsSetting(viewModel: SettingsViewModel = koinViewModel()) {
+    val useSystemColors by viewModel.useSystemColors.collectAsStateWithLifecycle()
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        Setting(title = stringResource(R.string.use_system_colors), paddingValues = PaddingValues(20.dp, 4.dp)) {
+            Switch(checked = useSystemColors, onCheckedChange = {
+                viewModel.setUseSystemColors(it)
+            })
         }
     }
 }
@@ -220,7 +234,7 @@ fun RoleSetting(role: Role, onChange: (Role) -> Unit) {
 }
 
 @Composable
-fun MinuteCounterSetting(viewModel: SettingsViewModel = koinViewModel()) {
+fun PrecisionModeSetting(viewModel: SettingsViewModel = koinViewModel()) {
     val precisionMode by viewModel.precisionMode.collectAsStateWithLifecycle()
 
     Setting(

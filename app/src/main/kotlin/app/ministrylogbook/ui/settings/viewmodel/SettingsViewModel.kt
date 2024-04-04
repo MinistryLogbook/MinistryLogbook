@@ -36,6 +36,11 @@ class SettingsViewModel(
         initialValue = Design.System,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+    val useSystemColors = _settingsService.useSystemColors.stateIn(
+        scope = viewModelScope,
+        initialValue = true,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
     val role = _settingsService.role.stateIn(
         scope = viewModelScope,
         initialValue = Role.Publisher,
@@ -110,6 +115,10 @@ class SettingsViewModel(
 
     fun setDesign(d: Design) = viewModelScope.launch {
         _settingsService.setDesign(d)
+    }
+
+    fun setUseSystemColors(value: Boolean) = viewModelScope.launch {
+        _settingsService.setUseSystemColors(value)
     }
 
     fun setRole(r: Role) = viewModelScope.launch {

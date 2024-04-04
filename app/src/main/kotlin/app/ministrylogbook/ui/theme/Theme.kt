@@ -1,10 +1,13 @@
 package app.ministrylogbook.ui.theme
 
+import android.content.Context
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -14,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.structuralEqualityPolicy
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import app.ministrylogbook.data.Design
 
 class ExtendedColorScheme(warning: Color, onWarning: Color) {
@@ -29,7 +33,10 @@ val MaterialTheme.extendedColorScheme: ExtendedColorScheme
     @ReadOnlyComposable
     get() = LocalExtendedColorScheme.current
 
-fun lightColorPalette(useDynamicColors: Boolean = false): ColorScheme {
+fun Context.lightColorPalette(useDynamicColors: Boolean = false): ColorScheme {
+    if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        return dynamicLightColorScheme(this)
+    }
     return lightColorScheme(
         primary = md_theme_light_primary,
         onPrimary = md_theme_light_onPrimary,
@@ -61,7 +68,10 @@ fun lightColorPalette(useDynamicColors: Boolean = false): ColorScheme {
     )
 }
 
-fun darkColorPalette(useDynamicColors: Boolean = false): ColorScheme {
+fun Context.darkColorPalette(useDynamicColors: Boolean = false): ColorScheme {
+    if (useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        return dynamicDarkColorScheme(this)
+    }
     return darkColorScheme(
         primary = md_theme_dark_primary,
         onPrimary = md_theme_dark_onPrimary,
@@ -96,23 +106,21 @@ fun darkColorPalette(useDynamicColors: Boolean = false): ColorScheme {
 @Composable
 fun MinistryLogbookTheme(
     design: Design = Design.System,
-    isDynamic: Boolean = true,
+    isDynamic: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val context = LocalContext.current
     val isSystemInDarkTheme = isSystemInDarkTheme()
     val useDarkTheme = when (design) {
         Design.Light -> false
         Design.Dark -> true
         Design.System -> isSystemInDarkTheme
     }
-    val useDynamicColors = isDynamic && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val colors =
         if (useDarkTheme) {
-            darkColorPalette(useDynamicColors)
+            context.darkColorPalette(isDynamic)
         } else {
-            lightColorPalette(
-                useDynamicColors
-            )
+            context.lightColorPalette(isDynamic)
         }
 
     val extendedColors = if (useDarkTheme) {

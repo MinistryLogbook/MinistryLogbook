@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         val settingsService = SettingsService(this)
         val design = runBlocking {
             settingsService.design.firstOrNull() ?: Design.System
@@ -30,13 +31,19 @@ class MainActivity : AppCompatActivity() {
         val showIntro = runBlocking {
             !(settingsService.introShown.firstOrNull() ?: false)
         }
+        val useSystemColors = runBlocking {
+            settingsService.useSystemColors.firstOrNull() ?: false
+        }
         lifecycleScope.launch {
             settingsService.design.drop(1).collectLatest { it.apply() }
+        }
+        lifecycleScope.launch {
+            settingsService.useSystemColors.drop(1).collectLatest { recreate() }
         }
 
         setContent {
             KoinAndroidContext {
-                MinistryLogbookTheme(design) {
+                MinistryLogbookTheme(design, useSystemColors) {
                     val startDestination = if (showIntro) AppGraph.Intro.route else AppGraph.Home.route
                     AppNavHost(startDestination)
                 }
