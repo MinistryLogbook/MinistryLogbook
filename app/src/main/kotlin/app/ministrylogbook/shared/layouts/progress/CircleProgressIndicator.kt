@@ -30,7 +30,7 @@ fun CircleProgressIndicator(
     modifier: Modifier = Modifier,
     strokeWidth: Dp = 8.dp,
     animationSpec: AnimationSpec<Float> = tween(400),
-    progresses: List<Progress>,
+    progresses: List<ProgressKind>,
     baseLineColor: Color
 ) {
     val initialValue = 0.0001f
@@ -47,7 +47,7 @@ fun CircleProgressIndicator(
             )
         }
 
-        progresses.forEach { progress ->
+        progresses.filterIsInstance<ProgressKind.Progress>().forEach { progress ->
             val animatable = remember { Animatable(initialValue) }
 
             LaunchedEffect(progress.percent) {
@@ -85,8 +85,8 @@ fun CircleProgressIndicatorPreview() {
                 modifier = Modifier.size(200.dp, 200.dp),
                 baseLineColor = ProgressPositive,
                 progresses = listOf(
-                    Progress(percent = .6f, ProgressNegative),
-                    Progress(percent = .45f, ProgressPositive)
+                    ProgressKind.Progress(percent = .6f, ProgressNegative),
+                    ProgressKind.Progress(percent = .45f, ProgressPositive)
                 )
             )
         }

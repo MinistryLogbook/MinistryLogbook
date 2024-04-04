@@ -19,3 +19,6 @@ val LocalDate.weekNumber: Int
         }
         return (daysFromFirstDay + adjustment) / 7 + 1
     }
+
+val LocalDate.isLeapYear: Boolean
+    get() = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)

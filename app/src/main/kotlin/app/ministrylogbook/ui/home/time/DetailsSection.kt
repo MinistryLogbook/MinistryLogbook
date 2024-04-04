@@ -49,7 +49,7 @@ import app.ministrylogbook.shared.layouts.placeholder.PlaceholderHighlight
 import app.ministrylogbook.shared.layouts.placeholder.material3.fade
 import app.ministrylogbook.shared.layouts.placeholder.material3.placeholder
 import app.ministrylogbook.shared.layouts.progress.CircleProgressIndicator
-import app.ministrylogbook.shared.layouts.progress.Progress
+import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
@@ -137,11 +137,11 @@ fun DetailsSection(state: HomeState) {
                         modifier = Modifier.size(widthDp / 2, widthDp / 2),
                         baseLineColor = ProgressPositive.copy(0.15f),
                         progresses = listOfNotNull(
-                            Progress(
+                            ProgressKind.Progress(
                                 percent = accPercent,
                                 color = ProgressPositive.copy(0.6f)
                             ).takeIf { state.role.canHaveCredit && credit.isNotEmpty },
-                            Progress(
+                            ProgressKind.Progress(
                                 percent = ministryPercent,
                                 color = ProgressPositive
                             ).takeIf { ministryTime.isNotEmpty }

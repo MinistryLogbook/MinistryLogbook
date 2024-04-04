@@ -2,6 +2,7 @@ package app.ministrylogbook.shared.layouts.progress
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.SpringSpec
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,11 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
 import kotlin.math.abs
 
 @Composable
 fun LinearProgressIndicator(
-    progresses: List<Progress>,
+    progresses: List<ProgressKind>,
     modifier: Modifier = Modifier,
     trackColor: Color = MaterialTheme.colorScheme.surfaceVariant,
     strokeCap: StrokeCap = ProgressIndicatorDefaults.LinearStrokeCap
@@ -30,7 +32,7 @@ fun LinearProgressIndicator(
             val strokeWidth = size.height
             drawLinearIndicator(0f, 1f, trackColor, strokeWidth, strokeCap)
         }
-        progresses.forEach { progress ->
+        progresses.filterIsInstance<ProgressKind.Progress>().forEach { progress ->
             val animatedProgress = remember { Animatable(0f) }
 
             LaunchedEffect(progress) {
@@ -40,6 +42,25 @@ fun LinearProgressIndicator(
             Canvas(Modifier.fillMaxSize()) {
                 val strokeWidth = size.height
                 drawLinearIndicator(0f, animatedProgress.value, progress.color, strokeWidth, strokeCap)
+            }
+        }
+        progresses.filterIsInstance<ProgressKind.Indicator>().forEach { progress ->
+            val animatedIndicator = remember { Animatable(0f) }
+            val coercedProgress = progress.percent.coerceIn(0f, 1f)
+
+            LaunchedEffect(progress) {
+                animatedIndicator.animateTo(1f, animationSpec = TweenSpec(delay = 600))
+            }
+            Canvas(Modifier.fillMaxSize()) {
+                val strokeWidth = 2.dp.toPx()
+                val x = (size.width - strokeWidth) * coercedProgress
+                drawLine(
+                    progress.color.copy(alpha = animatedIndicator.value),
+                    Offset(x, -2.dp.toPx()),
+                    Offset(x, size.height + 2.dp.toPx()),
+                    strokeWidth,
+                    StrokeCap.Round
+                )
             }
         }
     }

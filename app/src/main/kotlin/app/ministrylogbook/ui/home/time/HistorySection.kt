@@ -26,7 +26,7 @@ import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
-import app.ministrylogbook.shared.layouts.progress.Progress
+import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.shared.utilities.transfers
@@ -58,8 +58,8 @@ fun WeekNumberSeparator(
             Spacer(Modifier.height(3.dp))
             LinearProgressIndicator(
                 progresses = listOf(
-                    Progress(1f / weekGoal * ministryTimeSum.toFloat(), color = ProgressPositive),
-                    Progress(1f / weekGoal * allTimeSum.toFloat(), color = ProgressPositive.copy(0.6f))
+                    ProgressKind.Progress(1f / weekGoal * ministryTimeSum.toFloat(), color = ProgressPositive),
+                    ProgressKind.Progress(1f / weekGoal * allTimeSum.toFloat(), color = ProgressPositive.copy(0.6f))
                 ),
                 modifier = Modifier
                     .height(3.dp)

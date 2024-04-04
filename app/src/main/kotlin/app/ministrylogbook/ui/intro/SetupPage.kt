@@ -54,7 +54,7 @@ import app.ministrylogbook.data.Role
 import app.ministrylogbook.shared.layouts.DeferredAnimatedVisibility
 import app.ministrylogbook.shared.layouts.ToolbarLayout
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
-import app.ministrylogbook.shared.layouts.progress.Progress
+import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToHome
 import app.ministrylogbook.ui.intro.viewmodel.IntroIntent
@@ -166,7 +166,7 @@ fun SetupPage() {
                 ) {
                     LinearProgressIndicator(
                         progresses = listOf(
-                            Progress(progress, color = MaterialTheme.colorScheme.primary)
+                            ProgressKind.Progress(progress, color = MaterialTheme.colorScheme.primary)
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
