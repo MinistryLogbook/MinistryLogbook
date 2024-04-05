@@ -64,7 +64,6 @@ sealed class HomeIntent {
 
 data class HomeState(
     val month: LocalDate,
-    val name: String = "",
     val goal: Int? = null,
     val hasGoal: Boolean? = null,
     val roleGoal: Int? = null,
@@ -301,7 +300,6 @@ class HomeViewModel(
     }
 
     override val state = combine(
-        settingsService.name,
         _goal,
         _hasGoal,
         _roleGoal,
@@ -322,22 +320,21 @@ class HomeViewModel(
         @Suppress("UNCHECKED_CAST")
         HomeState(
             month = month,
-            name = values[0] as String,
-            goal = values[1] as Int?,
-            hasGoal = values[2] as Boolean,
-            roleGoal = values[3] as Int?,
-            yearlyGoal = values[4] as Int,
-            role = values[5] as Role,
-            entries = values[6] as List<Entry>,
-            entriesInServiceYear = values[7] as List<Entry>,
-            bibleStudies = values[8] as List<BibleStudy>,
-            restLastMonth = values[9] as Time,
-            transferred = values[10] as List<Entry>,
-            rest = values[11] as Time,
-            beginOfPioneeringInServiceYear = values[12] as LocalDate?,
-            monthlyInformation = values[13] as MonthlyInformation,
-            lastMonthReportSent = (values[14] as List<Entry>).isEmpty() || (values[15] as MonthlyInformation).reportSent,
-            parties = values[16] as List<Party>
+            goal = values[0] as Int?,
+            hasGoal = values[1] as Boolean,
+            roleGoal = values[2] as Int?,
+            yearlyGoal = values[3] as Int,
+            role = values[4] as Role,
+            entries = values[5] as List<Entry>,
+            entriesInServiceYear = values[6] as List<Entry>,
+            bibleStudies = values[7] as List<BibleStudy>,
+            restLastMonth = values[8] as Time,
+            transferred = values[9] as List<Entry>,
+            rest = values[10] as Time,
+            beginOfPioneeringInServiceYear = values[11] as LocalDate?,
+            monthlyInformation = values[12] as MonthlyInformation,
+            lastMonthReportSent = (values[13] as List<Entry>).isEmpty() || (values[14] as MonthlyInformation).reportSent,
+            parties = values[15] as List<Party>
         )
     }.stateIn(
         scope = viewModelScope,

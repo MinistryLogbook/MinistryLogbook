@@ -125,7 +125,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                     navController.navigateToMonth(it.year, it.monthNumber)
                 })
                 Spacer(Modifier.weight(1f))
-                ToolbarActions(state.name, selectedMonth)
+                ToolbarActions(selectedMonth)
             }
         },
         bottomBar = {
