@@ -2,22 +2,10 @@ package app.ministrylogbook.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-// val Green400 = Color(0xff34d399)
-// val Green500 = Color(0xff85d1b4) // Color(0xff10b981)
-// val Green600 = Color(0xff059669)
-// val Secondary = Color(0xff50b890)
-// val Tertiary = Color(0xffd19085)
-// val Green800 = Color(0xff065f46)
-//
-// val Indigo300 = Color(0xffa5b4fc)
-// val Indigo400 = Color(0xff818cf8)
-// val Indigo500 = Color(0xff6366f1)
-// val Indigo600 = Color(0xff4f46e5)
-//
-// val Red300 = Color(0xfffca5a5)
-
 val ThemeLightWarning = Color(0xfffacc15)
 val ThemeLightOnWarning = Color(0xff854d0e)
+val ThemeLightOutgoingTransfer = Color(0xFFD1D3D9)
+val ThemeLightOnOutgoingTransfer = Color(0xFF272a2e)
 
 val md_theme_light_primary = Color(0xFF00658c)
 val md_theme_light_onPrimary = Color(0xFFffffff)
@@ -48,6 +36,8 @@ val md_theme_light_inversePrimary = Color(0xFF79d0ff)
 
 val ThemeDarkWarning = Color(0xff854d0e)
 val ThemeDarkOnWarning = Color(0xfffde047)
+val ThemeDarkOutgoingTransfer = Color(0xFF404047)
+val ThemeDarkOnOutgoingTransfer = Color(0xFFCAD3DB)
 
 val md_theme_dark_primary = Color(0xFF79d0ff)
 val md_theme_dark_onPrimary = Color(0xFF00344a)

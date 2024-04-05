@@ -20,13 +20,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import app.ministrylogbook.data.Design
 
-class ExtendedColorScheme(warning: Color, onWarning: Color) {
+class ExtendedColorScheme(warning: Color, onWarning: Color, outgoingTransfer: Color, onOutgoingTransfer: Color) {
     val warning by mutableStateOf(warning, structuralEqualityPolicy())
     val onWarning by mutableStateOf(onWarning, structuralEqualityPolicy())
+    val outgoingTransfer by mutableStateOf(outgoingTransfer, structuralEqualityPolicy())
+    val onOutgoingTransfer by mutableStateOf(onOutgoingTransfer, structuralEqualityPolicy())
 }
 
 val LocalExtendedColorScheme =
-    compositionLocalOf { ExtendedColorScheme(warning = ThemeLightWarning, onWarning = ThemeLightOnWarning) }
+    compositionLocalOf {
+        ExtendedColorScheme(
+            warning = ThemeLightWarning,
+            onWarning = ThemeLightOnWarning,
+            outgoingTransfer = ThemeLightOutgoingTransfer,
+            onOutgoingTransfer = ThemeLightOnOutgoingTransfer
+        )
+    }
 
 val MaterialTheme.extendedColorScheme: ExtendedColorScheme
     @Composable
@@ -126,12 +135,16 @@ fun MinistryLogbookTheme(
     val extendedColors = if (useDarkTheme) {
         ExtendedColorScheme(
             warning = ThemeDarkWarning,
-            onWarning = ThemeDarkOnWarning
+            onWarning = ThemeDarkOnWarning,
+            outgoingTransfer = ThemeDarkOutgoingTransfer,
+            onOutgoingTransfer = ThemeDarkOnOutgoingTransfer
         )
     } else {
         ExtendedColorScheme(
             warning = ThemeLightWarning,
-            onWarning = ThemeLightOnWarning
+            onWarning = ThemeLightOnWarning,
+            outgoingTransfer = ThemeLightOutgoingTransfer,
+            onOutgoingTransfer = ThemeLightOnOutgoingTransfer
         )
     }
 

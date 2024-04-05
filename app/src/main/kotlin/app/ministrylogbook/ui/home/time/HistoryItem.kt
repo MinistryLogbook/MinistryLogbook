@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -36,6 +35,7 @@ import app.ministrylogbook.R
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.utilities.condition
+import app.ministrylogbook.ui.theme.extendedColorScheme
 import java.time.format.DateTimeFormatter
 import kotlinx.datetime.toJavaLocalDateTime
 
@@ -66,20 +66,30 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val tint = if (isTransfer && subtract) Color(0xFFE0E0E0) else entry.type.color()
+        val background = if (isTransfer && subtract) {
+            MaterialTheme.extendedColorScheme.outgoingTransfer
+        } else {
+            entry.type.color().copy(0.2f)
+        }
+        val tint =
+            if (isTransfer && subtract) {
+                MaterialTheme.extendedColorScheme.onOutgoingTransfer
+            } else entry.type.color().copy(0.8f)
         Box(
             Modifier
                 .clip(CircleShape)
-                .background(tint.copy(0.2f))
+                .background(background)
                 .padding(8.dp)
         ) {
             val iconResource =
-                if (isTransfer && subtract) painterResource(R.drawable.ic_output) else entry.type.icon()
+                if (isTransfer && subtract) {
+                    painterResource(R.drawable.ic_output)
+                } else entry.type.icon()
             Icon(
                 painter = iconResource,
                 contentDescription = null, // TODO: contentDescription
                 modifier = Modifier.size(20.dp),
-                tint = tint.copy(0.8f)
+                tint = tint
             )
         }
 
