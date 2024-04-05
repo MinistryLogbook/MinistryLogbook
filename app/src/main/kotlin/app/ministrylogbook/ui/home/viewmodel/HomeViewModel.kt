@@ -18,6 +18,7 @@ import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.services.BackupService
+import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupFile
@@ -110,11 +111,6 @@ class HomeViewModel(
         month.monthNumber >= 9 -> LocalDate(month.year, 9, 1)
         else -> LocalDate(month.year - 1, 9, 1)
     }
-    private val _serviceYearEnd = if (_serviceYearBegin.monthNumber >= 9) {
-        LocalDate(_serviceYearBegin.year + 1, 8, 31)
-    } else {
-        LocalDate(_serviceYearBegin.year, 8, 31)
-    }
     private val _beginOfPioneeringInServiceYear = _pioneerSince.map { pioneerSince ->
         if (pioneerSince != null && pioneerSince >= _serviceYearBegin) {
             pioneerSince
@@ -133,7 +129,7 @@ class HomeViewModel(
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
-        _entryRepository.getAllInRange(it, _serviceYearEnd)
+        _entryRepository.getAllInRange(it, month.lastDayOfMonth)
     }
     private val _transferred =
         _entryRepository.getTransferredFrom(month).map { transferred -> transferred.filter { it.time.isNotEmpty } }

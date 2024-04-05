@@ -29,6 +29,7 @@ import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.shared.sum
+import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
@@ -36,6 +37,7 @@ import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.shared.Tile
 import app.ministrylogbook.ui.theme.ProgressPositive
+import kotlin.math.min
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
@@ -96,7 +98,11 @@ fun YearlyProgress(state: HomeState) {
                 val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
                 val september = LocalDate(today.year, 9, 1)
                 val daysInServiceYear = state.beginOfPioneeringInServiceYear?.until(september, DateTimeUnit.DAY) ?: 1
-                val dayInServiceYear = state.beginOfPioneeringInServiceYear?.until(today, DateTimeUnit.DAY) ?: 0
+                val dayInServiceYear = min(
+                    state.beginOfPioneeringInServiceYear?.until(today, DateTimeUnit.DAY) ?: 0,
+                    state.beginOfPioneeringInServiceYear?.until(state.month.lastDayOfMonth, DateTimeUnit.DAY)
+                        ?: 0
+                )
                 LinearProgressIndicator(
                     progresses = listOf(
                         ProgressKind.Progress(
