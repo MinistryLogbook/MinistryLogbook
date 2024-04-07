@@ -333,7 +333,8 @@ class HomeViewModel(
             rest = values[10] as Time,
             beginOfPioneeringInServiceYear = values[11] as LocalDate?,
             monthlyInformation = values[12] as MonthlyInformation,
-            lastMonthReportSent = (values[13] as List<Entry>).isEmpty() || (values[14] as MonthlyInformation).reportSent,
+            lastMonthReportSent = (values[13] as List<Entry>).isEmpty() ||
+                (values[14] as MonthlyInformation).reportSent,
             parties = values[15] as List<Party>
         )
     }.stateIn(

@@ -180,7 +180,7 @@ fun DetailsSection(state: HomeState) {
                                     .clip(CircleShape)
                                     .defaultMinSize(minWidth = 48.dp)
                                     .background(MaterialTheme.colorScheme.onSurface.copy(0.1f))
-                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                    .padding(horizontal = 8.dp, vertical = 1.dp),
                                 horizontalArrangement = Arrangement.End,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
