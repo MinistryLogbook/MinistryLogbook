@@ -28,6 +28,7 @@ class BottomSheetStateLock {
 
     fun unlock() {
         _isLocked = false
+        _unlockRequest.value = UnlockRequestState.Initial
     }
 
     fun approveRequest() {
