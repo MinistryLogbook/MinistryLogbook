@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -29,7 +28,6 @@ import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.shared.sum
-import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
@@ -37,13 +35,6 @@ import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.shared.Tile
 import app.ministrylogbook.ui.theme.ProgressPositive
-import kotlin.math.min
-import kotlinx.datetime.Clock
-import kotlinx.datetime.DateTimeUnit
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
-import kotlinx.datetime.until
 
 @Composable
 fun YearlyProgress(state: HomeState) {
@@ -95,14 +86,14 @@ fun YearlyProgress(state: HomeState) {
 
                 Spacer(Modifier.width(16.dp))
 
-                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
-                val september = LocalDate(today.year, 9, 1)
-                val daysInServiceYear = state.beginOfPioneeringInServiceYear?.until(september, DateTimeUnit.DAY) ?: 1
-                val dayInServiceYear = min(
-                    state.beginOfPioneeringInServiceYear?.until(today, DateTimeUnit.DAY) ?: 0,
-                    state.beginOfPioneeringInServiceYear?.until(state.month.lastDayOfMonth, DateTimeUnit.DAY)
-                        ?: 0
-                )
+//                val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+//                val september = LocalDate(today.year, 9, 1)
+//                val daysInServiceYear = state.beginOfPioneeringInServiceYear?.until(september, DateTimeUnit.DAY) ?: 1
+//                val dayInServiceYear = min(
+//                    state.beginOfPioneeringInServiceYear?.until(today, DateTimeUnit.DAY) ?: 0,
+//                    state.beginOfPioneeringInServiceYear?.until(state.month.lastDayOfMonth, DateTimeUnit.DAY)
+//                        ?: 0
+//                )
                 LinearProgressIndicator(
                     progresses = listOf(
                         ProgressKind.Progress(
@@ -112,11 +103,11 @@ fun YearlyProgress(state: HomeState) {
                         ProgressKind.Progress(
                             percent = (1f / state.yearlyGoal * ministryTime.hours),
                             color = ProgressPositive
-                        ),
-                        ProgressKind.Indicator(
-                            percent = 1f / daysInServiceYear * dayInServiceYear,
-                            color = MaterialTheme.colorScheme.secondary
                         )
+//                        ProgressKind.Indicator(
+//                            percent = 1f / daysInServiceYear * dayInServiceYear,
+//                            color = MaterialTheme.colorScheme.secondary
+//                        )
                     ),
                     modifier = Modifier
                         .height(8.dp)
