@@ -38,13 +38,14 @@ import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.backup.navigateToBackup
 import app.ministrylogbook.ui.settings.navigateToSettings
 import app.ministrylogbook.ui.shared.ToolbarAction
+import kotlinx.datetime.LocalDate
 import java.util.Locale
 
 @Composable
-fun ProfileButton() {
+fun ProfileButton(month: LocalDate) {
     val navController = LocalAppNavController.current
 
-    ToolbarAction(onClick = { navController.navigateToHomeMenu() }) {
+    ToolbarAction(onClick = { navController.navigateToHomeMenu(month.year, month.monthNumber) }) {
         Icon(
             painterResource(R.drawable.ic_account_circle_thin),
             modifier = Modifier.size(38.dp),

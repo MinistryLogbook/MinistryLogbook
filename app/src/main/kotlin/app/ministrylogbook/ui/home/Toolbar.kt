@@ -57,7 +57,7 @@ fun ToolbarActions(month: LocalDate) {
                 contentDescription = stringResource(R.string.share_field_service_report)
             )
         }
-        ProfileButton()
+        ProfileButton(month)
     }
 }
 
