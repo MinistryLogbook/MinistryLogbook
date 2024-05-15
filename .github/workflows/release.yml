@@ -1,8 +1,8 @@
 name: Release
 
 on:
-  push:
-    tags: [ "*" ]
+  release:
+    types: [published]
 
   workflow_dispatch:
 
@@ -43,9 +43,7 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
 
       - name: Create a Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
           prerelease: ${{ contains(github.ref_name, 'beta') }}
           files: |
