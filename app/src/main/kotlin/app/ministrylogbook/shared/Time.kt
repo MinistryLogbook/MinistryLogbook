@@ -52,6 +52,17 @@ class Time : Comparable<Time> {
     override fun equals(other: Any?) =
         (other is Time) && this.internalRepresentation == other.internalRepresentation
 
+    operator fun div(other: Int): Time {
+        if (other == 0) {
+            throw IllegalArgumentException("Division by zero")
+        }
+        return Time(this.internalRepresentation / other)
+    }
+
+    operator fun times(other: Int): Time {
+        return Time(this.internalRepresentation * other)
+    }
+
     override fun hashCode() = internalRepresentation.hashCode()
 
     companion object {
@@ -72,4 +83,10 @@ fun Iterable<Time>.sum(): Time {
     var sum = Time.Empty
     this.forEach { sum += it }
     return sum
+}
+
+fun Float.toTime(): Time {
+    val hours = this.toInt()
+    val minutes = ((this - hours) * 60).toInt()
+    return Time(hours, minutes)
 }

@@ -70,6 +70,7 @@ data class HomeState(
     val yearlyGoal: Int = 1,
     val role: Role = Role.Publisher,
     val entries: List<Entry> = emptyList(),
+    val entriesLastMonth: List<Entry> = emptyList(),
     val entriesInServiceYear: List<Entry> = emptyList(),
     val bibleStudies: List<BibleStudy> = emptyList(),
     val restLastMonth: Time = Time.Empty,
@@ -125,6 +126,7 @@ class HomeViewModel(
         initial = null as (History<List<Entry>>?),
         operation = { previous, new -> History(previous?.current, new) }
     )
+    private val _entriesLastMonth = _entryRepository.getAllOfMonth(_lastMonth)
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
@@ -315,7 +317,8 @@ class HomeViewModel(
         _monthlyInformation,
         _lastMonthEntries,
         _lastMonthMonthlyInformation,
-        _parties
+        _parties,
+        _entriesLastMonth
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -335,7 +338,8 @@ class HomeViewModel(
             monthlyInformation = values[12] as MonthlyInformation,
             lastMonthReportSent = (values[13] as List<Entry>).isEmpty() ||
                 (values[14] as MonthlyInformation).reportSent,
-            parties = values[15] as List<Party>
+            parties = values[15] as List<Party>,
+            entriesLastMonth = values[16] as List<Entry>
         )
     }.stateIn(
         scope = viewModelScope,

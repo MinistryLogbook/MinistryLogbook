@@ -85,8 +85,8 @@ fun CircleProgressIndicatorPreview() {
                 modifier = Modifier.size(200.dp, 200.dp),
                 baseLineColor = ProgressPositive,
                 progresses = listOf(
-                    ProgressKind.Progress(percent = .6f, ProgressNegative),
-                    ProgressKind.Progress(percent = .45f, ProgressPositive)
+                    ProgressKind.Progress(percent = .6f, color = ProgressNegative),
+                    ProgressKind.Progress(percent = .45f, color = ProgressPositive)
                 )
             )
         }

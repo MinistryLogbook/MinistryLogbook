@@ -27,6 +27,8 @@ import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
+import app.ministrylogbook.shared.toTime
+import app.ministrylogbook.shared.utilities.isInFirstWeekOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.shared.utilities.transfers
@@ -43,7 +45,7 @@ import kotlinx.datetime.todayIn
 @Composable
 fun WeekNumberSeparator(
     text: String,
-    weekGoal: Int,
+    weekGoal: Time,
     ministryTimeSum: Time,
     allTimeSum: Time,
     showProgress: Boolean = false
@@ -54,12 +56,18 @@ fun WeekNumberSeparator(
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onBackground.copy(0.7f)
         )
-        if (showProgress && weekGoal > 0) {
+        if (showProgress && weekGoal.isNotEmpty) {
             Spacer(Modifier.height(3.dp))
             LinearProgressIndicator(
                 progresses = listOf(
-                    ProgressKind.Progress(1f / weekGoal * ministryTimeSum.toFloat(), color = ProgressPositive),
-                    ProgressKind.Progress(1f / weekGoal * allTimeSum.toFloat(), color = ProgressPositive.copy(0.6f))
+                    ProgressKind.Progress(
+                        1f / weekGoal.toFloat() * ministryTimeSum.toFloat(),
+                        color = ProgressPositive
+                    ),
+                    ProgressKind.Progress(
+                        1f / weekGoal.toFloat() * allTimeSum.toFloat(),
+                        color = ProgressPositive.copy(0.6f)
+                    )
                 ),
                 modifier = Modifier
                     .height(3.dp)
@@ -74,6 +82,9 @@ fun WeekNumberSeparator(
 @Composable
 fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
     val navController = LocalAppNavController.current
+    val entriesLastMonth by remember(state) {
+        derivedStateOf { state.entriesLastMonth }
+    }
     val orderedEntries by remember(state) {
         derivedStateOf { state.entries.sortedBy { it.datetime }.reversed() }
     }
@@ -98,25 +109,19 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
     }
 
     if (transferToUndo != null) {
-        AlertDialog(
-            title = {
-                Text(stringResource(R.string.undo_transfer_title))
-            },
-            text = {
-                Text(stringResource(R.string.undo_transfer_description))
-            },
-            dismissButton = {
-                TextButton(onClick = { transferToUndo = null }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = handleUndoTransfer) {
-                    Text(stringResource(R.string.undo))
-                }
-            },
-            onDismissRequest = { transferToUndo = null }
-        )
+        AlertDialog(title = {
+            Text(stringResource(R.string.undo_transfer_title))
+        }, text = {
+            Text(stringResource(R.string.undo_transfer_description))
+        }, dismissButton = {
+            TextButton(onClick = { transferToUndo = null }) {
+                Text(stringResource(R.string.cancel))
+            }
+        }, confirmButton = {
+            TextButton(onClick = handleUndoTransfer) {
+                Text(stringResource(R.string.undo))
+            }
+        }, onDismissRequest = { transferToUndo = null })
     }
 
     Column(
@@ -124,9 +129,15 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
             .fillMaxWidth()
             .padding(vertical = 8.dp)
     ) {
-        val currentWeek = Clock.System.todayIn(TimeZone.currentSystemDefault()).weekNumber
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
+        val currentWeek = today.weekNumber
+        val entriesCurrentWeekLastMonth = if (today.isInFirstWeekOfMonth) {
+            entriesLastMonth.filter { it.datetime.date.weekNumber == today.weekNumber }
+        } else {
+            arrayListOf()
+        }
         val groupedEntries = orderedEntriesWithoutTransfers.groupBy { it.datetime.date.weekNumber }
-        val weekGoal = (state.goal ?: 0) * 12 / 52
+        val weekGoal = ((state.goal ?: 0) * 12f / 52f).toTime()
 
         state.transferred.forEach {
             HistoryItem(it, subtract = true, onClick = { transferToUndo = it })
@@ -134,19 +145,27 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
 
         groupedEntries.forEach { (week, entries) ->
             val timeSum = entries.timeSum()
+            val timeLastMonth = entriesCurrentWeekLastMonth.timeSum()
             val formattedTime = if (timeSum.minutes == 0) timeSum.hours.toString() else timeSum.toString()
             val formattedTimeSum = stringResource(R.string.hours_short_unit, formattedTime)
+            val textFromLastMonth = if (timeLastMonth.isNotEmpty) {
+                val formattedTimeLastMonth = if (timeLastMonth.minutes == 0) timeLastMonth.hours.toString() else timeLastMonth.toString()
+                val formattedTimeSumLastMonth = stringResource(R.string.hours_short_unit, formattedTimeLastMonth)
+                " " + stringResource(R.string.plus_time_from_last_month, formattedTimeSumLastMonth)
+            } else {
+                ""
+            }
             val text = when (week) {
                 currentWeek -> stringResource(R.string.current_week)
                 currentWeek - 1 -> stringResource(R.string.last_week)
                 else -> stringResource(R.string.calendar_week_shorthand, week)
-            } + if (entries.size > 1) " ($formattedTimeSum)" else ""
+            } + if (entries.size > 1) " ($formattedTimeSum$textFromLastMonth)" else ""
 
             WeekNumberSeparator(
                 text = text,
                 weekGoal = weekGoal,
-                ministryTimeSum = entries.ministryTimeSum(),
-                allTimeSum = timeSum,
+                ministryTimeSum = entriesCurrentWeekLastMonth.ministryTimeSum() + entries.ministryTimeSum(),
+                allTimeSum = entriesCurrentWeekLastMonth.timeSum() + timeSum,
                 showProgress = week == currentWeek
             )
             entries.forEach { entry ->

@@ -38,8 +38,8 @@ import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.backup.navigateToBackup
 import app.ministrylogbook.ui.settings.navigateToSettings
 import app.ministrylogbook.ui.shared.ToolbarAction
-import kotlinx.datetime.LocalDate
 import java.util.Locale
+import kotlinx.datetime.LocalDate
 
 @Composable
 fun ProfileButton(month: LocalDate) {

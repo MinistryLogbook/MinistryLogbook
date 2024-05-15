@@ -37,7 +37,7 @@ fun SendReportHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
 
                 Tile(
                     title = {
-                        Text(stringResource(R.string.send_lastr_report, lastMonthName))
+                        Text(stringResource(R.string.send_last_report, lastMonthName))
                     },
                     actions = {
                         TextButton(

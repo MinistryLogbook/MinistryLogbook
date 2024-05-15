@@ -22,3 +22,6 @@ val LocalDate.weekNumber: Int
 
 val LocalDate.isLeapYear: Boolean
     get() = year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)
+
+val LocalDate.isInFirstWeekOfMonth: Boolean
+    get() = (this.dayOfMonth - this.dayOfWeek.ordinal) <= 1
