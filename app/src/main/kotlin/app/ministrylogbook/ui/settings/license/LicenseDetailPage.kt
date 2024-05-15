@@ -3,6 +3,7 @@ package app.ministrylogbook.ui.settings.license
 import android.graphics.Typeface
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -38,7 +39,12 @@ fun LicenseDetailPage(id: String) {
     }
 
     BaseSettingsPage(library?.name.orEmpty(), toolbarElevation = scrollState.canScrollBackward) {
-        Box(Modifier.verticalScroll(scrollState).padding(16.dp)) {
+        Box(
+            Modifier
+                .verticalScroll(scrollState)
+                .padding(16.dp)
+                .navigationBarsPadding()
+        ) {
             HtmlText(html = license?.htmlReadyLicenseContent.orEmpty())
         }
     }

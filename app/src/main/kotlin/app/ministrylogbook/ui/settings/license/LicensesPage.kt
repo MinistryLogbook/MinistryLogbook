@@ -4,9 +4,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -52,7 +55,11 @@ fun LicensesPage() {
         title = stringResource(R.string.open_source_licenses),
         toolbarElevation = lazyListState.canScrollBackward
     ) {
-        LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            state = lazyListState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = WindowInsets.navigationBars.asPaddingValues()
+        ) {
             items(libraries) { library ->
                 Library(library) {
                     navController.navigateToLicenseDetail(library.uniqueId)
