@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.ministrylogbook.R
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
@@ -86,16 +87,15 @@ class SettingsService(val context: Context) {
 
     val role = context.dataStore.data.map {
         it[RoleKey]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
-    }
-    val pioneerSince =
-        context.dataStore.data.map {
-            it[StartOfPioneeringKey]?.let { dateStr ->
-                val date = LocalDate.parse(dateStr)
-                LocalDate(date.year, date.month, 1)
-            }
+    }.distinctUntilChanged()
+    val pioneerSince = context.dataStore.data.map {
+        it[StartOfPioneeringKey]?.let { dateStr ->
+            val date = LocalDate.parse(dateStr)
+            LocalDate(date.year, date.month, 1)
         }
+    }.distinctUntilChanged()
     val roleGoal = role.map { it.goal }
-    val name = context.dataStore.data.map { it[NameKey] ?: "" }
+    val name = context.dataStore.data.map { it[NameKey] ?: "" }.distinctUntilChanged()
     val design = context.dataStore.data.map {
         val value = it[DesignKey]
 
@@ -104,15 +104,15 @@ class SettingsService(val context: Context) {
         } else {
             Design.System
         }
-    }
-    val useSystemColors = context.dataStore.data.map { it[UseSystemColors] ?: false }
-    val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }
-    val sendReportReminder = context.dataStore.data.map { it[SendReportReminderKey] ?: true }
+    }.distinctUntilChanged()
+    val useSystemColors = context.dataStore.data.map { it[UseSystemColors] ?: false }.distinctUntilChanged()
+    val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }.distinctUntilChanged()
+    val sendReportReminder = context.dataStore.data.map { it[SendReportReminderKey] ?: true }.distinctUntilChanged()
     val lastBackup = context.dataStore.data.map {
         val lastBackupMillis = it[LastBackupMillisKey] ?: return@map null
         Instant.fromEpochMilliseconds(lastBackupMillis).toLocalDateTime(TimeZone.currentSystemDefault())
-    }
-    val introShown = context.dataStore.data.map { it[IntroShownKey] ?: false }
+    }.distinctUntilChanged()
+    val introShown = context.dataStore.data.map { it[IntroShownKey] ?: false }.distinctUntilChanged()
 
     suspend fun setIntroShown() = context.dataStore.edit { it[IntroShownKey] = true }
 

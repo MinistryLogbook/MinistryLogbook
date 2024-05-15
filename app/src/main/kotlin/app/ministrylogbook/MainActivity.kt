@@ -35,10 +35,14 @@ class MainActivity : AppCompatActivity() {
             settingsService.useSystemColors.firstOrNull() ?: false
         }
         lifecycleScope.launch {
-            settingsService.design.drop(1).collectLatest { it.apply() }
+            settingsService.design.drop(1).collectLatest {
+                it.apply()
+            }
         }
         lifecycleScope.launch {
-            settingsService.useSystemColors.drop(1).collectLatest { recreate() }
+            settingsService.useSystemColors.drop(1).collectLatest {
+                recreate()
+            }
         }
 
         setContent {
