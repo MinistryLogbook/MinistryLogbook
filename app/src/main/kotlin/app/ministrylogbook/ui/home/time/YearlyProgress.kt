@@ -51,7 +51,7 @@ fun YearlyProgress(state: HomeState) {
 
         Tile(title = { Text(stringResource(R.string.progress_of_yearly_goal)) }) {
             val maxHoursWithCredit by remember(state.goal) {
-                derivedStateOf { Time(state.goal?.plus(5) ?: 0, 0) }
+                derivedStateOf { Time(state.roleGoal?.plus(5) ?: 0, 0) }
             }
             val time by remember(state.entriesInServiceYear, maxHoursWithCredit) {
                 derivedStateOf {
