@@ -57,12 +57,11 @@ fun YearlyProgress(state: HomeState) {
             val time by remember(state.entriesInServiceYear, maxHoursWithCredit) {
                 derivedStateOf {
                     state.entriesInServiceYear.splitIntoMonths().map {
-                        val ministryTimeSum = it.ministryTimeSum()
-                        val ministryHoursTime = ministryTimeSum.hours.toTime()
+                        val ministryTimeSum = it.ministryTimeSum().hours.toTime()
                         val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum().hours.toTime()
                         val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum().hours.toTime()
                         val max = maxOf(ministryTimeSum, maxHoursWithCredit)
-                        minOf(max, ministryHoursTime + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
+                        minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
                     }.sum()
                 }
             }
