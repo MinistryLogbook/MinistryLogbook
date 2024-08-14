@@ -14,8 +14,6 @@ fun List<Entry>.timeSum(): Time {
 
 fun List<Entry>.ministryTimeSum() = this.ministries().timeSum()
 
-fun List<Entry>.credits() = this.filter { it.isCredit }
-
 fun List<Entry>.theocraticAssignments() = this.filter { it.type == EntryType.TheocraticAssignment }
 
 fun List<Entry>.theocraticAssignmentTimeSum() = this.theocraticAssignments().timeSum()

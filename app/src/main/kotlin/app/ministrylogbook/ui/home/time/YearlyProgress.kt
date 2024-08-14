@@ -28,6 +28,7 @@ import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.shared.sum
+import app.ministrylogbook.shared.toTime
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.splitIntoMonths
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
@@ -57,10 +58,11 @@ fun YearlyProgress(state: HomeState) {
                 derivedStateOf {
                     state.entriesInServiceYear.splitIntoMonths().map {
                         val ministryTimeSum = it.ministryTimeSum()
+                        val ministryHoursTime = ministryTimeSum.hours.toTime()
                         val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum()
                         val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum()
                         val max = maxOf(ministryTimeSum, maxHoursWithCredit)
-                        minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
+                        minOf(max, ministryHoursTime + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
                     }.sum()
                 }
             }
@@ -69,7 +71,9 @@ fun YearlyProgress(state: HomeState) {
                     state.entriesInServiceYear.ministryTimeSum()
                 }
             }
-            val remaining by remember(time, state.yearlyGoal) { derivedStateOf { state.yearlyGoal - time.hours } }
+            val remaining by remember(time, state.yearlyGoal) {
+                derivedStateOf { state.yearlyGoal - time.hours }
+            }
 
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(

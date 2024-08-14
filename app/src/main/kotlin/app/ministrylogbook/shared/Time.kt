@@ -90,3 +90,5 @@ fun Float.toTime(): Time {
     val minutes = ((this - hours) * 60).toInt()
     return Time(hours, minutes)
 }
+
+fun Int.toTime() = Time(this, 0)
