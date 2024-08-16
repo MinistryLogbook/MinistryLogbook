@@ -29,6 +29,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
@@ -96,7 +97,7 @@ fun NavGraphBuilder.homeGraph() {
             val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
             val month = LocalDate(year, monthNumber, 1)
 
-            val viewModel = getViewModel<HomeViewModel>(parameters = { parametersOf(month) })
+            val viewModel = koinViewModel<HomeViewModel>(parameters = { parametersOf(month) })
             val state by viewModel.state.collectAsStateWithLifecycle()
 
             HomePage(state, viewModel::dispatch)
@@ -122,7 +123,7 @@ fun NavGraphBuilder.homeGraph() {
             val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
             val month = LocalDate(year, monthNumber, 1)
             val context = LocalContext.current
-            val viewModel = getViewModel<HomeViewModel>(parameters = {
+            val viewModel = koinViewModel<HomeViewModel>(parameters = {
                 parametersOf(month)
                 parametersOf(context.activity?.intent?.data)
             })
@@ -157,7 +158,7 @@ fun NavGraphBuilder.homeGraph() {
                 }
             }
 
-            val viewModel = getViewModel<EntryDetailsViewModel>(parameters = { parametersOf(month, id) })
+            val viewModel = koinViewModel<EntryDetailsViewModel>(parameters = { parametersOf(month, id) })
             EntryDetailsBottomSheetContent(viewModel)
         }
     }

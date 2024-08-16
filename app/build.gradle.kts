@@ -1,5 +1,6 @@
 import java.io.ByteArrayOutputStream
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -8,16 +9,17 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
     alias(libs.plugins.aboutlicenses)
+    alias(libs.plugins.compose.compiler)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "app.ministrylogbook"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = getVersionCode()
         versionName = getTagName()
         resourceConfigurations += listOf("en", "de")
@@ -76,8 +78,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
 
     buildFeatures {
@@ -86,7 +90,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.10"
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     namespace = "app.ministrylogbook"
@@ -99,8 +103,10 @@ androidComponents {
 }
 
 tasks.withType<KotlinCompile>().all {
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
 }
 

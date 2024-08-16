@@ -631,21 +631,18 @@ internal object AnchoredDraggableDefaults {
     /**
      * The default animation used by [AnchoredDraggableState].
      */
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     val AnimationSpec = SpringSpec<Float>()
 
     /**
      * The default velocity threshold (1.8 dp per millisecond) used by
      * [rememberAnchoredDraggableState].
      */
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     val velocityThreshold: () -> Float
         @Composable get() = with(LocalDensity.current) { { 125.dp.toPx() } }
 
     /**
      * The default positional threshold (56 dp) used by [rememberAnchoredDraggableState]
      */
-    @Suppress("OPT_IN_MARKER_ON_WRONG_TARGET")
     val positionalThreshold: (totalDistance: Float) -> Float
         @Composable get() = with(LocalDensity.current) {
             { 56.dp.toPx() }

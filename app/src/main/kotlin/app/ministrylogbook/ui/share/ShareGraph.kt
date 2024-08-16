@@ -26,6 +26,7 @@ import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.getViewModel
+import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 sealed class ShareGraph(
@@ -84,7 +85,7 @@ fun NavGraphBuilder.shareGraph() {
             } else {
                 LocalDate(year, monthNumber, 1) + DatePeriod(months = 1) - DatePeriod(days = 1)
             }
-            val shareViewModel = getViewModel<ShareViewModel>(parameters = {
+            val shareViewModel = koinViewModel<ShareViewModel>(parameters = {
                 parametersOf(month)
             })
             SharePage(shareViewModel)
