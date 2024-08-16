@@ -16,7 +16,6 @@ import app.ministrylogbook.ui.SlideInTransitionMillis
 import app.ministrylogbook.ui.SlideOutTransitionMillis
 import app.ministrylogbook.ui.home.HomeGraph
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
-import org.koin.androidx.compose.getViewModel
 import org.koin.androidx.compose.koinViewModel
 
 sealed class BackupGraph(private val rawRoute: String) {
