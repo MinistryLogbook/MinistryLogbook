@@ -1,5 +1,6 @@
 package app.ministrylogbook.shared.layouts
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.runtime.Composable
@@ -18,9 +19,9 @@ import androidx.navigation.NavOptions
 import androidx.navigation.Navigator
 import androidx.navigation.NavigatorState
 import app.ministrylogbook.shared.layouts.BottomSheetNavigator.Destination
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.transform
 
 /**
@@ -95,6 +96,7 @@ class BottomSheetNavigator(
      * A [Composable] function that hosts the current sheet content. This should be set as
      * sheetContent of your [ModalBottomSheetLayout].
      */
+    @SuppressLint("ProduceStateDoesNotAssignValue")
     val sheetContent: @Composable ColumnScope.() -> Unit = {
         val saveableStateHolder = rememberSaveableStateHolder()
         val transitionsInProgressEntries by transitionsInProgress.collectAsState()
@@ -112,10 +114,13 @@ class BottomSheetNavigator(
                 // the sheet first before deciding whether to re-show it or keep it hidden
                 try {
                     sheetState.hide()
+                } catch (_: CancellationException) {
+                    // We catch but ignore possible cancellation exceptions as we don't want
+                    // them to bubble up and cancel the whole produceState coroutine
                 } finally {
                     emit(backStackEntries.lastOrNull())
                 }
-            }.collectLatest { value = it }
+            }.collect { value = it }
         }
 
         if (retainedEntry != null) {

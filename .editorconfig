@@ -1,4 +1,4 @@
 [*.{kt,kts}]
-ktlint_code_style = android
+ktlint_code_style = android_studio
 max_line_length = 119
 no_wildcard_imports = false
