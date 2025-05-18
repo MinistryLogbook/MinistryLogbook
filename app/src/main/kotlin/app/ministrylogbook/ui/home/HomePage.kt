@@ -50,7 +50,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import nl.dionsegijn.konfetti.compose.KonfettiView
 
 enum class PagerPage {
     Time,
@@ -176,8 +175,8 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                         BadgedBox(badge = {
                             androidx.compose.animation.AnimatedVisibility(
                                 visible = !state.monthlyInformation.dismissedBibleStudiesHint &&
-                                    state.bibleStudies.isNotEmpty() &&
-                                    state.bibleStudies.all { !it.checked },
+                                        state.bibleStudies.isNotEmpty() &&
+                                        state.bibleStudies.all { !it.checked },
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {
@@ -205,13 +204,6 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                     PagerPage.Time -> TimePage(state, dispatch, timeScrollState)
                     PagerPage.BibleStudies -> BibleStudiesPage(state, dispatch, studiesScrollState)
                 }
-            }
-
-            if (state.parties.isNotEmpty()) {
-                KonfettiView(
-                    modifier = Modifier.fillMaxSize(),
-                    parties = state.parties
-                )
             }
         }
     }

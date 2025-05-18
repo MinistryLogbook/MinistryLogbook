@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.home.time
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.AnimationConstants
 import androidx.compose.animation.core.animateIntAsState
@@ -58,6 +59,7 @@ import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
 import kotlin.math.min
 
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun DetailsSection(state: HomeState) {
     // credit will be added until goal + 5 hours are reached
@@ -231,7 +233,7 @@ fun DetailsSection(state: HomeState) {
                             remainingHoursAnimated
                         )
                     } else {
-                        pluralStringResource(R.plurals.hours_remaining, 99, 99)
+                        pluralStringResource(R.plurals.hours_remaining, 0, 0)
                     }
 
                     Text(

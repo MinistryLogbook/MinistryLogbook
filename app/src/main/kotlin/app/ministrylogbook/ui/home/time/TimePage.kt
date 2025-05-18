@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +34,9 @@ import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import nl.dionsegijn.konfetti.compose.KonfettiView
+import nl.dionsegijn.konfetti.compose.OnParticleSystemUpdateListener
+import nl.dionsegijn.konfetti.core.PartySystem
 
 @Composable
 fun TimePage(
@@ -38,6 +44,8 @@ fun TimePage(
     dispatch: (intent: HomeIntent) -> Unit = {},
     scrollState: ScrollState = rememberScrollState()
 ) {
+    var goalDialogOpen by remember { mutableStateOf(false) }
+    val isYearlyGoalReached = remember { state.yearlyProgress.hours >= state.yearlyGoal }
     var fabExtended by remember { mutableStateOf(true) }
     val navController = LocalAppNavController.current
 
@@ -46,6 +54,12 @@ fun TimePage(
         snapshotFlow { scrollState.value }.collect {
             fabExtended = it <= prev
             prev = it
+        }
+    }
+
+    LaunchedEffect(isYearlyGoalReached, state.yearlyGoal, state.yearlyProgress) {
+        if (!isYearlyGoalReached && state.yearlyProgress.hours >= state.yearlyGoal) {
+            goalDialogOpen = true
         }
     }
 
@@ -91,6 +105,51 @@ fun TimePage(
                 },
                 text = {
                     Text(stringResource(R.string.create_entry))
+                }
+            )
+        }
+
+        if (goalDialogOpen) {
+            AlertDialog(
+                title = { Text("🎉 Gratulation!") },
+                text = { Text("Du hast dein Jahresziel erreicht!") },
+                onDismissRequest = { goalDialogOpen = false },
+                confirmButton = {
+                    TextButton(onClick = { goalDialogOpen = false }) {
+                        Text("Yay!")
+                    }
+                }
+            )
+        }
+
+        if (state.yearlyParties.isNotEmpty()) {
+            DisposableEffect(Unit) {
+                onDispose {
+                    dispatch(HomeIntent.YearlyPartyFinished)
+                }
+            }
+            KonfettiView(
+                modifier = Modifier.fillMaxSize(),
+                parties = state.yearlyParties,
+                updateListener = object : OnParticleSystemUpdateListener {
+                    override fun onParticleSystemEnded(system: PartySystem, activeSystems: Int) {
+                        dispatch(HomeIntent.YearlyPartyFinished)
+                    }
+                }
+            )
+        } else if (state.monthlyParties.isNotEmpty()) {
+            DisposableEffect(Unit) {
+                onDispose {
+                    dispatch(HomeIntent.MonthlyPartyFinished)
+                }
+            }
+            KonfettiView(
+                modifier = Modifier.fillMaxSize(),
+                parties = state.monthlyParties,
+                updateListener = object : OnParticleSystemUpdateListener {
+                    override fun onParticleSystemEnded(system: PartySystem, activeSystems: Int) {
+                        dispatch(HomeIntent.MonthlyPartyFinished)
+                    }
                 }
             )
         }

@@ -62,7 +62,7 @@ class BackupViewModel(
             lastBackup = lastBackup,
             isBackupValid = selectedBackupFile?.run {
                 _backupService.validateBackup(this.uri) && this.metadata != null
-            } ?: false,
+            } == true,
             latestEntry = latestEntry,
             importFinished = importFinished
         )

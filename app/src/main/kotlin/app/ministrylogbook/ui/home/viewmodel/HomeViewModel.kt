@@ -18,11 +18,15 @@ import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.services.BackupService
+import app.ministrylogbook.shared.sum
+import app.ministrylogbook.shared.toTime
 import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
+import app.ministrylogbook.shared.utilities.splitIntoMonths
+import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
+import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupFile
-import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,6 +50,7 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Spread
 import nl.dionsegijn.konfetti.core.emitter.Emitter
+import java.util.concurrent.TimeUnit
 
 sealed class HomeIntent {
     data class TransferToTextMonth(val minutes: Int) : HomeIntent()
@@ -59,7 +64,8 @@ sealed class HomeIntent {
     data object DismissImportBackup : HomeIntent()
     data object DismissBibleStudyHint : HomeIntent()
     data object DismissSendReportHint : HomeIntent()
-    data object PartyFinished : HomeIntent()
+    data object MonthlyPartyFinished : HomeIntent()
+    data object YearlyPartyFinished : HomeIntent()
 }
 
 data class HomeState(
@@ -83,7 +89,9 @@ data class HomeState(
     val importFinished: Boolean = false,
     val monthlyInformation: MonthlyInformation = MonthlyInformation(),
     val lastMonthReportSent: Boolean? = null,
-    val parties: List<Party> = emptyList()
+    val monthlyParties: List<Party> = emptyList(),
+    val yearlyProgress: Time = Time.Empty,
+    val yearlyParties: List<Party> = emptyList(),
 )
 
 data class History<T>(val previous: T?, val current: T)
@@ -166,35 +174,91 @@ class HomeViewModel(
         }
     }
     private val _bibleStudies = _bibleStudyRepository.getAllOfMonth(month)
+    private val _maxHoursWithCredit = _roleGoal.map { Time(it?.plus(5) ?: 0, 0) }
+    private val _yearlyProgress =
+        _entriesInServiceYear.combine(_maxHoursWithCredit) { entriesInServiceYear, maxHoursWithCredit ->
+            entriesInServiceYear.splitIntoMonths().map {
+                val ministryTimeSum = it.ministryTimeSum().hours.toTime()
+                val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum().hours.toTime()
+                val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum().hours.toTime()
+                val max = maxOf(ministryTimeSum, maxHoursWithCredit)
+                minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
+            }.sum()
+        }
+    private val _yearlyProgressHistory = _yearlyProgress.runningFold(
+        initial = null as (History<Time>?),
+        operation = { previous, new -> History(previous?.current, new) }
+    )
 
-    private val _parties = combine(_goal, _entriesHistory) { goal, entries ->
-        if (entries?.previous == null || (goal != null && entries.previous.timeSum().hours >= goal)) {
-            return@combine false
+    private val _isYearlyPartyFinished = MutableStateFlow(false)
+    private val _yearlyParties =
+        combine(_yearlyGoal, _yearlyProgressHistory, _isYearlyPartyFinished) { goal, progress, isFinished ->
+            if (isFinished || progress?.previous == null || (goal != 0 && progress.previous.hours >= goal)) {
+                return@combine emptyList()
+            }
+            val isYearlyGoalReached = goal != 0 && progress.current.hours >= goal
+            if (isYearlyGoalReached) {
+                val party = Party(
+                    speed = 10f,
+                    maxSpeed = 30f,
+                    damping = 0.9f,
+                    angle = Angle.RIGHT - 45,
+                    spread = Spread.SMALL * 2,
+                    emitter = Emitter(duration = 2, TimeUnit.SECONDS).perSecond(30),
+                    position = Position.Relative(0.0, 0.3)
+                )
+                listOf(party, party.copy(angle = party.angle - 90, position = Position.Relative(1.0, 0.3)))
+            } else {
+                emptyList()
+            }
         }
-        val time = entries.current.timeSum()
-        goal != null && time.hours >= goal
-    }.transform { isGoalReachedJustNow ->
-        val result = if (isGoalReachedJustNow) {
-            val party = Party(
-                speed = 10f,
-                maxSpeed = 30f,
-                damping = 0.9f,
-                angle = Angle.RIGHT - 45,
-                spread = Spread.SMALL * 2,
-                emitter = Emitter(duration = 2, TimeUnit.SECONDS).perSecond(30),
-                position = Position.Relative(0.0, 0.3)
-            )
-            listOf(party, party.copy(angle = party.angle - 90, position = Position.Relative(1.0, 0.3)))
-        } else {
-            emptyList()
+
+    private val _isMonthlyPartyFinished = MutableStateFlow(false)
+    private val _monthlyParties =
+        combine(_goal, _entriesHistory, _isMonthlyPartyFinished, _isYearlyPartyFinished) { goal, entries, isFinished, isYearFinished ->
+            if (isFinished || isYearFinished || entries?.previous == null || (goal != null && entries.previous.timeSum().hours >= goal)) {
+                return@combine emptyList()
+            }
+            val time = entries.current.timeSum()
+            val isMonthlyGoalReached = goal != null && time.hours >= goal
+            if (isMonthlyGoalReached) {
+                val party = Party(
+                    speed = 10f,
+                    maxSpeed = 30f,
+                    damping = 0.9f,
+                    angle = Angle.RIGHT - 45,
+                    spread = Spread.SMALL * 2,
+                    emitter = Emitter(duration = 2, TimeUnit.SECONDS).perSecond(30),
+                    position = Position.Relative(0.0, 0.3)
+                )
+                listOf(party, party.copy(angle = party.angle - 90, position = Position.Relative(1.0, 0.3)))
+            } else {
+                emptyList()
+            }
         }
-        emit(result)
-    }
 
     init {
         viewModelScope.launch {
             transferBibleStudies()
         }
+        viewModelScope.launch {
+            _entries.collect {
+                _isMonthlyPartyFinished.value = false
+            }
+        }
+        viewModelScope.launch {
+            _entriesInServiceYear.collect {
+                _isYearlyPartyFinished.value = false
+            }
+        }
+    }
+
+    private fun finishYearlyParty() {
+        _isYearlyPartyFinished.value = true
+    }
+
+    private fun finishMonthlyParty() {
+        _isMonthlyPartyFinished.value = true
     }
 
     private fun dismissBibleStudyHint() {
@@ -317,8 +381,10 @@ class HomeViewModel(
         _monthlyInformation,
         _lastMonthEntries,
         _lastMonthMonthlyInformation,
-        _parties,
-        _entriesLastMonth
+        _monthlyParties,
+        _entriesLastMonth,
+        _yearlyProgress,
+        _yearlyParties
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -337,9 +403,11 @@ class HomeViewModel(
             beginOfPioneeringInServiceYear = values[11] as LocalDate?,
             monthlyInformation = values[12] as MonthlyInformation,
             lastMonthReportSent = (values[13] as List<Entry>).isEmpty() ||
-                (values[14] as MonthlyInformation).reportSent,
-            parties = values[15] as List<Party>,
-            entriesLastMonth = values[16] as List<Entry>
+                    (values[14] as MonthlyInformation).reportSent,
+            monthlyParties = values[15] as List<Party>,
+            entriesLastMonth = values[16] as List<Entry>,
+            yearlyProgress = values[17] as Time,
+            yearlyParties = values[18] as List<Party>
         )
     }.stateIn(
         scope = viewModelScope,
@@ -360,7 +428,8 @@ class HomeViewModel(
             is HomeIntent.DeleteBibleStudy -> deleteBibleStudy(intent.bibleStudy)
             is HomeIntent.DismissBibleStudyHint -> dismissBibleStudyHint()
             is HomeIntent.DismissSendReportHint -> dismissSendReportHint()
-            is HomeIntent.PartyFinished -> {}
+            is HomeIntent.MonthlyPartyFinished -> finishMonthlyParty()
+            is HomeIntent.YearlyPartyFinished -> finishYearlyParty()
         }
     }
 }

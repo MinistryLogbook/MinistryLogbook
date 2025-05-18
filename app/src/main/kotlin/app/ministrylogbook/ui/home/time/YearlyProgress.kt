@@ -51,33 +51,19 @@ fun YearlyProgress(state: HomeState) {
         Spacer(Modifier.height(16.dp))
 
         Tile(title = { Text(stringResource(R.string.progress_of_yearly_goal)) }) {
-            val maxHoursWithCredit by remember(state.goal) {
-                derivedStateOf { Time(state.roleGoal?.plus(5) ?: 0, 0) }
-            }
-            val time by remember(state.entriesInServiceYear, maxHoursWithCredit) {
-                derivedStateOf {
-                    state.entriesInServiceYear.splitIntoMonths().map {
-                        val ministryTimeSum = it.ministryTimeSum().hours.toTime()
-                        val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum().hours.toTime()
-                        val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum().hours.toTime()
-                        val max = maxOf(ministryTimeSum, maxHoursWithCredit)
-                        minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
-                    }.sum()
-                }
-            }
             val ministryTime by remember(state.entriesInServiceYear) {
                 derivedStateOf {
                     state.entriesInServiceYear.ministryTimeSum()
                 }
             }
-            val remaining by remember(time, state.yearlyGoal) {
-                derivedStateOf { state.yearlyGoal - time.hours }
+            val remaining by remember(state.yearlyProgress, state.yearlyGoal) {
+                derivedStateOf { state.yearlyGoal - state.yearlyProgress.hours }
             }
 
             Row(Modifier.padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = AnnotatedString(
-                        time.hours.toString(),
+                        state.yearlyProgress.hours.toString(),
                         spanStyle = SpanStyle(fontSize = 20.sp)
                     ) + AnnotatedString(" ${stringResource(R.string.of)} ") + AnnotatedString(
                         text = stringResource(R.string.hours_value_short_unit, state.yearlyGoal),
@@ -100,7 +86,7 @@ fun YearlyProgress(state: HomeState) {
                 LinearProgressIndicator(
                     progresses = listOf(
                         ProgressKind.Progress(
-                            percent = (1f / state.yearlyGoal * time.hours),
+                            percent = (1f / state.yearlyGoal * state.yearlyProgress.hours),
                             color = ProgressPositive.copy(alpha = .6f)
                         ),
                         ProgressKind.Progress(

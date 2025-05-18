@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.settings.license
 
+import android.annotation.SuppressLint
 import android.graphics.Typeface
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import com.mikepenz.aboutlibraries.util.withContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@SuppressLint("ProduceStateDoesNotAssignValue")
 @Composable
 fun LicenseDetailPage(id: String) {
     val context = LocalContext.current

@@ -34,5 +34,4 @@ fun Context.restartApp(restartIntent: Intent) {
     if (this is Activity) {
         finish()
     }
-    Runtime.getRuntime().exit(0)
 }

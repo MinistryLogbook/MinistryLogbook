@@ -10,19 +10,19 @@ plugins {
     alias(libs.plugins.kotlinter)
     alias(libs.plugins.aboutlicenses)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.room)
     id(libs.plugins.kotlin.parcelize.get().pluginId)
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "app.ministrylogbook"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = getVersionCode()
         versionName = getTagName()
-        resourceConfigurations += listOf("en", "de")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
@@ -33,6 +33,15 @@ android {
             arg("room.schemaLocation", "$projectDir/schemas")
             arg("room.incremental", "true")
         }
+    }
+
+    androidResources {
+        @Suppress("UnstableApiUsage")
+        localeFilters += listOf("en", "de")
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 
     signingConfigs {
@@ -78,19 +87,18 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
+
+    @Suppress("UnstableApiUsage")
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     namespace = "app.ministrylogbook"
@@ -152,7 +160,7 @@ dependencies {
 }
 
 fun getGitHash() = ByteArrayOutputStream().use {
-    project.exec {
+    exec {
         commandLine("git", "rev-parse", "--short", "HEAD")
         standardOutput = it
     }
@@ -161,7 +169,7 @@ fun getGitHash() = ByteArrayOutputStream().use {
 
 fun getTagName() = ByteArrayOutputStream().use {
     try {
-        project.exec {
+        exec {
             commandLine("git", "describe", "--tags", "--abbrev=0")
             standardOutput = it
         }
@@ -172,7 +180,7 @@ fun getTagName() = ByteArrayOutputStream().use {
 }
 
 fun getVersionCode() = ByteArrayOutputStream().use {
-    project.exec {
+    exec {
         commandLine("git", "tag")
         standardOutput = it
     }
