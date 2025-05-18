@@ -29,18 +29,18 @@ class EntryDetailsViewModel(
     private val _entryRepository: EntryRepository
 ) : ViewModel() {
 
-    private val _initialEntry = Entry(id = id ?: 0, datetime = month.atTime(0, 0))
-    private val _originalEntry = if (id != null) {
+    private val initialEntry = Entry(id = id ?: 0, datetime = month.atTime(0, 0))
+    private val originalEntry = if (id != null) {
         _entryRepository.get(id)
     } else {
-        MutableStateFlow(_initialEntry)
+        MutableStateFlow(initialEntry)
     }
 
     private val _entry =
         if (id != null) {
-            _originalEntry.filterNotNull().mutableStateIn(viewModelScope, _initialEntry)
+            originalEntry.filterNotNull().mutableStateIn(viewModelScope, initialEntry)
         } else {
-            MutableStateFlow(_initialEntry)
+            MutableStateFlow(initialEntry)
         }
 
     val role = settingsDataStore.role.stateIn(
@@ -50,7 +50,7 @@ class EntryDetailsViewModel(
     )
     val entry = _entry.stateIn(
         scope = viewModelScope,
-        initialValue = _initialEntry,
+        initialValue = initialEntry,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
     val precisionMode = settingsDataStore.precisionMode.stateIn(
@@ -58,7 +58,7 @@ class EntryDetailsViewModel(
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val hasChanges = combine(_entry, _originalEntry) { entry, original -> entry != original }.stateIn(
+    val hasChanges = combine(_entry, originalEntry) { entry, original -> entry != original }.stateIn(
         scope = viewModelScope,
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)

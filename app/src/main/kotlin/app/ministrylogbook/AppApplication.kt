@@ -4,7 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.shared.services.ReminderChannelId
+import app.ministrylogbook.shared.services.REMINDER_CHANNEL_ID
 import app.ministrylogbook.shared.services.ReminderManager
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.first
@@ -48,7 +48,7 @@ class AppApplication : Application() {
 
     private fun createNotificationsChannels() {
         val channel = NotificationChannel(
-            ReminderChannelId,
+            REMINDER_CHANNEL_ID,
             getString(R.string.reminders),
             NotificationManager.IMPORTANCE_HIGH
         )

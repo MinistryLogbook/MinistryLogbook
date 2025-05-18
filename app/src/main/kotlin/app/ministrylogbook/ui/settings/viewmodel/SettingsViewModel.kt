@@ -23,8 +23,8 @@ class SettingsViewModel(
     private val _monthlyInformationRepository: MonthlyInformationRepository,
     private val _reminderManager: ReminderManager
 ) : ViewModel() {
-    private val _currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    private val _monthlyInfo = _monthlyInformationRepository.getOfMonth(_currentMonth)
+    private val currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    private val monthlyInfo = _monthlyInformationRepository.getOfMonth(currentMonth)
 
     val name = _settingsService.name.stateIn(
         scope = viewModelScope,
@@ -56,7 +56,7 @@ class SettingsViewModel(
         initialValue = 0,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
-    val manuallySetGoal = _monthlyInfo.map { it.goal }.stateIn(
+    val manuallySetGoal = monthlyInfo.map { it.goal }.stateIn(
         scope = viewModelScope,
         initialValue = null,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
@@ -102,13 +102,13 @@ class SettingsViewModel(
             resetGoal()
             return@launch
         }
-        _monthlyInfo.firstOrNull()?.let {
+        monthlyInfo.firstOrNull()?.let {
             _monthlyInformationRepository.save(it.copy(goal = value))
         }
     }
 
     fun resetGoal() = viewModelScope.launch {
-        _monthlyInfo.firstOrNull()?.let {
+        monthlyInfo.firstOrNull()?.let {
             _monthlyInformationRepository.save(it.copy(goal = null))
         }
     }
@@ -127,7 +127,7 @@ class SettingsViewModel(
             resetGoal()
         }
         if (isAnyPioneer(r) && !isAnyPioneer(role.value)) {
-            setPioneerSince(_currentMonth)
+            setPioneerSince(currentMonth)
         } else if (!isAnyPioneer(r)) {
             resetPioneerSince()
         }

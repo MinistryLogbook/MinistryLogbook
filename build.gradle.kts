@@ -1,3 +1,7 @@
+import org.jmailen.gradle.kotlinter.tasks.InstallPrePushHookTask
+
+val installKotlinterPrePushHook by tasks.creating(InstallPrePushHookTask::class)
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false

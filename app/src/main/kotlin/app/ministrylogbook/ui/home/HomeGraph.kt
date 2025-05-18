@@ -17,7 +17,7 @@ import app.ministrylogbook.shared.layouts.popup
 import app.ministrylogbook.shared.layouts.stayOut
 import app.ministrylogbook.shared.utilities.activity
 import app.ministrylogbook.ui.AppGraph
-import app.ministrylogbook.ui.SlideOutTransitionMillis
+import app.ministrylogbook.ui.SLIDE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.home.entrydetails.EntryDetailsBottomSheetContent
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
@@ -91,7 +91,7 @@ fun NavGraphBuilder.homeGraph() {
         route = AppGraph.Home.route,
         startDestination = HomeGraph.Root.route,
         enterTransition = { EnterTransition.None },
-        exitTransition = { stayOut(SlideOutTransitionMillis) }
+        exitTransition = { stayOut(SLIDE_OUT_TRANSITION_MILLIS) }
     ) {
         composable(HomeGraph.Root.route) {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())

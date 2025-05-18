@@ -783,11 +783,13 @@ object SwipeableDefaults {
     /**
      * A stiff resistance factor which indicates that swiping isn't available right now.
      */
+    @Suppress("ktlint:standard:property-naming")
     const val StiffResistanceFactor = 20f
 
     /**
      * A standard resistance factor which indicates that the user has run out of things to see.
      */
+    @Suppress("ktlint:standard:property-naming")
     const val StandardResistanceFactor = 10f
 
     /**

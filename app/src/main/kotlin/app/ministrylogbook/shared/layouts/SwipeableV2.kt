@@ -556,6 +556,7 @@ internal object SwipeableV2Defaults {
      * @param animate A lambda that gets invoked to start an animation to a new target
      * @param snap A lambda that gets invoked to snap to a new target
      */
+    @Suppress("ktlint:standard:function-naming")
     internal fun <T> ReconcileAnimationOnAnchorChangeHandler(
         state: SwipeableV2State<T>,
         animate: (target: T, velocity: Float) -> Unit,

@@ -108,7 +108,7 @@ enum class ModalBottomSheetValue {
  * If supplied with [ModalBottomSheetValue.HalfExpanded] for the initialValue, an
  * [IllegalArgumentException] will be thrown.
  */
-@Suppress("Deprecation")
+@Suppress("Deprecation", "ktlint:standard:function-naming")
 fun ModalBottomSheetState(
     initialValue: ModalBottomSheetValue,
     density: Density,
@@ -754,6 +754,7 @@ object ModalBottomSheetDefaults {
         get() = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.32f)
 }
 
+@Suppress("ktlint:standard:function-naming")
 private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     state: AnchoredDraggableState<T>,
     orientation: Orientation
@@ -803,6 +804,7 @@ private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
 }
 
+@Suppress("ktlint:standard:function-naming")
 private fun ModalBottomSheetAnchorChangeCallback(state: ModalBottomSheetState, scope: CoroutineScope) =
     AnchoredDraggableState.AnchorChangedCallback<ModalBottomSheetValue> { prevTarget, prevAnchors, newAnchors ->
         val previousTargetOffset = prevAnchors[prevTarget]

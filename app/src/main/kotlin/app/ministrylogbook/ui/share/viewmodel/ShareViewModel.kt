@@ -36,11 +36,11 @@ class ShareViewModel(
     settingsDataStore: SettingsService
 ) : AndroidViewModel(application) {
 
-    private val _monthlyInformation = _monthlyInfoRepository.getOfMonth(month)
-    private val _bibleStudies = bibleStudiesRepository.getAllOfMonth(month)
-    private val _entries = entryRepository.getAllOfMonth(month)
+    private val monthlyInformation = _monthlyInfoRepository.getOfMonth(month)
+    private val bibleStudies = bibleStudiesRepository.getAllOfMonth(month)
+    private val entries = entryRepository.getAllOfMonth(month)
 
-    val initialComments = _monthlyInformation.map { it.reportComment }.take(1).stateIn(
+    val initialComments = monthlyInformation.map { it.reportComment }.take(1).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT),
         initialValue = ""
@@ -48,9 +48,9 @@ class ShareViewModel(
 
     val fieldServiceReport =
         combine(
-            _entries,
+            entries,
             settingsDataStore.name,
-            _bibleStudies,
+            bibleStudies,
             settingsDataStore.role
         ) { entries, name, bibleStudies, role ->
             val theocraticAssignmentTime = entries.theocraticAssignmentTimeSum()
@@ -92,13 +92,13 @@ class ShareViewModel(
         )
 
     fun updateComments(text: String) = viewModelScope.launch {
-        _monthlyInformation.firstOrNull()?.let {
+        monthlyInformation.firstOrNull()?.let {
             _monthlyInfoRepository.save(it.copy(reportComment = text))
         }
     }
 
     fun markMonthlyReportSent() = viewModelScope.launch {
-        _monthlyInformation.firstOrNull()?.let {
+        monthlyInformation.firstOrNull()?.let {
             _monthlyInfoRepository.save(it.copy(reportSent = true))
         }
     }

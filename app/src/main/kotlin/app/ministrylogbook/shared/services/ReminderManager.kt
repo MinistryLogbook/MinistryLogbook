@@ -72,4 +72,4 @@ class ReminderManager : KoinComponent {
     }
 }
 
-const val ReminderChannelId = "reminder_channel"
+const val REMINDER_CHANNEL_ID = "reminder_channel"

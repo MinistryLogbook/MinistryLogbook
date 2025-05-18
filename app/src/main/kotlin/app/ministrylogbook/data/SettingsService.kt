@@ -33,9 +33,9 @@ enum class Role {
 
     val goal: Int?
         get() = when (this) {
-            AuxiliaryPioneer -> AuxiliaryPioneerGoal
-            RegularPioneer -> RegularPioneerGoal
-            SpecialPioneer -> SpecialPioneerGoal
+            AuxiliaryPioneer -> AUXILIARY_PIONEER_GOAL
+            RegularPioneer -> REGULAR_PIONEER_GOAL
+            SpecialPioneer -> SPECIAL_PIONEER_GOAL
             else -> null
         }
 
@@ -162,6 +162,6 @@ class SettingsService(val context: Context) {
     }
 }
 
-const val AuxiliaryPioneerGoal = 30
-const val RegularPioneerGoal = 50
-const val SpecialPioneerGoal = 100
+const val AUXILIARY_PIONEER_GOAL = 30
+const val REGULAR_PIONEER_GOAL = 50
+const val SPECIAL_PIONEER_GOAL = 100

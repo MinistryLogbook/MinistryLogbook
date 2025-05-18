@@ -24,7 +24,7 @@ class ReminderReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         val notificationManager = context.getSystemService(NotificationManager::class.java) as NotificationManager
-        notificationManager.sendReminderNotification(context, ReminderChannelId)
+        notificationManager.sendReminderNotification(context, REMINDER_CHANNEL_ID)
 
         // schedule next reminder
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
@@ -53,7 +53,7 @@ private fun NotificationManager.sendReminderNotification(context: Context, chann
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
 
-    notify(NotificationId, builder.build())
+    notify(NOTIFICATION_ID, builder.build())
 }
 
-const val NotificationId = 1
+const val NOTIFICATION_ID = 1

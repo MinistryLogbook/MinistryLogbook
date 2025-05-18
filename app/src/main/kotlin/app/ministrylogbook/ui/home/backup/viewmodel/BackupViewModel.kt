@@ -48,15 +48,15 @@ class BackupViewModel(
 ) : AndroidViewModel(_application),
     IntentViewModel<BackupState, BackupIntent> {
 
-    private val _selectedBackupFile = MutableStateFlow<BackupFile?>(null)
+    private val selectedBackupFile = MutableStateFlow<BackupFile?>(null)
 
-    private val _importFinished = MutableStateFlow(false)
+    private val importFinished = MutableStateFlow(false)
 
     override val state = combine(
-        _selectedBackupFile,
+        selectedBackupFile,
         _settingsService.lastBackup,
         entryRepository.latest,
-        _importFinished
+        importFinished
     ) { selectedBackupFile, lastBackup, latestEntry, importFinished ->
         BackupState(
             selectedBackupFile = selectedBackupFile,
@@ -102,7 +102,7 @@ class BackupViewModel(
                     Toast.LENGTH_LONG
                 ).show()
             } else {
-                _importFinished.update { true }
+                importFinished.update { true }
             }
         }
         unselectBackupFile()
@@ -110,12 +110,12 @@ class BackupViewModel(
 
     private fun selectBackupFile(uri: Uri) {
         val metadata = _backupService.getBackupMetadata(uri)
-        _selectedBackupFile.update {
+        selectedBackupFile.update {
             BackupFile(uri, metadata)
         }
     }
 
     private fun unselectBackupFile() {
-        _selectedBackupFile.update { null }
+        selectedBackupFile.update { null }
     }
 }

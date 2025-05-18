@@ -18,7 +18,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.mapSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -33,24 +32,24 @@ import kotlinx.coroutines.flow.update
 
 class SegmentedButtonsScope(initialSelectedIndex: Int) {
     private constructor(selectedIndex: Int, buttonCount: Int, segmentedButtonCount: Int) : this(selectedIndex) {
-        _selectedIndex.value = selectedIndex
-        _buttonCount.value = buttonCount
-        _segmentedButtonCount = segmentedButtonCount
+        this.selectedIndex.value = selectedIndex
+        this.buttonCount.value = buttonCount
+        this@SegmentedButtonsScope.segmentedButtonCount = segmentedButtonCount
     }
 
-    private var _selectedIndex = MutableStateFlow(initialSelectedIndex)
-    private var _buttonCount = MutableStateFlow(0)
-    private var _segmentedButtonCount = 0
+    private var selectedIndex = MutableStateFlow(initialSelectedIndex)
+    private var buttonCount = MutableStateFlow(0)
+    private var segmentedButtonCount = 0
 
-    val selectedIndexState = _selectedIndex.asStateFlow()
-    val buttonCountState = _buttonCount.asStateFlow()
+    val selectedIndexState = selectedIndex.asStateFlow()
+    val buttonCountState = buttonCount.asStateFlow()
 
     @Composable
     fun RowScope.SegmentedButton(onClick: () -> Unit = {}, text: @Composable () -> Unit) {
-        val index = rememberSaveable { _segmentedButtonCount++ }
+        val index = rememberSaveable { segmentedButtonCount++ }
 
         LaunchedEffect(Unit) {
-            _buttonCount.update { _segmentedButtonCount }
+            buttonCount.update { segmentedButtonCount }
         }
 
         Box(
@@ -60,7 +59,7 @@ class SegmentedButtonsScope(initialSelectedIndex: Int) {
                 .clip(CircleShape)
                 .clickable {
                     onClick()
-                    _selectedIndex.value = index
+                    selectedIndex.value = index
                 },
             contentAlignment = Alignment.Center
         ) {
@@ -69,12 +68,13 @@ class SegmentedButtonsScope(initialSelectedIndex: Int) {
     }
 
     companion object {
+        @Suppress("ktlint:standard:function-naming")
         fun Saver() = mapSaver(
             save = {
                 mapOf(
-                    "selectedIndex" to it._selectedIndex.value,
-                    "buttonCount" to it._buttonCount.value,
-                    "segmentedButtonCount" to it._segmentedButtonCount
+                    "selectedIndex" to it.selectedIndex.value,
+                    "buttonCount" to it.buttonCount.value,
+                    "segmentedButtonCount" to it.segmentedButtonCount
                 )
             },
             restore = {

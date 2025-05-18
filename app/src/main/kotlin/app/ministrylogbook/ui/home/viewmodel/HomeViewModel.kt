@@ -108,57 +108,57 @@ class HomeViewModel(
 ) : AndroidViewModel(_application),
     IntentViewModel<HomeState, HomeIntent> {
 
-    private val _selectedBackupFile =
+    private val selectedBackupFile =
         MutableStateFlow(_uri?.run { BackupFile(this, _backupService.getBackupMetadata(_uri)) })
 
-    private val _importFinished = MutableStateFlow(false)
+    private val importFinished = MutableStateFlow(false)
 
-    private val _pioneerSince = settingsService.pioneerSince
-    private val _serviceYearBegin = when {
+    private val pioneerSince = settingsService.pioneerSince
+    private val serviceYearBegin = when {
         // special case after corona pandemic; pioneering began in march
         month.year == 2023 && month.monthNumber < 9 -> LocalDate(month.year, 3, 1)
         month.monthNumber >= 9 -> LocalDate(month.year, 9, 1)
         else -> LocalDate(month.year - 1, 9, 1)
     }
-    private val _beginOfPioneeringInServiceYear = _pioneerSince.map { pioneerSince ->
-        if (pioneerSince != null && pioneerSince >= _serviceYearBegin) {
+    private val beginOfPioneeringInServiceYear = pioneerSince.map { pioneerSince ->
+        if (pioneerSince != null && pioneerSince >= serviceYearBegin) {
             pioneerSince
         } else {
-            _serviceYearBegin
+            serviceYearBegin
         }
     }
-    private val _lastMonth = month.minus(DatePeriod(months = 1))
-    private val _monthlyInformation = _monthlyInformationRepository.getOfMonth(month)
-    private val _lastMonthMonthlyInformation = _monthlyInformationRepository.getOfMonth(_lastMonth)
-    private val _entries = _entryRepository.getAllOfMonth(month)
-    private val _entriesHistory = _entries.runningFold(
+    private val lastMonth = month.minus(DatePeriod(months = 1))
+    private val monthlyInformation = _monthlyInformationRepository.getOfMonth(month)
+    private val lastMonthMonthlyInformation = _monthlyInformationRepository.getOfMonth(lastMonth)
+    private val entries = _entryRepository.getAllOfMonth(month)
+    private val entriesHistory = entries.runningFold(
         initial = null as (History<List<Entry>>?),
         operation = { previous, new -> History(previous?.current, new) }
     )
-    private val _entriesLastMonth = _entryRepository.getAllOfMonth(_lastMonth)
+    private val entriesLastMonth = _entryRepository.getAllOfMonth(lastMonth)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    private val _entriesInServiceYear = _beginOfPioneeringInServiceYear.flatMapLatest {
+    private val entriesInServiceYear = beginOfPioneeringInServiceYear.flatMapLatest {
         _entryRepository.getAllInRange(it, month.lastDayOfMonth)
     }
-    private val _transferred =
+    private val transferred =
         _entryRepository.getTransferredFrom(month).map { transferred -> transferred.filter { it.time.isNotEmpty } }
-    private val _roleGoal = settingsService.roleGoal
-    private val _manuallySetGoal = _monthlyInformation.map { it.goal }
-    private val _goal = _roleGoal.combine(_manuallySetGoal) { rg, msg -> msg ?: rg }
-    private val _hasGoal = combine(settingsService.role, _manuallySetGoal) { role, manuallySetGoal ->
+    private val roleGoal = settingsService.roleGoal
+    private val manuallySetGoal = monthlyInformation.map { it.goal }
+    private val goal = roleGoal.combine(manuallySetGoal) { rg, msg -> msg ?: rg }
+    private val hasGoal = combine(settingsService.role, manuallySetGoal) { role, manuallySetGoal ->
         manuallySetGoal != null || role != Role.Publisher
     }
-    private val _yearlyGoal = _roleGoal.combine(_beginOfPioneeringInServiceYear) { rl, beginOfPioneering ->
+    private val yearlyGoal = roleGoal.combine(beginOfPioneeringInServiceYear) { rl, beginOfPioneering ->
         val lastMonthInServiceYear = when {
-            _serviceYearBegin.monthNumber == 9 -> _serviceYearBegin + DatePeriod(months = 12)
-            _serviceYearBegin.monthNumber >= 9 -> LocalDate(_serviceYearBegin.year + 1, 9, 1)
-            else -> LocalDate(_serviceYearBegin.year, 9, 1)
+            serviceYearBegin.monthNumber == 9 -> serviceYearBegin + DatePeriod(months = 12)
+            serviceYearBegin.monthNumber >= 9 -> LocalDate(serviceYearBegin.year + 1, 9, 1)
+            else -> LocalDate(serviceYearBegin.year, 9, 1)
         }
         (rl ?: 0) * beginOfPioneering.monthsUntil(lastMonthInServiceYear)
     }
-    private val _lastMonthEntries = _entryRepository.getAllOfMonth(_lastMonth)
-    private val _restLastMonth = _lastMonthEntries.transform {
+    private val lastMonthEntries = _entryRepository.getAllOfMonth(lastMonth)
+    private val restLastMonth = lastMonthEntries.transform {
         val lastMonthTime = it.ministryTimeSum()
         if (!lastMonthTime.isNegative) {
             emit(Time(hours = 0, minutes = lastMonthTime.minutes))
@@ -166,7 +166,7 @@ class HomeViewModel(
             emit(Time.Empty)
         }
     }
-    private val _rest = _entries.combine(_transferred) { entries, transferred ->
+    private val rest = entries.combine(transferred) { entries, transferred ->
         val result = entries.ministryTimeSum() - transferred.ministryTimeSum()
         return@combine if (!result.isNegative) {
             result
@@ -174,10 +174,10 @@ class HomeViewModel(
             Time.Empty
         }
     }
-    private val _bibleStudies = _bibleStudyRepository.getAllOfMonth(month)
-    private val _maxHoursWithCredit = _roleGoal.map { Time(it?.plus(5) ?: 0, 0) }
-    private val _yearlyProgress =
-        _entriesInServiceYear.combine(_maxHoursWithCredit) { entriesInServiceYear, maxHoursWithCredit ->
+    private val bibleStudies = _bibleStudyRepository.getAllOfMonth(month)
+    private val maxHoursWithCredit = roleGoal.map { Time(it?.plus(5) ?: 0, 0) }
+    private val yearlyProgress =
+        entriesInServiceYear.combine(maxHoursWithCredit) { entriesInServiceYear, maxHoursWithCredit ->
             entriesInServiceYear.splitIntoMonths().map {
                 val ministryTimeSum = it.ministryTimeSum().hours.toTime()
                 val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum().hours.toTime()
@@ -186,14 +186,14 @@ class HomeViewModel(
                 minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
             }.sum()
         }
-    private val _yearlyProgressHistory = _yearlyProgress.runningFold(
+    private val yearlyProgressHistory = yearlyProgress.runningFold(
         initial = null as (History<Time>?),
         operation = { previous, new -> History(previous?.current, new) }
     )
 
-    private val _isYearlyPartyFinished = MutableStateFlow(false)
-    private val _yearlyParties =
-        combine(_yearlyGoal, _yearlyProgressHistory, _isYearlyPartyFinished) { goal, progress, isFinished ->
+    private val isYearlyPartyFinished = MutableStateFlow(false)
+    private val yearlyParties =
+        combine(yearlyGoal, yearlyProgressHistory, isYearlyPartyFinished) { goal, progress, isFinished ->
             if (isFinished || progress?.previous == null || (goal != 0 && progress.previous.hours >= goal)) {
                 return@combine emptyList()
             }
@@ -214,9 +214,9 @@ class HomeViewModel(
             }
         }
 
-    private val _isMonthlyPartyFinished = MutableStateFlow(false)
-    private val _monthlyParties =
-        combine(_goal, _entriesHistory, _isMonthlyPartyFinished, _isYearlyPartyFinished) {
+    private val isMonthlyPartyFinished = MutableStateFlow(false)
+    private val monthlyParties =
+        combine(goal, entriesHistory, isMonthlyPartyFinished, isYearlyPartyFinished) {
                 goal,
                 entries,
                 isFinished,
@@ -252,23 +252,23 @@ class HomeViewModel(
             transferBibleStudies()
         }
         viewModelScope.launch {
-            _entries.collect {
-                _isMonthlyPartyFinished.value = false
+            entries.collect {
+                isMonthlyPartyFinished.value = false
             }
         }
         viewModelScope.launch {
-            _entriesInServiceYear.collect {
-                _isYearlyPartyFinished.value = false
+            entriesInServiceYear.collect {
+                isYearlyPartyFinished.value = false
             }
         }
     }
 
     private fun finishYearlyParty() {
-        _isYearlyPartyFinished.value = true
+        isYearlyPartyFinished.value = true
     }
 
     private fun finishMonthlyParty() {
-        _isMonthlyPartyFinished.value = true
+        isMonthlyPartyFinished.value = true
     }
 
     private fun dismissBibleStudyHint() {
@@ -304,7 +304,7 @@ class HomeViewModel(
     }
 
     private suspend fun transferBibleStudies() {
-        val monthlyInfo = _monthlyInformation.first()
+        val monthlyInfo = monthlyInformation.first()
         val isTransferred = monthlyInfo.bibleStudiesTransferred
         if (isTransferred) {
             return
@@ -362,39 +362,39 @@ class HomeViewModel(
                     Toast.LENGTH_LONG
                 ).show()
             } else {
-                _importFinished.update { true }
+                importFinished.update { true }
             }
         }
     }
 
     private fun dismissSendReportHint() {
         viewModelScope.launch {
-            val monthlyInfo = _lastMonthMonthlyInformation.first()
+            val monthlyInfo = lastMonthMonthlyInformation.first()
             val newMonthlyInfo = monthlyInfo.copy(reportSent = true)
             _monthlyInformationRepository.save(newMonthlyInfo)
         }
     }
 
     override val state = combine(
-        _goal,
-        _hasGoal,
-        _roleGoal,
-        _yearlyGoal,
+        goal,
+        hasGoal,
+        roleGoal,
+        yearlyGoal,
         settingsService.role,
-        _entries,
-        _entriesInServiceYear,
-        _bibleStudies,
-        _restLastMonth,
-        _transferred,
-        _rest,
-        _beginOfPioneeringInServiceYear,
-        _monthlyInformation,
-        _lastMonthEntries,
-        _lastMonthMonthlyInformation,
-        _monthlyParties,
-        _entriesLastMonth,
-        _yearlyProgress,
-        _yearlyParties
+        entries,
+        entriesInServiceYear,
+        bibleStudies,
+        restLastMonth,
+        transferred,
+        rest,
+        beginOfPioneeringInServiceYear,
+        monthlyInformation,
+        lastMonthEntries,
+        lastMonthMonthlyInformation,
+        monthlyParties,
+        entriesLastMonth,
+        yearlyProgress,
+        yearlyParties
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -431,7 +431,7 @@ class HomeViewModel(
             is HomeIntent.UndoTransfer -> undoTransferTime(intent.transfer)
             is HomeIntent.TransferFromLastMonth -> transferTimeFromLastMonth(intent.minutes)
             is HomeIntent.ImportBackup -> importBackup()
-            is HomeIntent.DismissImportBackup -> _selectedBackupFile.update { null }
+            is HomeIntent.DismissImportBackup -> selectedBackupFile.update { null }
             is HomeIntent.CreateBibleStudy -> createBibleStudy(intent.name)
             is HomeIntent.CheckBibleStudy -> checkBibleStudy(intent.bibleStudy)
             is HomeIntent.UncheckBibleStudy -> uncheckBibleStudy(intent.bibleStudy)

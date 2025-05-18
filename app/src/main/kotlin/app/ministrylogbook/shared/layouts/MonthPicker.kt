@@ -215,7 +215,7 @@ fun MonthPickerPopup(
     }
 
     suspend fun handleDismissRequest() {
-        delay(OutTransitionDuration.toLong())
+        delay(OUT_TRANSITION_DURATION.toLong())
         onDismissRequest()
     }
 
@@ -318,13 +318,13 @@ fun MonthPickerPopupContent(
             if (false isTransitioningTo true) {
                 // Dismissed to expanded
                 tween(
-                    durationMillis = InTransitionDuration,
+                    durationMillis = IN_TRANSITION_DURATION,
                     easing = LinearOutSlowInEasing
                 )
             } else {
                 // Expanded to dismissed.
                 tween(
-                    durationMillis = OutTransitionDuration,
+                    durationMillis = OUT_TRANSITION_DURATION,
                     easing = LinearOutSlowInEasing
                 )
             }
@@ -344,10 +344,10 @@ fun MonthPickerPopupContent(
         transitionSpec = {
             if (false isTransitioningTo true) {
                 // Dismissed to expanded
-                tween(durationMillis = InTransitionDuration)
+                tween(durationMillis = IN_TRANSITION_DURATION)
             } else {
                 // Expanded to dismissed.
-                tween(durationMillis = OutTransitionDuration)
+                tween(durationMillis = OUT_TRANSITION_DURATION)
             }
         },
         label = ""
@@ -473,5 +473,5 @@ internal fun calculateTransformOrigin(parentBounds: IntRect, menuBounds: IntRect
 }
 
 // Menu open/close animation.
-internal const val InTransitionDuration = 120
-internal const val OutTransitionDuration = 80
+internal const val IN_TRANSITION_DURATION = 120
+internal const val OUT_TRANSITION_DURATION = 80

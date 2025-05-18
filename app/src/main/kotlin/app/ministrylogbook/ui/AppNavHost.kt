@@ -65,7 +65,7 @@ typealias AppNavHostController = NavHostController
 val LocalAppNavController =
     compositionLocalOf<AppNavHostController> { error("LocalAppNavController error") }
 
-const val SlideInTransitionMillis = 250
-const val SlideOutTransitionMillis = 250
-const val FadeInTransitionMillis = 150
-const val FadeOutTransitionMillis = 150
+const val SLIDE_IN_TRANSITION_MILLIS = 250
+const val SLIDE_OUT_TRANSITION_MILLIS = 250
+const val FADE_IN_TRANSITION_MILLIS = 150
+const val FADE_OUT_TRANSITION_MILLIS = 150

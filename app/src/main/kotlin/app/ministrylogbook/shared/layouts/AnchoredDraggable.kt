@@ -639,6 +639,7 @@ internal object AnchoredDraggableDefaults {
      *
      * Consider implementing a custom handler for more complex components like sheets.
      */
+    @Suppress("ktlint:standard:function-naming")
     internal fun <T> ReconcileAnimationOnAnchorChangedCallback(
         state: AnchoredDraggableState<T>,
         scope: CoroutineScope

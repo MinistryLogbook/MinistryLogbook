@@ -10,10 +10,10 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import app.ministrylogbook.ui.AppGraph
-import app.ministrylogbook.ui.FadeInTransitionMillis
-import app.ministrylogbook.ui.FadeOutTransitionMillis
-import app.ministrylogbook.ui.SlideInTransitionMillis
-import app.ministrylogbook.ui.SlideOutTransitionMillis
+import app.ministrylogbook.ui.FADE_IN_TRANSITION_MILLIS
+import app.ministrylogbook.ui.FADE_OUT_TRANSITION_MILLIS
+import app.ministrylogbook.ui.SLIDE_IN_TRANSITION_MILLIS
+import app.ministrylogbook.ui.SLIDE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.home.HomeGraph
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
 import org.koin.androidx.compose.koinViewModel
@@ -33,13 +33,13 @@ fun NavGraphBuilder.backupGraph() {
         route = AppGraph.Backup.route,
         startDestination = BackupGraph.Root.route,
         enterTransition = {
-            slideInHorizontally(tween(SlideInTransitionMillis)) { it / 6 } + fadeIn(
-                tween(FadeInTransitionMillis)
+            slideInHorizontally(tween(SLIDE_IN_TRANSITION_MILLIS)) { it / 6 } + fadeIn(
+                tween(FADE_IN_TRANSITION_MILLIS)
             )
         },
         exitTransition = {
-            slideOutHorizontally(tween(SlideOutTransitionMillis)) { it / 6 } + fadeOut(
-                tween(FadeOutTransitionMillis)
+            slideOutHorizontally(tween(SLIDE_OUT_TRANSITION_MILLIS)) { it / 6 } + fadeOut(
+                tween(FADE_OUT_TRANSITION_MILLIS)
             )
         }
     ) {

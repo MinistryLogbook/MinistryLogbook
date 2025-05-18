@@ -3,7 +3,6 @@ package app.ministrylogbook.shared.services
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
-import android.util.Log
 import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.SettingsService
 import java.io.BufferedInputStream
@@ -25,8 +24,8 @@ class BackupService(
 ) : KoinComponent {
 
     companion object {
-        const val Version = 1
-        const val MetadataFileName = "metadata.toml"
+        const val VERSION = 1
+        const val METADATA_FILE_NAME = "metadata.toml"
     }
 
     private val files by lazy {
@@ -38,9 +37,7 @@ class BackupService(
     }
 
     suspend fun createBackup(uri: Uri) {
-        Log.d("ministrylogbook", "a")
         val outputStream = context.contentResolver.openOutputStream(uri) ?: return
-        Log.d("ministrylogbook", "b")
         val out = ZipOutputStream(BufferedOutputStream(outputStream))
 
         files.filter { it.exists() }.forEach { file ->
@@ -54,10 +51,10 @@ class BackupService(
             origin.close()
         }
 
-        val metadataEntry = ZipEntry(MetadataFileName)
+        val metadataEntry = ZipEntry(METADATA_FILE_NAME)
         out.putNextEntry(metadataEntry)
         val metadata = Metadata(
-            version = 1,
+            version = VERSION,
             datetime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
             role = settingsService.role.first(),
             startOfPioneering = settingsService.pioneerSince.first(),
@@ -91,7 +88,7 @@ class BackupService(
 
                 zip.copyTo(out)
                 out.close()
-            } else if (entry.name == MetadataFileName) {
+            } else if (entry.name == METADATA_FILE_NAME) {
                 metadata = Metadata.fromToml(zip.readBytes().decodeToString())
             }
             entry = zip.nextEntry
@@ -119,7 +116,7 @@ class BackupService(
         var entry = zip.nextEntry
         var metadata: Metadata? = null
         while (entry != null) {
-            if (entry.name == MetadataFileName) {
+            if (entry.name == METADATA_FILE_NAME) {
                 val content = zip.readBytes().decodeToString()
                 metadata = Metadata.fromToml(content)
                 break

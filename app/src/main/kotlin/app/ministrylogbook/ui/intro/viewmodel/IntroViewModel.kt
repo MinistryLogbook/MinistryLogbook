@@ -40,7 +40,7 @@ class IntroViewModel(
 ) : ViewModel(),
     IntentViewModel<IntroState, IntroIntent> {
 
-    private val _today by lazy {
+    private val today by lazy {
         Clock.System.todayIn(TimeZone.currentSystemDefault())
     }
 
@@ -49,7 +49,7 @@ class IntroViewModel(
         _settingsService.role,
         _settingsService.pioneerSince,
         _settingsService.sendReportReminder,
-        _monthlyInfoRepository.getOfMonth(_today)
+        _monthlyInfoRepository.getOfMonth(today)
     ) { name, role, pioneerSince, reminders, monthlyInfo ->
         val goal = if (role == Role.Publisher) {
             monthlyInfo.goal
@@ -83,7 +83,7 @@ class IntroViewModel(
             }
 
             is IntroIntent.GoalChange -> viewModelScope.launch {
-                _monthlyInfoRepository.update(_today) {
+                _monthlyInfoRepository.update(today) {
                     it.copy(goal = intent.goal)
                 }
             }
