@@ -56,10 +56,7 @@ val License.htmlReadyLicenseContent: String?
     get() = licenseContent?.replace("\n", "<br />")
 
 @Composable
-fun HtmlText(
-    html: String,
-    modifier: Modifier = Modifier
-) {
+fun HtmlText(html: String, modifier: Modifier = Modifier) {
     AndroidView(
         modifier = modifier,
         factory = { context -> TextView(context) },

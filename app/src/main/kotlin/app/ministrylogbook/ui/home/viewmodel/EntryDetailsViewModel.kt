@@ -64,12 +64,7 @@ class EntryDetailsViewModel(
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
 
-    fun update(
-        datetime: LocalDateTime? = null,
-        hours: Int? = null,
-        minutes: Int? = null,
-        type: EntryType? = null
-    ) {
+    fun update(datetime: LocalDateTime? = null, hours: Int? = null, minutes: Int? = null, type: EntryType? = null) {
         _entry.update { old ->
             val currentDatetime = if (datetime == null) {
                 old.datetime

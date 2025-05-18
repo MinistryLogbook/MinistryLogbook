@@ -143,15 +143,12 @@ class PopupState(initialValue: PopupVisibility = PopupVisibility.Hidden) {
     }
 
     companion object {
-        fun Saver(): Saver<PopupState, *> =
-            Saver(save = { it.visibility.value }, restore = { PopupState(it) })
+        fun Saver(): Saver<PopupState, *> = Saver(save = { it.visibility.value }, restore = { PopupState(it) })
     }
 }
 
 @Composable
-fun rememberPopupState(): PopupState {
-    return rememberSaveable(saver = PopupState.Saver()) { PopupState() }
-}
+fun rememberPopupState(): PopupState = rememberSaveable(saver = PopupState.Saver()) { PopupState() }
 
 @Composable
 fun rememberPopupNavigator(): PopupNavigator {
@@ -194,17 +191,15 @@ class PopupNavigator(val popupState: PopupState) : Navigator<PopupNavigator.Dest
     }
 
     @Composable
-    fun currentBackStackEntryAsState(): State<NavBackStackEntry?> {
-        return produceState<NavBackStackEntry?>(null, backStack) {
-            backStack.transform {
-                try {
-                    popupState.hide()
-                } finally {
-                    emit(it.lastOrNull())
-                }
-            }.collectLatest {
-                value = it
+    fun currentBackStackEntryAsState(): State<NavBackStackEntry?> = produceState<NavBackStackEntry?>(null, backStack) {
+        backStack.transform {
+            try {
+                popupState.hide()
+            } finally {
+                emit(it.lastOrNull())
             }
+        }.collectLatest {
+            value = it
         }
     }
 
@@ -223,11 +218,7 @@ class PopupNavigator(val popupState: PopupState) : Navigator<PopupNavigator.Dest
         state.popWithTransition(popUpTo, savedState)
     }
 
-    override fun navigate(
-        entries: List<NavBackStackEntry>,
-        navOptions: NavOptions?,
-        navigatorExtras: Extras?
-    ) {
+    override fun navigate(entries: List<NavBackStackEntry>, navOptions: NavOptions?, navigatorExtras: Extras?) {
         entries.forEach { entry ->
             state.push(entry)
         }
@@ -237,7 +228,8 @@ class PopupNavigator(val popupState: PopupState) : Navigator<PopupNavigator.Dest
     class Destination(
         navigator: PopupNavigator,
         internal val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
-    ) : NavDestination(navigator), FloatingWindow
+    ) : NavDestination(navigator),
+        FloatingWindow
 }
 
 fun NavGraphBuilder.popup(

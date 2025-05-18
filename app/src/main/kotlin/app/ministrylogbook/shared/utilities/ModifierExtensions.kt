@@ -6,10 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 
 @SuppressLint("UnnecessaryComposedModifier")
-fun Modifier.condition(
-    condition: Boolean,
-    then: @Composable Modifier.() -> Modifier
-): Modifier = if (condition) {
+fun Modifier.condition(condition: Boolean, then: @Composable Modifier.() -> Modifier): Modifier = if (condition) {
     composed(factory = then)
 } else {
     this

@@ -113,11 +113,7 @@ fun Context.darkColorPalette(useDynamicColors: Boolean = false): ColorScheme {
 }
 
 @Composable
-fun MinistryLogbookTheme(
-    design: Design = Design.System,
-    isDynamic: Boolean = false,
-    content: @Composable () -> Unit
-) {
+fun MinistryLogbookTheme(design: Design = Design.System, isDynamic: Boolean = false, content: @Composable () -> Unit) {
     val context = LocalContext.current
     val isSystemInDarkTheme = isSystemInDarkTheme()
     val useDarkTheme = when (design) {

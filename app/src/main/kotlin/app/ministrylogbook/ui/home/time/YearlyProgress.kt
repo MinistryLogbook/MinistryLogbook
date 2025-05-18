@@ -24,15 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.LinearProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
-import app.ministrylogbook.shared.sum
-import app.ministrylogbook.shared.toTime
 import app.ministrylogbook.shared.utilities.ministryTimeSum
-import app.ministrylogbook.shared.utilities.splitIntoMonths
-import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
-import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.shared.Tile
 import app.ministrylogbook.ui.theme.ProgressPositive
@@ -42,7 +36,8 @@ fun YearlyProgress(state: HomeState) {
     val show by remember(state.role, state.beginOfPioneeringInServiceYear, state.month) {
         derivedStateOf {
             val isPioneer = state.role == Role.SpecialPioneer || state.role == Role.RegularPioneer
-            isPioneer && state.beginOfPioneeringInServiceYear != null &&
+            isPioneer &&
+                state.beginOfPioneeringInServiceYear != null &&
                 state.beginOfPioneeringInServiceYear <= state.month
         }
     }

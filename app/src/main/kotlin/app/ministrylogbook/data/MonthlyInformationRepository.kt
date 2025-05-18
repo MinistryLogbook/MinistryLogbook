@@ -32,10 +32,8 @@ class MonthlyInformationRepository(private val monthlyInformationDao: MonthlyInf
         }
     }
 
-    suspend fun save(info: MonthlyInformation): Long {
-        return withContext(Dispatchers.IO) {
-            monthlyInformationDao.upsert(info)
-        }
+    suspend fun save(info: MonthlyInformation): Long = withContext(Dispatchers.IO) {
+        monthlyInformationDao.upsert(info)
     }
 
     suspend fun update(month: LocalDate, modify: (monthlyInfo: MonthlyInformation) -> MonthlyInformation) {

@@ -59,9 +59,7 @@ fun PlaceholderDefaults.fadeHighlightColor(
 fun PlaceholderDefaults.shimmerHighlightColor(
     backgroundColor: Color = MaterialTheme.colorScheme.inverseSurface,
     alpha: Float = 0.75f
-): Color {
-    return backgroundColor.copy(alpha = alpha)
-}
+): Color = backgroundColor.copy(alpha = alpha)
 
 /**
  * Draws some skeleton UI which is typically used whilst content is 'loading'.

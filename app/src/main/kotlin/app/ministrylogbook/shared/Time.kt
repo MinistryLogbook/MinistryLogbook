@@ -40,17 +40,13 @@ class Time : Comparable<Time> {
         this.internalRepresentation = internalRepresentation
     }
 
-    operator fun plus(other: Time) =
-        Time(this.internalRepresentation + other.internalRepresentation)
+    operator fun plus(other: Time) = Time(this.internalRepresentation + other.internalRepresentation)
 
-    operator fun minus(other: Time) =
-        Time(this.internalRepresentation - other.internalRepresentation)
+    operator fun minus(other: Time) = Time(this.internalRepresentation - other.internalRepresentation)
 
-    override fun compareTo(other: Time) =
-        this.internalRepresentation.compareTo(other.internalRepresentation)
+    override fun compareTo(other: Time) = this.internalRepresentation.compareTo(other.internalRepresentation)
 
-    override fun equals(other: Any?) =
-        (other is Time) && this.internalRepresentation == other.internalRepresentation
+    override fun equals(other: Any?) = (other is Time) && this.internalRepresentation == other.internalRepresentation
 
     operator fun div(other: Int): Time {
         if (other == 0) {
@@ -59,9 +55,7 @@ class Time : Comparable<Time> {
         return Time(this.internalRepresentation / other)
     }
 
-    operator fun times(other: Int): Time {
-        return Time(this.internalRepresentation * other)
-    }
+    operator fun times(other: Int): Time = Time(this.internalRepresentation * other)
 
     override fun hashCode() = internalRepresentation.hashCode()
 
@@ -74,9 +68,7 @@ class Time : Comparable<Time> {
         return "$sign$hours:${minutes.toString().padStart(2, '0')}"
     }
 
-    fun toFloat(): Float {
-        return this.hours + 1 / 60f * this.minutes
-    }
+    fun toFloat(): Float = this.hours + 1 / 60f * this.minutes
 }
 
 fun Iterable<Time>.sum(): Time {

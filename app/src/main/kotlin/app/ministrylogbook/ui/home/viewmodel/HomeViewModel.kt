@@ -27,6 +27,7 @@ import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupFile
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -50,7 +51,6 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Spread
 import nl.dionsegijn.konfetti.core.emitter.Emitter
-import java.util.concurrent.TimeUnit
 
 sealed class HomeIntent {
     data class TransferToTextMonth(val minutes: Int) : HomeIntent()
@@ -91,7 +91,7 @@ data class HomeState(
     val lastMonthReportSent: Boolean? = null,
     val monthlyParties: List<Party> = emptyList(),
     val yearlyProgress: Time = Time.Empty,
-    val yearlyParties: List<Party> = emptyList(),
+    val yearlyParties: List<Party> = emptyList()
 )
 
 data class History<T>(val previous: T?, val current: T)
@@ -105,7 +105,8 @@ class HomeViewModel(
     private val _bibleStudyRepository: BibleStudyRepository,
     private val _monthlyInformationRepository: MonthlyInformationRepository,
     settingsService: SettingsService
-) : AndroidViewModel(_application), IntentViewModel<HomeState, HomeIntent> {
+) : AndroidViewModel(_application),
+    IntentViewModel<HomeState, HomeIntent> {
 
     private val _selectedBackupFile =
         MutableStateFlow(_uri?.run { BackupFile(this, _backupService.getBackupMetadata(_uri)) })
@@ -215,8 +216,17 @@ class HomeViewModel(
 
     private val _isMonthlyPartyFinished = MutableStateFlow(false)
     private val _monthlyParties =
-        combine(_goal, _entriesHistory, _isMonthlyPartyFinished, _isYearlyPartyFinished) { goal, entries, isFinished, isYearFinished ->
-            if (isFinished || isYearFinished || entries?.previous == null || (goal != null && entries.previous.timeSum().hours >= goal)) {
+        combine(_goal, _entriesHistory, _isMonthlyPartyFinished, _isYearlyPartyFinished) {
+                goal,
+                entries,
+                isFinished,
+                isYearFinished
+            ->
+            if (isFinished ||
+                isYearFinished ||
+                entries?.previous == null ||
+                (goal != null && entries.previous.timeSum().hours >= goal)
+            ) {
                 return@combine emptyList()
             }
             val time = entries.current.timeSum()
@@ -403,7 +413,7 @@ class HomeViewModel(
             beginOfPioneeringInServiceYear = values[11] as LocalDate?,
             monthlyInformation = values[12] as MonthlyInformation,
             lastMonthReportSent = (values[13] as List<Entry>).isEmpty() ||
-                    (values[14] as MonthlyInformation).reportSent,
+                (values[14] as MonthlyInformation).reportSent,
             monthlyParties = values[15] as List<Party>,
             entriesLastMonth = values[16] as List<Entry>,
             yearlyProgress = values[17] as Time,

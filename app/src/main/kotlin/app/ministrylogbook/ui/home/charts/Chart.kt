@@ -36,7 +36,8 @@ import app.ministrylogbook.R
 data class Bar(val value: Float, val name: String, val color: Color, val width: Dp = 10.dp)
 
 enum class VerticalMarkerStyle {
-    Line, Dashed
+    Line,
+    Dashed
 }
 
 data class VerticalMarker(

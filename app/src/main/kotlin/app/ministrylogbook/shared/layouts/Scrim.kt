@@ -16,12 +16,7 @@ import androidx.compose.ui.semantics.onClick
 import androidx.compose.ui.semantics.semantics
 
 @Composable
-fun Scrim(
-    color: Color,
-    onDismiss: () -> Unit,
-    visible: Boolean,
-    semanticsContentDescription: String? = null
-) {
+fun Scrim(color: Color, onDismiss: () -> Unit, visible: Boolean, semanticsContentDescription: String? = null) {
     if (color.isSpecified) {
         val alpha by animateFloatAsState(
             targetValue = if (visible) 1f else 0f,
@@ -34,7 +29,10 @@ fun Scrim(
                     if (semanticsContentDescription != null) {
                         contentDescription = semanticsContentDescription
                     }
-                    onClick { onDismiss(); true }
+                    onClick {
+                        onDismiss()
+                        true
+                    }
                 }
         } else {
             Modifier

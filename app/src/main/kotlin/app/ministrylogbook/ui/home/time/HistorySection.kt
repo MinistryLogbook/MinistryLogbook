@@ -151,7 +151,9 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
             val textFromLastMonth = if (timeLastMonth.isNotEmpty) {
                 val formattedTimeLastMonth = if (timeLastMonth.minutes == 0) {
                     timeLastMonth.hours.toString()
-                } else timeLastMonth.toString()
+                } else {
+                    timeLastMonth.toString()
+                }
                 val formattedTimeSumLastMonth = stringResource(R.string.hours_short_unit, formattedTimeLastMonth)
                 " " + stringResource(R.string.plus_time_from_last_month, formattedTimeSumLastMonth)
             } else {

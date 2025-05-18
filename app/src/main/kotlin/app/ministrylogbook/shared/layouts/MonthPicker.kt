@@ -67,12 +67,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 @Composable
-fun MonthPickerMonth(
-    text: String,
-    selected: Boolean = false,
-    disabled: Boolean = false,
-    onClick: () -> Unit
-) {
+fun MonthPickerMonth(text: String, selected: Boolean = false, disabled: Boolean = false, onClick: () -> Unit) {
     val selectedBackground = MaterialTheme.colorScheme.primary.copy(0.2f)
     val modifier = Modifier
         .clip(CircleShape)
@@ -445,10 +440,7 @@ internal data class MonthPickerPositionProvider(
     }
 }
 
-internal fun calculateTransformOrigin(
-    parentBounds: IntRect,
-    menuBounds: IntRect
-): TransformOrigin {
+internal fun calculateTransformOrigin(parentBounds: IntRect, menuBounds: IntRect): TransformOrigin {
     val pivotX = when {
         menuBounds.left >= parentBounds.right -> 0f
         menuBounds.right <= parentBounds.left -> 1f

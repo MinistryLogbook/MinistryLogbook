@@ -37,7 +37,8 @@ class IntroViewModel(
     private val _settingsService: SettingsService,
     private val _monthlyInfoRepository: MonthlyInformationRepository,
     private val _reminderManager: ReminderManager
-) : ViewModel(), IntentViewModel<IntroState, IntroIntent> {
+) : ViewModel(),
+    IntentViewModel<IntroState, IntroIntent> {
 
     private val _today by lazy {
         Clock.System.todayIn(TimeZone.currentSystemDefault())

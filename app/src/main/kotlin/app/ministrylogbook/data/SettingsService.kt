@@ -23,7 +23,10 @@ import kotlinx.datetime.toLocalDateTime
 private val Context.dataStore by preferencesDataStore(SettingsService.NAME)
 
 enum class Role {
-    Publisher, AuxiliaryPioneer, RegularPioneer, SpecialPioneer;
+    Publisher,
+    AuxiliaryPioneer,
+    RegularPioneer,
+    SpecialPioneer;
 
     val canHaveCredit: Boolean
         get() = this == RegularPioneer || this == SpecialPioneer
@@ -50,7 +53,9 @@ enum class Role {
 }
 
 enum class Design {
-    System, Light, Dark;
+    System,
+    Light,
+    Dark;
 
     fun apply() = when (this) {
         System -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)

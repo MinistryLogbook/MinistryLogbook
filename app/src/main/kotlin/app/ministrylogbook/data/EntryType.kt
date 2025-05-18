@@ -11,7 +11,10 @@ import app.ministrylogbook.R
 import app.ministrylogbook.ui.theme.ProgressPositive
 
 enum class EntryType {
-    Ministry, TheocraticAssignment, TheocraticSchool, Transfer;
+    Ministry,
+    TheocraticAssignment,
+    TheocraticSchool,
+    Transfer;
 
     @Composable
     @ReadOnlyComposable

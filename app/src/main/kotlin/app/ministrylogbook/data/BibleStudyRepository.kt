@@ -21,11 +21,9 @@ class BibleStudyRepository(private val bibleStudyDao: BibleStudyDao) {
         }
     }
 
-    suspend fun save(bibleStudy: BibleStudy): Long {
-        return withContext(Dispatchers.IO) {
-            bibleStudyDao.upsert(bibleStudy)
-        }.first()
-    }
+    suspend fun save(bibleStudy: BibleStudy): Long = withContext(Dispatchers.IO) {
+        bibleStudyDao.upsert(bibleStudy)
+    }.first()
 
     suspend fun delete(bibleStudy: BibleStudy) {
         withContext(Dispatchers.IO) {

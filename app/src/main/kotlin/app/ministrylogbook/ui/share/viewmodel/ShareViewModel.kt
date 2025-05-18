@@ -82,7 +82,8 @@ class ShareViewModel(
                 bibleStudies = bibleStudies.filter { it.checked }.size,
                 comments = comments,
                 reportsHours = role == Role.AuxiliaryPioneer ||
-                    role == Role.RegularPioneer || role == Role.SpecialPioneer
+                    role == Role.RegularPioneer ||
+                    role == Role.SpecialPioneer
             )
         }.stateIn(
             scope = viewModelScope,

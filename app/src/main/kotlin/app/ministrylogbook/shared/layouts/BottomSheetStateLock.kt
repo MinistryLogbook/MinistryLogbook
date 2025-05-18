@@ -50,8 +50,6 @@ class BottomSheetStateLock {
 }
 
 @Composable
-fun rememberBottomSheetStateLock(): BottomSheetStateLock {
-    return remember { BottomSheetStateLock() }
-}
+fun rememberBottomSheetStateLock(): BottomSheetStateLock = remember { BottomSheetStateLock() }
 
 val LocalBottomSheetStateLock = compositionLocalOf { BottomSheetStateLock() }

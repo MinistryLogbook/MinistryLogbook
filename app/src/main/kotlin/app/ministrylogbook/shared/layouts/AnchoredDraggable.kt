@@ -95,10 +95,7 @@ internal interface AnchoredDragScope {
      * @param newOffset new value for [AnchoredDraggableState.offset].
      * @param lastKnownVelocity last known velocity (if known)
      */
-    fun dragTo(
-        newOffset: Float,
-        lastKnownVelocity: Float = 0f
-    )
+    fun dragTo(newOffset: Float, lastKnownVelocity: Float = 0f)
 }
 
 /**
@@ -137,10 +134,7 @@ internal class AnchoredDraggableState<T>(
             }
         }
 
-        override suspend fun drag(
-            dragPriority: MutatePriority,
-            block: suspend DragScope.() -> Unit
-        ) {
+        override suspend fun drag(dragPriority: MutatePriority, block: suspend DragScope.() -> Unit) {
             this@AnchoredDraggableState.anchoredDrag(dragPriority) {
                 with(dragScope) { block() }
             }
@@ -232,7 +226,13 @@ internal class AnchoredDraggableState<T>(
         if (distance > 1e-6f) {
             val progress = (this.requireOffset() - a) / (b - a)
             // If we are very close to 0f or 1f, we round to the closest
-            if (progress < 1e-6f) 0f else if (progress > 1 - 1e-6f) 1f else progress
+            if (progress < 1e-6f) {
+                0f
+            } else if (progress > 1 - 1e-6f) {
+                1f
+            } else {
+                progress
+            }
         } else {
             1f
         }
@@ -277,10 +277,7 @@ internal class AnchoredDraggableState<T>(
      * @param onAnchorsChanged Optional callback to be invoked if the state needs to be updated
      * after updating the anchors, for example if the anchor for the [currentValue] has been removed
      */
-    internal fun updateAnchors(
-        newAnchors: Map<T, Float>,
-        onAnchorsChanged: AnchorChangedCallback<T>? = null
-    ) {
+    internal fun updateAnchors(newAnchors: Map<T, Float>, onAnchorsChanged: AnchorChangedCallback<T>? = null) {
         if (anchors != newAnchors) {
             val previousAnchors = anchors
             val previousTarget = targetValue
@@ -322,11 +319,7 @@ internal class AnchoredDraggableState<T>(
         }
     }
 
-    private fun computeTarget(
-        offset: Float,
-        currentValue: T,
-        velocity: Float
-    ): T {
+    private fun computeTarget(offset: Float, currentValue: T, velocity: Float): T {
         val currentAnchors = anchors
         val currentAnchor = currentAnchors[currentValue]
         val velocityThresholdPx = velocityThreshold()
@@ -363,10 +356,7 @@ internal class AnchoredDraggableState<T>(
         }
     }
 
-    private fun computeTargetWithoutThresholds(
-        offset: Float,
-        currentValue: T
-    ): T {
+    private fun computeTargetWithoutThresholds(offset: Float, currentValue: T): T {
         val currentAnchors = anchors
         val currentAnchor = currentAnchors[currentValue]
         return if (currentAnchor == offset || currentAnchor == null) {
@@ -529,11 +519,7 @@ internal class AnchoredDraggableState<T>(
          * @param previousAnchors The previously set anchors
          * @param newAnchors The newly set anchors
          */
-        fun onAnchorsChanged(
-            previousTargetValue: T,
-            previousAnchors: Map<T, Float>,
-            newAnchors: Map<T, Float>
-        )
+        fun onAnchorsChanged(previousTargetValue: T, previousAnchors: Map<T, Float>, newAnchors: Map<T, Float>)
     }
 }
 
@@ -565,10 +551,7 @@ internal suspend fun <T> AnchoredDraggableState<T>.snapTo(targetValue: T) {
  * @param targetValue The target value of the animation
  * @param velocity The velocity the animation should start with
  */
-internal suspend fun <T> AnchoredDraggableState<T>.animateTo(
-    targetValue: T,
-    velocity: Float = this.lastVelocity
-) {
+internal suspend fun <T> AnchoredDraggableState<T>.animateTo(targetValue: T, velocity: Float = this.lastVelocity) {
     anchoredDrag(targetValue = targetValue) { anchors ->
         val targetOffset = anchors[targetValue]
         if (targetOffset != null) {
@@ -659,28 +642,24 @@ internal object AnchoredDraggableDefaults {
     internal fun <T> ReconcileAnimationOnAnchorChangedCallback(
         state: AnchoredDraggableState<T>,
         scope: CoroutineScope
-    ) =
-        AnchoredDraggableState.AnchorChangedCallback<T> { previousTarget, previousAnchors, newAnchors ->
-            val previousTargetOffset = previousAnchors[previousTarget]
-            val newTargetOffset = newAnchors[previousTarget]
-            if (previousTargetOffset != newTargetOffset) {
-                if (newTargetOffset != null) {
-                    scope.launch {
-                        state.animateTo(previousTarget, state.lastVelocity)
-                    }
-                } else {
-                    scope.launch {
-                        state.snapTo(newAnchors.closestAnchor(offset = state.requireOffset()))
-                    }
+    ) = AnchoredDraggableState.AnchorChangedCallback<T> { previousTarget, previousAnchors, newAnchors ->
+        val previousTargetOffset = previousAnchors[previousTarget]
+        val newTargetOffset = newAnchors[previousTarget]
+        if (previousTargetOffset != newTargetOffset) {
+            if (newTargetOffset != null) {
+                scope.launch {
+                    state.animateTo(previousTarget, state.lastVelocity)
+                }
+            } else {
+                scope.launch {
+                    state.snapTo(newAnchors.closestAnchor(offset = state.requireOffset()))
                 }
             }
         }
+    }
 }
 
-private fun <T> Map<T, Float>.closestAnchor(
-    offset: Float = 0f,
-    searchUpwards: Boolean = false
-): T {
+private fun <T> Map<T, Float>.closestAnchor(offset: Float = 0f, searchUpwards: Boolean = false): T {
     require(isNotEmpty()) { "The anchors were empty when trying to find the closest anchor" }
     return minBy { (_, anchor) ->
         val delta = if (searchUpwards) anchor - offset else offset - anchor

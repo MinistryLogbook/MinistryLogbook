@@ -313,12 +313,9 @@ constructor(
         velocity: Float = anchoredDraggableState.lastVelocity
     ) = anchoredDraggableState.animateTo(target, velocity)
 
-    internal suspend fun snapTo(target: ModalBottomSheetValue) =
-        anchoredDraggableState.snapTo(target)
+    internal suspend fun snapTo(target: ModalBottomSheetValue) = anchoredDraggableState.snapTo(target)
 
-    internal fun trySnapTo(target: ModalBottomSheetValue): Boolean {
-        return anchoredDraggableState.trySnapTo(target)
-    }
+    internal fun trySnapTo(target: ModalBottomSheetValue): Boolean = anchoredDraggableState.trySnapTo(target)
 
     internal fun requireOffset() = anchoredDraggableState.requireOffset()
     internal val lastVelocity: Float get() = anchoredDraggableState.lastVelocity
@@ -709,11 +706,7 @@ fun ModalBottomSheetLayout(
 }
 
 @Composable
-private fun Scrim(
-    color: Color,
-    onDismiss: () -> Unit,
-    visible: Boolean
-) {
+private fun Scrim(color: Color, onDismiss: () -> Unit, visible: Boolean) {
     if (color.isSpecified) {
         val alpha by animateFloatAsState(
             targetValue = if (visible) 1f else 0f,
@@ -726,7 +719,10 @@ private fun Scrim(
                 .pointerInput(onDismiss) { detectTapGestures { onDismiss() } }
                 .semantics(mergeDescendants = true) {
                     contentDescription = closeSheet
-                    onClick { onDismiss(); true }
+                    onClick {
+                        onDismiss()
+                        true
+                    }
                 }
         } else {
             Modifier
@@ -771,17 +767,12 @@ private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
         }
     }
 
-    override fun onPostScroll(
-        consumed: Offset,
-        available: Offset,
-        source: NestedScrollSource
-    ): Offset {
-        return if (source == NestedScrollSource.Drag) {
+    override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
+        if (source == NestedScrollSource.Drag) {
             state.dispatchRawDelta(available.toFloat()).toOffset()
         } else {
             Offset.Zero
         }
-    }
 
     override suspend fun onPreFling(available: Velocity): Velocity {
         val toFling = available.toFloat()
@@ -812,38 +803,36 @@ private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     private fun Offset.toFloat(): Float = if (orientation == Orientation.Horizontal) x else y
 }
 
-private fun ModalBottomSheetAnchorChangeCallback(
-    state: ModalBottomSheetState,
-    scope: CoroutineScope
-) = AnchoredDraggableState.AnchorChangedCallback<ModalBottomSheetValue> { prevTarget, prevAnchors, newAnchors ->
-    val previousTargetOffset = prevAnchors[prevTarget]
-    val newTarget = when (prevTarget) {
-        ModalBottomSheetValue.Hidden -> ModalBottomSheetValue.Hidden
-        ModalBottomSheetValue.HalfExpanded, ModalBottomSheetValue.Expanded -> {
-            val hasHalfExpandedState =
-                newAnchors.containsKey(ModalBottomSheetValue.HalfExpanded)
-            val newTarget = if (hasHalfExpandedState) {
-                ModalBottomSheetValue.HalfExpanded
-            } else if (newAnchors.containsKey(ModalBottomSheetValue.Expanded)) {
-                ModalBottomSheetValue.Expanded
-            } else {
-                ModalBottomSheetValue.Hidden
+private fun ModalBottomSheetAnchorChangeCallback(state: ModalBottomSheetState, scope: CoroutineScope) =
+    AnchoredDraggableState.AnchorChangedCallback<ModalBottomSheetValue> { prevTarget, prevAnchors, newAnchors ->
+        val previousTargetOffset = prevAnchors[prevTarget]
+        val newTarget = when (prevTarget) {
+            ModalBottomSheetValue.Hidden -> ModalBottomSheetValue.Hidden
+            ModalBottomSheetValue.HalfExpanded, ModalBottomSheetValue.Expanded -> {
+                val hasHalfExpandedState =
+                    newAnchors.containsKey(ModalBottomSheetValue.HalfExpanded)
+                val newTarget = if (hasHalfExpandedState) {
+                    ModalBottomSheetValue.HalfExpanded
+                } else if (newAnchors.containsKey(ModalBottomSheetValue.Expanded)) {
+                    ModalBottomSheetValue.Expanded
+                } else {
+                    ModalBottomSheetValue.Hidden
+                }
+                newTarget
             }
-            newTarget
+        }
+        val newTargetOffset = newAnchors.getValue(newTarget)
+        if (newTargetOffset != previousTargetOffset) {
+            if (state.isAnimationRunning) {
+                // Re-target the animation to the new offset if it changed
+                scope.launch { state.animateTo(newTarget, velocity = state.lastVelocity) }
+            } else {
+                // Snap to the new offset value of the target if no animation was running
+                val didSnapSynchronously = state.trySnapTo(newTarget)
+                if (!didSnapSynchronously) scope.launch { state.snapTo(newTarget) }
+            }
         }
     }
-    val newTargetOffset = newAnchors.getValue(newTarget)
-    if (newTargetOffset != previousTargetOffset) {
-        if (state.isAnimationRunning) {
-            // Re-target the animation to the new offset if it changed
-            scope.launch { state.animateTo(newTarget, velocity = state.lastVelocity) }
-        } else {
-            // Snap to the new offset value of the target if no animation was running
-            val didSnapSynchronously = state.trySnapTo(newTarget)
-            if (!didSnapSynchronously) scope.launch { state.snapTo(newTarget) }
-        }
-    }
-}
 
 private val ModalBottomSheetPositionalThreshold = 56.dp
 private val ModalBottomSheetVelocityThreshold = 125.dp

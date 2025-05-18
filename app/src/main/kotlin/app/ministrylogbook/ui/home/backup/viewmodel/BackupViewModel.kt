@@ -45,7 +45,8 @@ class BackupViewModel(
     private val _backupService: BackupService,
     private val _settingsService: SettingsService,
     entryRepository: EntryRepository
-) : AndroidViewModel(_application), IntentViewModel<BackupState, BackupIntent> {
+) : AndroidViewModel(_application),
+    IntentViewModel<BackupState, BackupIntent> {
 
     private val _selectedBackupFile = MutableStateFlow<BackupFile?>(null)
 

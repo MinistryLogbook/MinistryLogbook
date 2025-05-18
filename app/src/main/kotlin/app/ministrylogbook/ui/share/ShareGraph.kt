@@ -28,10 +28,7 @@ import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 import org.koin.core.parameter.parametersOf
 
-sealed class ShareGraph(
-    private val rawRoute: String,
-    val arguments: List<NamedNavArgument> = listOf()
-) {
+sealed class ShareGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
     data object Root : ShareGraph(
         "?year={year}&monthNumber={monthNumber}",
         arguments = listOf(
@@ -43,9 +40,8 @@ sealed class ShareGraph(
             }
         )
     ) {
-        fun createDestination(year: Int, monthNumber: Int): String {
-            return "${AppGraph.Share}/?year=$year&monthNumber=$monthNumber"
-        }
+        fun createDestination(year: Int, monthNumber: Int): String =
+            "${AppGraph.Share}/?year=$year&monthNumber=$monthNumber"
     }
 
     val route

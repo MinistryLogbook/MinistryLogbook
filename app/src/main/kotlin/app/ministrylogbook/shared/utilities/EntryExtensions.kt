@@ -22,8 +22,7 @@ fun List<Entry>.theocraticSchools() = this.filter { it.type == EntryType.Theocra
 
 fun List<Entry>.theocraticSchoolTimeSum() = this.theocraticSchools().timeSum()
 
-fun List<Entry>.ministries() =
-    this.filter { it.type in arrayOf(EntryType.Ministry, EntryType.Transfer) }
+fun List<Entry>.ministries() = this.filter { it.type in arrayOf(EntryType.Ministry, EntryType.Transfer) }
 
 fun List<Entry>.transfers() = this.filter { it.type == EntryType.Transfer }
 

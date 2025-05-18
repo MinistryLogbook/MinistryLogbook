@@ -19,11 +19,9 @@ class EntryRepository(private val entryDao: EntryDao) {
     val latest: Flow<Entry?>
         get() = entryDao.getLatest()
 
-    suspend fun save(entry: Entry): Int {
-        return withContext(Dispatchers.IO) {
-            entryDao.upsert(entry)
-        }.first().toInt()
-    }
+    suspend fun save(entry: Entry): Int = withContext(Dispatchers.IO) {
+        entryDao.upsert(entry)
+    }.first().toInt()
 
     suspend fun delete(entry: Entry) {
         withContext(Dispatchers.IO) {

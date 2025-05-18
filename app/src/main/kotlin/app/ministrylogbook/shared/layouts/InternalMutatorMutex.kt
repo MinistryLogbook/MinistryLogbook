@@ -79,20 +79,18 @@ internal class InternalMutatorMutex {
      * @param block mutation code to run mutually exclusive with any other call to [mutate],
      * [mutateWith] or [tryMutate].
      */
-    suspend fun <R> mutate(
-        priority: MutatePriority = MutatePriority.Default,
-        block: suspend () -> R
-    ) = coroutineScope {
-        val mutator = Mutator(priority, coroutineContext[Job]!!)
-        tryMutateOrCancel(mutator)
-        mutex.withLock {
-            try {
-                block()
-            } finally {
-                currentMutator.compareAndSet(mutator, null)
+    suspend fun <R> mutate(priority: MutatePriority = MutatePriority.Default, block: suspend () -> R) =
+        coroutineScope {
+            val mutator = Mutator(priority, coroutineContext[Job]!!)
+            tryMutateOrCancel(mutator)
+            mutex.withLock {
+                try {
+                    block()
+                } finally {
+                    currentMutator.compareAndSet(mutator, null)
+                }
             }
         }
-    }
 
     /**
      * Enforce that only a single caller may be active at a time.

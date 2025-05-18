@@ -74,7 +74,9 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
         val tint =
             if (isTransfer && subtract) {
                 MaterialTheme.extendedColorScheme.onOutgoingTransfer
-            } else entry.type.color().copy(0.8f)
+            } else {
+                entry.type.color().copy(0.8f)
+            }
         Box(
             Modifier
                 .clip(CircleShape)
@@ -84,7 +86,9 @@ fun HistoryItem(entry: Entry, subtract: Boolean = false, onClick: (() -> Unit)? 
             val iconResource =
                 if (isTransfer && subtract) {
                     painterResource(R.drawable.ic_output)
-                } else entry.type.icon()
+                } else {
+                    entry.type.icon()
+                }
             Icon(
                 painter = iconResource,
                 contentDescription = null, // TODO: contentDescription

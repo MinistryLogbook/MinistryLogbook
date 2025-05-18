@@ -175,8 +175,8 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                         BadgedBox(badge = {
                             androidx.compose.animation.AnimatedVisibility(
                                 visible = !state.monthlyInformation.dismissedBibleStudiesHint &&
-                                        state.bibleStudies.isNotEmpty() &&
-                                        state.bibleStudies.all { !it.checked },
+                                    state.bibleStudies.isNotEmpty() &&
+                                    state.bibleStudies.all { !it.checked },
                                 enter = fadeIn(),
                                 exit = fadeOut()
                             ) {

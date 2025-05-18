@@ -59,7 +59,8 @@ import kotlinx.coroutines.flow.debounce
 import org.koin.androidx.compose.koinViewModel
 
 enum class ShareAs {
-    Text, Image
+    Text,
+    Image
 }
 
 @OptIn(FlowPreview::class)

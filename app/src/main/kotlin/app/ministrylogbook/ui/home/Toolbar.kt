@@ -62,10 +62,7 @@ fun ToolbarActions(month: LocalDate) {
 }
 
 @Composable
-fun ToolbarMonthSelect(
-    selectedMonth: LocalDate,
-    onSelect: (newDate: LocalDate) -> Unit = {}
-) {
+fun ToolbarMonthSelect(selectedMonth: LocalDate, onSelect: (newDate: LocalDate) -> Unit = {}) {
     val navController = LocalAppNavController.current
     val locale = getLocale()
     val monthTitle by remember(selectedMonth) {

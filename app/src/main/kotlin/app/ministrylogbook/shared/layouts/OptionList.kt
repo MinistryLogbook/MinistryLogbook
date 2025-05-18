@@ -53,8 +53,7 @@ internal class OptionListScopeImpl(private val bullets: Boolean) : OptionListSco
     override fun Option(text: String) = Option(text, selected = false, onClick = {})
 
     @Composable
-    override fun Option(text: String, onClick: () -> Unit) =
-        Option(text, selected = false, onClick = onClick)
+    override fun Option(text: String, onClick: () -> Unit) = Option(text, selected = false, onClick = onClick)
 }
 
 @Composable

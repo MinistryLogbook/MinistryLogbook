@@ -65,7 +65,12 @@ sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNa
 
     object EntryDetails : HomeGraph(
         rawRoute = "{year}/{monthNumber}/entry-details/{id}",
-        arguments = listOf(navArgument("id") { nullable = true; defaultValue = null })
+        arguments = listOf(
+            navArgument("id") {
+                nullable = true
+                defaultValue = null
+            }
+        )
     ) {
         fun createDestination(month: LocalDate, id: Int? = null): String {
             if (id == null) {

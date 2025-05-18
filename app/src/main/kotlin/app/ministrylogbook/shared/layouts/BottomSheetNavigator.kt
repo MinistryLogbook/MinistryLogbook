@@ -62,9 +62,7 @@ fun rememberBottomSheetNavigator(
  * drive the sheet state
  */
 @Navigator.Name("BottomSheetNavigator")
-class BottomSheetNavigator(
-    internal val sheetState: ModalBottomSheetState
-) : Navigator<Destination>() {
+class BottomSheetNavigator(internal val sheetState: ModalBottomSheetState) : Navigator<Destination>() {
 
     private var attached by mutableStateOf(false)
 
@@ -160,11 +158,7 @@ class BottomSheetNavigator(
 
     override fun createDestination(): Destination = Destination(navigator = this, content = {})
 
-    override fun navigate(
-        entries: List<NavBackStackEntry>,
-        navOptions: NavOptions?,
-        navigatorExtras: Extras?
-    ) {
+    override fun navigate(entries: List<NavBackStackEntry>, navOptions: NavOptions?, navigatorExtras: Extras?) {
         entries.forEach { entry ->
             state.pushWithTransition(entry)
         }
@@ -181,5 +175,6 @@ class BottomSheetNavigator(
     class Destination(
         navigator: BottomSheetNavigator,
         internal val content: @Composable ColumnScope.(NavBackStackEntry) -> Unit
-    ) : NavDestination(navigator), FloatingWindow
+    ) : NavDestination(navigator),
+        FloatingWindow
 }

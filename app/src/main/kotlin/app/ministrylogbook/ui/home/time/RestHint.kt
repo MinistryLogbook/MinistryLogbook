@@ -19,9 +19,10 @@ import kotlinx.datetime.todayIn
 @Composable
 fun RestHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
     val actualDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-    val show = state.rest.minutes > 0 && (
-        state.month.year < actualDate.year || state.month.monthNumber < actualDate.monthNumber
-        )
+    val show = state.rest.minutes > 0 &&
+        (
+            state.month.year < actualDate.year || state.month.monthNumber < actualDate.monthNumber
+            )
 
     if (show) {
         Spacer(Modifier.height(16.dp))

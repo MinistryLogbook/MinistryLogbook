@@ -32,11 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun NumberPicker(
-    value: Int,
-    step: Int = 1,
-    onChange: (newValue: Int) -> Unit = {}
-) {
+fun NumberPicker(value: Int, step: Int = 1, onChange: (newValue: Int) -> Unit = {}) {
     val handleIncrease = {
         val toAdd = if (value % step == 0) step else step - (value % step)
         onChange(value + toAdd)
@@ -87,30 +83,27 @@ fun NumberPicker(
 }
 
 @SuppressLint("ModifierFactoryUnreferencedReceiver")
-fun Modifier.repeatingClickable(
-    initialDelay: Long = 700,
-    delay: Long = 110,
-    onClick: () -> Unit
-): Modifier = composed {
-    val currentClickListener by rememberUpdatedState(onClick)
+fun Modifier.repeatingClickable(initialDelay: Long = 700, delay: Long = 110, onClick: () -> Unit): Modifier =
+    composed {
+        val currentClickListener by rememberUpdatedState(onClick)
 
-    pointerInput(Unit) {
-        coroutineScope {
-            awaitEachGesture {
-                val down = awaitFirstDown(requireUnconsumed = false)
+        pointerInput(Unit) {
+            coroutineScope {
+                awaitEachGesture {
+                    val down = awaitFirstDown(requireUnconsumed = false)
 
-                val heldButtonJob = launch {
-                    delay(initialDelay)
+                    val heldButtonJob = launch {
+                        delay(initialDelay)
 
-                    while (down.pressed) {
-                        currentClickListener()
-                        delay(delay)
+                        while (down.pressed) {
+                            currentClickListener()
+                            delay(delay)
+                        }
                     }
-                }
 
-                waitForUpOrCancellation()
-                heldButtonJob.cancel()
+                    waitForUpOrCancellation()
+                    heldButtonJob.cancel()
+                }
             }
         }
     }
-}
