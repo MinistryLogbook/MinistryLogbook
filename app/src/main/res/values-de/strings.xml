@@ -120,6 +120,7 @@
     <string name="no_backup_yet">Noch keine Sicherung</string>
     <string name="create_backup_file">Sicherungsdatei erstellen</string>
     <string name="import_backup_file">Sicherungsdatei laden</string>
+    <string name="restore_backup">Sicherung wiederherstellen</string>
     <string name="whats_your_name">Wie ist dein Name?</string>
     <string name="intro_name_description">Wir erfassen keinerlei Daten. Dein Name wird auf deinem digitalen Berichtszettel abgedruckt.</string>
     <string name="intro_role_title">Hallo %1$s, bitte wähle deine Rolle aus</string>

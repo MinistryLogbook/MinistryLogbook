@@ -218,6 +218,7 @@ class BackupService(
         val writableDatabase = db.openHelper.writableDatabase
         val escapedPath = restoredDatabaseFile.path.replace("'", "''")
 
+        initializeInvalidationTracking(writableDatabase)
         writableDatabase.execSQL("ATTACH DATABASE '$escapedPath' AS restored")
         try {
             writableDatabase.beginTransaction()
@@ -237,6 +238,25 @@ class BackupService(
         } finally {
             writableDatabase.execSQL("DETACH DATABASE restored")
         }
+    }
+
+    private fun initializeInvalidationTracking(database: SupportSQLiteDatabase) {
+        database.execSQL("PRAGMA temp_store = MEMORY")
+        database.execSQL("PRAGMA recursive_triggers = 1")
+        createInvalidationTrackingTable(database, temporary = false)
+        createInvalidationTrackingTable(database, temporary = true)
+    }
+
+    private fun createInvalidationTrackingTable(database: SupportSQLiteDatabase, temporary: Boolean) {
+        val temporaryKeyword = if (temporary) "TEMP " else ""
+        database.execSQL(
+            """
+            CREATE ${temporaryKeyword}TABLE IF NOT EXISTS room_table_modification_log (
+                table_id INTEGER PRIMARY KEY,
+                invalidated INTEGER NOT NULL DEFAULT 0
+            )
+            """.trimIndent()
+        )
     }
 
     private fun columnNames(database: SupportSQLiteDatabase, table: String) =

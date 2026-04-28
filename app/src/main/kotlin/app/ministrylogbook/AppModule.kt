@@ -11,6 +11,7 @@ import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.services.BackupService
 import app.ministrylogbook.shared.services.ReminderManager
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModel
+import app.ministrylogbook.ui.home.backup.viewmodel.BackupViewModelOptions
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
 import app.ministrylogbook.ui.intro.viewmodel.IntroViewModel
@@ -45,7 +46,15 @@ val appModule = module {
             get()
         )
     }
-    viewModel { BackupViewModel(androidContext() as Application, get(), get(), get()) }
+    viewModel { params ->
+        BackupViewModel(
+            androidContext() as Application,
+            get(),
+            get(),
+            get(),
+            params.getOrNull<BackupViewModelOptions>() ?: BackupViewModelOptions()
+        )
+    }
     viewModel { SettingsViewModel(get(), get(), get()) }
     viewModel { params ->
         HomeViewModel(

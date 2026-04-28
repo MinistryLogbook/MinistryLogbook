@@ -16,6 +16,7 @@ import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -40,11 +41,17 @@ data class BackupState(
     val importFinished: Boolean = false
 )
 
+data class BackupViewModelOptions(
+    val markIntroShownAfterImport: Boolean = false,
+    val observeLatestEntry: Boolean = true
+)
+
 class BackupViewModel(
     private val _application: Application,
     private val _backupService: BackupService,
     private val _settingsService: SettingsService,
-    entryRepository: EntryRepository
+    entryRepository: EntryRepository,
+    private val _options: BackupViewModelOptions = BackupViewModelOptions()
 ) : AndroidViewModel(_application),
     IntentViewModel<BackupState, BackupIntent> {
 
@@ -55,7 +62,7 @@ class BackupViewModel(
     override val state = combine(
         selectedBackupFile,
         _settingsService.lastBackup,
-        entryRepository.latest,
+        if (_options.observeLatestEntry) entryRepository.latest else flowOf(null),
         importFinished
     ) { selectedBackupFile, lastBackup, latestEntry, importFinished ->
         BackupState(
@@ -102,6 +109,9 @@ class BackupViewModel(
                     Toast.LENGTH_LONG
                 ).show()
             } else {
+                if (_options.markIntroShownAfterImport) {
+                    _settingsService.setIntroShown()
+                }
                 importFinished.update { true }
             }
         }
