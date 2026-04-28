@@ -29,7 +29,7 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground.toArgb()
     val onBackgroundColor80 = MaterialTheme.colorScheme.onBackground.copy(0.8f).toArgb()
     val onBackgroundColor60 = MaterialTheme.colorScheme.onBackground.copy(0.6f).toArgb()
-    val googleSansTypeface = ResourcesCompat.getFont(context, R.font.google_sans_regular)
+    val googleSansTypeface = ResourcesCompat.getFont(context, R.font.google_sans_flex_rounded_regular)
     val animatedHours by animateIntAsState(targetValue = time.hours, label = "hours")
     val animatedMinutes by animateIntAsState(targetValue = time.minutes, label = "minutes")
     val hrsText = stringResource(R.string.hours_short)

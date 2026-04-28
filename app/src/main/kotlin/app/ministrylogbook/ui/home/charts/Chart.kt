@@ -57,7 +57,7 @@ fun Chart(
 ) {
     val progress = remember { Animatable(0f) }
     val context = LocalContext.current
-    val googleSansTypeface = ResourcesCompat.getFont(context, R.font.google_sans_regular)
+    val googleSansTypeface = ResourcesCompat.getFont(context, R.font.google_sans_flex_rounded_regular)
     val cornerRadius = CornerRadius(100f, 100f)
     val lineColor = MaterialTheme.colorScheme.onBackground.copy(0.4f)
 
