@@ -184,5 +184,8 @@ fun NavController.navigateToEntryDetails(month: LocalDate, id: Int? = null) =
 
 fun NavController.navigateToMonth(year: Int, monthNumber: Int) =
     navigate(HomeGraph.Root.createDestination(year, monthNumber)) {
-        popBackStack()
+        popUpTo(HomeGraph.Root.route) {
+            inclusive = true
+        }
+        launchSingleTop = true
     }

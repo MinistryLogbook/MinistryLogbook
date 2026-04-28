@@ -2,6 +2,8 @@ package app.ministrylogbook.ui.home
 
 import android.content.Intent
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -30,11 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.currentBackStackEntryAsState
 import app.ministrylogbook.MainActivity
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.restartApp
@@ -45,11 +47,7 @@ import app.ministrylogbook.ui.home.time.TimePage
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.shared.Toolbar
-import kotlin.time.Clock
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 
 enum class PagerPage {
     Time,
@@ -69,14 +67,12 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
     val timeScrollState = rememberScrollState()
     val studiesScrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    var selectedMonth by remember(navBackStackEntry) {
-        val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-        val arguments = navBackStackEntry?.arguments
-        val year = arguments?.getString("year")?.toInt() ?: currentDate.year
-        val monthNumber = arguments?.getString("monthNumber")?.toInt() ?: (currentDate.month.ordinal + 1)
-        return@remember mutableStateOf(LocalDate(year, monthNumber, 1))
-    }
+    var isMonthPickerExpanded by remember { mutableStateOf(false) }
+    val backgroundBlur by animateDpAsState(
+        targetValue = if (isMonthPickerExpanded) 12.dp else 0.dp,
+        animationSpec = tween(durationMillis = 180),
+        label = "homeBackgroundBlur"
+    )
     val context = LocalContext.current
     val scrollPosition by remember(currentPage) {
         derivedStateOf {
@@ -113,18 +109,22 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
     }
 
     Scaffold(
+        modifier = Modifier.blur(backgroundBlur),
         contentWindowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
         topBar = {
             Toolbar(
                 padding = PaddingValues(horizontal = 12.dp),
                 elevation = if (scrollPosition > 0) 4.dp else 0.dp
             ) {
-                ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
-                    selectedMonth = it
-                    navController.navigateToMonth(it.year, it.month.ordinal + 1)
-                })
+                ToolbarMonthSelect(
+                    selectedMonth = state.month,
+                    onExpandedChange = { isMonthPickerExpanded = it },
+                    onSelect = {
+                        navController.navigateToMonth(it.year, it.month.ordinal + 1)
+                    }
+                )
                 Spacer(Modifier.weight(1f))
-                ToolbarActions(selectedMonth)
+                ToolbarActions(state.month)
             }
         },
         bottomBar = {

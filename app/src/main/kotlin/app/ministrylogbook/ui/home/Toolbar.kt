@@ -61,7 +61,11 @@ fun ToolbarActions(month: LocalDate) {
 }
 
 @Composable
-fun ToolbarMonthSelect(selectedMonth: LocalDate, onSelect: (newDate: LocalDate) -> Unit = {}) {
+fun ToolbarMonthSelect(
+    selectedMonth: LocalDate,
+    onExpandedChange: (Boolean) -> Unit = {},
+    onSelect: (newDate: LocalDate) -> Unit = {}
+) {
     val locale = getLocale()
     val monthTitle by remember(selectedMonth) {
         derivedStateOf {
@@ -78,7 +82,10 @@ fun ToolbarMonthSelect(selectedMonth: LocalDate, onSelect: (newDate: LocalDate) 
                 .height(32.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.secondary.copy(0.2f))
-                .clickable { expanded = true }
+                .clickable {
+                    expanded = true
+                    onExpandedChange(true)
+                }
                 .padding(start = 16.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -95,9 +102,11 @@ fun ToolbarMonthSelect(selectedMonth: LocalDate, onSelect: (newDate: LocalDate) 
             selectedMonth = selectedMonth,
             onDismissRequest = {
                 expanded = false
+                onExpandedChange(false)
             },
             onSelect = { month ->
                 expanded = false
+                onExpandedChange(false)
                 onSelect(month)
             }
         )
