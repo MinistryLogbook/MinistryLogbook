@@ -120,21 +120,29 @@ fun WelcomePage(
         Column {
             Toolbar {
                 Spacer(modifier = Modifier.weight(1f))
-                ToolbarAction(onClick = {
-                    openDocumentLauncher.launch(arrayOf("application/*"))
-                }) {
+                val restoreBackupDescription = stringResource(R.string.restore_backup)
+                ToolbarAction(
+                    description = restoreBackupDescription,
+                    onClick = {
+                        openDocumentLauncher.launch(arrayOf("application/*"))
+                    }
+                ) {
                     Icon(
                         painterResource(R.drawable.ic_settings_backup_restore),
-                        contentDescription = stringResource(R.string.restore_backup)
+                        contentDescription = restoreBackupDescription
                     )
                 }
                 Spacer(modifier = Modifier.size(8.dp))
-                ToolbarAction(onClick = {
-                    isDialogOpen = true
-                }) {
+                val languageDescription = stringResource(R.string.language)
+                ToolbarAction(
+                    description = languageDescription,
+                    onClick = {
+                        isDialogOpen = true
+                    }
+                ) {
                     Icon(
                         painterResource(R.drawable.ic_language),
-                        contentDescription = stringResource(R.string.language)
+                        contentDescription = languageDescription
                     )
                 }
             }

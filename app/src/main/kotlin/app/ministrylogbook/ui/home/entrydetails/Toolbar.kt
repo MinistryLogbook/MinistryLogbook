@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -21,6 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
+import app.ministrylogbook.ui.shared.DescriptiveIconButton
 
 @Composable
 fun Toolbar(
@@ -38,18 +38,20 @@ fun Toolbar(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(onClick = onClose) {
+        val closeDescription = stringResource(R.string.close)
+        DescriptiveIconButton(description = closeDescription, onClick = onClose) {
             Icon(
                 painterResource(R.drawable.ic_close),
-                contentDescription = "Close window" // TODO: translation
+                contentDescription = closeDescription
             )
         }
         Row {
             if (isDeletable) {
-                IconButton(onClick = onDelete) {
+                val deleteDescription = stringResource(R.string.delete_entry)
+                DescriptiveIconButton(description = deleteDescription, onClick = onDelete) {
                     Icon(
                         painterResource(R.drawable.ic_delete_forever),
-                        contentDescription = stringResource(R.string.delete_entry)
+                        contentDescription = deleteDescription
                     )
                 }
             }

@@ -139,10 +139,11 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     }
 
     ToolbarLayout(elevation = isToolbarElevated, toolbarContent = {
-        ToolbarAction(onClick = handleBack) {
+        val backDescription = stringResource(R.string.back)
+        ToolbarAction(description = backDescription, onClick = handleBack) {
             Icon(
                 painterResource(R.drawable.ic_arrow_back),
-                contentDescription = null // TODO: contentDescription
+                contentDescription = backDescription
             )
         }
         Spacer(Modifier.width(8.dp))

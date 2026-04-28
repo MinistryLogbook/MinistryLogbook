@@ -47,20 +47,28 @@ fun ToolbarActions(month: LocalDate) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        ToolbarAction(onClick = {
-            navController.navigateToShare(month.year, month.month.ordinal + 1)
-        }) {
+        val shareDescription = stringResource(R.string.share_field_service_report)
+        ToolbarAction(
+            description = shareDescription,
+            onClick = {
+                navController.navigateToShare(month.year, month.month.ordinal + 1)
+            }
+        ) {
             Icon(
                 painterResource(R.drawable.ic_share),
-                contentDescription = stringResource(R.string.share_field_service_report)
+                contentDescription = shareDescription
             )
         }
-        ToolbarAction(onClick = {
-            navController.navigateToSettings()
-        }) {
+        val settingsDescription = stringResource(R.string.settings)
+        ToolbarAction(
+            description = settingsDescription,
+            onClick = {
+                navController.navigateToSettings()
+            }
+        ) {
             Icon(
                 painterResource(R.drawable.ic_settings),
-                contentDescription = stringResource(R.string.settings)
+                contentDescription = settingsDescription
             )
         }
     }

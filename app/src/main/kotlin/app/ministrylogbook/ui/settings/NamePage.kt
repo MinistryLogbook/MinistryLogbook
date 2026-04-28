@@ -54,10 +54,11 @@ fun NamePage(viewModel: SettingsViewModel = koinViewModel()) {
         title = stringResource(R.string.name),
         toolbarElevation = scrollState.canScrollBackward,
         actions = {
-            ToolbarAction(onClick = { handleSave() }) {
+            val saveDescription = stringResource(R.string.save)
+            ToolbarAction(description = saveDescription, onClick = { handleSave() }) {
                 Icon(
                     painterResource(R.drawable.ic_done),
-                    contentDescription = null // TODO: contentDescription
+                    contentDescription = saveDescription
                 )
             }
         }

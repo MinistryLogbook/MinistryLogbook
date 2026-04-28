@@ -158,8 +158,9 @@ fun SetupPage() {
         ToolbarLayout(
             elevation = scrollState.canScrollBackward,
             toolbarContent = {
-                ToolbarAction(onClick = { navigateBack() }) {
-                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = null)
+                val backDescription = stringResource(R.string.back)
+                ToolbarAction(description = backDescription, onClick = { navigateBack() }) {
+                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = backDescription)
                 }
 
                 Box(

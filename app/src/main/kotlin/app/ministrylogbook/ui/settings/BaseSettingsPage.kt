@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
@@ -34,12 +35,16 @@ fun BaseSettingsPage(
     val navController = LocalAppNavController.current
 
     ToolbarLayout(elevation = toolbarElevation, toolbarContent = {
-        ToolbarAction(onClick = {
-            navController.navigateUp()
-        }) {
+        val backDescription = stringResource(R.string.back)
+        ToolbarAction(
+            description = backDescription,
+            onClick = {
+                navController.navigateUp()
+            }
+        ) {
             Icon(
                 painterResource(R.drawable.ic_arrow_back),
-                contentDescription = null // TODO: contentDescription
+                contentDescription = backDescription
             )
         }
         Spacer(Modifier.width(8.dp))

@@ -10,7 +10,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.ministrylogbook.R
+import app.ministrylogbook.ui.shared.DescriptiveIconButton
 
 @Composable
 fun BibleStudyItem(
@@ -68,8 +68,9 @@ fun BibleStudyItem(
         Checkbox(checked = checked, onCheckedChange = onCheckedChange)
         Spacer(Modifier.width(16.dp))
         Text(name, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
-        IconButton(onClick = { isDialogOpen = true }) {
-            Icon(painterResource(R.drawable.ic_delete_forever), contentDescription = null)
+        val deleteDescription = stringResource(R.string.delete_bible_study)
+        DescriptiveIconButton(description = deleteDescription, onClick = { isDialogOpen = true }) {
+            Icon(painterResource(R.drawable.ic_delete_forever), contentDescription = deleteDescription)
         }
     }
 }

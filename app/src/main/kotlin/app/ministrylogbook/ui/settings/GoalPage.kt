@@ -86,10 +86,11 @@ fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
         title = stringResource(R.string.monthly_goal),
         toolbarElevation = scrollState.canScrollBackward,
         actions = {
-            ToolbarAction(onClick = { handleSave() }, disabled = !isSavable) {
+            val saveDescription = stringResource(R.string.save)
+            ToolbarAction(description = saveDescription, onClick = { handleSave() }, disabled = !isSavable) {
                 Icon(
                     painterResource(R.drawable.ic_done),
-                    contentDescription = null // TODO: contentDescription
+                    contentDescription = saveDescription
                 )
             }
         }

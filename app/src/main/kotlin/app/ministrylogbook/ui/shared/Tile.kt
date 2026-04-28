@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Surface
@@ -17,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,10 +39,15 @@ fun Tile(
     ) {
         Box(Modifier.fillMaxWidth()) {
             onDismiss?.let {
-                IconButton(modifier = Modifier.align(Alignment.TopEnd), onClick = it) {
+                val closeDescription = stringResource(R.string.close)
+                DescriptiveIconButton(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    description = closeDescription,
+                    onClick = it
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_close),
-                        contentDescription = "Close", // TODO: translation
+                        contentDescription = closeDescription,
                         modifier = Modifier.size(20.dp)
                     )
                 }

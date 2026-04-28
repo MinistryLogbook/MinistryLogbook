@@ -12,10 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -66,21 +73,50 @@ fun Toolbar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ToolbarAction(
+fun DescriptiveIconButton(
     modifier: Modifier = Modifier,
+    description: String,
     disabled: Boolean = false,
     onClick: () -> Unit = {},
     content: @Composable () -> Unit = {}
 ) {
-    IconButton(
+    TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
+        tooltip = {
+            PlainTooltip {
+                Text(description)
+            }
+        },
+        state = rememberTooltipState()
+    ) {
+        IconButton(
+            modifier = modifier,
+            onClick = onClick,
+            enabled = !disabled
+        ) {
+            content()
+        }
+    }
+}
+
+@Composable
+fun ToolbarAction(
+    modifier: Modifier = Modifier,
+    description: String,
+    disabled: Boolean = false,
+    onClick: () -> Unit = {},
+    content: @Composable () -> Unit = {}
+) {
+    DescriptiveIconButton(
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
             .then(modifier),
+        description = description,
+        disabled = disabled,
         onClick = onClick,
-        enabled = !disabled
-    ) {
-        content()
-    }
+        content = content
+    )
 }
