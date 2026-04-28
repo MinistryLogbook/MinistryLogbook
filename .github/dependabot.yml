@@ -42,6 +42,11 @@ updates:
           - "com.mikepenz.aboutlibraries*"
           - "org.jmailen.kotlinter:*"
           - "org.jmailen.kotlinter*"
+    ignore:
+      - dependency-name: "com.android.application"
+        versions: ["[9.2.0-alpha02,)"]
+      - dependency-name: "com.android.tools.build:gradle"
+        versions: ["[9.2.0-alpha02,)"]
 
   - package-ecosystem: "github-actions"
     directory: "/"

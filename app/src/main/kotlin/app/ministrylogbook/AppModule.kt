@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.room.Room
 import app.ministrylogbook.data.AppDatabase
 import app.ministrylogbook.data.BibleStudyRepository
+import app.ministrylogbook.data.DatabaseChangeNotifier
 import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.SettingsService
@@ -26,12 +27,13 @@ val appModule = module {
     single { get<AppDatabase>().monthlyInformationDao() }
     single { get<AppDatabase>().entryDao() }
     single { get<AppDatabase>().studyDao() }
-    single { EntryRepository(get()) }
-    single { BibleStudyRepository(get()) }
-    single { MonthlyInformationRepository(get()) }
+    single { DatabaseChangeNotifier() }
+    single { EntryRepository(get(), get()) }
+    single { BibleStudyRepository(get(), get()) }
+    single { MonthlyInformationRepository(get(), get()) }
     single { SettingsService(androidContext()) }
     single { ReminderManager(androidContext()) }
-    single { BackupService(androidContext(), get(), get()) }
+    single { BackupService(androidContext(), get(), get(), get()) }
     viewModel { params -> EntryDetailsViewModel(params.get(), params.getOrNull(), get(), get()) }
     viewModel { params ->
         ShareViewModel(

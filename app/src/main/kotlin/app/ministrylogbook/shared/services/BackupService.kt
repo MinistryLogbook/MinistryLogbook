@@ -3,11 +3,15 @@ package app.ministrylogbook.shared.services
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.net.Uri
+import androidx.room.Room
+import androidx.sqlite.db.SupportSQLiteDatabase
 import app.ministrylogbook.data.AppDatabase
+import app.ministrylogbook.data.DatabaseChangeNotifier
 import app.ministrylogbook.data.SettingsService
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
+import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -22,13 +26,16 @@ import org.koin.core.component.KoinComponent
 class BackupService(
     private val context: Context,
     private val db: AppDatabase,
-    private val settingsService: SettingsService
+    private val settingsService: SettingsService,
+    private val databaseChangeNotifier: DatabaseChangeNotifier
 ) : KoinComponent {
 
     companion object {
         const val VERSION = 1
         const val METADATA_FILE_NAME = "metadata.toml"
     }
+
+    private val databaseTables = listOf("Entry", "BibleStudy", "MonthlyInformation")
 
     private val files by lazy {
         listOfNotNull(
@@ -75,17 +82,17 @@ class BackupService(
         val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext false
         val origin = BufferedInputStream(inputStream)
         val zip = ZipInputStream(origin)
+        val restoreDirectory = File(context.cacheDir, "restore-${UUID.randomUUID()}")
+        restoreDirectory.mkdirs()
 
         var entry = zip.nextEntry
         var metadata: Metadata? = null
         while (entry != null) {
-            val file = files.find { it.name == entry.name }
+            val databaseFile = files.find { it.name == entry.name }
 
-            if (file != null) {
-                val backupFile = File(file.path + ".bak")
-                file.copyTo(backupFile, true)
-                file.delete()
-                val outputStream = file.outputStream()
+            if (databaseFile != null) {
+                val restoreFile = File(restoreDirectory, databaseFile.name)
+                val outputStream = restoreFile.outputStream()
                 val out = BufferedOutputStream(outputStream)
 
                 zip.copyTo(out)
@@ -98,15 +105,27 @@ class BackupService(
 
         zip.close()
 
+        val restoredDatabaseFile = File(restoreDirectory, files.first().name)
+        val isDatabaseValid = restoredDatabaseFile.exists() && verifyDatabase(restoredDatabaseFile)
+
+        if (!isDatabaseValid) {
+            restoreDirectory.deleteRecursively()
+            return@withContext false
+        }
+
+        val migratedDatabase = migrateRestoredDatabase(restoredDatabaseFile)
+        try {
+            replaceDatabaseContents(migratedDatabase.file)
+            databaseChangeNotifier.notifyDatabaseChanged()
+        } finally {
+            context.deleteDatabase(migratedDatabase.name)
+        }
+
         metadata?.let {
             importSettings(it)
         }
 
-        if (!verifyDatabase()) {
-            recover()
-            return@withContext false
-        }
-
+        restoreDirectory.deleteRecursively()
         true
     }
 
@@ -150,26 +169,85 @@ class BackupService(
         }
     }
 
-    private fun verifyDatabase(): Boolean {
+    private fun verifyDatabase(file: File): Boolean {
         try {
             val db = SQLiteDatabase.openDatabase(
-                db.openHelper.readableDatabase.path!!,
+                file.path,
                 null,
                 SQLiteDatabase.OPEN_READONLY
             )
             db.rawQuery("SELECT * from entry LIMIT 1", arrayOf()).close()
+            db.close()
         } catch (_: Exception) {
             return false
         }
         return true
     }
 
-    private fun recover() {
-        files.forEach { file ->
-            val backupFile = File(file.path + ".bak")
-            backupFile.copyTo(file, true)
+    private fun migrateRestoredDatabase(restoredDatabaseFile: File): RestoredDatabase {
+        val tempDatabaseName = "restore-${UUID.randomUUID()}.db"
+        val tempDatabaseFile = context.getDatabasePath(tempDatabaseName)
+        tempDatabaseFile.parentFile?.mkdirs()
+        restoredDatabaseFile.copyTo(tempDatabaseFile, overwrite = true)
+        File("${restoredDatabaseFile.path}-wal")
+            .copyToIfExists(File("${tempDatabaseFile.path}-wal"))
+        File("${restoredDatabaseFile.path}-shm")
+            .copyToIfExists(File("${tempDatabaseFile.path}-shm"))
+
+        val restoredDatabase = Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            tempDatabaseName
+        ).build()
+        try {
+            restoredDatabase.openHelper.writableDatabase.query("SELECT 1").close()
+        } finally {
+            restoredDatabase.close()
+        }
+
+        return RestoredDatabase(tempDatabaseFile, tempDatabaseName)
+    }
+
+    private fun File.copyToIfExists(target: File) {
+        if (exists()) {
+            copyTo(target, overwrite = true)
         }
     }
+
+    private suspend fun replaceDatabaseContents(restoredDatabaseFile: File) {
+        val writableDatabase = db.openHelper.writableDatabase
+        val escapedPath = restoredDatabaseFile.path.replace("'", "''")
+
+        writableDatabase.execSQL("ATTACH DATABASE '$escapedPath' AS restored")
+        try {
+            writableDatabase.beginTransaction()
+            try {
+                databaseTables.forEach { table ->
+                    val columns = columnNames(writableDatabase, table)
+                        .joinToString(", ") { "`$it`" }
+                    writableDatabase.execSQL("DELETE FROM `$table`")
+                    writableDatabase.execSQL(
+                        "INSERT INTO `$table` ($columns) SELECT $columns FROM restored.`$table`"
+                    )
+                }
+                writableDatabase.setTransactionSuccessful()
+            } finally {
+                writableDatabase.endTransaction()
+            }
+        } finally {
+            writableDatabase.execSQL("DETACH DATABASE restored")
+        }
+    }
+
+    private fun columnNames(database: SupportSQLiteDatabase, table: String) =
+        database.query("PRAGMA table_info(`$table`)").use { cursor ->
+            val nameColumnIndex = cursor.getColumnIndexOrThrow("name")
+            buildList {
+                while (cursor.moveToNext()) {
+                    add(cursor.getString(nameColumnIndex))
+                }
+            }
+        }
 
     private suspend fun importSettings(metadata: Metadata) {
         settingsService.setRole(metadata.role)
@@ -179,4 +257,6 @@ class BackupService(
         settingsService.setPrecisionMode(metadata.precisionMode)
         settingsService.setSendReportReminders(metadata.sendReportReminder)
     }
+
+    private data class RestoredDatabase(val file: File, val name: String)
 }
