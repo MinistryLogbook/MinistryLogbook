@@ -660,8 +660,7 @@ fun ModalBottomSheetLayout(
                                     dismiss {
                                         if (sheetState.anchoredDraggableState.confirmValueChange(
                                                 ModalBottomSheetValue.Hidden
-                                            ) &&
-                                            !bottomSheetStateLock.requestUnlocked()
+                                            )
                                         ) {
                                             scope.launch { sheetState.hide() }
                                         }
@@ -673,8 +672,7 @@ fun ModalBottomSheetLayout(
                                         expand {
                                             if (sheetState.anchoredDraggableState.confirmValueChange(
                                                     ModalBottomSheetValue.Expanded
-                                                ) &&
-                                                !bottomSheetStateLock.requestUnlocked()
+                                                )
                                             ) {
                                                 scope.launch { sheetState.expand() }
                                             }
@@ -684,8 +682,7 @@ fun ModalBottomSheetLayout(
                                         collapse {
                                             if (sheetState.anchoredDraggableState.confirmValueChange(
                                                     ModalBottomSheetValue.HalfExpanded
-                                                ) &&
-                                                !bottomSheetStateLock.requestUnlocked()
+                                                )
                                             ) {
                                                 scope.launch { sheetState.halfExpand() }
                                             }

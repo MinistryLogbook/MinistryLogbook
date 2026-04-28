@@ -36,12 +36,16 @@ fun rememberBottomSheetNavigator(
         ModalBottomSheetValue.Hidden,
         animationSpec = animationSpec,
         skipHalfExpanded = true,
-        confirmValueChange = {
-            bottomSheetStateLock.requestUnlocked()
+        confirmValueChange = { targetValue ->
+            !shouldRequestUnlockForBottomSheetTarget(targetValue) ||
+                bottomSheetStateLock.requestUnlocked()
         }
     )
     return remember { BottomSheetNavigator(sheetState) }
 }
+
+internal fun shouldRequestUnlockForBottomSheetTarget(targetValue: ModalBottomSheetValue) =
+    targetValue == ModalBottomSheetValue.Hidden
 
 /**
  * Navigator that drives a [ModalBottomSheetState] for use of [ModalBottomSheetLayout]s
