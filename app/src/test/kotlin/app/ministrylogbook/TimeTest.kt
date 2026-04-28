@@ -57,4 +57,19 @@ class TimeTest {
 
         assertTrue(negativeTime1 == negativeTime2)
     }
+
+    @Test
+    fun toString_padsMinutesAndKeepsNegativeSign() {
+        assertEquals("-1:05", Time(hours = 1, minutes = 5, isNegative = true).toString())
+    }
+
+    @Test
+    fun toFloat_convertsMinutesToFractionalHours() {
+        assertEquals(1.5f, Time(hours = 1, minutes = 30).toFloat())
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun constructor_rejectsSixtyMinutes() {
+        Time(hours = 1, minutes = 60)
+    }
 }

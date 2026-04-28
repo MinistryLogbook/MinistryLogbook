@@ -1,0 +1,68 @@
+version: 2
+
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    open-pull-requests-limit: 10
+    groups:
+      kotlin-tooling:
+        patterns:
+          - "org.jetbrains.kotlin:*"
+          - "org.jetbrains.kotlin.*"
+          - "com.google.devtools.ksp:*"
+          - "com.google.devtools.ksp*"
+      compose:
+        patterns:
+          - "androidx.compose*:*"
+      androidx-runtime:
+        patterns:
+          - "androidx.activity:*"
+          - "androidx.appcompat:*"
+          - "androidx.browser:*"
+          - "androidx.constraintlayout:*"
+          - "androidx.core:*"
+          - "androidx.datastore:*"
+          - "androidx.lifecycle:*"
+          - "androidx.navigation:*"
+      android-test:
+        patterns:
+          - "androidx.test:*"
+          - "androidx.test.*:*"
+          - "junit:junit"
+      room:
+        patterns:
+          - "androidx.room:*"
+      build-tooling:
+        patterns:
+          - "com.android.tools.build:gradle"
+          - "com.android.application"
+          - "com.mikepenz:*"
+          - "com.mikepenz.aboutlibraries*"
+          - "org.jmailen.kotlinter:*"
+          - "org.jmailen.kotlinter*"
+    ignore:
+      - dependency-name: "*"
+        versions:
+          - "*-alpha*"
+          - "*-beta*"
+          - "*-rc*"
+          - "*-RC*"
+          - "*-M*"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        versions:
+          - "*-alpha*"
+          - "*-beta*"
+          - "*-rc*"
+          - "*-RC*"

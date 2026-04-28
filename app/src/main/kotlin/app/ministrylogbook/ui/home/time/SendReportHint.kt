@@ -17,6 +17,7 @@ import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.share.navigateToShare
 import app.ministrylogbook.ui.shared.Tile
+import java.time.Month as JavaMonth
 import java.time.format.TextStyle
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.minus
@@ -30,7 +31,7 @@ fun SendReportHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
         ExpandAnimatedVisibility(show) {
             val lastMonth = state.month.minus(DatePeriod(months = 1))
             val locale = getLocale()
-            val lastMonthName = lastMonth.month.getDisplayName(TextStyle.FULL, locale)
+            val lastMonthName = JavaMonth.of(lastMonth.month.ordinal + 1).getDisplayName(TextStyle.FULL, locale)
 
             Column {
                 Spacer(Modifier.height(16.dp))
@@ -42,7 +43,7 @@ fun SendReportHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
                     actions = {
                         TextButton(
                             onClick = {
-                                navController.navigateToShare(lastMonth.year, lastMonth.monthNumber)
+                                navController.navigateToShare(lastMonth.year, lastMonth.month.ordinal + 1)
                             }
                         ) {
                             Text(stringResource(R.string.send_report))

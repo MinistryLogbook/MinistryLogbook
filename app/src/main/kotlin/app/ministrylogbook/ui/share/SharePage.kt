@@ -69,6 +69,11 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
     val context = LocalContext.current
     val navController = LocalAppNavController.current
     val scrollState = rememberScrollState()
+    val isToolbarElevated by remember {
+        derivedStateOf { scrollState.value > 0 }
+    }
+    val fieldServiceReportSubjectPattern = stringResource(R.string.field_service_report_subject)
+    val reportShareFileNamePattern = stringResource(R.string.report_share_file_name)
     var selectedShareAs by remember { mutableStateOf(ShareAs.Image) }
     val fieldServiceReport by viewModel.fieldServiceReport.collectAsStateWithLifecycle()
     val initialComments by viewModel.initialComments.collectAsStateWithLifecycle()
@@ -107,18 +112,17 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
         if (selectedShareAs == ShareAs.Text) {
             context.shareText(
                 fieldServiceReportText,
-                context.getString(R.string.field_service_report_subject, fieldServiceReportWithComments.month)
+                fieldServiceReportSubjectPattern.format(fieldServiceReportWithComments.month)
             )
         } else if (selectedShareAs == ShareAs.Image) {
             bitmap.let {
-                val reportShareFileName = context.getString(
-                    R.string.report_share_file_name,
+                val reportShareFileName = reportShareFileNamePattern.format(
                     fieldServiceReport.month,
                     viewModel.month.year
                 )
 
                 val fieldServiceReportSubject =
-                    context.getString(R.string.field_service_report_subject, fieldServiceReport.month)
+                    fieldServiceReportSubjectPattern.format(fieldServiceReport.month)
                 context.shareBitmap(
                     it,
                     reportShareFileName,
@@ -134,7 +138,7 @@ fun SharePage(viewModel: ShareViewModel = koinViewModel()) {
         }
     }
 
-    ToolbarLayout(elevation = scrollState.value > 0, toolbarContent = {
+    ToolbarLayout(elevation = isToolbarElevated, toolbarContent = {
         ToolbarAction(onClick = handleBack) {
             Icon(
                 painterResource(R.drawable.ic_arrow_back),

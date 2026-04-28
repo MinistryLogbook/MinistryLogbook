@@ -4,16 +4,16 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.ministrylogbook.R
+import kotlin.time.Instant
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -41,14 +41,11 @@ enum class Role {
 
     @Composable
     @ReadOnlyComposable
-    fun translate(): String {
-        val context = LocalContext.current
-        return when (this@Role) {
-            Publisher -> context.getString(R.string.publisher)
-            AuxiliaryPioneer -> context.getString(R.string.auxiliary_pioneer)
-            RegularPioneer -> context.getString(R.string.regular_pioneer)
-            SpecialPioneer -> context.getString(R.string.special_pioneer)
-        }
+    fun translate(): String = when (this@Role) {
+        Publisher -> stringResource(R.string.publisher)
+        AuxiliaryPioneer -> stringResource(R.string.auxiliary_pioneer)
+        RegularPioneer -> stringResource(R.string.regular_pioneer)
+        SpecialPioneer -> stringResource(R.string.special_pioneer)
     }
 }
 
@@ -65,13 +62,10 @@ enum class Design {
 
     @Composable
     @ReadOnlyComposable
-    fun translate(): String {
-        val context = LocalContext.current
-        return when (this@Design) {
-            System -> context.getString(R.string.system_default)
-            Light -> context.getString(R.string.light)
-            Dark -> context.getString(R.string.dark)
-        }
+    fun translate(): String = when (this@Design) {
+        System -> stringResource(R.string.system_default)
+        Light -> stringResource(R.string.light)
+        Dark -> stringResource(R.string.dark)
     }
 }
 

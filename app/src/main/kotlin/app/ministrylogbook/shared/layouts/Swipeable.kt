@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("UNUSED_PARAMETER", "unused")
+
 package app.ministrylogbook.shared.layouts
 
 import android.annotation.SuppressLint
@@ -522,8 +524,6 @@ internal fun <T : Any> rememberSwipeableStateFor(
  *
  * For an example of a [swipeable] with three states, see:
  *
- * @sample androidx.compose.material.samples.SwipeableSample
- *
  * @param T The type of the state.
  * @param state The state of the [swipeable].
  * @param anchors Pairs of anchors and states, used to map anchors to states and vice versa.
@@ -739,14 +739,16 @@ private fun computeTarget(
     val bounds = findBounds(offset, anchors)
     return when (bounds.size) {
         0 -> lastValue
+
         1 -> bounds[0]
+
         else -> {
             val lower = bounds[0]
             val upper = bounds[1]
             if (lastValue <= offset) {
                 // Swiping from lower to upper (positive).
                 if (velocity >= velocityThreshold) {
-                    return upper
+                    upper
                 } else {
                     val threshold = thresholds(lower, upper)
                     if (offset < threshold) lower else upper
@@ -754,7 +756,7 @@ private fun computeTarget(
             } else {
                 // Swiping from upper to lower (negative).
                 if (velocity <= -velocityThreshold) {
-                    return lower
+                    lower
                 } else {
                     val threshold = thresholds(upper, lower)
                     if (offset > threshold) upper else lower
@@ -816,7 +818,7 @@ internal val <T> SwipeableState<T>.PreUpPostDownNestedScrollConnection: NestedSc
     get() = object : NestedScrollConnection {
         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
             val delta = available.toFloat()
-            return if (delta < 0 && source == NestedScrollSource.Drag) {
+            return if (delta < 0 && source == NestedScrollSource.UserInput) {
                 performDrag(delta).toOffset()
             } else {
                 Offset.Zero
@@ -824,7 +826,7 @@ internal val <T> SwipeableState<T>.PreUpPostDownNestedScrollConnection: NestedSc
         }
 
         override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
-            if (source == NestedScrollSource.Drag) {
+            if (source == NestedScrollSource.UserInput) {
                 performDrag(available.toFloat()).toOffset()
             } else {
                 Offset.Zero

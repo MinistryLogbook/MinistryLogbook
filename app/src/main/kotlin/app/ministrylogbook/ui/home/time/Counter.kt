@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.home.time
 
+import android.graphics.Paint
 import android.graphics.Rect
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.Canvas
@@ -9,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -36,19 +36,19 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
     val minText = stringResource(R.string.minutes_short)
 
     Canvas(modifier = modifier, onDraw = {
-        val bigTextPaint = Paint().asFrameworkPaint().apply {
+        val bigTextPaint = Paint().apply {
             isAntiAlias = true
             textSize = 60.sp.toPx()
             color = onBackgroundColor
             typeface = jostTypeface
         }
-        val smallTextPaint = Paint().asFrameworkPaint().apply {
+        val smallTextPaint = Paint().apply {
             isAntiAlias = true
             textSize = 28.sp.toPx()
             color = onBackgroundColor80
             typeface = jostTypeface
         }
-        val unitTextPaint = Paint().asFrameworkPaint().apply {
+        val unitTextPaint = Paint().apply {
             isAntiAlias = true
             textSize = 16.sp.toPx()
             color = onBackgroundColor60

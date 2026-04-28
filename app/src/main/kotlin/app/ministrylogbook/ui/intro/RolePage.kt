@@ -1,3 +1,5 @@
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "ASSIGNED_VALUE_IS_NEVER_READ", "UNUSED_VALUE")
+
 package app.ministrylogbook.ui.intro
 
 import androidx.compose.foundation.ScrollState
@@ -14,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -38,7 +41,7 @@ import app.ministrylogbook.shared.layouts.ExpandAnimatedVisibility
 import app.ministrylogbook.shared.layouts.MonthPickerDialog
 import app.ministrylogbook.ui.intro.viewmodel.IntroState
 import java.time.format.DateTimeFormatter
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
@@ -136,7 +139,7 @@ fun RolePage(
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(),
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true),
                 readOnly = true,
                 value = state.role.translate(),
                 onValueChange = { },

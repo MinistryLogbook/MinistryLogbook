@@ -116,8 +116,10 @@ class HomeViewModel(
     private val pioneerSince = settingsService.pioneerSince
     private val serviceYearBegin = when {
         // special case after corona pandemic; pioneering began in march
-        month.year == 2023 && month.monthNumber < 9 -> LocalDate(month.year, 3, 1)
-        month.monthNumber >= 9 -> LocalDate(month.year, 9, 1)
+        month.year == 2023 && month.month.ordinal + 1 < 9 -> LocalDate(month.year, 3, 1)
+
+        month.month.ordinal + 1 >= 9 -> LocalDate(month.year, 9, 1)
+
         else -> LocalDate(month.year - 1, 9, 1)
     }
     private val beginOfPioneeringInServiceYear = pioneerSince.map { pioneerSince ->
@@ -151,8 +153,8 @@ class HomeViewModel(
     }
     private val yearlyGoal = roleGoal.combine(beginOfPioneeringInServiceYear) { rl, beginOfPioneering ->
         val lastMonthInServiceYear = when {
-            serviceYearBegin.monthNumber == 9 -> serviceYearBegin + DatePeriod(months = 12)
-            serviceYearBegin.monthNumber >= 9 -> LocalDate(serviceYearBegin.year + 1, 9, 1)
+            serviceYearBegin.month.ordinal + 1 == 9 -> serviceYearBegin + DatePeriod(months = 12)
+            serviceYearBegin.month.ordinal + 1 >= 9 -> LocalDate(serviceYearBegin.year + 1, 9, 1)
             else -> LocalDate(serviceYearBegin.year, 9, 1)
         }
         (rl ?: 0) * beginOfPioneering.monthsUntil(lastMonthInServiceYear)

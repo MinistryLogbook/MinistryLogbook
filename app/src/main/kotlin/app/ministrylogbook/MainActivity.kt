@@ -15,11 +15,8 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.koin.androidx.compose.KoinAndroidContext
-import org.koin.core.annotation.KoinExperimentalAPI
 
 class MainActivity : AppCompatActivity() {
-    @OptIn(KoinExperimentalAPI::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -46,11 +43,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         setContent {
-            KoinAndroidContext {
-                MinistryLogbookTheme(design, useSystemColors) {
-                    val startDestination = if (showIntro) AppGraph.Intro.route else AppGraph.Home.route
-                    AppNavHost(startDestination)
-                }
+            MinistryLogbookTheme(design, useSystemColors) {
+                val startDestination = if (showIntro) AppGraph.Intro.route else AppGraph.Home.route
+                AppNavHost(startDestination)
             }
         }
     }

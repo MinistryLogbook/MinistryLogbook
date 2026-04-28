@@ -3,8 +3,8 @@ package app.ministrylogbook.shared.layouts
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -58,9 +58,9 @@ import androidx.compose.ui.window.PopupPositionProvider
 import androidx.compose.ui.window.PopupProperties
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.condition
+import kotlin.time.Clock
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.Month
 import kotlinx.datetime.TimeZone
@@ -127,7 +127,7 @@ fun MonthPicker(selectedMonth: LocalDate, onSelect: (month: LocalDate) -> Unit =
     }
     val selectedYear = actualYear + selectedYearIndex
     val isActualMonth =
-        selectedMonth.year == actualYear && selectedMonth.monthNumber == actualDate.monthNumber
+        selectedMonth.year == actualYear && selectedMonth.month.ordinal + 1 == actualDate.month.ordinal + 1
 
     Column {
         YearPicker(selectedYear, onChange = {
@@ -146,12 +146,12 @@ fun MonthPicker(selectedMonth: LocalDate, onSelect: (month: LocalDate) -> Unit =
             items(months) { month ->
                 val monthName = Month(month).getShortDisplayName()
                 val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
-                val currentMonth = currentDate.month.value
+                val currentMonth = currentDate.month.ordinal + 1
                 val currentYear = actualYear + selectedYearIndex
                 val disabled = (month > currentMonth && currentYear == actualYear) ||
                     currentYear > actualYear
                 val selected = currentYear == selectedMonth.year &&
-                    month == selectedMonth.monthNumber
+                    month == selectedMonth.month.ordinal + 1
 
                 MonthPickerMonth(
                     monthName,
@@ -179,7 +179,7 @@ fun MonthPicker(selectedMonth: LocalDate, onSelect: (month: LocalDate) -> Unit =
                     clickable {
                         val currentMonth = LocalDate(
                             actualYear,
-                            actualDate.monthNumber,
+                            actualDate.month.ordinal + 1,
                             1
                         )
                         onSelect(currentMonth)
@@ -311,7 +311,7 @@ fun MonthPickerPopupContent(
     transformOriginState: MutableState<TransformOrigin>,
     content: @Composable () -> Unit
 ) {
-    val transition = updateTransition(expandedStates, "MonthPickerContent")
+    val transition = rememberTransition(expandedStates, "MonthPickerContent")
 
     val scale by transition.animateFloat(
         transitionSpec = {
@@ -443,8 +443,11 @@ internal data class MonthPickerPositionProvider(
 internal fun calculateTransformOrigin(parentBounds: IntRect, menuBounds: IntRect): TransformOrigin {
     val pivotX = when {
         menuBounds.left >= parentBounds.right -> 0f
+
         menuBounds.right <= parentBounds.left -> 1f
+
         menuBounds.width == 0 -> 0f
+
         else -> {
             val intersectionCenter = (
                 kotlin.math.max(
@@ -457,8 +460,11 @@ internal fun calculateTransformOrigin(parentBounds: IntRect, menuBounds: IntRect
     }
     val pivotY = when {
         menuBounds.top >= parentBounds.bottom -> 0f
+
         menuBounds.bottom <= parentBounds.top -> 1f
+
         menuBounds.height == 0 -> 0f
+
         else -> {
             val intersectionCenter = (
                 kotlin.math.max(

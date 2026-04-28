@@ -13,8 +13,10 @@ import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
 import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.ui.share.FieldServiceReport
+import java.time.Month as JavaMonth
 import java.time.format.TextStyle
 import java.util.Locale
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
@@ -22,7 +24,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -104,7 +105,7 @@ class ShareViewModel(
     }
 
     private fun getMonthTitle(locale: Locale): String = month.run {
-        val monthName = this.month.getDisplayName(TextStyle.FULL, locale)
+        val monthName = JavaMonth.of(this.month.ordinal + 1).getDisplayName(TextStyle.FULL, locale)
         val currentYear = Clock.System.todayIn(TimeZone.currentSystemDefault()).year
         if (this.year != currentYear) "$monthName ${this.year}" else monthName
     }

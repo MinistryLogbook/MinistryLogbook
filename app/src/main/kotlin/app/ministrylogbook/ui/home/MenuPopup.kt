@@ -1,6 +1,5 @@
 package app.ministrylogbook.ui.home
 
-import android.net.Uri
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.browser.customtabs.CustomTabColorSchemeParams
@@ -32,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.getLocale
 import app.ministrylogbook.ui.LocalAppNavController
@@ -45,7 +45,7 @@ import kotlinx.datetime.LocalDate
 fun ProfileButton(month: LocalDate) {
     val navController = LocalAppNavController.current
 
-    ToolbarAction(onClick = { navController.navigateToHomeMenu(month.year, month.monthNumber) }) {
+    ToolbarAction(onClick = { navController.navigateToHomeMenu(month.year, month.month.ordinal + 1) }) {
         Icon(
             painterResource(R.drawable.ic_account_circle_thin),
             modifier = Modifier.size(38.dp),
@@ -144,7 +144,7 @@ fun MenuPopup() {
                 .setShowTitle(true)
                 .build()
 
-            customTabsIntent.launchUrl(context, Uri.parse(getPrivacyPolicyUrl(locale)))
+            customTabsIntent.launchUrl(context, getPrivacyPolicyUrl(locale).toUri())
         }
 
         TextButton(onClick = handleOpenPrivacyPolicy) {

@@ -99,6 +99,7 @@ fun SetupPage() {
         derivedStateOf {
             when (currentBackStackEntry?.destination?.route) {
                 InnerIntroGraph.Name.route -> tempName.isNotBlank()
+
                 InnerIntroGraph.Role.route -> {
                     if (state.role == Role.RegularPioneer || state.role == Role.SpecialPioneer) {
                         state.pioneerSince != null
@@ -122,6 +123,7 @@ fun SetupPage() {
                 viewModel.dispatch(IntroIntent.NameChange(tempName))
                 introNavController.navigate(InnerIntroGraph.Role.route)
             }
+
             InnerIntroGraph.Role.route -> {
                 if (state.role == Role.Publisher) {
                     introNavController.navigate(InnerIntroGraph.Goal.route)
@@ -129,10 +131,12 @@ fun SetupPage() {
                     introNavController.navigate(InnerIntroGraph.Reminders.route)
                 }
             }
+
             InnerIntroGraph.Goal.route -> {
                 viewModel.dispatch(IntroIntent.GoalChange(tempGoal))
                 introNavController.navigate(InnerIntroGraph.Reminders.route)
             }
+
             else -> {}
         }
     }

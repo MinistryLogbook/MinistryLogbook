@@ -1,3 +1,5 @@
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "ASSIGNED_VALUE_IS_NEVER_READ", "UNUSED_VALUE")
+
 package app.ministrylogbook.ui.settings
 
 import android.app.AlarmManager
@@ -49,7 +51,7 @@ import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import java.time.format.DateTimeFormatter
 import java.util.Locale
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.datetime.todayIn

@@ -17,8 +17,7 @@ package app.ministrylogbook.shared.layouts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 
 @Immutable
 @JvmInline
@@ -36,12 +35,14 @@ internal value class Strings private constructor(@Suppress("unused") private val
 
 @Composable
 internal fun getString(string: Strings): String {
-    LocalConfiguration.current
-    val resources = LocalContext.current.resources
+    val resources = LocalResources.current
     return when (string) {
         Strings.NavigationMenu -> resources.getString(androidx.compose.ui.R.string.navigation_menu)
+
         Strings.CloseDrawer -> resources.getString(androidx.compose.ui.R.string.close_drawer)
+
         Strings.CloseSheet -> resources.getString(androidx.compose.ui.R.string.close_sheet)
+
         Strings.DefaultErrorMessage -> resources.getString(
             androidx.compose.ui.R.string.default_error_message
         )
@@ -51,7 +52,9 @@ internal fun getString(string: Strings): String {
         )
 
         Strings.SliderRangeStart -> resources.getString(androidx.compose.ui.R.string.range_start)
+
         Strings.SliderRangeEnd -> resources.getString(androidx.compose.ui.R.string.range_end)
+
         else -> ""
     }
 }

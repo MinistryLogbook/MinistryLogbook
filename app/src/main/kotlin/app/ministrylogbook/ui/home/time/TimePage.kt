@@ -45,7 +45,9 @@ fun TimePage(
     scrollState: ScrollState = rememberScrollState()
 ) {
     var goalDialogOpen by remember { mutableStateOf(false) }
-    val isYearlyGoalReached = remember { state.yearlyProgress.hours >= state.yearlyGoal }
+    val isYearlyGoalReached = remember {
+        state.yearlyGoal > 0 && state.yearlyProgress.hours >= state.yearlyGoal
+    }
     var fabExtended by remember { mutableStateOf(true) }
     val navController = LocalAppNavController.current
 
@@ -58,7 +60,10 @@ fun TimePage(
     }
 
     LaunchedEffect(isYearlyGoalReached, state.yearlyGoal, state.yearlyProgress) {
-        if (!isYearlyGoalReached && state.yearlyProgress.hours >= state.yearlyGoal) {
+        if (!isYearlyGoalReached &&
+            state.yearlyGoal > 0 &&
+            state.yearlyProgress.hours >= state.yearlyGoal
+        ) {
             goalDialogOpen = true
         }
     }

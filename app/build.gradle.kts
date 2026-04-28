@@ -1,17 +1,12 @@
-import java.io.ByteArrayOutputStream
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
     alias(libs.plugins.aboutlicenses)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.room)
-    id(libs.plugins.kotlin.parcelize.get().pluginId)
+    id("org.jetbrains.kotlin.plugin.parcelize")
 }
 
 android {
@@ -29,19 +24,11 @@ android {
             useSupportLibrary = true
         }
 
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas")
-            arg("room.incremental", "true")
-        }
     }
 
     androidResources {
         @Suppress("UnstableApiUsage")
         localeFilters += listOf("en", "de")
-    }
-
-    room {
-        schemaDirectory("$projectDir/schemas")
     }
 
     signingConfigs {
@@ -55,8 +42,10 @@ android {
     }
 
     sourceSets.all {
-        kotlin.srcDir("src/$name/kotlin")
+        kotlin.directories.add("src/$name/kotlin")
     }
+
+    sourceSets.getByName("androidTest").assets.directories.add("$projectDir/schemas")
 
     buildTypes {
         debug {
@@ -87,21 +76,28 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
-    @Suppress("UnstableApiUsage")
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.15"
-    }
-
     buildFeatures {
         compose = true
         buildConfig = true
     }
 
+    packaging {
+        jniLibs.keepDebugSymbols += listOf(
+            "**/libandroidx.graphics.path.so",
+            "**/libdatastore_shared_counter.so"
+        )
+    }
+
     namespace = "app.ministrylogbook"
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+    arg("room.incremental", "true")
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }
 
 androidComponents {
@@ -110,18 +106,13 @@ androidComponents {
     }
 }
 
-tasks.withType<KotlinCompile>().all {
-    kotlin {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_11)
-        }
-    }
-}
-
 dependencies {
+    implementation(platform(libs.androidx.compose.bom))
+    debugImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
-    annotationProcessor(libs.room.compiler)
     ksp(libs.room.compiler)
 
     implementation(libs.koin)
@@ -142,6 +133,7 @@ dependencies {
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.material.icons.core)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.constraintlayout.compose)
@@ -149,42 +141,27 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtimeCompose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.browser)
-    implementation(libs.accompanist.systemuicontroller)
-    implementation(libs.accompanist.navigation.material)
 
     debugImplementation(libs.ui.tooling)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
+    androidTestImplementation(libs.room.testing)
 }
 
-fun getGitHash() = ByteArrayOutputStream().use {
-    exec {
-        commandLine("git", "rev-parse", "--short", "HEAD")
-        standardOutput = it
-    }
-    it.toString().trim()
-}
+fun gitOutput(vararg args: String) = providers.exec {
+    commandLine("git", *args)
+    isIgnoreExitValue = true
+}.standardOutput.asText.get().trim()
 
-fun getTagName() = ByteArrayOutputStream().use {
-    try {
-        exec {
-            commandLine("git", "describe", "--tags", "--abbrev=0")
-            standardOutput = it
-        }
-    } catch (e: Exception) {
-        return@use ""
-    }
-    it.toString().trim()
-}
+fun getGitHash() = gitOutput("rev-parse", "--short", "HEAD")
 
-fun getVersionCode() = ByteArrayOutputStream().use {
-    exec {
-        commandLine("git", "tag")
-        standardOutput = it
-    }
-    it.toString().trim().split("\n").size
-}
+fun getTagName() = gitOutput("describe", "--tags", "--abbrev=0")
+
+fun getVersionCode() = gitOutput("tag")
+    .lines()
+    .filter { it.isNotBlank() }
+    .size
 
 fun hasSigningConfig() = System.getenv("SIGNING_STORE_PASSWORD") != null

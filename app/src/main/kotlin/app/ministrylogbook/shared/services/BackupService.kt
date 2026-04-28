@@ -11,8 +11,10 @@ import java.io.File
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
+import kotlin.time.Clock
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.datetime.Clock
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
@@ -36,8 +38,8 @@ class BackupService(
         )
     }
 
-    suspend fun createBackup(uri: Uri) {
-        val outputStream = context.contentResolver.openOutputStream(uri) ?: return
+    suspend fun createBackup(uri: Uri) = withContext(Dispatchers.IO) {
+        val outputStream = context.contentResolver.openOutputStream(uri) ?: return@withContext
         val out = ZipOutputStream(BufferedOutputStream(outputStream))
 
         files.filter { it.exists() }.forEach { file ->
@@ -69,8 +71,8 @@ class BackupService(
         out.close()
     }
 
-    suspend fun importBackup(uri: Uri): Boolean {
-        val inputStream = context.contentResolver.openInputStream(uri) ?: return false
+    suspend fun importBackup(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+        val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext false
         val origin = BufferedInputStream(inputStream)
         val zip = ZipInputStream(origin)
 
@@ -102,10 +104,10 @@ class BackupService(
 
         if (!verifyDatabase()) {
             recover()
-            return false
+            return@withContext false
         }
 
-        return true
+        true
     }
 
     fun getBackupMetadata(uri: Uri): Metadata? {
@@ -156,7 +158,7 @@ class BackupService(
                 SQLiteDatabase.OPEN_READONLY
             )
             db.rawQuery("SELECT * from entry LIMIT 1", arrayOf()).close()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             return false
         }
         return true

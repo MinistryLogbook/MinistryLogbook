@@ -21,7 +21,7 @@ import app.ministrylogbook.ui.SLIDE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.home.entrydetails.EntryDetailsBottomSheetContent
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import app.ministrylogbook.ui.home.viewmodel.HomeViewModel
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -74,9 +74,9 @@ sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNa
     ) {
         fun createDestination(month: LocalDate, id: Int? = null): String {
             if (id == null) {
-                return "${AppGraph.Home}/${month.year}/${month.monthNumber}/entry-details/new"
+                return "${AppGraph.Home}/${month.year}/${month.month.ordinal + 1}/entry-details/new"
             }
-            return "${AppGraph.Home}/${month.year}/${month.monthNumber}/entry-details/$id"
+            return "${AppGraph.Home}/${month.year}/${month.month.ordinal + 1}/entry-details/$id"
         }
     }
 
@@ -98,7 +98,7 @@ fun NavGraphBuilder.homeGraph() {
             val yearArgument = it.arguments?.getString("year")
             val year = yearArgument?.toInt() ?: currentDate.year
             val monthNumberArgument = it.arguments?.getString("monthNumber")
-            val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
+            val monthNumber = monthNumberArgument?.toInt() ?: (currentDate.month.ordinal + 1)
             val month = LocalDate(year, monthNumber, 1)
 
             val viewModel = koinViewModel<HomeViewModel>(parameters = { parametersOf(month) })
@@ -124,12 +124,11 @@ fun NavGraphBuilder.homeGraph() {
             val yearArgument = it.arguments?.getString("year")
             val year = yearArgument?.toInt() ?: currentDate.year
             val monthNumberArgument = it.arguments?.getString("monthNumber")
-            val monthNumber = monthNumberArgument?.toInt() ?: currentDate.monthNumber
+            val monthNumber = monthNumberArgument?.toInt() ?: (currentDate.month.ordinal + 1)
             val month = LocalDate(year, monthNumber, 1)
             val context = LocalContext.current
             val viewModel = koinViewModel<HomeViewModel>(parameters = {
-                parametersOf(month)
-                parametersOf(context.activity?.intent?.data)
+                parametersOf(month, context.activity?.intent?.data)
             })
             val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -147,8 +146,8 @@ fun NavGraphBuilder.homeGraph() {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
             val monthNumber =
-                it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
-            val isCurrentMonth = year == currentDate.year && monthNumber == currentDate.monthNumber
+                it.arguments?.getString("monthNumber")?.toInt() ?: (currentDate.month.ordinal + 1)
+            val isCurrentMonth = year == currentDate.year && monthNumber == (currentDate.month.ordinal + 1)
             val month = if (isCurrentMonth) {
                 currentDate
             } else {
@@ -168,8 +167,11 @@ fun NavGraphBuilder.homeGraph() {
     }
 }
 
-fun NavController.navigateToHome() = navigate(AppGraph.Home.route) {
-    popUpTo(0)
+fun NavController.navigateToHome() {
+    val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    navigate(HomeGraph.Root.createDestination(currentDate.year, currentDate.month.ordinal + 1)) {
+        popUpTo(0)
+    }
 }
 
 fun NavController.navigateToHomeMenu(year: Int, monthNumber: Int) =

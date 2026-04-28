@@ -1,3 +1,5 @@
+@file:Suppress("ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE", "ASSIGNED_VALUE_IS_NEVER_READ", "UNUSED_VALUE")
+
 package app.ministrylogbook.ui.home.entrydetails
 
 import androidx.compose.foundation.background
@@ -51,9 +53,9 @@ import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.EntryDetailsViewModel
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone

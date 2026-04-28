@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+@file:Suppress("UNUSED_PARAMETER", "unused")
+
 package app.ministrylogbook.shared.layouts
 
 import androidx.compose.animation.core.AnimationSpec
@@ -102,8 +104,9 @@ enum class ModalBottomSheetValue {
  * @param animationSpec The default animation that will be used to animate to a new state.
  * @param confirmValueChange Optional callback invoked to confirm or veto a pending state change.
  * @param isSkipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
+ * be skipped. If true, the sheet will always expand to the [ModalBottomSheetValue.Expanded] state
+ * and move to the [ModalBottomSheetValue.Hidden] state when hiding the sheet, either
+ * programmatically or by user interaction.
  * <b>Must not be set to true if the initialValue is [ModalBottomSheetValue.HalfExpanded].</b>
  * If supplied with [ModalBottomSheetValue.HalfExpanded] for the initialValue, an
  * [IllegalArgumentException] will be thrown.
@@ -132,8 +135,9 @@ fun ModalBottomSheetState(
  * @param animationSpec The default animation that will be used to animate to a new state.
  * @param confirmValueChange Optional callback invoked to confirm or veto a pending state change.
  * @param isSkipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
+ * be skipped. If true, the sheet will always expand to the [ModalBottomSheetValue.Expanded] state
+ * and move to the [ModalBottomSheetValue.Hidden] state when hiding the sheet, either
+ * programmatically or by user interaction.
  * <b>Must not be set to true if the initialValue is [ModalBottomSheetValue.HalfExpanded].</b>
  * If supplied with [ModalBottomSheetValue.HalfExpanded] for the initialValue, an
  * [IllegalArgumentException] will be thrown.
@@ -145,7 +149,7 @@ fun ModalBottomSheetState(
         """
             ModalBottomSheetState(
                 initialValue = initialValue,
-                density =,
+                density = density,
                 animationSpec = animationSpec,
                 isSkipHalfExpanded = isSkipHalfExpanded,
                 confirmStateChange = confirmValueChange
@@ -173,8 +177,9 @@ fun ModalBottomSheetState(
  * [ModalBottomSheetValue.HalfExpanded] if [isSkipHalfExpanded] is set to true.</b>
  * @param animationSpec The default animation that will be used to animate to a new state.
  * @param isSkipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
+ * be skipped. If true, the sheet will always expand to the [ModalBottomSheetValue.Expanded] state
+ * and move to the [ModalBottomSheetValue.Hidden] state when hiding the sheet, either
+ * programmatically or by user interaction.
  * <b>Must not be set to true if the initialValue is [ModalBottomSheetValue.HalfExpanded].</b>
  * If supplied with [ModalBottomSheetValue.HalfExpanded] for the initialValue, an
  * [IllegalArgumentException] will be thrown.
@@ -413,8 +418,9 @@ constructor(
  * @param animationSpec The default animation that will be used to animate to a new state.
  * @param confirmValueChange Optional callback invoked to confirm or veto a pending state change.
  * @param skipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
+ * be skipped. If true, the sheet will always expand to the [ModalBottomSheetValue.Expanded] state
+ * and move to the [ModalBottomSheetValue.Hidden] state when hiding the sheet, either
+ * programmatically or by user interaction.
  * <b>Must not be set to true if the [initialValue] is [ModalBottomSheetValue.HalfExpanded].</b>
  * If supplied with [ModalBottomSheetValue.HalfExpanded] for the [initialValue], an
  * [IllegalArgumentException] will be thrown.
@@ -461,8 +467,9 @@ fun rememberModalBottomSheetState(
  * @param initialValue The initial value of the state.
  * @param animationSpec The default animation that will be used to animate to a new state.
  * @param skipHalfExpanded Whether the half expanded state, if the sheet is tall enough, should
- * be skipped. If true, the sheet will always expand to the [Expanded] state and move to the
- * [Hidden] state when hiding the sheet, either programmatically or by user interaction.
+ * be skipped. If true, the sheet will always expand to the [ModalBottomSheetValue.Expanded] state
+ * and move to the [ModalBottomSheetValue.Hidden] state when hiding the sheet, either
+ * programmatically or by user interaction.
  * <b>Must not be set to true if the [initialValue] is [ModalBottomSheetValue.HalfExpanded].</b>
  * If supplied with [ModalBottomSheetValue.HalfExpanded] for the [initialValue], an
  * [IllegalArgumentException] will be thrown.
@@ -526,8 +533,6 @@ fun rememberModalBottomSheetState(
  * ![Modal bottom sheet image](https://developer.android.com/images/reference/androidx/compose/material/modal-bottom-sheet.png)
  *
  * A simple example of a modal bottom sheet looks like this:
- *
- * @sample androidx.compose.material.samples.ModalBottomSheetSample
  *
  * @param sheetContent The content of the bottom sheet.
  * @param modifier Optional [Modifier] for the entire component.
@@ -761,7 +766,7 @@ private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
 ): NestedScrollConnection = object : NestedScrollConnection {
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
         val delta = available.toFloat()
-        return if (delta < 0 && source == NestedScrollSource.Drag) {
+        return if (delta < 0 && source == NestedScrollSource.UserInput) {
             state.dispatchRawDelta(delta).toOffset()
         } else {
             Offset.Zero
@@ -769,7 +774,7 @@ private fun <T> ConsumeSwipeWithinBottomSheetBoundsNestedScrollConnection(
     }
 
     override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset =
-        if (source == NestedScrollSource.Drag) {
+        if (source == NestedScrollSource.UserInput) {
             state.dispatchRawDelta(available.toFloat()).toOffset()
         } else {
             Offset.Zero
@@ -810,6 +815,7 @@ private fun ModalBottomSheetAnchorChangeCallback(state: ModalBottomSheetState, s
         val previousTargetOffset = prevAnchors[prevTarget]
         val newTarget = when (prevTarget) {
             ModalBottomSheetValue.Hidden -> ModalBottomSheetValue.Hidden
+
             ModalBottomSheetValue.HalfExpanded, ModalBottomSheetValue.Expanded -> {
                 val hasHalfExpandedState =
                     newAnchors.containsKey(ModalBottomSheetValue.HalfExpanded)

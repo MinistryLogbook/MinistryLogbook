@@ -9,12 +9,15 @@ class EntryRepository(private val entryDao: EntryDao) {
 
     fun get(id: Int) = entryDao.get(id)
 
-    fun getAllOfMonth(month: LocalDate) = entryDao.getAllOfMonth(month.year, month.monthNumber)
+    fun getAllOfMonth(month: LocalDate) = entryDao.getAllOfMonth(month.year, month.month.ordinal + 1)
 
     fun getAllInRange(from: LocalDate, to: LocalDate) =
-        entryDao.getAllInRange(from.year, from.monthNumber, to.year, to.monthNumber)
+        entryDao.getAllInRange(from.year, from.month.ordinal + 1, to.year, to.month.ordinal + 1)
 
-    fun getTransferredFrom(localDate: LocalDate) = entryDao.getTransferredFrom(localDate.year, localDate.monthNumber)
+    fun getTransferredFrom(localDate: LocalDate) = entryDao.getTransferredFrom(
+        localDate.year,
+        localDate.month.ordinal + 1
+    )
 
     val latest: Flow<Entry?>
         get() = entryDao.getLatest()

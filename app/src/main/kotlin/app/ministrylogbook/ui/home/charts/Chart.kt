@@ -1,5 +1,6 @@
 package app.ministrylogbook.ui.home.charts
 
+import android.graphics.Paint
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.tween
@@ -19,7 +20,6 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -86,7 +86,7 @@ fun Chart(
                 start = Offset(x = 0f, y = markerHeight),
                 end = Offset(x = size.width, y = markerHeight)
             )
-            val textPaint = Paint().asFrameworkPaint().apply {
+            val textPaint = Paint().apply {
                 isAntiAlias = true
                 textSize = 9.sp.toPx()
                 color = marker.color.toArgb()

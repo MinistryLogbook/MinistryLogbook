@@ -16,7 +16,7 @@ import app.ministrylogbook.ui.intro.viewmodel.IntroViewModel
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
@@ -30,7 +30,7 @@ val appModule = module {
     single { BibleStudyRepository(get()) }
     single { MonthlyInformationRepository(get()) }
     single { SettingsService(androidContext()) }
-    single { ReminderManager() }
+    single { ReminderManager(androidContext()) }
     single { BackupService(androidContext(), get(), get()) }
     viewModel { params -> EntryDetailsViewModel(params.get(), params.getOrNull(), get(), get()) }
     viewModel { params ->

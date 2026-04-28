@@ -9,17 +9,13 @@ import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import java.util.Calendar
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.todayIn
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
 
-class ReminderManager : KoinComponent {
-
-    private val context: Context by inject()
+class ReminderManager(private val context: Context) {
 
     companion object {
         const val REMINDER_NOTIFICATION_REQUEST_CODE = 1
@@ -48,8 +44,8 @@ class ReminderManager : KoinComponent {
             ?: LocaleListCompat.getDefault()[0]!!
 
         val calendar = Calendar.getInstance(locale).apply {
-            set(Calendar.MONTH, dateTime.monthNumber - 1)
-            set(Calendar.DAY_OF_MONTH, dateTime.dayOfMonth)
+            set(Calendar.MONTH, dateTime.month.ordinal + 1 - 1)
+            set(Calendar.DAY_OF_MONTH, dateTime.day)
             set(Calendar.HOUR_OF_DAY, dateTime.hour)
             set(Calendar.MINUTE, dateTime.minute)
             set(Calendar.SECOND, dateTime.second)
@@ -64,6 +60,7 @@ class ReminderManager : KoinComponent {
             PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_IMMUTABLE)
         }
         alarmManager.cancel(intent)
+        intent.cancel()
     }
 
     private fun defaultReminderTime(): LocalDateTime {

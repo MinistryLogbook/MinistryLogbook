@@ -11,7 +11,7 @@ import androidx.core.net.toUri
 import app.ministrylogbook.MainActivity
 import app.ministrylogbook.R
 import app.ministrylogbook.shared.utilities.lastDayOfMonth
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
@@ -19,9 +19,6 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.todayIn
 
 class ReminderReceiver : BroadcastReceiver() {
-
-    private val reminderManager by lazy { ReminderManager() }
-
     override fun onReceive(context: Context, intent: Intent) {
         val notificationManager = context.getSystemService(NotificationManager::class.java) as NotificationManager
         notificationManager.sendReminderNotification(context, REMINDER_CHANNEL_ID)
@@ -29,7 +26,7 @@ class ReminderReceiver : BroadcastReceiver() {
         // schedule next reminder
         val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val nextMonth = today + DatePeriod(months = 1)
-        reminderManager.scheduleReminder(nextMonth.lastDayOfMonth.atTime(20, 0))
+        ReminderManager(context.applicationContext).scheduleReminder(nextMonth.lastDayOfMonth.atTime(20, 0))
     }
 }
 
@@ -38,7 +35,7 @@ private fun NotificationManager.sendReminderNotification(context: Context, chann
     val contentIntent =
         Intent(
             Intent.ACTION_VIEW,
-            "ministrylogbook://share/?year=${today.year}&monthNumber=${today.monthNumber}".toUri(),
+            "ministrylogbook://share/?year=${today.year}&monthNumber=${today.month.ordinal + 1}".toUri(),
             context,
             MainActivity::class.java
         )

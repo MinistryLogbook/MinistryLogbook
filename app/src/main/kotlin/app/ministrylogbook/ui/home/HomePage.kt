@@ -45,8 +45,8 @@ import app.ministrylogbook.ui.home.time.TimePage
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.shared.Toolbar
+import kotlin.time.Clock
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
@@ -74,7 +74,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
         val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
         val arguments = navBackStackEntry?.arguments
         val year = arguments?.getString("year")?.toInt() ?: currentDate.year
-        val monthNumber = arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
+        val monthNumber = arguments?.getString("monthNumber")?.toInt() ?: (currentDate.month.ordinal + 1)
         return@remember mutableStateOf(LocalDate(year, monthNumber, 1))
     }
     val context = LocalContext.current
@@ -121,7 +121,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
             ) {
                 ToolbarMonthSelect(selectedMonth = selectedMonth, onSelect = {
                     selectedMonth = it
-                    navController.navigateToMonth(it.year, it.monthNumber)
+                    navController.navigateToMonth(it.year, it.month.ordinal + 1)
                 })
                 Spacer(Modifier.weight(1f))
                 ToolbarActions(selectedMonth)

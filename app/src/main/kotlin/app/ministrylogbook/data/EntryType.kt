@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import app.ministrylogbook.R
 import app.ministrylogbook.ui.theme.ProgressPositive
 
@@ -18,14 +18,11 @@ enum class EntryType {
 
     @Composable
     @ReadOnlyComposable
-    fun translate(): String {
-        val context = LocalContext.current
-        return when (this) {
-            Ministry -> context.getString(R.string.ministry)
-            TheocraticAssignment -> context.getString(R.string.theocratic_assignment)
-            TheocraticSchool -> context.getString(R.string.theocratic_school_or_class)
-            Transfer -> context.getString(R.string.transfer)
-        }
+    fun translate(): String = when (this) {
+        Ministry -> stringResource(R.string.ministry)
+        TheocraticAssignment -> stringResource(R.string.theocratic_assignment)
+        TheocraticSchool -> stringResource(R.string.theocratic_school_or_class)
+        Transfer -> stringResource(R.string.transfer)
     }
 
     @Composable

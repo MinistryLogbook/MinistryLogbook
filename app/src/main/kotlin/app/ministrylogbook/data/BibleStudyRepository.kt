@@ -10,11 +10,11 @@ class BibleStudyRepository(private val bibleStudyDao: BibleStudyDao) {
     fun get(id: Int) = bibleStudyDao.get(id)
 
     fun getAllOfMonth(month: LocalDate): Flow<List<BibleStudy>> =
-        bibleStudyDao.getAllOfMonth(month.year, month.monthNumber)
+        bibleStudyDao.getAllOfMonth(month.year, month.month.ordinal + 1)
 
     suspend fun transfer(fromMonth: LocalDate, toMonth: LocalDate) {
         withContext(Dispatchers.IO) {
-            val bibleStudies = bibleStudyDao.getAllOfMonth(fromMonth.year, fromMonth.monthNumber).first()
+            val bibleStudies = bibleStudyDao.getAllOfMonth(fromMonth.year, fromMonth.month.ordinal + 1).first()
             bibleStudies.forEach {
                 save(BibleStudy(month = toMonth, name = it.name, checked = false))
             }

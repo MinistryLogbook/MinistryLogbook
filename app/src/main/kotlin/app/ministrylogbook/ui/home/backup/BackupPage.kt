@@ -31,7 +31,7 @@ import app.ministrylogbook.ui.settings.BaseSettingsPage
 import app.ministrylogbook.ui.settings.Setting
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.todayIn
@@ -42,6 +42,8 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val fileExtension = "mlbak"
+    val invalidBackupMessage = stringResource(R.string.backup_is_invalid)
+    val backupFileNamePattern = stringResource(R.string.backup_file_name)
 
     val createDocumentLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/mlbak")) { uri ->
@@ -62,7 +64,7 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
         if (state.selectedBackupFile != null && !state.isBackupValid) {
             Toast.makeText(
                 context,
-                context.getString(R.string.backup_is_invalid),
+                invalidBackupMessage,
                 Toast.LENGTH_LONG
             ).show()
             viewModel.dispatch(BackupIntent.UnselectBackupFile)
@@ -116,10 +118,10 @@ fun BackupPage(viewModel: BackupViewModel = koinViewModel()) {
             onClick = {
                 val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
                 val year = currentDate.year.toString()
-                val month = currentDate.monthNumber.toString().padStart(2, '0')
-                val dayOfMonth = currentDate.dayOfMonth.toString().padStart(2, '0')
+                val month = (currentDate.month.ordinal + 1).toString().padStart(2, '0')
+                val dayOfMonth = currentDate.day.toString().padStart(2, '0')
                 val fileName =
-                    context.getString(R.string.backup_file_name, year, month, dayOfMonth) + ".$fileExtension"
+                    backupFileNamePattern.format(year, month, dayOfMonth) + ".$fileExtension"
                 createDocumentLauncher.launch(fileName)
             }
         )

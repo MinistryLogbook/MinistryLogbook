@@ -18,7 +18,7 @@ import app.ministrylogbook.ui.FADE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.SLIDE_IN_TRANSITION_MILLIS
 import app.ministrylogbook.ui.SLIDE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.share.viewmodel.ShareViewModel
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
@@ -73,8 +73,8 @@ fun NavGraphBuilder.shareGraph() {
             val currentDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
             val year = it.arguments?.getString("year")?.toInt() ?: currentDate.year
             val monthNumber =
-                it.arguments?.getString("monthNumber")?.toInt() ?: currentDate.monthNumber
-            val isCurrentMonth = year == currentDate.year && monthNumber == currentDate.monthNumber
+                it.arguments?.getString("monthNumber")?.toInt() ?: (currentDate.month.ordinal + 1)
+            val isCurrentMonth = year == currentDate.year && monthNumber == (currentDate.month.ordinal + 1)
             val month = if (isCurrentMonth) {
                 currentDate
             } else {

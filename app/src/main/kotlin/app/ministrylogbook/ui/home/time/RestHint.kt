@@ -12,7 +12,7 @@ import app.ministrylogbook.R
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.shared.Tile
-import kotlinx.datetime.Clock
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
@@ -21,7 +21,7 @@ fun RestHint(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
     val actualDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val show = state.rest.minutes > 0 &&
         (
-            state.month.year < actualDate.year || state.month.monthNumber < actualDate.monthNumber
+            state.month.year < actualDate.year || state.month.month.ordinal + 1 < actualDate.month.ordinal + 1
             )
 
     if (show) {
