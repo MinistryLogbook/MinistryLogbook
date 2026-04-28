@@ -18,7 +18,6 @@ import app.ministrylogbook.shared.layouts.PopupLayout
 import app.ministrylogbook.shared.layouts.rememberBottomSheetNavigator
 import app.ministrylogbook.shared.layouts.rememberBottomSheetStateLock
 import app.ministrylogbook.shared.layouts.rememberPopupNavigator
-import app.ministrylogbook.ui.home.backup.backupGraph
 import app.ministrylogbook.ui.home.homeGraph
 import app.ministrylogbook.ui.intro.introGraph
 import app.ministrylogbook.ui.settings.settingsGraph
@@ -49,7 +48,6 @@ fun AppNavHost(startDestination: String = AppGraph.Home.route) {
                 PopupLayout(popupNavigator = popupNavigator, popupState = popupNavigator.popupState) {
                     NavHost(navController = navController, startDestination = startDestination) {
                         shareGraph()
-                        backupGraph()
                         homeGraph()
                         settingsGraph()
                         introGraph()

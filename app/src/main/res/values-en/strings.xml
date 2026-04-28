@@ -94,6 +94,7 @@
     <string name="image">Image</string>
     <string name="share">Share</string>
     <string name="date_in_future">Date is in the future</string>
+    <string name="data">Data</string>
     <string name="legal">Legal</string>
     <string name="open_source_licenses">Open Source Licenses</string>
     <string name="start_of_pioneering_month_pattern">MMMM yyyy</string>
@@ -115,6 +116,8 @@
     <string name="backup">Backup</string>
     <string name="backup_file_name">MinistryLogbookBackup_%1$s-%2$s-%3$s</string>
     <string name="last_backup">Last backup</string>
+    <string name="last_backup_value">Last backup: %1$s</string>
+    <string name="no_backup_yet">No backup yet</string>
     <string name="create_backup_file">Create backup file</string>
     <string name="import_backup_file">Import backup file</string>
     <string name="whats_your_name">What\'s your name?</string>

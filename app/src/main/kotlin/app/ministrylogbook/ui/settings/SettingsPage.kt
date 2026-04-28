@@ -11,6 +11,9 @@ import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.browser.customtabs.CustomTabColorSchemeParams
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,28 +35,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.graphics.drawable.toBitmap
+import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.ministrylogbook.BuildConfig
 import app.ministrylogbook.R
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.Role
+import app.ministrylogbook.shared.utilities.getLocale
 import app.ministrylogbook.shared.layouts.AlertDialog
 import app.ministrylogbook.shared.layouts.MonthPickerDialog
 import app.ministrylogbook.shared.layouts.OptionList
 import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaLocalDateTime
 import kotlinx.datetime.todayIn
 import org.koin.androidx.compose.koinViewModel
 
@@ -94,7 +104,12 @@ fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
                 PrecisionModeSetting()
             }
             Column {
+                Title(stringResource(R.string.data))
+                BackupSetting()
+            }
+            Column {
                 Title(stringResource(R.string.legal))
+                PrivacyPolicySetting()
                 OpenSourceLicenses()
             }
             Box(
@@ -115,6 +130,29 @@ fun SettingsPage(viewModel: SettingsViewModel = koinViewModel()) {
             }
         }
     }
+}
+
+@Composable
+fun BackupSetting(viewModel: SettingsViewModel = koinViewModel()) {
+    val navController = LocalAppNavController.current
+    val lastBackup by viewModel.lastBackup.collectAsStateWithLifecycle()
+    val dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM)
+    val lastBackupDescription = if (lastBackup != null) {
+        stringResource(
+            R.string.last_backup_value,
+            dateTimeFormatter.format(lastBackup?.toJavaLocalDateTime())
+        )
+    } else {
+        stringResource(R.string.no_backup_yet)
+    }
+
+    Setting(
+        title = stringResource(R.string.backup),
+        description = lastBackupDescription,
+        onClick = {
+            navController.navigateToBackup()
+        }
+    )
 }
 
 @Composable
@@ -456,3 +494,41 @@ fun OpenSourceLicenses() {
         navController.navigateToOpenSourceLicenses()
     })
 }
+
+@Composable
+fun PrivacyPolicySetting() {
+    val context = LocalContext.current
+    val colorScheme = MaterialTheme.colorScheme
+    val design = when (AppCompatDelegate.getDefaultNightMode()) {
+        AppCompatDelegate.MODE_NIGHT_YES -> CustomTabsIntent.COLOR_SCHEME_DARK
+        AppCompatDelegate.MODE_NIGHT_NO -> CustomTabsIntent.COLOR_SCHEME_LIGHT
+        else -> CustomTabsIntent.COLOR_SCHEME_SYSTEM
+    }
+    val locale = getLocale()
+
+    Setting(title = stringResource(R.string.privacy_policy), onClick = {
+        val arrowBackDrawable = AppCompatResources.getDrawable(context, R.drawable.ic_arrow_back)
+        DrawableCompat.setTint(arrowBackDrawable!!, colorScheme.onSurface.toArgb())
+        val customTabsIntent = CustomTabsIntent.Builder()
+            .setCloseButtonIcon(arrowBackDrawable.toBitmap())
+            .setShareState(CustomTabsIntent.SHARE_STATE_OFF)
+            .setDefaultColorSchemeParams(
+                CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(colorScheme.surface.toArgb())
+                    .build()
+            )
+            .setColorSchemeParams(
+                CustomTabsIntent.COLOR_SCHEME_DARK,
+                CustomTabColorSchemeParams.Builder()
+                    .setToolbarColor(colorScheme.surface.toArgb())
+                    .build()
+            )
+            .setColorScheme(design)
+            .setShowTitle(true)
+            .build()
+
+        customTabsIntent.launchUrl(context, getPrivacyPolicyUrl(locale).toUri())
+    })
+}
+
+fun getPrivacyPolicyUrl(locale: Locale) = "https://ministrylogbook.app/${locale.language}/privacy-policy"

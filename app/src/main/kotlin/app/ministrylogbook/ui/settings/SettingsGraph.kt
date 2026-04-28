@@ -9,6 +9,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NamedNavArgument
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
@@ -19,6 +20,7 @@ import app.ministrylogbook.ui.FADE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.SLIDE_IN_TRANSITION_MILLIS
 import app.ministrylogbook.ui.SLIDE_OUT_TRANSITION_MILLIS
 import app.ministrylogbook.ui.home.HomeGraph
+import app.ministrylogbook.ui.home.backup.BackupPage
 import app.ministrylogbook.ui.settings.license.LicenseDetailPage
 import app.ministrylogbook.ui.settings.license.LicensesPage
 
@@ -28,6 +30,8 @@ sealed class SettingsGraph(private val rawRoute: String, val arguments: List<Nam
     data object Name : SettingsGraph("name")
 
     data object Goal : SettingsGraph("goal")
+
+    data object Backup : SettingsGraph("backup")
 
     data object Licenses : SettingsGraph("licenses")
 
@@ -81,6 +85,10 @@ fun NavGraphBuilder.settingsGraph() {
             GoalPage()
         }
 
+        composable(SettingsGraph.Backup.route) {
+            BackupPage()
+        }
+
         composable(SettingsGraph.Licenses.route) {
             LicensesPage()
         }
@@ -99,19 +107,23 @@ fun NavHostController.navigateToSettings() = navigate(SettingsGraph.Root.route) 
     popUpTo(HomeGraph.Root.route)
 }
 
-fun NavHostController.navigateToSettingsName() = navigate(SettingsGraph.Name.route) {
-    popUpTo(SettingsGraph.Root.route)
-}
+fun NavHostController.navigateToSettingsName() = navigateToSettingsChild(SettingsGraph.Name)
 
-fun NavHostController.navigateToSettingsGoal() = navigate(SettingsGraph.Goal.route) {
-    popUpTo(SettingsGraph.Root.route)
-}
+fun NavHostController.navigateToSettingsGoal() = navigateToSettingsChild(SettingsGraph.Goal)
 
-fun NavHostController.navigateToOpenSourceLicenses() = navigate(SettingsGraph.Licenses.route) {
-    popUpTo(SettingsGraph.Root.route)
+fun NavHostController.navigateToOpenSourceLicenses() = navigateToSettingsChild(SettingsGraph.Licenses)
+
+fun NavHostController.navigateToBackup() = navigateToSettingsChild(SettingsGraph.Backup)
+
+private fun NavHostController.navigateToSettingsChild(destination: SettingsGraph) = navigate(destination.route) {
+    popUpToSettingsRoot()
 }
 
 fun NavHostController.navigateToLicenseDetail(id: String) =
     navigate(SettingsGraph.LicenseDetail.createDestination(id)) {
         popUpTo(SettingsGraph.Licenses.route)
     }
+
+private fun NavOptionsBuilder.popUpToSettingsRoot() {
+    popUpTo(SettingsGraph.Root.route)
+}

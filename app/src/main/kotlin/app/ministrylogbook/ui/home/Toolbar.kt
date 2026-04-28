@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +29,7 @@ import app.ministrylogbook.R
 import app.ministrylogbook.shared.layouts.MonthPickerPopup
 import app.ministrylogbook.shared.utilities.getLocale
 import app.ministrylogbook.ui.LocalAppNavController
+import app.ministrylogbook.ui.settings.navigateToSettings
 import app.ministrylogbook.ui.share.navigateToShare
 import app.ministrylogbook.ui.shared.ToolbarAction
 import java.time.Month as JavaMonth
@@ -56,7 +55,14 @@ fun ToolbarActions(month: LocalDate) {
                 contentDescription = stringResource(R.string.share_field_service_report)
             )
         }
-        ProfileButton(month)
+        ToolbarAction(onClick = {
+            navController.navigateToSettings()
+        }) {
+            Icon(
+                painterResource(R.drawable.ic_settings),
+                contentDescription = stringResource(R.string.settings)
+            )
+        }
     }
 }
 
@@ -92,7 +98,7 @@ fun ToolbarMonthSelect(
             Text(monthTitle, color = MaterialTheme.colorScheme.secondary)
             Spacer(Modifier.width(6.dp))
             Icon(
-                Icons.Rounded.ArrowDropDown,
+                painterResource(R.drawable.ic_arrow_drop_down),
                 contentDescription = "Dropdown Arrow for month selection", // TODO: translation
                 tint = MaterialTheme.colorScheme.secondary
             )

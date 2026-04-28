@@ -38,7 +38,6 @@ androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidXJUnit" }
 androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "androidLifecycle" }
 androidx-lifecycle-runtimeCompose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidLifecycle" }
-androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core" }
 androidx-material3 = { module = "androidx.compose.material3:material3" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-ui = { module = "androidx.compose.ui:ui" }

@@ -10,7 +10,5 @@ sealed class AppGraph(val route: String) {
 
     object Share : AppGraph("share")
 
-    object Backup : AppGraph("backup")
-
     override fun toString() = route
 }

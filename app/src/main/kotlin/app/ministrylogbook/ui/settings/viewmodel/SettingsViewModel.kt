@@ -76,6 +76,11 @@ class SettingsViewModel(
         initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
+    val lastBackup = _settingsService.lastBackup.stateIn(
+        scope = viewModelScope,
+        initialValue = null,
+        started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
+    )
 
     fun setPioneerSince(date: LocalDate) = viewModelScope.launch {
         _settingsService.setPioneerSince(date)

@@ -13,7 +13,6 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import app.ministrylogbook.shared.layouts.bottomSheet
-import app.ministrylogbook.shared.layouts.popup
 import app.ministrylogbook.shared.layouts.stayOut
 import app.ministrylogbook.shared.utilities.activity
 import app.ministrylogbook.ui.AppGraph
@@ -47,21 +46,6 @@ sealed class HomeGraph(private val rawRoute: String, val arguments: List<NamedNa
     }
 
     object FromDeepLink : HomeGraph("?fromDeepLink=true")
-
-    object Menu : HomeGraph(
-        rawRoute = "menu?year={year}&monthNumber={monthNumber}",
-        arguments = listOf(
-            navArgument("year") {
-                nullable = true
-            },
-            navArgument("monthNumber") {
-                nullable = true
-            }
-        )
-    ) {
-        fun createDestination(year: Int, monthNumber: Int) =
-            "${AppGraph.Home}/menu?year=$year&monthNumber=$monthNumber"
-    }
 
     object EntryDetails : HomeGraph(
         rawRoute = "{year}/{monthNumber}/entry-details/{id}",
@@ -135,10 +119,6 @@ fun NavGraphBuilder.homeGraph() {
             HomePage(state, viewModel::dispatch)
         }
 
-        popup(HomeGraph.Menu.route) {
-            MenuPopup()
-        }
-
         bottomSheet(
             HomeGraph.EntryDetails.route,
             arguments = HomeGraph.EntryDetails.arguments
@@ -173,9 +153,6 @@ fun NavController.navigateToHome() {
         popUpTo(0)
     }
 }
-
-fun NavController.navigateToHomeMenu(year: Int, monthNumber: Int) =
-    navigate(HomeGraph.Menu.createDestination(year, monthNumber))
 
 fun NavController.navigateToEntryDetails(month: LocalDate, id: Int? = null) =
     navigate(HomeGraph.EntryDetails.createDestination(month, id)) {
