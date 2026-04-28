@@ -29,7 +29,7 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
     val onBackgroundColor = MaterialTheme.colorScheme.onBackground.toArgb()
     val onBackgroundColor80 = MaterialTheme.colorScheme.onBackground.copy(0.8f).toArgb()
     val onBackgroundColor60 = MaterialTheme.colorScheme.onBackground.copy(0.6f).toArgb()
-    val jostTypeface = ResourcesCompat.getFont(context, R.font.jost_variable)
+    val googleSansTypeface = ResourcesCompat.getFont(context, R.font.google_sans_regular)
     val animatedHours by animateIntAsState(targetValue = time.hours, label = "hours")
     val animatedMinutes by animateIntAsState(targetValue = time.minutes, label = "minutes")
     val hrsText = stringResource(R.string.hours_short)
@@ -40,19 +40,19 @@ fun Counter(modifier: Modifier = Modifier, time: Time) {
             isAntiAlias = true
             textSize = 60.sp.toPx()
             color = onBackgroundColor
-            typeface = jostTypeface
+            typeface = googleSansTypeface
         }
         val smallTextPaint = Paint().apply {
             isAntiAlias = true
             textSize = 28.sp.toPx()
             color = onBackgroundColor80
-            typeface = jostTypeface
+            typeface = googleSansTypeface
         }
         val unitTextPaint = Paint().apply {
             isAntiAlias = true
             textSize = 16.sp.toPx()
             color = onBackgroundColor60
-            typeface = jostTypeface
+            typeface = googleSansTypeface
         }
         val hoursBounds = Rect()
         val animatedHoursWithSign =

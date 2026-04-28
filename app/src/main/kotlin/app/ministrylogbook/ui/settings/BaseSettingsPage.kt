@@ -90,7 +90,7 @@ fun Setting(
                 .weight(1f)
                 .padding(end = 8.dp)
         ) {
-            Text(title, fontSize = MaterialTheme.typography.titleMedium.fontSize)
+            Text(title, style = MaterialTheme.typography.bodyLarge)
             description?.let {
                 Text(
                     description,

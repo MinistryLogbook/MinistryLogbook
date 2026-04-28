@@ -57,7 +57,7 @@ fun Chart(
 ) {
     val progress = remember { Animatable(0f) }
     val context = LocalContext.current
-    val jostTypeface = ResourcesCompat.getFont(context, R.font.jost_variable)
+    val googleSansTypeface = ResourcesCompat.getFont(context, R.font.google_sans_regular)
     val cornerRadius = CornerRadius(100f, 100f)
     val lineColor = MaterialTheme.colorScheme.onBackground.copy(0.4f)
 
@@ -90,7 +90,7 @@ fun Chart(
                 isAntiAlias = true
                 textSize = 9.sp.toPx()
                 color = marker.color.toArgb()
-                typeface = jostTypeface
+                typeface = googleSansTypeface
             }
             val bounds = android.graphics.Rect()
             val text = if (marker.value % 1.0 == 0.0) {

@@ -38,7 +38,7 @@ class SettingsViewModel(
     )
     val useSystemColors = _settingsService.useSystemColors.stateIn(
         scope = viewModelScope,
-        initialValue = true,
+        initialValue = false,
         started = SharingStarted.WhileSubscribed(DEFAULT_TIMEOUT)
     )
     val role = _settingsService.role.stateIn(
