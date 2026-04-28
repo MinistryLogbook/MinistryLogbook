@@ -42,14 +42,6 @@ updates:
           - "com.mikepenz.aboutlibraries*"
           - "org.jmailen.kotlinter:*"
           - "org.jmailen.kotlinter*"
-    ignore:
-      - dependency-name: "*"
-        versions:
-          - "*-alpha*"
-          - "*-beta*"
-          - "*-rc*"
-          - "*-RC*"
-          - "*-M*"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -59,10 +51,3 @@ updates:
       github-actions:
         patterns:
           - "*"
-    ignore:
-      - dependency-name: "*"
-        versions:
-          - "*-alpha*"
-          - "*-beta*"
-          - "*-rc*"
-          - "*-RC*"
