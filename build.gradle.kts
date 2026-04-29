@@ -5,6 +5,7 @@ val installKotlinterPrePushHook by tasks.registering(InstallPrePushHookTask::cla
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlinter) apply false
+    alias(libs.plugins.kover) apply false
     alias(libs.plugins.aboutlicenses) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.room) apply false

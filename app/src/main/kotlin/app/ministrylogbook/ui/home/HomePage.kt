@@ -149,7 +149,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                     icon = {
                         Icon(
                             painterResource(R.drawable.ic_schedule),
-                            contentDescription = null // TODO: contentDescription
+                            contentDescription = stringResource(R.string.time)
                         )
                     }
                 )
@@ -185,7 +185,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
                         }) {
                             Icon(
                                 painterResource(R.drawable.ic_group),
-                                contentDescription = null // TODO: contentDescription
+                                contentDescription = stringResource(R.string.bible_studies_short)
                             )
                         }
                     }

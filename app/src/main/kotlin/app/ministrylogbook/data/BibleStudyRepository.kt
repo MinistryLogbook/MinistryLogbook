@@ -8,22 +8,32 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
+interface HomeBibleStudyRepository {
+    fun getAllOfMonth(month: LocalDate): Flow<List<BibleStudy>>
+
+    suspend fun transfer(fromMonth: LocalDate, toMonth: LocalDate)
+
+    suspend fun save(bibleStudy: BibleStudy): Long
+
+    suspend fun delete(bibleStudy: BibleStudy)
+}
+
 class BibleStudyRepository(
     private val bibleStudyDao: BibleStudyDao,
     private val databaseChangeNotifier: DatabaseChangeNotifier
-) {
+) : HomeBibleStudyRepository {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun get(id: Int) = databaseChangeNotifier.databaseChanges.flatMapLatest {
         bibleStudyDao.get(id)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAllOfMonth(month: LocalDate): Flow<List<BibleStudy>> =
+    override fun getAllOfMonth(month: LocalDate): Flow<List<BibleStudy>> =
         databaseChangeNotifier.databaseChanges.flatMapLatest {
             bibleStudyDao.getAllOfMonth(month.year, month.month.ordinal + 1)
         }
 
-    suspend fun transfer(fromMonth: LocalDate, toMonth: LocalDate) {
+    override suspend fun transfer(fromMonth: LocalDate, toMonth: LocalDate) {
         withContext(Dispatchers.IO) {
             val bibleStudies = bibleStudyDao.getAllOfMonth(fromMonth.year, fromMonth.month.ordinal + 1).first()
             bibleStudies.forEach {
@@ -32,11 +42,11 @@ class BibleStudyRepository(
         }
     }
 
-    suspend fun save(bibleStudy: BibleStudy): Long = withContext(Dispatchers.IO) {
+    override suspend fun save(bibleStudy: BibleStudy): Long = withContext(Dispatchers.IO) {
         bibleStudyDao.upsert(bibleStudy)
     }.first()
 
-    suspend fun delete(bibleStudy: BibleStudy) {
+    override suspend fun delete(bibleStudy: BibleStudy) {
         withContext(Dispatchers.IO) {
             bibleStudyDao.delete(bibleStudy)
         }

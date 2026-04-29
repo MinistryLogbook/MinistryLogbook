@@ -2,11 +2,11 @@ package app.ministrylogbook.ui.settings.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.ministrylogbook.data.AppMonthlyInformationRepository
 import app.ministrylogbook.data.Design
-import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsService
-import app.ministrylogbook.shared.services.ReminderManager
+import app.ministrylogbook.data.UserSettings
+import app.ministrylogbook.shared.services.ReminderScheduler
 import kotlin.time.Clock
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -19,9 +19,9 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 
 class SettingsViewModel(
-    private val _settingsService: SettingsService,
-    private val _monthlyInformationRepository: MonthlyInformationRepository,
-    private val _reminderManager: ReminderManager
+    private val _settingsService: UserSettings,
+    private val _monthlyInformationRepository: AppMonthlyInformationRepository,
+    private val _reminderManager: ReminderScheduler
 ) : ViewModel() {
     private val currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
     private val monthlyInfo = _monthlyInformationRepository.getOfMonth(currentMonth)

@@ -256,7 +256,10 @@ fun SetupPage() {
                                 enabled = isNextButtonEnabled,
                                 contentPadding = PaddingValues(0.dp)
                             ) {
-                                Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null)
+                                Icon(
+                                    painterResource(R.drawable.ic_arrow_forward),
+                                    contentDescription = stringResource(R.string.next)
+                                )
                             }
                         }
                     }

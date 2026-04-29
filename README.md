@@ -22,3 +22,12 @@
 ## Download
 
 [<img height="80" src="resources/google-play-badge.png" alt="Get it on Google Play">](https://play.google.com/store/apps/details?id=app.ministrylogbook)
+
+## Testing And Coverage
+
+- JVM tests: `./gradlew :app:testDebugUnitTest`
+- JVM coverage: `./gradlew :app:koverHtmlReportDebug` or `./gradlew :app:createDebugUnitTestCoverageReport`
+- Instrumented coverage: `./gradlew :app:createDebugAndroidTestCoverageReport`
+- Unified unit and instrumented coverage: `./gradlew :app:createCoverageReport`
+
+Instrumented and unified coverage require a connected Android device or emulator.

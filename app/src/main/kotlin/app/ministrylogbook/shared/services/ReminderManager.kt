@@ -9,16 +9,27 @@ import androidx.core.os.ConfigurationCompat
 import androidx.core.os.LocaleListCompat
 import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import java.util.Calendar
+import java.util.Locale
 import kotlin.time.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atTime
 import kotlinx.datetime.todayIn
 
-class ReminderManager(private val context: Context) {
+interface ReminderScheduler {
+    fun scheduleReminder()
+
+    fun cancelReminder()
+}
+
+class ReminderManager(private val context: Context) : ReminderScheduler {
 
     companion object {
         const val REMINDER_NOTIFICATION_REQUEST_CODE = 1
+    }
+
+    override fun scheduleReminder() {
+        scheduleReminder(defaultReminderTime(), REMINDER_NOTIFICATION_REQUEST_CODE)
     }
 
     fun scheduleReminder(
@@ -43,15 +54,11 @@ class ReminderManager(private val context: Context) {
         val locale = ConfigurationCompat.getLocales(context.resources.configuration).get(0)
             ?: LocaleListCompat.getDefault()[0]!!
 
-        val calendar = Calendar.getInstance(locale).apply {
-            set(Calendar.MONTH, dateTime.month.ordinal + 1 - 1)
-            set(Calendar.DAY_OF_MONTH, dateTime.day)
-            set(Calendar.HOUR_OF_DAY, dateTime.hour)
-            set(Calendar.MINUTE, dateTime.minute)
-            set(Calendar.SECOND, dateTime.second)
-        }
+        alarmManager.set(AlarmManager.RTC_WAKEUP, reminderTriggerTimeInMillis(dateTime, locale), intent)
+    }
 
-        alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, intent)
+    override fun cancelReminder() {
+        cancelReminder(REMINDER_NOTIFICATION_REQUEST_CODE)
     }
 
     fun cancelReminder(id: Int = REMINDER_NOTIFICATION_REQUEST_CODE) {
@@ -68,5 +75,18 @@ class ReminderManager(private val context: Context) {
         return today.lastDayOfMonth.atTime(20, 0)
     }
 }
+
+internal fun reminderTriggerTimeInMillis(dateTime: LocalDateTime, locale: Locale): Long =
+    Calendar.getInstance(locale).apply {
+        clear()
+        set(
+            dateTime.year,
+            dateTime.month.ordinal,
+            dateTime.day,
+            dateTime.hour,
+            dateTime.minute,
+            dateTime.second
+        )
+    }.timeInMillis
 
 const val REMINDER_CHANNEL_ID = "reminder_channel"

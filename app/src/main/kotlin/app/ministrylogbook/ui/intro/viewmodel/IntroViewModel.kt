@@ -2,11 +2,11 @@ package app.ministrylogbook.ui.intro.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import app.ministrylogbook.data.MonthlyInformationRepository
+import app.ministrylogbook.data.AppMonthlyInformationRepository
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsService
+import app.ministrylogbook.data.UserSettings
 import app.ministrylogbook.shared.IntentViewModel
-import app.ministrylogbook.shared.services.ReminderManager
+import app.ministrylogbook.shared.services.ReminderScheduler
 import kotlin.time.Clock
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -34,9 +34,9 @@ sealed class IntroIntent {
 }
 
 class IntroViewModel(
-    private val _settingsService: SettingsService,
-    private val _monthlyInfoRepository: MonthlyInformationRepository,
-    private val _reminderManager: ReminderManager
+    private val _settingsService: UserSettings,
+    private val _monthlyInfoRepository: AppMonthlyInformationRepository,
+    private val _reminderManager: ReminderScheduler
 ) : ViewModel(),
     IntentViewModel<IntroState, IntroIntent> {
 

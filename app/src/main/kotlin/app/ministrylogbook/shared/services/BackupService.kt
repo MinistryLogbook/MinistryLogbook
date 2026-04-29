@@ -23,12 +23,21 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 
+interface HomeBackupService {
+    suspend fun importBackup(uri: Uri): Boolean
+
+    fun getBackupMetadata(uri: Uri): Metadata?
+
+    fun validateBackup(uri: Uri): Boolean
+}
+
 class BackupService(
     private val context: Context,
     private val db: AppDatabase,
     private val settingsService: SettingsService,
     private val databaseChangeNotifier: DatabaseChangeNotifier
-) : KoinComponent {
+) : KoinComponent,
+    HomeBackupService {
 
     companion object {
         const val VERSION = 1
@@ -78,7 +87,7 @@ class BackupService(
         out.close()
     }
 
-    suspend fun importBackup(uri: Uri): Boolean = withContext(Dispatchers.IO) {
+    override suspend fun importBackup(uri: Uri): Boolean = withContext(Dispatchers.IO) {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return@withContext false
         val origin = BufferedInputStream(inputStream)
         val zip = ZipInputStream(origin)
@@ -129,7 +138,7 @@ class BackupService(
         true
     }
 
-    fun getBackupMetadata(uri: Uri): Metadata? {
+    override fun getBackupMetadata(uri: Uri): Metadata? {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return null
         val origin = BufferedInputStream(inputStream)
         val zip = ZipInputStream(origin)
@@ -150,7 +159,7 @@ class BackupService(
         return metadata
     }
 
-    fun validateBackup(uri: Uri): Boolean {
+    override fun validateBackup(uri: Uri): Boolean {
         val inputStream = context.contentResolver.openInputStream(uri) ?: return false
         val origin = BufferedInputStream(inputStream)
         val zip = ZipInputStream(origin)

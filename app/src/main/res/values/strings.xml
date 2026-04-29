@@ -49,6 +49,7 @@
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
     <string name="back">Back</string>
+    <string name="next">Next</string>
     <string name="close">Close</string>
     <string name="set_name">Set name</string>
     <string name="printed_and_electronic">Printed and Electronic</string>

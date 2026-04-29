@@ -22,6 +22,12 @@ class LocalDateExtensionsTest {
     }
 
     @Test
+    fun lastDayOfMonth_handlesThirtyAndThirtyOneDayMonths() {
+        assertEquals(LocalDate(2026, 4, 30), LocalDate(2026, 4, 15).lastDayOfMonth)
+        assertEquals(LocalDate(2026, 5, 31), LocalDate(2026, 5, 15).lastDayOfMonth)
+    }
+
+    @Test
     fun isLeapYear_followsGregorianCenturyRules() {
         assertTrue(LocalDate(2000, 1, 1).isLeapYear)
         assertFalse(LocalDate(1900, 1, 1).isLeapYear)
@@ -35,8 +41,20 @@ class LocalDateExtensionsTest {
     }
 
     @Test
+    fun weekNumber_countsWeeksAfterYearBoundaryAdjustment() {
+        assertEquals(2, LocalDate(2026, 1, 5).weekNumber)
+        assertEquals(53, LocalDate(2026, 12, 31).weekNumber)
+    }
+
+    @Test
     fun isInFirstWeekOfMonth_usesCalendarWeekBoundary() {
         assertTrue(LocalDate(2026, 4, 1).isInFirstWeekOfMonth)
         assertFalse(LocalDate(2026, 4, 8).isInFirstWeekOfMonth)
+    }
+
+    @Test
+    fun isInFirstWeekOfMonth_includesSundayEndingFirstCalendarWeek() {
+        assertTrue(LocalDate(2026, 4, 5).isInFirstWeekOfMonth)
+        assertFalse(LocalDate(2026, 4, 6).isInFirstWeekOfMonth)
     }
 }

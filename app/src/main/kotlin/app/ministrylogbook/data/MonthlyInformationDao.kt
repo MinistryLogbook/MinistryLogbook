@@ -1,6 +1,7 @@
 package app.ministrylogbook.data
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -17,4 +18,7 @@ interface MonthlyInformationDao {
 
     @Upsert
     suspend fun upsert(info: MonthlyInformation): Long
+
+    @Delete
+    suspend fun delete(info: MonthlyInformation)
 }

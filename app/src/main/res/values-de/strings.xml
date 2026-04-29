@@ -49,6 +49,7 @@
     <string name="cancel">Abbrechen</string>
     <string name="ok">OK</string>
     <string name="back">Zurück</string>
+    <string name="next">Weiter</string>
     <string name="close">Schließen</string>
     <string name="set_name">Name eingeben</string>
     <string name="printed_and_electronic">gedruckt und elektronisch</string>

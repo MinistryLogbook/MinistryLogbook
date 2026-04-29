@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kotlinter)
+    alias(libs.plugins.kover)
     alias(libs.plugins.aboutlicenses)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.room)
@@ -49,6 +50,8 @@ android {
 
     buildTypes {
         debug {
+            enableUnitTestCoverage = true
+            enableAndroidTestCoverage = true
             versionNameSuffix = if (getTagName() == "") getGitHash() else ".${getGitHash()}"
             applicationIdSuffix = ".debug"
             signingConfig =
@@ -100,6 +103,22 @@ room {
     schemaDirectory("$projectDir/schemas")
 }
 
+kover {
+    reports {
+        filters {
+            excludes {
+                classes(
+                    "app.ministrylogbook.BuildConfig",
+                    "app.ministrylogbook.R",
+                    "app.ministrylogbook.R\$*",
+                    "app.ministrylogbook.data.AppDatabase_Impl",
+                    "app.ministrylogbook.ui.theme.*"
+                )
+            }
+        }
+    }
+}
+
 androidComponents {
     onVariants(selector().withBuildType("release")) {
         it.packaging.resources.excludes.add("META-INF/*.version")
@@ -143,7 +162,9 @@ dependencies {
 
     debugImplementation(libs.ui.tooling)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.room.testing)

@@ -11,13 +11,23 @@ import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.minus
 
+interface HomeMonthlyInformationRepository {
+    fun getOfMonth(month: LocalDate): Flow<MonthlyInformation>
+
+    suspend fun save(info: MonthlyInformation): Long
+}
+
+interface AppMonthlyInformationRepository : HomeMonthlyInformationRepository {
+    suspend fun update(month: LocalDate, modify: (monthlyInfo: MonthlyInformation) -> MonthlyInformation)
+}
+
 class MonthlyInformationRepository(
     private val monthlyInformationDao: MonthlyInformationDao,
     private val databaseChangeNotifier: DatabaseChangeNotifier
-) {
+) : AppMonthlyInformationRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getOfMonth(month: LocalDate): Flow<MonthlyInformation> {
+    override fun getOfMonth(month: LocalDate): Flow<MonthlyInformation> {
         val lastMonth = month.minus(DatePeriod(months = 1))
 
         return databaseChangeNotifier.databaseChanges.flatMapLatest {
@@ -40,11 +50,11 @@ class MonthlyInformationRepository(
         }
     }
 
-    suspend fun save(info: MonthlyInformation): Long = withContext(Dispatchers.IO) {
+    override suspend fun save(info: MonthlyInformation): Long = withContext(Dispatchers.IO) {
         monthlyInformationDao.upsert(info)
     }
 
-    suspend fun update(month: LocalDate, modify: (monthlyInfo: MonthlyInformation) -> MonthlyInformation) {
+    override suspend fun update(month: LocalDate, modify: (monthlyInfo: MonthlyInformation) -> MonthlyInformation) {
         withContext(Dispatchers.IO) {
             val info = monthlyInformationDao
                 .getOfMonth(month.year, month.month.ordinal + 1)

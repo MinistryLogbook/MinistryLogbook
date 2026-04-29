@@ -38,9 +38,9 @@ import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
+import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import kotlin.time.Clock
 
 @Composable
 fun WeekNumberSeparator(

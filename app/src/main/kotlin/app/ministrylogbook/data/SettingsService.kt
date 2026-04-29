@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import app.ministrylogbook.R
 import kotlin.time.Instant
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.LocalDate
@@ -69,7 +70,44 @@ enum class Design {
     }
 }
 
-class SettingsService(val context: Context) {
+interface EntryDetailsSettings {
+    val role: Flow<Role>
+    val precisionMode: Flow<Boolean>
+}
+
+interface HomeSettings {
+    val role: Flow<Role>
+    val pioneerSince: Flow<LocalDate?>
+    val roleGoal: Flow<Int?>
+}
+
+interface UserSettings {
+    val role: Flow<Role>
+    val pioneerSince: Flow<LocalDate?>
+    val roleGoal: Flow<Int?>
+    val name: Flow<String>
+    val design: Flow<Design>
+    val useSystemColors: Flow<Boolean>
+    val precisionMode: Flow<Boolean>
+    val sendReportReminder: Flow<Boolean>
+    val lastBackup: Flow<LocalDateTime?>
+    val introShown: Flow<Boolean>
+
+    suspend fun setIntroShown()
+    suspend fun setPioneerSince(date: LocalDate?)
+    suspend fun setLastBackup(dateTime: LocalDateTime?)
+    suspend fun setRole(role: Role)
+    suspend fun setName(name: String)
+    suspend fun setDesign(design: Design)
+    suspend fun setUseSystemColors(value: Boolean)
+    suspend fun setPrecisionMode(precisionMode: Boolean)
+    suspend fun setSendReportReminders(value: Boolean)
+}
+
+class SettingsService(val context: Context) :
+    EntryDetailsSettings,
+    HomeSettings,
+    UserSettings {
     companion object {
         const val NAME = "settings"
 
@@ -84,18 +122,18 @@ class SettingsService(val context: Context) {
         private val IntroShownKey = booleanPreferencesKey("intro_shown")
     }
 
-    val role = context.dataStore.data.map {
+    override val role = context.dataStore.data.map {
         it[RoleKey]?.let { role -> Role.valueOf(role) } ?: Role.Publisher
     }.distinctUntilChanged()
-    val pioneerSince = context.dataStore.data.map {
+    override val pioneerSince = context.dataStore.data.map {
         it[StartOfPioneeringKey]?.let { dateStr ->
             val date = LocalDate.parse(dateStr)
             LocalDate(date.year, date.month, 1)
         }
     }.distinctUntilChanged()
-    val roleGoal = role.map { it.goal }
-    val name = context.dataStore.data.map { it[NameKey] ?: "" }.distinctUntilChanged()
-    val design = context.dataStore.data.map {
+    override val roleGoal = role.map { it.goal }
+    override val name = context.dataStore.data.map { it[NameKey] ?: "" }.distinctUntilChanged()
+    override val design = context.dataStore.data.map {
         val value = it[DesignKey]
 
         if (value != null) {
@@ -104,55 +142,65 @@ class SettingsService(val context: Context) {
             Design.System
         }
     }.distinctUntilChanged()
-    val useSystemColors = context.dataStore.data.map { it[UseSystemColors] ?: false }.distinctUntilChanged()
-    val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }.distinctUntilChanged()
-    val sendReportReminder = context.dataStore.data.map { it[SendReportReminderKey] ?: true }.distinctUntilChanged()
-    val lastBackup = context.dataStore.data.map {
+    override val useSystemColors = context.dataStore.data.map {
+        it[UseSystemColors] ?: false
+    }.distinctUntilChanged()
+    override val precisionMode = context.dataStore.data.map { it[PrecisionModeKey] ?: false }.distinctUntilChanged()
+    override val sendReportReminder = context.dataStore.data.map {
+        it[SendReportReminderKey] ?: true
+    }.distinctUntilChanged()
+    override val lastBackup = context.dataStore.data.map {
         val lastBackupMillis = it[LastBackupMillisKey] ?: return@map null
         Instant.fromEpochMilliseconds(lastBackupMillis).toLocalDateTime(TimeZone.currentSystemDefault())
     }.distinctUntilChanged()
-    val introShown = context.dataStore.data.map { it[IntroShownKey] ?: false }.distinctUntilChanged()
+    override val introShown = context.dataStore.data.map { it[IntroShownKey] ?: false }.distinctUntilChanged()
 
-    suspend fun setIntroShown() = context.dataStore.edit { it[IntroShownKey] = true }
+    override suspend fun setIntroShown() {
+        context.dataStore.edit { it[IntroShownKey] = true }
+    }
 
-    suspend fun setPioneerSince(date: LocalDate?) = context.dataStore.edit {
-        if (date == null) {
-            it.remove(StartOfPioneeringKey)
-            return@edit
+    override suspend fun setPioneerSince(date: LocalDate?) {
+        context.dataStore.edit {
+            if (date == null) {
+                it.remove(StartOfPioneeringKey)
+                return@edit
+            }
+            it[StartOfPioneeringKey] = date.toString()
         }
-        it[StartOfPioneeringKey] = date.toString()
     }
 
-    suspend fun setLastBackup(dateTime: LocalDateTime?) = context.dataStore.edit {
-        if (dateTime == null) {
-            it.remove(LastBackupMillisKey)
-            return@edit
+    override suspend fun setLastBackup(dateTime: LocalDateTime?) {
+        context.dataStore.edit {
+            if (dateTime == null) {
+                it.remove(LastBackupMillisKey)
+                return@edit
+            }
+            it[LastBackupMillisKey] = dateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
         }
-        it[LastBackupMillisKey] = dateTime.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds()
     }
 
-    suspend fun setRole(role: Role) = context.dataStore.edit {
-        it[RoleKey] = role.name
+    override suspend fun setRole(role: Role) {
+        context.dataStore.edit { it[RoleKey] = role.name }
     }
 
-    suspend fun setName(name: String) = context.dataStore.edit {
-        it[NameKey] = name
+    override suspend fun setName(name: String) {
+        context.dataStore.edit { it[NameKey] = name }
     }
 
-    suspend fun setDesign(design: Design) = context.dataStore.edit {
-        it[DesignKey] = design.name
+    override suspend fun setDesign(design: Design) {
+        context.dataStore.edit { it[DesignKey] = design.name }
     }
 
-    suspend fun setUseSystemColors(value: Boolean) = context.dataStore.edit {
-        it[UseSystemColors] = value
+    override suspend fun setUseSystemColors(value: Boolean) {
+        context.dataStore.edit { it[UseSystemColors] = value }
     }
 
-    suspend fun setPrecisionMode(precisionMode: Boolean) = context.dataStore.edit {
-        it[PrecisionModeKey] = precisionMode
+    override suspend fun setPrecisionMode(precisionMode: Boolean) {
+        context.dataStore.edit { it[PrecisionModeKey] = precisionMode }
     }
 
-    suspend fun setSendReportReminders(value: Boolean) = context.dataStore.edit {
-        it[SendReportReminderKey] = value
+    override suspend fun setSendReportReminders(value: Boolean) {
+        context.dataStore.edit { it[SendReportReminderKey] = value }
     }
 }
 

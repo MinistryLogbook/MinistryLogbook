@@ -103,9 +103,10 @@ fun TimePage(
                 },
                 extended = fabExtended,
                 icon = {
+                    val createEntryDescription = stringResource(R.string.create_entry)
                     Icon(
                         painterResource(R.drawable.ic_add),
-                        contentDescription = null // TODO: contentDescription
+                        contentDescription = createEntryDescription
                     )
                 },
                 text = {

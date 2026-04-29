@@ -169,9 +169,10 @@ fun BibleStudiesPage(
                 onClick = { isDialogOpen = true },
                 extended = fabExtended,
                 icon = {
+                    val addBibleStudyDescription = stringResource(R.string.add_bible_study)
                     Icon(
                         painterResource(R.drawable.ic_add),
-                        contentDescription = null // TODO: contentDescription
+                        contentDescription = addBibleStudyDescription
                     )
                 },
                 text = {

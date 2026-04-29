@@ -154,8 +154,8 @@ fun CircleProgressIndicator(
                     ?: 0f
                 val roundedCapPercent = (segmentStrokeWidth / 2f).toSweepPercent(radius = segmentSize / 2f)
                 val overlapsTinyProgress = progressEndPercent > 0f &&
-                        progressEndPercent <= roundedCapPercent &&
-                        startPercent <= progressEndPercent + roundedCapPercent
+                    progressEndPercent <= roundedCapPercent &&
+                    startPercent <= progressEndPercent + roundedCapPercent
                 val sweepPercent = (endPercent - startPercent).coerceAtLeast(0f).coerceAtMost(1f)
 
                 if (sweepPercent > 0f && !overlapsTinyProgress) {

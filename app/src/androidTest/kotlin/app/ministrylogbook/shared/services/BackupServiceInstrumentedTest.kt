@@ -8,10 +8,14 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import app.ministrylogbook.data.AppDatabase
+import app.ministrylogbook.data.BibleStudy
+import app.ministrylogbook.data.BibleStudyRepository
 import app.ministrylogbook.data.DatabaseChangeNotifier
 import app.ministrylogbook.data.Design
 import app.ministrylogbook.data.Entry
 import app.ministrylogbook.data.EntryRepository
+import app.ministrylogbook.data.MonthlyInformation
+import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
 import app.ministrylogbook.data.SettingsService
 import java.io.File
@@ -27,6 +31,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -90,6 +95,180 @@ class BackupServiceInstrumentedTest {
         assertEquals(Design.Dark, metadata.design)
         assertEquals(true, metadata.precisionMode)
         assertEquals(false, metadata.sendReportReminder)
+    }
+
+    @Test
+    fun createBackup_withEmptyDatabaseWritesValidBackupAndMetadata() = runBlocking {
+        val database = Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
+        db = database
+        val settings = SettingsService(context)
+        settings.setRole(Role.Publisher)
+        settings.setPioneerSince(null)
+        settings.setName("")
+        settings.setDesign(Design.System)
+        settings.setPrecisionMode(false)
+        settings.setSendReportReminders(true)
+        val backupService = BackupService(context, database, settings, DatabaseChangeNotifier())
+        val backupUri = Uri.fromFile(backupFile)
+
+        backupService.createBackup(backupUri)
+
+        assertTrue(backupFile.exists())
+        assertTrue(backupService.validateBackup(backupUri))
+        val metadata = backupService.getBackupMetadata(backupUri)
+        assertNotNull(metadata)
+        assertEquals(Role.Publisher, metadata!!.role)
+        assertEquals(null, metadata.startOfPioneering)
+        assertEquals("", metadata.name)
+        assertEquals(Design.System, metadata.design)
+        assertEquals(false, metadata.precisionMode)
+        assertEquals(true, metadata.sendReportReminder)
+    }
+
+    @Test
+    fun importBackup_fromCurrentVersionRestoresDataAndSettings() = runBlocking {
+        val database = Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
+        db = database
+        val settings = SettingsService(context)
+        val backupService = BackupService(context, database, settings, DatabaseChangeNotifier())
+        settings.setRole(Role.AuxiliaryPioneer)
+        settings.setPioneerSince(LocalDate(2026, 1, 1))
+        settings.setName("Current Backup")
+        settings.setDesign(Design.Light)
+        settings.setPrecisionMode(true)
+        settings.setSendReportReminders(false)
+        database.entryDao().upsert(
+            Entry(
+                datetime = LocalDateTime(2026, 4, 28, 18, 0),
+                hours = 2,
+                minutes = 10
+            )
+        )
+        database.studyDao().upsert(
+            BibleStudy(name = "Study", month = LocalDate(2026, 4, 1), checked = true)
+        )
+        database.monthlyInformationDao().upsert(
+            MonthlyInformation(
+                month = LocalDate(2026, 4, 1),
+                goal = 30,
+                reportComment = "Ready"
+            )
+        )
+
+        backupService.createBackup(Uri.fromFile(backupFile))
+        database.entryDao().upsert(
+            database.entryDao().getLatest().first()!!.copy(hours = 9)
+        )
+        database.studyDao().delete(database.studyDao().getAllOfMonth(2026, 4).first().single())
+        database.monthlyInformationDao().delete(database.monthlyInformationDao().getOfMonth(2026, 4).first()!!)
+        settings.setRole(Role.Publisher)
+        settings.setPioneerSince(null)
+        settings.setName("Changed")
+        settings.setDesign(Design.Dark)
+        settings.setPrecisionMode(false)
+        settings.setSendReportReminders(true)
+
+        val imported = backupService.importBackup(Uri.fromFile(backupFile))
+
+        assertTrue(imported)
+        assertEquals(2, database.entryDao().getLatest().first()?.hours)
+        assertEquals("Study", database.studyDao().getAllOfMonth(2026, 4).first().single().name)
+        assertEquals(30, database.monthlyInformationDao().getOfMonth(2026, 4).first()?.goal)
+        assertEquals(Role.AuxiliaryPioneer, settings.role.first())
+        assertEquals(LocalDate(2026, 1, 1), settings.pioneerSince.first())
+        assertEquals("Current Backup", settings.name.first())
+        assertEquals(Design.Light, settings.design.first())
+        assertEquals(true, settings.precisionMode.first())
+        assertEquals(false, settings.sendReportReminder.first())
+    }
+
+    @Test
+    fun importBackup_roundTripRestoresAllRepositoryRecordsAfterDatabaseIsCleared() = runBlocking {
+        val database = Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
+        db = database
+        val databaseChangeNotifier = DatabaseChangeNotifier()
+        val entryRepository = EntryRepository(database.entryDao(), databaseChangeNotifier)
+        val bibleStudyRepository = BibleStudyRepository(database.studyDao(), databaseChangeNotifier)
+        val monthlyInformationRepository = MonthlyInformationRepository(
+            database.monthlyInformationDao(),
+            databaseChangeNotifier
+        )
+        val backupService = BackupService(
+            context,
+            database,
+            SettingsService(context),
+            databaseChangeNotifier
+        )
+        val entryId = entryRepository.save(
+            Entry(
+                datetime = LocalDateTime(2026, 4, 29, 10, 45),
+                hours = 1,
+                minutes = 25
+            )
+        )
+        val bibleStudyId = bibleStudyRepository.save(
+            BibleStudy(name = "Round Trip", month = LocalDate(2026, 4, 1), checked = true)
+        ).toInt()
+        val monthlyInformationId = monthlyInformationRepository.save(
+            MonthlyInformation(
+                month = LocalDate(2026, 4, 1),
+                goal = 50,
+                bibleStudies = 1,
+                reportSent = true
+            )
+        ).toInt()
+
+        backupService.createBackup(Uri.fromFile(backupFile))
+        entryRepository.delete(entryRepository.get(entryId).first()!!)
+        bibleStudyRepository.delete(bibleStudyRepository.get(bibleStudyId).first()!!)
+        database.monthlyInformationDao().delete(
+            monthlyInformationRepository.getOfMonth(LocalDate(2026, 4, 1)).first()
+        )
+
+        val imported = backupService.importBackup(Uri.fromFile(backupFile))
+
+        assertTrue(imported)
+        assertEquals(1, entryRepository.get(entryId).first()?.hours)
+        assertEquals(
+            "Round Trip",
+            bibleStudyRepository.get(bibleStudyId).first()?.name
+        )
+        assertEquals(
+            MonthlyInformation(
+                id = monthlyInformationId,
+                month = LocalDate(2026, 4, 1),
+                bibleStudies = 1,
+                goal = 50,
+                reportSent = true
+            ),
+            monthlyInformationRepository.getOfMonth(LocalDate(2026, 4, 1)).first()
+        )
+    }
+
+    @Test
+    fun malformedBackupDataIsRejectedWithoutReplacingExistingData() = runBlocking {
+        val database = Room.databaseBuilder(context, AppDatabase::class.java, databaseName).build()
+        db = database
+        val backupService = BackupService(
+            context,
+            database,
+            SettingsService(context),
+            DatabaseChangeNotifier()
+        )
+        database.entryDao().upsert(
+            Entry(
+                datetime = LocalDateTime(2026, 4, 29, 12, 0),
+                hours = 4
+            )
+        )
+        backupFile.writeText("not a backup")
+        val backupUri = Uri.fromFile(backupFile)
+
+        val imported = backupService.importBackup(backupUri)
+
+        assertFalse(imported)
+        assertFalse(backupService.validateBackup(backupUri))
+        assertEquals(4, database.entryDao().getLatest().first()?.hours)
     }
 
     @Test

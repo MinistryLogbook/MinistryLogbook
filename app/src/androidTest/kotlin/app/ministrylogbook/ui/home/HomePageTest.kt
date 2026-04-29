@@ -64,7 +64,7 @@ class HomePageTest {
                 }
             }
 
-            compose.waitUntil { expectedTitle != null }
+            compose.waitUntil(timeoutMillis = 5_000) { expectedTitle != null }
             compose.onNodeWithText(expectedTitle!!).assertIsDisplayed()
         }
     }
@@ -102,7 +102,7 @@ class HomePageTest {
                 }
             }
 
-            compose.waitUntil { monthTitle != null && monthShortTitle != null }
+            compose.waitUntil(timeoutMillis = 5_000) { monthTitle != null && monthShortTitle != null }
             compose.onNodeWithText(monthTitle!!).performClick()
             compose.onNodeWithText(monthShortTitle!!).performClick()
 

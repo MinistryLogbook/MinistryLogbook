@@ -3,10 +3,10 @@ package app.ministrylogbook.ui.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.data.Entry
-import app.ministrylogbook.data.EntryRepository
+import app.ministrylogbook.data.EntryDetailsRepository
+import app.ministrylogbook.data.EntryDetailsSettings
 import app.ministrylogbook.data.EntryType
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.utilities.mutableStateIn
 import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,8 +25,8 @@ import kotlinx.datetime.toLocalDateTime
 class EntryDetailsViewModel(
     month: LocalDate,
     val id: Int?,
-    settingsDataStore: SettingsService,
-    private val _entryRepository: EntryRepository
+    settingsDataStore: EntryDetailsSettings,
+    private val _entryRepository: EntryDetailsRepository
 ) : ViewModel() {
 
     private val initialEntry = Entry(id = id ?: 0, datetime = month.atTime(0, 0))
@@ -82,7 +82,7 @@ class EntryDetailsViewModel(
     }
 
     fun save() = viewModelScope.launch {
-        val currentEntry = entry.value
+        val currentEntry = _entry.value
         val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
         val currentDatetime = if (currentEntry.id == 0) {
             currentEntry.datetime.date.atTime(now.hour, now.minute)
@@ -105,7 +105,7 @@ class EntryDetailsViewModel(
     }
 
     fun delete() = viewModelScope.launch {
-        _entryRepository.delete(entry.value)
+        _entryRepository.delete(_entry.value)
     }
 }
 

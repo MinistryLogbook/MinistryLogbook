@@ -7,22 +7,23 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import app.ministrylogbook.R
 import app.ministrylogbook.data.BibleStudy
-import app.ministrylogbook.data.BibleStudyRepository
 import app.ministrylogbook.data.Entry
-import app.ministrylogbook.data.EntryRepository
 import app.ministrylogbook.data.EntryType
+import app.ministrylogbook.data.HomeBibleStudyRepository
+import app.ministrylogbook.data.HomeEntryRepository
+import app.ministrylogbook.data.HomeMonthlyInformationRepository
+import app.ministrylogbook.data.HomeSettings
 import app.ministrylogbook.data.MonthlyInformation
-import app.ministrylogbook.data.MonthlyInformationRepository
 import app.ministrylogbook.data.Role
-import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.Time
-import app.ministrylogbook.shared.services.BackupService
+import app.ministrylogbook.shared.services.HomeBackupService
 import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupFile
 import app.ministrylogbook.ui.home.time.HomeTimeCalculator
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,7 +47,6 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Spread
 import nl.dionsegijn.konfetti.core.emitter.Emitter
-import java.util.concurrent.TimeUnit
 
 sealed class HomeIntent {
     data class TransferToTextMonth(val minutes: Int) : HomeIntent()
@@ -93,15 +93,31 @@ data class HomeState(
 
 data class History<T>(val previous: T?, val current: T)
 
+interface HomeMessageNotifier {
+    fun showInvalidBackupMessage()
+}
+
+class ToastHomeMessageNotifier(private val application: Application) : HomeMessageNotifier {
+    override fun showInvalidBackupMessage() {
+        val context = application.applicationContext
+        Toast.makeText(
+            context,
+            context.getString(R.string.backup_is_invalid),
+            Toast.LENGTH_LONG
+        ).show()
+    }
+}
+
 class HomeViewModel(
     val month: LocalDate,
     private val _uri: Uri? = null,
     private val _application: Application,
-    private val _entryRepository: EntryRepository,
-    private val _backupService: BackupService,
-    private val _bibleStudyRepository: BibleStudyRepository,
-    private val _monthlyInformationRepository: MonthlyInformationRepository,
-    settingsService: SettingsService
+    private val _entryRepository: HomeEntryRepository,
+    private val _backupService: HomeBackupService,
+    private val _bibleStudyRepository: HomeBibleStudyRepository,
+    private val _monthlyInformationRepository: HomeMonthlyInformationRepository,
+    settingsService: HomeSettings,
+    private val _messageNotifier: HomeMessageNotifier = ToastHomeMessageNotifier(_application)
 ) : AndroidViewModel(_application),
     IntentViewModel<HomeState, HomeIntent> {
 
@@ -212,14 +228,16 @@ class HomeViewModel(
 
     private val isMonthlyPartyFinished = MutableStateFlow(false)
     private val monthlyParties =
-        combine(goal, entriesHistory, isMonthlyPartyFinished, isYearlyPartyFinished) {
+        combine(goal, entriesHistory, isMonthlyPartyFinished, isYearlyPartyFinished, yearlyParties) {
                 goal,
                 entries,
                 isFinished,
-                isYearFinished
+                isYearFinished,
+                yearlyParties
             ->
             if (isFinished ||
                 isYearFinished ||
+                yearlyParties.isNotEmpty() ||
                 entries?.previous == null ||
                 (goal != null && entries.previous.timeSum().hours >= goal)
             ) {
@@ -351,12 +369,7 @@ class HomeViewModel(
             val backupFile = state.value.selectedBackupFile ?: return@launch
             val imported = _backupService.importBackup(backupFile.uri)
             if (!imported) {
-                val context = _application.applicationContext
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.backup_is_invalid),
-                    Toast.LENGTH_LONG
-                ).show()
+                _messageNotifier.showInvalidBackupMessage()
             } else {
                 importFinished.update { true }
             }
@@ -390,7 +403,9 @@ class HomeViewModel(
         monthlyParties,
         entriesLastMonth,
         yearlyProgress,
-        yearlyParties
+        yearlyParties,
+        selectedBackupFile,
+        importFinished
     ) { values ->
         @Suppress("UNCHECKED_CAST")
         HomeState(
@@ -414,7 +429,12 @@ class HomeViewModel(
             monthlyParties = values[15] as List<Party>,
             entriesLastMonth = values[16] as List<Entry>,
             yearlyProgress = values[17] as Time,
-            yearlyParties = values[18] as List<Party>
+            yearlyParties = values[18] as List<Party>,
+            selectedBackupFile = values[19] as BackupFile?,
+            isBackupValid = (values[19] as BackupFile?)?.run {
+                _backupService.validateBackup(this.uri) && this.metadata != null
+            } == true,
+            importFinished = values[20] as Boolean
         )
     }.stateIn(
         scope = viewModelScope,

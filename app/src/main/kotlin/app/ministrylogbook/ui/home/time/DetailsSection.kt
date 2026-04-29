@@ -62,13 +62,13 @@ import app.ministrylogbook.shared.layouts.progress.CircleProgressSegment
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
-import kotlinx.coroutines.launch
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.todayIn
 import kotlin.math.PI
 import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.time.Clock
+import kotlinx.coroutines.launch
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
@@ -323,23 +323,23 @@ private fun GoalPillColumn(
             visible = credit.isNotEmpty,
             enter = if (animateCreditPill) {
                 expandVertically(animationSpec = tween(durationMillis = 180)) +
-                        fadeIn(
-                            animationSpec = tween(
-                                durationMillis = 120,
-                                delayMillis = 200
-                            )
+                    fadeIn(
+                        animationSpec = tween(
+                            durationMillis = 120,
+                            delayMillis = 200
                         )
+                    )
             } else {
                 EnterTransition.None
             },
             exit = if (animateCreditPill) {
                 fadeOut(animationSpec = tween(durationMillis = 120)) +
-                        shrinkVertically(
-                            animationSpec = tween(
-                                durationMillis = 180,
-                                delayMillis = 140
-                            )
+                    shrinkVertically(
+                        animationSpec = tween(
+                            durationMillis = 180,
+                            delayMillis = 140
                         )
+                    )
             } else {
                 ExitTransition.None
             }

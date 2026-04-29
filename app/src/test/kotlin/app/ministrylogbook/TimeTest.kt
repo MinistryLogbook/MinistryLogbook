@@ -1,6 +1,8 @@
 package app.ministrylogbook
 
 import app.ministrylogbook.shared.Time
+import app.ministrylogbook.shared.sum
+import app.ministrylogbook.shared.toTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -68,8 +70,60 @@ class TimeTest {
         assertEquals(1.5f, Time(hours = 1, minutes = 30).toFloat())
     }
 
+    @Test
+    fun subtraction_canProduceNegativeTime() {
+        val result = Time(hours = 1, minutes = 15) - Time(hours = 2, minutes = 0)
+
+        assertEquals(Time(hours = 0, minutes = 45, isNegative = true), result)
+    }
+
+    @Test
+    fun division_truncatesRemainingMinutes() {
+        val result = Time(hours = 1, minutes = 1) / 2
+
+        assertEquals(Time(hours = 0, minutes = 30), result)
+    }
+
+    @Test
+    fun multiplication_preservesNegativeSign() {
+        val result = Time(hours = 0, minutes = 30, isNegative = true) * 3
+
+        assertEquals(Time(hours = 1, minutes = 30, isNegative = true), result)
+    }
+
+    @Test
+    fun sum_accumulatesPositiveAndNegativeTimes() {
+        val result = listOf(
+            Time(hours = 1, minutes = 45),
+            Time(hours = 0, minutes = 30, isNegative = true),
+            Time(hours = 0, minutes = 15)
+        ).sum()
+
+        assertEquals(Time(hours = 1, minutes = 30), result)
+    }
+
+    @Test
+    fun floatToTime_truncatesSubMinutePrecision() {
+        assertEquals(Time(hours = 1, minutes = 44), 1.749f.toTime())
+    }
+
+    @Test
+    fun intToTime_convertsToWholeHours() {
+        assertEquals(Time(hours = 3, minutes = 0), 3.toTime())
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun constructor_rejectsSixtyMinutes() {
         Time(hours = 1, minutes = 60)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun constructor_rejectsNegativeHours() {
+        Time(hours = -1, minutes = 0)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun division_rejectsZeroDivisor() {
+        Time(hours = 1, minutes = 0) / 0
     }
 }

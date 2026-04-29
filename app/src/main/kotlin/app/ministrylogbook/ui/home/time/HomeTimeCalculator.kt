@@ -78,8 +78,8 @@ object HomeTimeCalculator {
             accumulatedBeforeToday = accumulatedBeforeToday,
             todayAdded = todayAdded,
             showTodaySegment = month.year == today.year &&
-                    month.month == today.month &&
-                    todayAdded.isNotEmpty,
+                month.month == today.month &&
+                todayAdded.isNotEmpty,
             remainingHours = calculateRemainingHours(goal, role, accumulatedTime, fieldServiceTime),
             credit = credit,
             weeklyProgress = weeklyProgress,

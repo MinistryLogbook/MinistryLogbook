@@ -2,29 +2,52 @@ package app.ministrylogbook.data
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.LocalDate
 
-class EntryRepository(private val entryDao: EntryDao, private val databaseChangeNotifier: DatabaseChangeNotifier) {
+interface EntryDetailsRepository {
+    fun get(id: Int): Flow<Entry?>
+
+    suspend fun save(entry: Entry): Int
+
+    suspend fun delete(entry: Entry)
+}
+
+interface HomeEntryRepository {
+    fun getAllOfMonth(month: LocalDate): Flow<List<Entry>>
+
+    fun getAllInRange(from: LocalDate, to: LocalDate): Flow<List<Entry>>
+
+    fun getTransferredFrom(localDate: LocalDate): Flow<List<Entry>>
+
+    suspend fun save(entry: Entry): Int
+
+    suspend fun delete(entry: Entry)
+}
+
+class EntryRepository(private val entryDao: EntryDao, private val databaseChangeNotifier: DatabaseChangeNotifier) :
+    EntryDetailsRepository,
+    HomeEntryRepository {
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun get(id: Int) = databaseChangeNotifier.databaseChanges.flatMapLatest {
+    override fun get(id: Int) = databaseChangeNotifier.databaseChanges.flatMapLatest {
         entryDao.get(id)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAllOfMonth(month: LocalDate) = databaseChangeNotifier.databaseChanges.flatMapLatest {
+    override fun getAllOfMonth(month: LocalDate) = databaseChangeNotifier.databaseChanges.flatMapLatest {
         entryDao.getAllOfMonth(month.year, month.month.ordinal + 1)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getAllInRange(from: LocalDate, to: LocalDate) = databaseChangeNotifier.databaseChanges.flatMapLatest {
+    override fun getAllInRange(from: LocalDate, to: LocalDate) = databaseChangeNotifier.databaseChanges.flatMapLatest {
         entryDao.getAllInRange(from.year, from.month.ordinal + 1, to.year, to.month.ordinal + 1)
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getTransferredFrom(localDate: LocalDate) = databaseChangeNotifier.databaseChanges.flatMapLatest {
+    override fun getTransferredFrom(localDate: LocalDate) = databaseChangeNotifier.databaseChanges.flatMapLatest {
         entryDao.getTransferredFrom(
             localDate.year,
             localDate.month.ordinal + 1
@@ -37,11 +60,11 @@ class EntryRepository(private val entryDao: EntryDao, private val databaseChange
             entryDao.getLatest()
         }
 
-    suspend fun save(entry: Entry): Int = withContext(Dispatchers.IO) {
+    override suspend fun save(entry: Entry): Int = withContext(Dispatchers.IO) {
         entryDao.upsert(entry)
     }.first().toInt()
 
-    suspend fun delete(entry: Entry) {
+    override suspend fun delete(entry: Entry) {
         withContext(Dispatchers.IO) {
             entryDao.delete(entry)
         }

@@ -11,7 +11,10 @@ interface BibleStudyDao {
     @Query("SELECT * FROM biblestudy WHERE id = :id")
     fun get(id: Int): Flow<BibleStudy?>
 
-    @Query("SELECT * FROM biblestudy WHERE strftime('%Y%m', month) = :year || substr('00' || :month, -2, 2)")
+    @Query(
+        "SELECT * FROM biblestudy WHERE strftime('%Y%m', month) = :year || substr('00' || :month, -2, 2) " +
+            "ORDER BY id ASC"
+    )
     fun getAllOfMonth(year: Int, month: Int): Flow<List<BibleStudy>>
 
     @Upsert
