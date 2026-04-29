@@ -121,7 +121,9 @@ fun ToolbarMonthSelect(
             onSelect = { month ->
                 expanded = false
                 onExpandedChange(false)
-                onSelect(month)
+                if (month != selectedMonth) {
+                    onSelect(month)
+                }
             }
         )
     }
