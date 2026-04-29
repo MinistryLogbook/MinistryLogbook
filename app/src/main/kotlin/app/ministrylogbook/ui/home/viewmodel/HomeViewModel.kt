@@ -18,16 +18,11 @@ import app.ministrylogbook.data.SettingsService
 import app.ministrylogbook.shared.IntentViewModel
 import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.services.BackupService
-import app.ministrylogbook.shared.sum
-import app.ministrylogbook.shared.toTime
 import app.ministrylogbook.shared.utilities.lastDayOfMonth
 import app.ministrylogbook.shared.utilities.ministryTimeSum
-import app.ministrylogbook.shared.utilities.splitIntoMonths
-import app.ministrylogbook.shared.utilities.theocraticAssignmentTimeSum
-import app.ministrylogbook.shared.utilities.theocraticSchoolTimeSum
 import app.ministrylogbook.shared.utilities.timeSum
 import app.ministrylogbook.ui.home.backup.viewmodel.BackupFile
-import java.util.concurrent.TimeUnit
+import app.ministrylogbook.ui.home.time.HomeTimeCalculator
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -51,6 +46,7 @@ import nl.dionsegijn.konfetti.core.Party
 import nl.dionsegijn.konfetti.core.Position
 import nl.dionsegijn.konfetti.core.Spread
 import nl.dionsegijn.konfetti.core.emitter.Emitter
+import java.util.concurrent.TimeUnit
 
 sealed class HomeIntent {
     data class TransferToTextMonth(val minutes: Int) : HomeIntent()
@@ -70,6 +66,7 @@ sealed class HomeIntent {
 
 data class HomeState(
     val month: LocalDate,
+    val isLoaded: Boolean = false,
     val goal: Int? = null,
     val hasGoal: Boolean? = null,
     val roleGoal: Int? = null,
@@ -177,16 +174,13 @@ class HomeViewModel(
         }
     }
     private val bibleStudies = _bibleStudyRepository.getAllOfMonth(month)
-    private val maxHoursWithCredit = roleGoal.map { Time(it?.plus(5) ?: 0, 0) }
     private val yearlyProgress =
-        entriesInServiceYear.combine(maxHoursWithCredit) { entriesInServiceYear, maxHoursWithCredit ->
-            entriesInServiceYear.splitIntoMonths().map {
-                val ministryTimeSum = it.ministryTimeSum().hours.toTime()
-                val theocraticSchoolTimeSum = it.theocraticSchoolTimeSum().hours.toTime()
-                val theocraticAssignmentTimeSum = it.theocraticAssignmentTimeSum().hours.toTime()
-                val max = maxOf(ministryTimeSum, maxHoursWithCredit)
-                minOf(max, ministryTimeSum + theocraticAssignmentTimeSum) + theocraticSchoolTimeSum
-            }.sum()
+        combine(entriesInServiceYear, settingsService.role, roleGoal) { entriesInServiceYear, role, roleGoal ->
+            HomeTimeCalculator.calculateYearlyProgress(
+                entriesInServiceYear = entriesInServiceYear,
+                role = role,
+                roleGoal = roleGoal
+            )
         }
     private val yearlyProgressHistory = yearlyProgress.runningFold(
         initial = null as (History<Time>?),
@@ -401,6 +395,7 @@ class HomeViewModel(
         @Suppress("UNCHECKED_CAST")
         HomeState(
             month = month,
+            isLoaded = true,
             goal = values[0] as Int?,
             hasGoal = values[1] as Boolean,
             roleGoal = values[2] as Int?,

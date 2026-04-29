@@ -38,9 +38,9 @@ import app.ministrylogbook.ui.home.navigateToEntryDetails
 import app.ministrylogbook.ui.home.viewmodel.HomeIntent
 import app.ministrylogbook.ui.home.viewmodel.HomeState
 import app.ministrylogbook.ui.theme.ProgressPositive
-import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 @Composable
 fun WeekNumberSeparator(
@@ -170,7 +170,7 @@ fun HistorySection(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}
                 weekGoal = weekGoal,
                 ministryTimeSum = entriesCurrentWeekLastMonth.ministryTimeSum() + entries.ministryTimeSum(),
                 allTimeSum = entriesCurrentWeekLastMonth.timeSum() + timeSum,
-                showProgress = week == currentWeek
+                showProgress = false
             )
             entries.forEach { entry ->
                 HistoryItem(entry, onClick = { handleClick(entry) })

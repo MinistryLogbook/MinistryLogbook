@@ -16,4 +16,8 @@
         <item quantity="one">%1$d Stunde verbleibend</item>
         <item quantity="other">%1$d Stunden verbleibend</item>
     </plurals>
+    <plurals name="short_hours_remaining">
+        <item quantity="one">%1$d Std verbleibend</item>
+        <item quantity="other">%1$d Std verbleibend</item>
+    </plurals>
 </resources>

@@ -118,7 +118,7 @@ fun HomePage(state: HomeState, dispatch: (intent: HomeIntent) -> Unit = {}) {
             ) {
                 ToolbarMonthSelect(
                     selectedMonth = state.month,
-                    onExpandedChange = { isMonthPickerExpanded = it },
+                    onExpandedChange = { },
                     onSelect = {
                         navController.navigateToMonth(it.year, it.month.ordinal + 1)
                     }

@@ -36,6 +36,9 @@
     <string name="current_month">Aktueller Monat</string>
     <string name="role">Rolle</string>
     <string name="monthly_goal">Monatliches Ziel</string>
+    <string name="credits">Gutschrift</string>
+    <string name="weekly_progress">Woche</string>
+    <string name="field_service_this_month">Predigtdienst</string>
     <string name="no_name_set">Kein Name gesetzt</string>
     <string name="no_goal_set">Kein Ziel gesetzt</string>
     <string name="personal_information">Persönliche Informationen</string>
