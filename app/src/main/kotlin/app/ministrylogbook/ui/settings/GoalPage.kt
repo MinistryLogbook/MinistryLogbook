@@ -40,9 +40,13 @@ import app.ministrylogbook.ui.settings.viewmodel.SettingsViewModel
 import app.ministrylogbook.ui.shared.ToolbarAction
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.ParametersDefinition
 
 @Composable
-fun GoalPage(viewModel: SettingsViewModel = koinViewModel()) {
+fun GoalPage(
+    parameters: ParametersDefinition? = null,
+    viewModel: SettingsViewModel = koinViewModel(parameters = parameters)
+) {
     val navController = LocalAppNavController.current
     val scrollState = rememberScrollState()
     val goal by viewModel.goal.collectAsStateWithLifecycle()

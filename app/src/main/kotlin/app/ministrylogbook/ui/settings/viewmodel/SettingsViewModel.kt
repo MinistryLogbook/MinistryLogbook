@@ -21,9 +21,10 @@ import kotlinx.datetime.todayIn
 class SettingsViewModel(
     private val _settingsService: UserSettings,
     private val _monthlyInformationRepository: AppMonthlyInformationRepository,
-    private val _reminderManager: ReminderScheduler
+    private val _reminderManager: ReminderScheduler,
+    month: LocalDate? = null
 ) : ViewModel() {
-    private val currentMonth = Clock.System.todayIn(TimeZone.currentSystemDefault())
+    private val currentMonth = month ?: Clock.System.todayIn(TimeZone.currentSystemDefault())
     private val monthlyInfo = _monthlyInformationRepository.getOfMonth(currentMonth)
 
     val name = _settingsService.name.stateIn(

@@ -75,7 +75,7 @@ val appModule = module {
             params.getOrNull<BackupViewModelOptions>() ?: BackupViewModelOptions()
         )
     }
-    viewModel { SettingsViewModel(get(), get(), get()) }
+    viewModel { params -> SettingsViewModel(get(), get(), get(), params.getOrNull()) }
     viewModel { params ->
         HomeViewModel(
             params.get(),

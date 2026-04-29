@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -60,7 +62,9 @@ import app.ministrylogbook.shared.Time
 import app.ministrylogbook.shared.layouts.progress.CircleProgressIndicator
 import app.ministrylogbook.shared.layouts.progress.CircleProgressSegment
 import app.ministrylogbook.shared.layouts.progress.ProgressKind
+import app.ministrylogbook.ui.LocalAppNavController
 import app.ministrylogbook.ui.home.viewmodel.HomeState
+import app.ministrylogbook.ui.settings.navigateToSettingsGoal
 import app.ministrylogbook.ui.theme.ProgressPositive
 import kotlin.math.PI
 import kotlin.math.min
@@ -73,6 +77,7 @@ import kotlinx.datetime.todayIn
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun DetailsSection(state: HomeState) {
+    val navController = LocalAppNavController.current
     val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
     val timeSummary = remember(
         state.month,
@@ -113,10 +118,18 @@ fun DetailsSection(state: HomeState) {
             ) {
                 val circleSize = widthDp * 0.55f
                 val circleStrokeWidth = 26.dp
+                val monthlyGoalText = stringResource(R.string.monthly_goal)
                 Box(
                     modifier = Modifier
                         .height(circleSize)
                         .width(circleSize)
+                        .clip(CircleShape)
+                        .clickable(
+                            onClickLabel = monthlyGoalText,
+                            onClick = {
+                                navController.navigateToSettingsGoal(state.month)
+                            }
+                        )
                 ) {
                     val accPercent = if (state.goal != null) {
                         1f / state.goal * timeSummary.accumulatedTime.toFloat()
@@ -209,7 +222,7 @@ fun DetailsSection(state: HomeState) {
                         }
                     )
                     CurvedRingLabel(
-                        text = stringResource(R.string.monthly_goal),
+                        text = monthlyGoalText,
                         strokeWidth = circleStrokeWidth,
                         gap = 6.dp,
                         verticalOffset = 12.dp,

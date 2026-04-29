@@ -111,6 +111,26 @@ class SettingsViewModelTest {
     }
 
     @Test
+    fun setGoal_withTargetMonth_updatesOnlyThatMonth() = runTest {
+        val today = currentDate()
+        val oldMonth = LocalDate(2026, 1, 1)
+        val settings = FakeUserSettings()
+        val monthlyInfo = FakeMonthlyInformationRepository(
+            MonthlyInformation(month = today, goal = 7),
+            MonthlyInformation(month = oldMonth, goal = 5)
+        )
+        val viewModel = SettingsViewModel(settings, monthlyInfo, FakeReminderScheduler(), oldMonth)
+        val collectJob = collect(viewModel)
+
+        viewModel.setGoal(12)
+        advanceUntilIdle()
+
+        assertEquals(12, monthlyInfo.get(oldMonth).goal)
+        assertEquals(7, monthlyInfo.get(today).goal)
+        collectJob.cancel()
+    }
+
+    @Test
     fun setRole_setsAndClearsPioneerStartDate() = runTest {
         val settings = FakeUserSettings(role = Role.Publisher)
         val viewModel = SettingsViewModel(

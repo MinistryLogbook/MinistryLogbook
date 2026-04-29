@@ -23,13 +23,32 @@ import app.ministrylogbook.ui.home.HomeGraph
 import app.ministrylogbook.ui.home.backup.BackupPage
 import app.ministrylogbook.ui.settings.license.LicenseDetailPage
 import app.ministrylogbook.ui.settings.license.LicensesPage
+import kotlinx.datetime.LocalDate
+import org.koin.core.parameter.parametersOf
 
 sealed class SettingsGraph(private val rawRoute: String, val arguments: List<NamedNavArgument> = listOf()) {
     data object Root : SettingsGraph("")
 
     data object Name : SettingsGraph("name")
 
-    data object Goal : SettingsGraph("goal")
+    data object Goal : SettingsGraph(
+        rawRoute = "goal?year={year}&monthNumber={monthNumber}",
+        arguments = listOf(
+            navArgument("year") {
+                nullable = true
+            },
+            navArgument("monthNumber") {
+                nullable = true
+            }
+        )
+    ) {
+        fun createDestination(month: LocalDate? = null): String {
+            if (month == null) {
+                return "${AppGraph.Settings}/goal"
+            }
+            return "${AppGraph.Settings}/goal?year=${month.year}&monthNumber=${month.month.ordinal + 1}"
+        }
+    }
 
     data object Backup : SettingsGraph("backup")
 
@@ -81,8 +100,15 @@ fun NavGraphBuilder.settingsGraph() {
             NamePage()
         }
 
-        composable(SettingsGraph.Goal.route) {
-            GoalPage()
+        composable(SettingsGraph.Goal.route, arguments = SettingsGraph.Goal.arguments) { backStackEntry ->
+            val year = backStackEntry.arguments?.getString("year")?.toIntOrNull()
+            val monthNumber = backStackEntry.arguments?.getString("monthNumber")?.toIntOrNull()
+            val month = if (year != null && monthNumber != null) {
+                LocalDate(year, monthNumber, 1)
+            } else {
+                null
+            }
+            GoalPage(parameters = { parametersOf(month) })
         }
 
         composable(SettingsGraph.Backup.route) {
@@ -109,7 +135,14 @@ fun NavHostController.navigateToSettings() = navigate(SettingsGraph.Root.route) 
 
 fun NavHostController.navigateToSettingsName() = navigateToSettingsChild(SettingsGraph.Name)
 
-fun NavHostController.navigateToSettingsGoal() = navigateToSettingsChild(SettingsGraph.Goal)
+fun NavHostController.navigateToSettingsGoal(month: LocalDate? = null) =
+    navigate(SettingsGraph.Goal.createDestination(month)) {
+        if (currentBackStackEntry?.destination?.route?.startsWith(AppGraph.Settings.route) == true) {
+            popUpToSettingsRoot()
+        } else {
+            popUpTo(HomeGraph.Root.route)
+        }
+    }
 
 fun NavHostController.navigateToOpenSourceLicenses() = navigateToSettingsChild(SettingsGraph.Licenses)
 
