@@ -20,7 +20,7 @@ jobs:
         run: git fetch --tags
 
       - name: Decode Keystore
-        uses: timheuer/base64-to-file@v1
+        uses: timheuer/base64-to-file@v2
         with:
           fileName: 'keystore/MinistryLogbook.jks'
           fileDir: ${{ github.workspace }}
